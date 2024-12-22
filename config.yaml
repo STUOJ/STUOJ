@@ -21,7 +21,7 @@ yuki-image:
   port: 4128
   token: XIv3ybWOTIR2Md3sKuMk6AgqjBUH48IRK2d9RMqHGeVymDwc9AWMFOWV7lXc3foJ
 neko-acm:
-  host: http://127.0.0.1
+  host: http://10.143.50.21
   port: 14515
   token: 016526330aaf250542e5acc9103d9f663a8a5bb00d1b8607a1b170b6d93d6401
 
