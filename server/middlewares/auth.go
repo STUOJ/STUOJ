@@ -16,23 +16,29 @@ import (
 
 func TokenGetInfo() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		role, err := getUserRole(c)
+		if utils.GetToken(c) == "" {
+			c.Set("id", uint64(0))
+			c.Set("role", entity.RoleVisitor)
+			c.Next()
+			return
+		}
+		uid, err := utils.GetTokenUid(c)
 		if err != nil {
-			log.Println(err)
+			c.JSON(http.StatusUnauthorized, model.RespError("获取用户id失败", nil))
+			c.Abort()
+			return
+		}
+		role, err := getUserRole(uid)
+		if err != nil {
+			c.JSON(http.StatusUnauthorized, model.RespError("无法查询到用户组", nil))
+			c.Abort()
 			return
 		}
 
-		var uid uint64
 		if role != entity.RoleVisitor {
 			err = tokenAutoRefresh(c)
 			if err != nil {
 				log.Println(err)
-			}
-			uid, err = utils.GetTokenUid(c)
-			if err != nil {
-				c.JSON(http.StatusUnauthorized, model.RespError("获取用户id失败", nil))
-				c.Abort()
-				return
 			}
 		}
 
@@ -147,19 +153,11 @@ func tokenAutoRefresh(c *gin.Context) error {
 	return nil
 }
 
-func getUserRole(c *gin.Context) (entity.Role, error) {
-	// 获取用户id
-	uid, err := utils.GetTokenUid(c)
-	if err != nil {
-		return -1, err
-	}
-
+func getUserRole(uid uint64) (entity.Role, error) {
 	// 获取用户信息
 	u, err := user.SelectById(uid)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, model.RespError("token无效，获取用户信息失败", nil))
-		c.Abort()
-		return 0, err
+		return -1, err
 	}
 
 	return u.Role, nil
