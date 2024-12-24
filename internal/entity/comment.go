@@ -13,7 +13,7 @@ const (
 func (s CommentStatus) String() string {
 	switch s {
 	case CommentStatusBanned:
-		return "被屏蔽"
+		return "屏蔽"
 	case CommentStatusPublic:
 		return "公开"
 	default:
