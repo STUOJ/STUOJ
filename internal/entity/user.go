@@ -20,15 +20,15 @@ const (
 func (r Role) String() string {
 	switch r {
 	case RoleBanned:
-		return "被封禁用户"
+		return "封禁"
 	case RoleUser:
-		return "普通用户"
+		return "用户"
 	case RoleAdmin:
-		return "管理员"
+		return "管理"
 	case RoleRoot:
-		return "超级管理员"
+		return "超管"
 	default:
-		return "未知角色"
+		return "未知"
 	}
 }
 

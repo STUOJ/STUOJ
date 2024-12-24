@@ -4,37 +4,37 @@ import (
 	"time"
 )
 
-// 难度：0 暂无评定，1 E级（入门），2 D级（简单），3 C级（中等），4 B级（较难），5 A级（困难），6 S级（超级困难）
+// 难度：0 未知，1 入门，2 简单，3 中等，4 较难，5 困难，6 超难
 type Difficulty uint8
 
 const (
-	DifficultyUnknown Difficulty = 0
-	DifficultyE       Difficulty = 1
-	DifficultyD       Difficulty = 2
-	DifficultyC       Difficulty = 3
-	DifficultyB       Difficulty = 4
-	DifficultyA       Difficulty = 5
-	DifficultyS       Difficulty = 6
+	DifficultyU Difficulty = 0
+	DifficultyE Difficulty = 1
+	DifficultyD Difficulty = 2
+	DifficultyC Difficulty = 3
+	DifficultyB Difficulty = 4
+	DifficultyA Difficulty = 5
+	DifficultyS Difficulty = 6
 )
 
 func (d Difficulty) String() string {
 	switch d {
-	case DifficultyUnknown:
-		return "暂无评定"
+	case DifficultyU:
+		return "[?]未知"
 	case DifficultyE:
-		return "E级（入门）"
+		return "[E]入门"
 	case DifficultyD:
-		return "D级（简单）"
+		return "[D]简单"
 	case DifficultyC:
-		return "C级（中等）"
+		return "[C]中等"
 	case DifficultyB:
-		return "B级（较难）"
+		return "[B]较难"
 	case DifficultyA:
-		return "A级（困难）"
+		return "[A]困难"
 	case DifficultyS:
-		return "S级（超级困难）"
+		return "[S]超难"
 	default:
-		return "暂无评定"
+		return "[?]未知"
 	}
 }
 
@@ -55,11 +55,11 @@ func (s ProblemStatus) String() string {
 	case ProblemStatusPublic:
 		return "公开"
 	case ProblemStatusEditing:
-		return "出题中"
+		return "出题"
 	case ProblemStatusDebugging:
-		return "调试中"
+		return "调试"
 	default:
-		return "未知状态"
+		return "未知"
 	}
 }
 
@@ -77,7 +77,7 @@ type Problem struct {
 	SampleInput  string        `gorm:"type:longtext;not null;comment:输入样例" json:"sample_input,omitempty"`
 	SampleOutput string        `gorm:"type:longtext;not null;comment:输出样例" json:"sample_output,omitempty"`
 	Hint         string        `gorm:"type:longtext;not null;comment:提示" json:"hint,omitempty"`
-	Status       ProblemStatus `gorm:"not null;default:1;comment:状态" json:"status"`
+	Status       ProblemStatus `gorm:"not null;default:0;comment:状态" json:"status"`
 	ProblemTag   []*Tag        `gorm:"many2many:tbl_problem_tag;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;association_jointable_foreignkey:tag_id;jointable_foreignkey:problem_id" json:"problem_tag,omitempty"`
 	CreateTime   time.Time     `gorm:"not null;default:CURRENT_TIMESTAMP;comment:创建时间" json:"create_time,omitempty"`
 	UpdateTime   time.Time     `gorm:"not null;default:CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;comment:更新时间" json:"update_time,omitempty"`

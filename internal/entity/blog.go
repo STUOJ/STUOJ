@@ -16,13 +16,13 @@ const (
 func (s BlogStatus) String() string {
 	switch s {
 	case BLogStatusBanned:
-		return "被屏蔽"
+		return "屏蔽"
 	case BlogStatusPublic:
 		return "公开"
 	case BlogStatusDraft:
 		return "草稿"
 	case BLogStatusReview:
-		return "待审核"
+		return "审核"
 	case BlogStatusNotice:
 		return "公告"
 	default:
