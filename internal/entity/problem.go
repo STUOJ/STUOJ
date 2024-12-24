@@ -68,7 +68,7 @@ type Problem struct {
 	Id           uint64        `gorm:"primaryKey;autoIncrement;comment:题目ID" json:"id,omitempty"`
 	Title        string        `gorm:"type:text;not null;comment:标题" json:"title,omitempty"`
 	Source       string        `gorm:"type:text;not null;comment:题目来源" json:"source,omitempty"`
-	Difficulty   Difficulty    `gorm:"not null;default:0;comment:难度" json:"difficulty,omitempty"`
+	Difficulty   Difficulty    `gorm:"not null;default:0;comment:难度" json:"difficulty"`
 	TimeLimit    float64       `gorm:"not null;default:1;comment:时间限制（s）" json:"time_limit,omitempty"`
 	MemoryLimit  uint64        `gorm:"not null;default:131072;comment:内存限制（kb）" json:"memory_limit,omitempty"`
 	Description  string        `gorm:"type:longtext;not null;comment:题面" json:"description,omitempty"`
