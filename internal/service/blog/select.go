@@ -20,31 +20,25 @@ func SelectById(id uint64, userId uint64, admin ...bool) (entity.Blog, error) {
 		log.Println(err)
 		return entity.Blog{}, errors.New("获取博客失败")
 	}
-	if b.Status != entity.BlogStatusPublic && (len(admin) == 0 || !admin[0]) {
+	if b.Status != entity.BlogStatusPublic && (len(admin) == 0 || !admin[0]) && b.UserId != userId {
 		return entity.Blog{}, errors.New("该博客未公开")
 	}
 	return b, nil
 }
 
 func Select(condition dao.BlogWhere, userId uint64, page uint64, size uint64, admin ...bool) (BlogPage, error) {
+	if len(admin) == 0 || !admin[0] && (!condition.UserId.Exist() || condition.UserId.Value() != userId) {
+		condition.Status.Set(entity.BlogStatusPublic)
+	}
 	blogs, err := dao.SelectBlogs(condition, page, size)
 	if err != nil {
 		log.Println(err)
 		return BlogPage{}, errors.New("获取博客失败")
 	}
-	if len(admin) == 0 || !admin[0] {
-		var publicBlogs []entity.Blog
-		for _, blog := range blogs {
-			if blog.Status >= entity.BlogStatusPublic || blog.UserId == userId {
-				publicBlogs = append(publicBlogs, blog)
-			}
-		}
-		blogs = publicBlogs
-	}
+	count, err := dao.CountBlogs(condition)
 
 	hideBlogContent(blogs)
 
-	count, err := dao.CountBlogs(condition)
 	if err != nil {
 		log.Println(err)
 		return BlogPage{}, errors.New("获取统计失败")
