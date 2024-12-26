@@ -1,0 +1,10 @@
+version: '3'
+services:
+    stuoj:
+        container_name: stuoj
+        image: stuoj
+        restart: no
+        volumes:
+            - ./config.yaml:/app/config.yaml
+        ports:
+            - 14514:14514
