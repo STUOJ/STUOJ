@@ -23,7 +23,7 @@ func GenerateTestcase(ti model.NekoTestcaseInstruction) (model.NekoTestcase, err
 	}
 
 	// 解析返回值
-	var resp model.NekoResponse
+	var resp model.NekoRespObj
 	err = json.Unmarshal([]byte(bodyStr), &resp)
 	if err != nil {
 		return model.NekoTestcase{}, err

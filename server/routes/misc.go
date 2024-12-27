@@ -13,4 +13,9 @@ func InitMiscRoute(ginServer *gin.Engine) {
 		uploadRoute.Use(middlewares.TokenAuthUser())
 		uploadRoute.POST("/image", handler.UploadImage)
 	}
+
+	miscRoute := ginServer.Group("/misc")
+	{
+		miscRoute.GET("/joke", handler.GetJoke)
+	}
 }
