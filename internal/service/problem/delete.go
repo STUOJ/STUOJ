@@ -79,11 +79,11 @@ func DeleteTag(pid uint64, tid uint64) error {
 
 	// 检查题目标签关系是否存在
 	count, err := dao.CountProblemTag(pt)
-	if err != nil || count > 0 {
+	if err != nil || count < 1 {
 		if err != nil {
 			log.Println(err)
 		}
-		return errors.New("该题目已存在该标签")
+		return errors.New("该题目不存在该标签")
 	}
 
 	// 更新题目更新时间
