@@ -3,6 +3,7 @@ package handler
 import (
 	"STUOJ/external/yuki"
 	"STUOJ/internal/model"
+	"STUOJ/internal/service/misc"
 	"STUOJ/utils"
 	"fmt"
 	"log"
@@ -41,4 +42,16 @@ func UploadImage(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, model.RespOk("上传成功", image.Url))
+}
+
+// 获取笑话
+func GetJoke(c *gin.Context) {
+	j, err := misc.TellJoke()
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, model.RespError("获取失败", nil))
+		return
+	}
+
+	c.JSON(http.StatusOK, model.RespOk("OK", j))
 }

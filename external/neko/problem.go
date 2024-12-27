@@ -23,7 +23,7 @@ func GenerateProblem(pi model.NekoProblemInstruction) (model.NekoProblem, error)
 	}
 
 	// 解析返回值
-	var resp model.NekoResponse
+	var resp model.NekoRespObj
 	err = json.Unmarshal([]byte(bodyStr), &resp)
 	if err != nil {
 		return model.NekoProblem{}, err
@@ -57,7 +57,7 @@ func TranslateProblem(pi model.NekoTranslateInstruction) (model.NekoProblem, err
 	}
 
 	// 解析返回值
-	var resp model.NekoResponse
+	var resp model.NekoRespObj
 	err = json.Unmarshal([]byte(bodyStr), &resp)
 	if err != nil {
 		return model.NekoProblem{}, err

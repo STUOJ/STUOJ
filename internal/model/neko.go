@@ -78,8 +78,14 @@ type NekoTranslateInstruction struct {
 	TargetLang  string   `json:"target_lang,omitempty" binding:"omitempty"`
 }
 
-type NekoResponse struct {
+type NekoRespObj struct {
 	Code int                    `json:"code"`
 	Msg  string                 `json:"msg"`
 	Data map[string]interface{} `json:"data"`
+}
+
+type NekoRespStr struct {
+	Code int    `json:"code"`
+	Msg  string `json:"msg"`
+	Data string `json:"data"`
 }
