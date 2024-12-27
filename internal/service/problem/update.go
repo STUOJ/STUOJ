@@ -44,8 +44,8 @@ func UpdateById(p entity.Problem, uid uint64) error {
 	}
 
 	// 更新题目
-	p0.UpdateTime = updateTime
-	err = dao.UpdateProblemById(p0)
+	p.UpdateTime = updateTime
+	err = dao.UpdateProblemById(p)
 	if err != nil {
 		return errors.New("更新题目失败")
 	}
