@@ -4,10 +4,11 @@ import (
 	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
 	"STUOJ/internal/service/testcase"
-	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
 // 获取评测点数据
@@ -138,7 +139,11 @@ func AdminTestcaseDataMake(c *gin.Context) {
 		return
 	}
 
-	tc := t.Unfold()
+	tc, err := t.Unfold()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		return
+	}
 
 	// 返回结果
 	c.JSON(http.StatusOK, model.RespOk("OK", tc.String()))

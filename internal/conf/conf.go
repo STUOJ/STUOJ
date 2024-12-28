@@ -1,6 +1,7 @@
 package conf
 
 import (
+	"STUOJ/internal/model"
 	"STUOJ/utils"
 )
 
@@ -33,6 +34,7 @@ func InitConfig() error {
 	utils.Expire = Conf.Token.Expire
 	utils.Secret = Conf.Token.Secret
 	utils.Refresh = Conf.Token.Refresh
+	model.DatamakeLimit = Conf.Server.DatamakeLimit
 	return nil
 }
 

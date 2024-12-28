@@ -1,9 +1,16 @@
 package model
 
 import (
-	"golang.org/x/exp/rand"
+	"errors"
+	"fmt"
 	"time"
+
+	"golang.org/x/exp/rand"
 )
+
+var DatamakeLimit = uint64(10000)
+
+var currentLimit uint64
 
 type CommonTestcaseInput struct {
 	Rows []CommonTestcaseRow `json:"rows,omitempty"`
@@ -23,7 +30,8 @@ type CommonTestcaseValue struct {
 	MinId       uint64  `json:"min_id,omitempty"`
 }
 
-func (c *CommonTestcaseInput) Unfold() DataMakerInput {
+func (c *CommonTestcaseInput) Unfold() (DataMakerInput, error) {
+	currentLimit = 0
 	rand.Seed(uint64(time.Now().UnixNano()))
 	var input DataMakerInput
 	var hsh []float64
@@ -31,30 +39,50 @@ func (c *CommonTestcaseInput) Unfold() DataMakerInput {
 	for _, row := range c.Rows {
 		if row.RowSizeId > 0 && row.RowSizeId < uint64(len(hsh)) {
 			for i := 0; i < int(hsh[row.RowSizeId]); i++ {
-				input.AppendRow(row.Unfold(&hsh))
+				newRow, err := row.Unfold(&hsh)
+				if err != nil {
+					return input, err
+				}
+				input.AppendRow(newRow)
 			}
 		} else {
-			input.AppendRow(row.Unfold(&hsh))
+			newRow, err := row.Unfold(&hsh)
+			if err != nil {
+				return input, err
+			}
+			input.AppendRow(newRow)
 		}
 	}
-	return input
+	return input, nil
 }
 
-func (c *CommonTestcaseRow) Unfold(hsh *[]float64) DataMakerRow {
+func (c *CommonTestcaseRow) Unfold(hsh *[]float64) (DataMakerRow, error) {
 	var row DataMakerRow
 	for _, v := range c.Values {
 		if v.ValueSizeId > 0 && v.ValueSizeId < uint64(len(*hsh)) {
 			for i := 0; i < int((*hsh)[v.ValueSizeId]); i++ {
-				row.AppendValue(v.Unfold(hsh))
+				value, err := v.Unfold(hsh)
+				if err != nil {
+					return row, err
+				}
+				row.AppendValue(value)
 			}
 		} else {
-			row.AppendValue(v.Unfold(hsh))
+			value, err := v.Unfold(hsh)
+			if err != nil {
+				return row, err
+			}
+			row.AppendValue(value)
 		}
 	}
-	return row
+	return row, nil
 }
 
-func (c *CommonTestcaseValue) Unfold(hsh *[]float64) DataMakerValue {
+func (c *CommonTestcaseValue) Unfold(hsh *[]float64) (DataMakerValue, error) {
+	if currentLimit > DatamakeLimit {
+		return DataMakerValue{}, errors.New("生成次数超过" + fmt.Sprint(DatamakeLimit))
+	}
+	currentLimit++
 	if c.MaxId > 0 && c.MaxId < uint64(len(*hsh)) {
 		c.Max = (*hsh)[c.MaxId]
 	}
@@ -67,5 +95,5 @@ func (c *CommonTestcaseValue) Unfold(hsh *[]float64) DataMakerValue {
 	return DataMakerValue{
 		Type:  t,
 		Value: v,
-	}
+	}, nil
 }
