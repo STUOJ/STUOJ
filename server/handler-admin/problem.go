@@ -20,7 +20,7 @@ import (
 type ReqProblemAdd struct {
 	Title        string               `json:"title" binding:"required"`
 	Source       string               `json:"source"`
-	Difficulty   entity.Difficulty    `json:"difficulty" binding:"required"`
+	Difficulty   entity.Difficulty    `json:"difficulty"`
 	TimeLimit    float64              `json:"time_limit" binding:"required"`
 	MemoryLimit  uint64               `json:"memory_limit" binding:"required"`
 	Description  string               `json:"description" binding:"required"`
@@ -29,7 +29,7 @@ type ReqProblemAdd struct {
 	SampleInput  string               `json:"sample_input" binding:"required"`
 	SampleOutput string               `json:"sample_output" binding:"required"`
 	Hint         string               `json:"hint"`
-	Status       entity.ProblemStatus `json:"status" binding:"required"`
+	Status       entity.ProblemStatus `json:"status"`
 }
 
 func AdminProblemAdd(c *gin.Context) {
