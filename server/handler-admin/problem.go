@@ -19,7 +19,7 @@ import (
 // 添加题目
 type ReqProblemAdd struct {
 	Title        string               `json:"title" binding:"required"`
-	Source       string               `json:"source" binding:"required"`
+	Source       string               `json:"source"`
 	Difficulty   entity.Difficulty    `json:"difficulty" binding:"required"`
 	TimeLimit    float64              `json:"time_limit" binding:"required"`
 	MemoryLimit  uint64               `json:"memory_limit" binding:"required"`
@@ -28,7 +28,7 @@ type ReqProblemAdd struct {
 	Output       string               `json:"output" binding:"required"`
 	SampleInput  string               `json:"sample_input" binding:"required"`
 	SampleOutput string               `json:"sample_output" binding:"required"`
-	Hint         string               `json:"hint" binding:"required"`
+	Hint         string               `json:"hint"`
 	Status       entity.ProblemStatus `json:"status" binding:"required"`
 }
 
@@ -74,7 +74,7 @@ func AdminProblemAdd(c *gin.Context) {
 type ReqProblemModify struct {
 	Id           uint64               `json:"id" binding:"required"`
 	Title        string               `json:"title" binding:"required"`
-	Source       string               `json:"source" binding:"required"`
+	Source       string               `json:"source"`
 	Difficulty   entity.Difficulty    `json:"difficulty" binding:"required"`
 	TimeLimit    float64              `json:"time_limit" binding:"required"`
 	MemoryLimit  uint64               `json:"memory_limit" binding:"required"`
@@ -83,7 +83,7 @@ type ReqProblemModify struct {
 	Output       string               `json:"output" binding:"required"`
 	SampleInput  string               `json:"sample_input" binding:"required"`
 	SampleOutput string               `json:"sample_output" binding:"required"`
-	Hint         string               `json:"hint" binding:"required"`
+	Hint         string               `json:"hint"`
 	Status       entity.ProblemStatus `json:"status" binding:"required"`
 }
 
