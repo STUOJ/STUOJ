@@ -11,6 +11,7 @@ type Config struct {
 	YukiImage YukiConf     `yaml:"yuki-image" json:"yuki_image"`
 	NekoAcm   NekoConf     `yaml:"neko-acm" json:"neko_acm"`
 	Server    ServerConf   `yaml:"server" json:"server"`
+	Email     EmailConf    `yaml:"email" json:"email"`
 	Token     TokenConf    `yaml:"token" json:"token"`
 }
 
@@ -35,6 +36,10 @@ func InitConfig() error {
 	utils.Secret = Conf.Token.Secret
 	utils.Refresh = Conf.Token.Refresh
 	model.DatamakeLimit = Conf.Server.DatamakeLimit
+	utils.EmailHost = Conf.Email.Host
+	utils.EmailPort = Conf.Email.Port
+	utils.FromEmail = Conf.Email.Email
+	utils.FromEmailSmtpPwd = Conf.Email.SmtpPwd
 	return nil
 }
 
