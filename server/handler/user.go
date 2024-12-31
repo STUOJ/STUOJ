@@ -15,9 +15,9 @@ import (
 
 // 用户注册
 type ReqUserRegister struct {
-	Username string `json:"username" binding:"required"`
-	Password string `json:"password" binding:"required"`
-	Email    string `json:"email" binding:"required"`
+	Username string       `json:"username" binding:"required"`
+	Password string       `json:"password" binding:"required"`
+	Email    entity.Email `json:"email" binding:"required"`
 }
 
 func UserRegister(c *gin.Context) {
@@ -37,6 +37,12 @@ func UserRegister(c *gin.Context) {
 		Password: req.Password,
 		Email:    req.Email,
 	}
+
+	if err := u.Email.Verify(); err != nil {
+		c.JSON(http.StatusUnauthorized, model.RespError(err.Error(), nil))
+		return
+	}
+
 	u.Id, err = user.Register(u)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
@@ -49,8 +55,8 @@ func UserRegister(c *gin.Context) {
 
 // 用户登录
 type ReqUserLogin struct {
-	Password string `json:"password" binding:"required"`
-	Email    string `json:"email" binding:"required"`
+	Password string       `json:"password" binding:"required"`
+	Email    entity.Email `json:"email" binding:"required"`
 }
 
 func UserLogin(c *gin.Context) {
@@ -111,9 +117,9 @@ func UserCurrentId(c *gin.Context) {
 
 // 修改用户信息
 type ReqUserModify struct {
-	Username  string `json:"username" binding:"required"`
-	Email     string `json:"email" binding:"required"`
-	Signature string `json:"signature" binding:"required"`
+	Username  string       `json:"username" binding:"required"`
+	Email     entity.Email `json:"email" binding:"required"`
+	Signature string       `json:"signature" binding:"required"`
 }
 
 func UserModify(c *gin.Context) {
