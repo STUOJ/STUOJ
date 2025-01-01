@@ -15,9 +15,10 @@ import (
 
 // 用户注册
 type ReqUserRegister struct {
-	Username string       `json:"username" binding:"required"`
-	Password string       `json:"password" binding:"required"`
-	Email    entity.Email `json:"email" binding:"required"`
+	Username   string       `json:"username" binding:"required"`
+	Password   string       `json:"password" binding:"required"`
+	Email      entity.Email `json:"email" binding:"required"`
+	VerifyCode string       `json:"verify_code" binding:"required"`
 }
 
 func UserRegister(c *gin.Context) {
@@ -28,6 +29,11 @@ func UserRegister(c *gin.Context) {
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		return
+	}
+
+	if err := utils.VerifyVerificationCode(req.Email.String(), req.VerifyCode); !err {
+		c.JSON(http.StatusUnauthorized, model.RespError("验证码验证失败", nil))
 		return
 	}
 
