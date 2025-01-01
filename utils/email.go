@@ -23,7 +23,7 @@ var (
 
 var (
 	// cache for storing verification codes
-	// 缓存中的验证代码将在创建后5分钟内有效，且每隔10分钟进行一次清理。
+	// 缓存中的验证代码将在创建后5分钟内有效，且每隔10分钟进行一次���理。
 	verificationCodeCache = cache.New(5*time.Minute, 10*time.Minute)
 )
 
@@ -121,6 +121,10 @@ func VerifyVerificationCode(email string, code string) bool {
 	if cachedCode != code {
 		return false
 	}
+
+	// 验证成功后，从缓存中删除验证码
+	verificationCodeCache.Delete(email)
+	// verificationCodeCache.Delete(email + "_timestamp")
 
 	return true
 }
