@@ -35,11 +35,11 @@ func UserList(c *gin.Context) {
 
 // 添加普通用户
 type ReqUserAdd struct {
-	Username  string `json:"username" binding:"required"`
-	Password  string `json:"password" binding:"required"`
-	Email     string `json:"email" binding:"required"`
-	Avatar    string `json:"avatar" binding:"required"`
-	Signature string `json:"signature" binding:"required"`
+	Username  string       `json:"username" binding:"required"`
+	Password  string       `json:"password" binding:"required"`
+	Email     entity.Email `json:"email" binding:"required"`
+	Avatar    string       `json:"avatar" binding:"required"`
+	Signature string       `json:"signature" binding:"required"`
 }
 
 func AdminUserAdd(c *gin.Context) {

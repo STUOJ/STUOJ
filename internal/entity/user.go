@@ -1,6 +1,8 @@
 package entity
 
 import (
+	"errors"
+	"regexp"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
@@ -32,13 +34,30 @@ func (r Role) String() string {
 	}
 }
 
+type Email string
+
+func (e Email) Verify() error {
+	emailRegex := `^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$`
+
+	// 编译正则表达式
+	re := regexp.MustCompile(emailRegex)
+	if !re.MatchString(string(e)) {
+		return errors.New("邮箱格式不正确")
+	}
+	return nil
+}
+
+func (e Email) String() string {
+	return string(e)
+}
+
 // 用户
 type User struct {
 	Id         uint64    `gorm:"primaryKey;autoIncrement;comment:用户ID" json:"id,omitempty"`
 	Username   string    `gorm:"type:varchar(255);not null;unique;comment:用户名" json:"username,omitempty"`
 	Password   string    `gorm:"type:varchar(255);not null;default:'123456';comment:密码" json:"password,omitempty"`
 	Role       Role      `gorm:"not null;default:1;comment:角色" json:"role"`
-	Email      string    `gorm:"type:varchar(255);not null;unique;comment:邮箱" json:"email,omitempty"`
+	Email      Email     `gorm:"type:varchar(255);not null;unique;comment:邮箱" json:"email,omitempty"`
 	Avatar     string    `gorm:"type:text;not null;comment:头像URL" json:"avatar,omitempty"`
 	Signature  string    `gorm:"type:text;not null;comment:个性签名" json:"signature,omitempty"`
 	CreateTime time.Time `gorm:"not null;default:CURRENT_TIMESTAMP;comment:创建时间" json:"create_time,omitempty"`

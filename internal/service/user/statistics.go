@@ -14,7 +14,7 @@ func VerifyByEmail(u entity.User) (string, error) {
 	password := u.Password
 
 	// 查询用户
-	u, err := dao.SelectUserByEmail(u.Email)
+	u, err := dao.SelectUserByEmail(u.Email.String())
 	if err != nil {
 		log.Println(err)
 		return "", errors.New("用户不存在")
