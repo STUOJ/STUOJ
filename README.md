@@ -24,7 +24,9 @@ STUOJ 也是首款支持 AI 大模型的 ACM-ICPC 算法题目自动出题的 OJ
 - 前端：Vue + Element Plus
 - 数据库：MySQL
 - 代码沙箱: Judge0
-- 图床服务: yuki-image
+- 图床服务: [yuki-image](https://github.com/ArtdragonXoX/yuki-image)
+- 反向代理：Nginx
+- 容器化部署：Docker
 - AI题目生成：[NekoACM](https://github.com/HEX9CF/NekoACM)
 - 题目文件格式：FPS
 
