@@ -30,6 +30,8 @@ STUOJ 也是首款支持 AI 大模型的 ACM-ICPC 算法题目自动出题的 OJ
 - AI题目生成：[NekoACM](https://github.com/HEX9CF/NekoACM)
 - 题目文件格式：FPS
 
+![image](https://github.com/user-attachments/assets/367668c5-585f-4fa2-820e-6891f638b0d8)
+
 ## 系统功能
 
 ![STUOJ](https://github.com/user-attachments/assets/68c7f6d9-7b07-4c26-a416-ff163f751f48)
