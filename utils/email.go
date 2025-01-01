@@ -30,8 +30,10 @@ var (
 // SendVerificationCode sends a verification code to the user's email
 func SendVerificationCode(to string) error {
 	// Check if a code was sent within the last 60 seconds
-	if _, found := verificationCodeCache.Get(to + "_timestamp"); found {
-		return fmt.Errorf("请在60秒后再试")
+	if timestamp, found := verificationCodeCache.Get(to + "_timestamp"); found {
+		if time.Since(timestamp.(time.Time)) < 60*time.Second {
+			return fmt.Errorf("请在60秒后再试")
+		}
 	}
 
 	code := generateVerificationCode()
