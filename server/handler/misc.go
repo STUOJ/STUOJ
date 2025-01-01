@@ -68,7 +68,6 @@ func SendVerificationCode(c *gin.Context) {
 	}
 	if err := utils.SendVerificationCode(req.Email); err != nil {
 		c.JSON(http.StatusBadRequest, model.RespError(err.Error(), nil))
-		log.Println(err)
 		return
 	}
 	c.JSON(http.StatusOK, model.RespOk("OK", nil))
