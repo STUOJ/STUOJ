@@ -1,6 +1,11 @@
 server:
   port: 14514
   datamake_limit: 100000
+email:
+  host:
+  port: 465
+  email:
+  smtp_pwd:
 token:
   expire: 864000
   refresh: 432000
