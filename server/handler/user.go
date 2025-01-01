@@ -172,7 +172,8 @@ func UserModify(c *gin.Context) {
 
 // 修改用户密码
 type ReqUserChangePassword struct {
-	Password string `json:"password" binding:"required"`
+	Password   string `json:"password" binding:"required"`
+	VerifyCode string `json:"verify_code" binding:"required"`
 }
 
 func UserChangePassword(c *gin.Context) {
@@ -191,6 +192,17 @@ func UserChangePassword(c *gin.Context) {
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		return
+	}
+
+	userInfo, err := user.SelectById(uid)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		return
+	}
+
+	if err := utils.VerifyVerificationCode(userInfo.Email.String(), req.VerifyCode); !err {
+		c.JSON(http.StatusUnauthorized, model.RespError("验证码验证失败", nil))
 		return
 	}
 
