@@ -1,28 +1,33 @@
 server:
   port: 14514
   datamake_limit: 100000
+email:
+  host:
+  port: 465
+  email:
+  smtp_pwd:
 token:
   expire: 864000
   refresh: 432000
   secret: stuoj
 database:
-  host: 8.134.48.192
-  port: 3306
+  host:
+  port:
   name: stuoj_db
   user: stuoj
-  password: 12345678
+  password:
   max_open_conns: 10
   max_idle_conns: 5
 judge:
-  host: http://10.143.50.21
-  port: 2358
-  token: q2yBnVYCtteEWJGBa69bPCDV78duxxYM
+  host:
+  port:
+  token:
 yuki-image:
-  host: http://10.143.50.21
-  port: 4128
-  token: XIv3ybWOTIR2Md3sKuMk6AgqjBUH48IRK2d9RMqHGeVymDwc9AWMFOWV7lXc3foJ
+  host:
+  port:
+  token:
 neko-acm:
-  host: http://10.143.50.21
-  port: 14515
-  token: 016526330aaf250542e5acc9103d9f663a8a5bb00d1b8607a1b170b6d93d6401
+  host:
+  port:
+  token:
 

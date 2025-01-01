@@ -55,3 +55,25 @@ func GetJoke(c *gin.Context) {
 
 	c.JSON(http.StatusOK, model.RespOk("OK", j))
 }
+
+type ReqEmail struct {
+	Email string `json:"email" binding:"required"`
+}
+
+func SendVerificationCode(c *gin.Context) {
+	var req ReqEmail
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		return
+	}
+	if err := utils.SendVerificationCode(req.Email); err != nil {
+		c.JSON(http.StatusBadRequest, model.RespError(err.Error(), nil))
+		return
+	}
+	c.JSON(http.StatusOK, model.RespOk("OK", nil))
+}
+
+type ReqVerify struct {
+	Email string `json:"email" binding:"required"`
+	Code  string `json:"code" binding:"required"`
+}

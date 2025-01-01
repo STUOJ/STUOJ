@@ -4,10 +4,11 @@ import (
 	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
 	"STUOJ/internal/service/solution"
-	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
 // 获取题解数据
@@ -32,9 +33,9 @@ func AdminSolutionInfo(c *gin.Context) {
 
 // 添加题解
 type ReqSolutionAdd struct {
-	LanguageId uint64 `json:"language_id,omitempty" binding:"required"`
-	ProblemId  uint64 `json:"problem_id,omitempty" binding:"required"`
-	SourceCode string `json:"source_code,omitempty" binding:"required"`
+	LanguageId uint64 `json:"language_id" binding:"required"`
+	ProblemId  uint64 `json:"problem_id" binding:"required"`
+	SourceCode string `json:"source_code" binding:"required"`
 }
 
 func AdminSolutionAdd(c *gin.Context) {
