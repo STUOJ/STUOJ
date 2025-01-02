@@ -13,6 +13,7 @@ func InitUserRoute(ginServer *gin.Engine) {
 		userPublicRoute.GET("/:id", handler.UserInfo)
 		userPublicRoute.POST("/login", handler.UserLogin)
 		userPublicRoute.POST("/register", handler.UserRegister)
+		userPublicRoute.PUT("/password", handler.UserChangePassword)
 	}
 	userProtectedRoute := ginServer.Group("/user")
 	{
@@ -21,7 +22,6 @@ func InitUserRoute(ginServer *gin.Engine) {
 
 		userProtectedRoute.GET("/current", handler.UserCurrentId)
 		userProtectedRoute.PUT("/modify/:id", handler.UserModify)
-		userProtectedRoute.PUT("/password/:id", handler.UserChangePassword)
 		userProtectedRoute.POST("/avatar/:id", handler.ModifyUserAvatar)
 	}
 }
