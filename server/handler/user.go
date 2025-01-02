@@ -172,47 +172,37 @@ func UserModify(c *gin.Context) {
 
 // 修改用户密码
 type ReqUserChangePassword struct {
-	Password   string `json:"password" binding:"required"`
-	VerifyCode string `json:"verify_code" binding:"required"`
+	Email      entity.Email `json:"email" binding:"required"`
+	Password   string       `json:"password" binding:"required"`
+	VerifyCode string       `json:"verify_code" binding:"required"`
 }
 
 func UserChangePassword(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
-		return
-	}
-	uid := uint64(id)
-	role, id_ := utils.GetUserInfo(c)
+	role, _ := utils.GetUserInfo(c)
 	var req ReqUserChangePassword
 
 	// 参数绑定
-	err = c.ShouldBindBodyWithJSON(&req)
+	err := c.ShouldBindBodyWithJSON(&req)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
 		return
 	}
 
-	userInfo, err := user.SelectById(uid)
+	if role <= entity.RoleUser {
+		if err := utils.VerifyVerificationCode(req.Email.String(), req.VerifyCode); !err {
+			c.JSON(http.StatusUnauthorized, model.RespError("验证码验证失败", nil))
+			return
+		}
+	}
+	u, err := user.SelectByEmail(req.Email.String())
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
 	}
 
-	if err := utils.VerifyVerificationCode(userInfo.Email.String(), req.VerifyCode); !err {
-		c.JSON(http.StatusUnauthorized, model.RespError("验证码验证失败", nil))
-		return
-	}
-
-	if id_ != uid && role <= entity.RoleUser {
-		c.JSON(http.StatusUnauthorized, model.RespError("权限不足", nil))
-		return
-	}
-
 	// 修改密码
-	err = user.UpdatePasswordById(uid, req.Password)
+	err = user.UpdatePasswordById(u.Id, req.Password)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
