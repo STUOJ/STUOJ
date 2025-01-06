@@ -14,9 +14,15 @@ type SubmissionPage struct {
 }
 
 // 查询所有提交记录（不返回源代码）
-func Select(condition dao.SubmissionWhere, page uint64, size uint64, userId uint64, hideCode ...bool) (SubmissionPage, error) {
+func Select(condition dao.SubmissionWhere, userId uint64, hideCode ...bool) (SubmissionPage, error) {
+	if !condition.Page.Exist() {
+		condition.Page.Set(1)
+	}
+	if !condition.Size.Exist() {
+		condition.Size.Set(10)
+	}
 	// 获取提交信息
-	submissions, err := dao.SelectSubmissions(condition, page, size)
+	submissions, err := dao.SelectSubmissions(condition)
 	if err != nil {
 		log.Println(err)
 		return SubmissionPage{}, errors.New("获取提交信息失败")
@@ -32,8 +38,8 @@ func Select(condition dao.SubmissionWhere, page uint64, size uint64, userId uint
 	sPage := SubmissionPage{
 		Submissions: submissions,
 		Page: model.Page{
-			Page:  page,
-			Size:  size,
+			Page:  condition.Page.Value(),
+			Size:  condition.Size.Value(),
 			Total: total,
 		},
 	}
