@@ -16,6 +16,8 @@ type SubmissionWhere struct {
 	StartTime  model.Field[time.Time]
 	EndTime    model.Field[time.Time]
 	Status     model.Field[uint64]
+	Page       model.Field[uint64]
+	Size       model.Field[uint64]
 }
 
 // 插入提交记录
@@ -32,11 +34,11 @@ func InsertSubmission(s entity.Submission) (uint64, error) {
 }
 
 // 查询所有提交记录
-func SelectSubmissions(condition SubmissionWhere, page uint64, size uint64) ([]entity.Submission, error) {
+func SelectSubmissions(condition SubmissionWhere) ([]entity.Submission, error) {
 	var submissions []entity.Submission
 
 	where := generateSubmissionWhereCondition(condition)
-	tx := db.Db.Offset(int((page - 1) * size)).Limit(int(size))
+	tx := db.Db.Model(&entity.Submission{})
 	tx = where(tx)
 	tx = tx.Find(&submissions)
 	if tx.Error != nil {
@@ -91,7 +93,7 @@ func DeleteSubmissionById(id uint64) error {
 // 统计提交信息数量
 func CountSubmissions(condition SubmissionWhere) (uint64, error) {
 	var count int64
-	where := generateSubmissionWhereCondition(condition)
+	where := generateSubmissionWhereConditionWithNoPage(condition)
 	tx := db.Db.Model(&entity.Submission{})
 	tx = where(tx)
 	tx = tx.Count(&count)
@@ -138,7 +140,7 @@ func CountSubmissionsBetweenCreateTime(startTime time.Time, endTime time.Time) (
 	return countByDate, nil
 }
 
-func generateSubmissionWhereCondition(con SubmissionWhere) func(*gorm.DB) *gorm.DB {
+func generateSubmissionWhereConditionWithNoPage(con SubmissionWhere) func(*gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		whereClause := map[string]interface{}{}
 
@@ -162,5 +164,12 @@ func generateSubmissionWhereCondition(con SubmissionWhere) func(*gorm.DB) *gorm.
 			where.Where("create_time <= ?", con.EndTime.Value())
 		}
 		return where
+	}
+}
+
+func generateSubmissionWhereCondition(con SubmissionWhere) func(*gorm.DB) *gorm.DB {
+	where := generateSubmissionWhereConditionWithNoPage(con)
+	return func(db *gorm.DB) *gorm.DB {
+		return where(db).Offset(int((con.Page.Value() - 1) * con.Size.Value())).Limit(int(con.Size.Value()))
 	}
 }

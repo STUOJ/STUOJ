@@ -26,11 +26,17 @@ func SelectById(id uint64, userId uint64, admin ...bool) (entity.Blog, error) {
 	return b, nil
 }
 
-func Select(condition dao.BlogWhere, userId uint64, page uint64, size uint64, admin ...bool) (BlogPage, error) {
+func Select(condition dao.BlogWhere, userId uint64, admin ...bool) (BlogPage, error) {
 	if len(admin) == 0 || !admin[0] && (!condition.UserId.Exist() || condition.UserId.Value() != userId) {
 		condition.Status.Set(entity.BlogStatusPublic)
 	}
-	blogs, err := dao.SelectBlogs(condition, page, size)
+	if !condition.Page.Exist() {
+		condition.Page.Set(1)
+	}
+	if !condition.Size.Exist() {
+		condition.Size.Set(10)
+	}
+	blogs, err := dao.SelectBlogs(condition)
 	if err != nil {
 		log.Println(err)
 		return BlogPage{}, errors.New("获取博客失败")
@@ -47,8 +53,8 @@ func Select(condition dao.BlogWhere, userId uint64, page uint64, size uint64, ad
 		Blogs: blogs,
 		Page: model.Page{
 			Total: count,
-			Size:  size,
-			Page:  page,
+			Size:  condition.Size.Value(),
+			Page:  condition.Page.Value(),
 		},
 	}
 	return bPage, nil

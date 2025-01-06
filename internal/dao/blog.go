@@ -17,6 +17,8 @@ type BlogWhere struct {
 	Status    model.Field[entity.BlogStatus]
 	StartTime model.Field[time.Time]
 	EndTime   model.Field[time.Time]
+	Page      model.Field[uint64]
+	Size      model.Field[uint64]
 }
 
 // 插入博客
@@ -41,12 +43,12 @@ func SelectBlogById(id uint64) (entity.Blog, error) {
 	return b, nil
 }
 
-func SelectBlogs(condition BlogWhere, page uint64, size uint64) ([]entity.Blog, error) {
+func SelectBlogs(condition BlogWhere) ([]entity.Blog, error) {
 	var blogs []entity.Blog
 
 	where := generateBlogWhereCondition(condition)
 
-	tx := db.Db.Offset(int((page - 1) * size)).Limit(int(size))
+	tx := db.Db.Model(&entity.Blog{})
 	tx = where(tx)
 	tx = tx.Find(&blogs)
 	if tx.Error != nil {
@@ -80,7 +82,7 @@ func DeleteBlogById(id uint64) error {
 func CountBlogs(condition BlogWhere) (uint64, error) {
 	var count int64
 
-	where := generateBlogWhereCondition(condition)
+	where := generateBlogWhereConditionWithNoPage(condition)
 	tx := db.Db.Model(&entity.Blog{})
 	tx = where(tx)
 	tx = tx.Count(&count)
@@ -103,7 +105,7 @@ func CountBlogsBetweenCreateTime(startTime time.Time, endTime time.Time) ([]mode
 	return counts, nil
 }
 
-func generateBlogWhereCondition(con BlogWhere) func(*gorm.DB) *gorm.DB {
+func generateBlogWhereConditionWithNoPage(con BlogWhere) func(*gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		whereClause := map[string]interface{}{}
 		if con.Id.Exist() {
@@ -130,5 +132,12 @@ func generateBlogWhereCondition(con BlogWhere) func(*gorm.DB) *gorm.DB {
 			where.Where("create_time <= ?", con.EndTime.Value())
 		}
 		return where
+	}
+}
+
+func generateBlogWhereCondition(con BlogWhere) func(*gorm.DB) *gorm.DB {
+	where := generateBlogWhereConditionWithNoPage(con)
+	return func(db *gorm.DB) *gorm.DB {
+		return where(db).Offset(int((con.Page.Value() - 1) * con.Size.Value())).Limit(int(con.Size.Value()))
 	}
 }

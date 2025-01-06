@@ -20,7 +20,7 @@ func SelectById(id uint64, admin ...bool) (model.ProblemData, error) {
 		condition.Status.Set(entity.ProblemStatusPublic)
 	}
 	// 获取题目信息
-	p, err := dao.SelectProblem(condition, 1, 10)
+	p, err := dao.SelectProblem(condition)
 	if err != nil {
 		return model.ProblemData{}, errors.New("获取题目信息失败")
 	}
@@ -60,8 +60,14 @@ func SelectById(id uint64, admin ...bool) (model.ProblemData, error) {
 	return pd, nil
 }
 
-func Select(condition dao.ProblemWhere, page uint64, size uint64) (ProblemPage, error) {
-	problems, err := dao.SelectProblem(condition, page, size)
+func Select(condition dao.ProblemWhere) (ProblemPage, error) {
+	if !condition.Page.Exist() {
+		condition.Page.Set(1)
+	}
+	if !condition.Size.Exist() {
+		condition.Size.Set(10)
+	}
+	problems, err := dao.SelectProblem(condition)
 	if err != nil {
 		return ProblemPage{}, errors.New("获取题目信息失败")
 	}
@@ -76,8 +82,8 @@ func Select(condition dao.ProblemWhere, page uint64, size uint64) (ProblemPage, 
 	pPage := ProblemPage{
 		Problems: problems,
 		Page: model.Page{
-			Page:  page,
-			Size:  size,
+			Page:  condition.Page.Value(),
+			Size:  condition.Size.Value(),
 			Total: count,
 		},
 	}

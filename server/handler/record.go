@@ -35,20 +35,11 @@ func RecordInfo(c *gin.Context) {
 
 // 获取提交记录列表
 func RecordList(c *gin.Context) {
-	page, err := strconv.Atoi(c.Query("page"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
-		return
-	}
-	size, err := strconv.Atoi(c.Query("size"))
-	if err != nil {
-		size = 10
-	}
 	role, id_ := utils.GetUserInfo(c)
 
 	condition := parseRecordWhere(c)
 
-	records, err := record.Select(condition, uint64(page), uint64(size), id_, role <= entity.RoleUser)
+	records, err := record.Select(condition, id_, role <= entity.RoleUser)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
@@ -96,6 +87,22 @@ func parseRecordWhere(c *gin.Context) dao.SubmissionWhere {
 			log.Println(err)
 		} else {
 			condition.Status.Set(uint64(status))
+		}
+	}
+	if c.Query("page") != "" {
+		page, err := strconv.Atoi(c.Query("page"))
+		if err != nil {
+			log.Println(err)
+		} else {
+			condition.Page.Set(uint64(page))
+		}
+	}
+	if c.Query("size") != "" {
+		size, err := strconv.Atoi(c.Query("size"))
+		if err != nil {
+			log.Println(err)
+		} else {
+			condition.Size.Set(uint64(size))
 		}
 	}
 	return condition

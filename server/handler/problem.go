@@ -38,22 +38,14 @@ func ProblemInfo(c *gin.Context) {
 // 获取题目列表
 func ProblemList(c *gin.Context) {
 	role, _ := utils.GetUserInfo(c)
-	page, err := strconv.Atoi(c.Query("page"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
-		return
-	}
-	size, err := strconv.Atoi(c.Query("size"))
-	if err != nil {
-		size = 10
-	}
+
 	condition := parseProblemWhere(c)
 
 	if role < entity.RoleAdmin {
 		condition.Status.Set(entity.ProblemStatusPublic)
 	}
 
-	pds, err := problem.Select(condition, uint64(page), uint64(size))
+	pds, err := problem.Select(condition)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
@@ -109,6 +101,22 @@ func parseProblemWhere(c *gin.Context) dao.ProblemWhere {
 			log.Println(err)
 		} else {
 			condition.Status.Set(entity.ProblemStatus(status))
+		}
+	}
+	if c.Query("page") != "" {
+		page, err := strconv.Atoi(c.Query("page"))
+		if err != nil {
+			log.Println(err)
+		} else {
+			condition.Page.Set(uint64(page))
+		}
+	}
+	if c.Query("size") != "" {
+		size, err := strconv.Atoi(c.Query("size"))
+		if err != nil {
+			log.Println(err)
+		} else {
+			condition.Size.Set(uint64(size))
 		}
 	}
 	return condition
