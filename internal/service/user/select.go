@@ -41,8 +41,14 @@ func SelectByEmail(email string) (entity.User, error) {
 }
 
 // 查询所有用户
-func Select(condition dao.UserWhere, page uint64, size uint64) (UserPage, error) {
-	users, err := dao.SelectUsers(condition, page, size)
+func Select(condition dao.UserWhere) (UserPage, error) {
+	if !condition.Page.Exist() {
+		condition.Page.Set(1)
+	}
+	if !condition.Size.Exist() {
+		condition.Size.Set(10)
+	}
+	users, err := dao.SelectUsers(condition)
 	if err != nil {
 		log.Println(err)
 		return UserPage{}, errors.New("查询用户失败")
@@ -59,8 +65,8 @@ func Select(condition dao.UserWhere, page uint64, size uint64) (UserPage, error)
 		Users: users,
 		Page: model.Page{
 			Total: count,
-			Page:  page,
-			Size:  size,
+			Page:  condition.Page.Value(),
+			Size:  condition.Size.Value(),
 		},
 	}
 

@@ -14,17 +14,8 @@ import (
 
 // 获取用户列表
 func UserList(c *gin.Context) {
-	page, err := strconv.Atoi(c.Query("page"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
-		return
-	}
-	size, err := strconv.Atoi(c.Query("size"))
-	if err != nil {
-		size = 10
-	}
 	condition := parseUserWhere(c)
-	users, err := user.Select(condition, uint64(page), uint64(size))
+	users, err := user.Select(condition)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
@@ -133,6 +124,22 @@ func parseUserWhere(c *gin.Context) dao.UserWhere {
 			log.Println(err)
 		} else {
 			condition.Role.Set(entity.Role(role))
+		}
+	}
+	if c.Query("page") != "" {
+		page, err := strconv.Atoi(c.Query("page"))
+		if err != nil {
+			log.Println(err)
+		} else {
+			condition.Page.Set(uint64(page))
+		}
+	}
+	if c.Query("size") != "" {
+		size, err := strconv.Atoi(c.Query("size"))
+		if err != nil {
+			log.Println(err)
+		} else {
+			condition.Size.Set(uint64(size))
 		}
 	}
 
