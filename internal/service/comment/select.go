@@ -13,8 +13,14 @@ type CommentPage struct {
 	model.Page
 }
 
-func Select(condition dao.CommentWhere, userId uint64, page uint64, size uint64, admin ...bool) (CommentPage, error) {
-	comments, err := dao.SelectComments(condition, page, size)
+func Select(condition dao.CommentWhere, userId uint64, admin ...bool) (CommentPage, error) {
+	if !condition.Page.Exist() {
+		condition.Page.Set(1)
+	}
+	if !condition.Size.Exist() {
+		condition.Size.Set(10)
+	}
+	comments, err := dao.SelectComments(condition)
 	if err != nil {
 		log.Println(err)
 		return CommentPage{}, errors.New("获取评论失败")
@@ -36,8 +42,8 @@ func Select(condition dao.CommentWhere, userId uint64, page uint64, size uint64,
 	cPage := CommentPage{
 		Comments: comments,
 		Page: model.Page{
-			Page:  page,
-			Size:  size,
+			Page:  condition.Page.Value(),
+			Size:  condition.Size.Value(),
 			Total: count,
 		},
 	}

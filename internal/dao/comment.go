@@ -15,6 +15,8 @@ type CommentWhere struct {
 	Status    model.Field[entity.CommentStatus]
 	StartTime model.Field[time.Time]
 	EndTime   model.Field[time.Time]
+	Page      model.Field[uint64]
+	Size      model.Field[uint64]
 }
 
 // 根据ID查询评论
@@ -30,10 +32,10 @@ func SelectCommentById(id uint64) (entity.Comment, error) {
 }
 
 // 查询评论
-func SelectComments(condition CommentWhere, page uint64, size uint64) ([]entity.Comment, error) {
+func SelectComments(condition CommentWhere) ([]entity.Comment, error) {
 	var comments []entity.Comment
 	where := generateCommentWhereCondition(condition)
-	tx := db.Db.Offset(int((page - 1) * size)).Limit(int(size))
+	tx := db.Db.Model(&entity.Comment{})
 	tx = where(tx)
 	tx = tx.Find(&comments)
 	if tx.Error != nil {
@@ -76,7 +78,7 @@ func DeleteCommentById(id uint64) error {
 // 统计评论数量
 func CountComments(condition CommentWhere) (uint64, error) {
 	var count int64
-	where := generateCommentWhereCondition(condition)
+	where := generateCommentWhereConditionWithNoPage(condition)
 
 	tx := db.Db.Model(&entity.Comment{})
 	tx = where(tx)
@@ -100,7 +102,7 @@ func CountCommentsBetweenCreateTime(startTime time.Time, endTime time.Time) ([]m
 	return counts, nil
 }
 
-func generateCommentWhereCondition(con CommentWhere) func(*gorm.DB) *gorm.DB {
+func generateCommentWhereConditionWithNoPage(con CommentWhere) func(*gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		whereClause := map[string]interface{}{}
 
@@ -121,5 +123,12 @@ func generateCommentWhereCondition(con CommentWhere) func(*gorm.DB) *gorm.DB {
 			where.Where("create_time <= ?", con.EndTime.Value())
 		}
 		return where
+	}
+}
+
+func generateCommentWhereCondition(con CommentWhere) func(*gorm.DB) *gorm.DB {
+	where := generateCommentWhereConditionWithNoPage(con)
+	return func(db *gorm.DB) *gorm.DB {
+		return where(db).Offset(int((con.Page.Value() - 1) * con.Size.Value())).Limit(int(con.Size.Value()))
 	}
 }

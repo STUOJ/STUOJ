@@ -15,6 +15,8 @@ type ProblemWhere struct {
 	Difficulty model.Field[entity.Difficulty]
 	Status     model.Field[entity.ProblemStatus]
 	Tag        model.FieldList[uint64]
+	Page       model.Field[uint64]
+	Size       model.Field[uint64]
 }
 
 // 插入题目
@@ -38,10 +40,10 @@ func SelectProblemById(id uint64) (entity.Problem, error) {
 	return p, nil
 }
 
-func SelectProblem(condition ProblemWhere, page uint64, size uint64) ([]entity.Problem, error) {
+func SelectProblem(condition ProblemWhere) ([]entity.Problem, error) {
 	var problems []entity.Problem
 	where := generateProblemWhereCondition(condition)
-	tx := db.Db.Offset(int((page - 1) * size)).Limit(int(size))
+	tx := db.Db.Model(&entity.Problem{})
 	tx = where(tx)
 	tx = tx.Find(&problems)
 
@@ -85,7 +87,7 @@ func DeleteProblemById(id uint64) error {
 func CountProblems(condition ProblemWhere) (uint64, error) {
 	var count int64
 
-	where := generateProblemWhereCondition(condition)
+	where := generateProblemWhereConditionWithNoPage(condition)
 
 	tx := db.Db.Model(&entity.Problem{})
 	tx = where(tx)
@@ -109,7 +111,7 @@ func CountProblemsBetweenCreateTime(startTime time.Time, endTime time.Time) ([]m
 	return countByDate, nil
 }
 
-func generateProblemWhereCondition(con ProblemWhere) func(*gorm.DB) *gorm.DB {
+func generateProblemWhereConditionWithNoPage(con ProblemWhere) func(*gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		whereClause := map[string]interface{}{}
 
@@ -131,5 +133,12 @@ func generateProblemWhereCondition(con ProblemWhere) func(*gorm.DB) *gorm.DB {
 			where = where.Where("title LIKE ?", "%"+con.Title.Value()+"%")
 		}
 		return where
+	}
+}
+
+func generateProblemWhereCondition(con ProblemWhere) func(*gorm.DB) *gorm.DB {
+	where := generateProblemWhereConditionWithNoPage(con)
+	return func(db *gorm.DB) *gorm.DB {
+		return where(db).Offset(int((con.Page.Value() - 1) * con.Size.Value())).Limit(int(con.Size.Value()))
 	}
 }

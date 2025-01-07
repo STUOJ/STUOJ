@@ -51,17 +51,8 @@ func CommentAdd(c *gin.Context) {
 
 func CommentList(c *gin.Context) {
 	role, userId := utils.GetUserInfo(c)
-	page, err := strconv.Atoi(c.Query("page"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
-		return
-	}
-	size, err := strconv.Atoi(c.Query("size"))
-	if err != nil {
-		size = 10
-	}
 	condition := parseCommentWhere(c)
-	commonts, err := comment.Select(condition, userId, uint64(page), uint64(size), role >= entity.RoleAdmin)
+	commonts, err := comment.Select(condition, userId, role >= entity.RoleAdmin)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespOk(err.Error(), nil))
 		return
@@ -126,6 +117,21 @@ func parseCommentWhere(c *gin.Context) dao.CommentWhere {
 		condition.StartTime.Set(timePreiod.StartTime)
 		condition.EndTime.Set(timePreiod.EndTime)
 	}
-
+	if c.Query("page") != "" {
+		page, err := strconv.Atoi(c.Query("page"))
+		if err != nil {
+			log.Println(err)
+		} else {
+			condition.Page.Set(uint64(page))
+		}
+	}
+	if c.Query("size") != "" {
+		size, err := strconv.Atoi(c.Query("size"))
+		if err != nil {
+			log.Println(err)
+		} else {
+			condition.Size.Set(uint64(size))
+		}
+	}
 	return condition
 }

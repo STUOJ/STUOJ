@@ -11,6 +11,8 @@ import (
 
 type UserWhere struct {
 	Role model.Field[entity.Role]
+	Page model.Field[uint64]
+	Size model.Field[uint64]
 }
 
 // 插入用户
@@ -47,11 +49,11 @@ func SelectUserByEmail(e string) (entity.User, error) {
 }
 
 // 查询用户
-func SelectUsers(condition UserWhere, page uint64, size uint64) ([]entity.User, error) {
+func SelectUsers(condition UserWhere) ([]entity.User, error) {
 	var users []entity.User
 	where := generateUserWhereCondition(condition)
 
-	tx := db.Db.Offset(int((page - 1) * size)).Limit(int(size))
+	tx := db.Db.Model(&entity.User{})
 	tx = where(tx)
 	tx = tx.Find(&users)
 	if tx.Error != nil {
@@ -84,7 +86,7 @@ func DeleteUserById(id uint64) error {
 // 统计用户数量
 func CountUsers(condition UserWhere) (uint64, error) {
 	var count int64
-	where := generateUserWhereCondition(condition)
+	where := generateUserWhereConditionWithNoPage(condition)
 	tx := db.Db.Model(&entity.User{})
 	tx = where(tx)
 	tx = tx.Count(&count)
@@ -119,13 +121,19 @@ func CountUsersBetweenCreateTime(startTime time.Time, endTime time.Time) ([]mode
 	return counts, nil
 }
 
-func generateUserWhereCondition(con UserWhere) func(*gorm.DB) *gorm.DB {
+func generateUserWhereConditionWithNoPage(con UserWhere) func(*gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		whereClause := map[string]interface{}{}
-
 		if con.Role.Exist() {
 			whereClause["role"] = con.Role.Value()
 		}
 		return db.Where(whereClause)
+	}
+}
+
+func generateUserWhereCondition(con UserWhere) func(*gorm.DB) *gorm.DB {
+	where := generateUserWhereConditionWithNoPage(con)
+	return func(db *gorm.DB) *gorm.DB {
+		return where(db).Offset(int((con.Page.Value() - 1) * con.Size.Value())).Limit(int(con.Size.Value()))
 	}
 }
