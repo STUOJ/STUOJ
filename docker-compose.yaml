@@ -2,7 +2,7 @@ version: '3'
 services:
     stuoj:
         container_name: stuoj
-        image: stuoj
+        image: crpi-jg7reu90mmam5qch.cn-guangzhou.personal.cr.aliyuncs.com/artdragon/stuoj:latest
         restart: no
         volumes:
             - ./config.yaml:/app/config.yaml
