@@ -8,30 +8,36 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// 角色：-1 访客 , 0 封禁，1 普通用户，2 管理员，3 超级管理员
+// Role 角色: 0 访客, 1 封禁, 2 禁言, 3 用户, 4 会员, 5 编辑, 6 管理, 7 超管
 type Role int8
 
 const (
-	RoleVisitor Role = -1
-	RoleBanned  Role = 0
-	RoleUser    Role = 1
-	RoleAdmin   Role = 2
-	RoleRoot    Role = 3
+	RoleVisitor Role = 0
+	RoleBanned  Role = 1
+	RoleMuted   Role = 2
+	RoleUser    Role = 3
+	RoleVip     Role = 4
+	RoleEditor  Role = 5
+	RoleAdmin   Role = 6
+	RoleRoot    Role = 7
 )
 
+var roleNames = map[Role]string{
+	RoleVisitor: "访客",
+	RoleBanned:  "封禁",
+	RoleMuted:   "禁言",
+	RoleUser:    "用户",
+	RoleVip:     "会员",
+	RoleEditor:  "编辑",
+	RoleAdmin:   "管理",
+	RoleRoot:    "站长",
+}
+
 func (r Role) String() string {
-	switch r {
-	case RoleBanned:
-		return "封禁"
-	case RoleUser:
-		return "用户"
-	case RoleAdmin:
-		return "管理"
-	case RoleRoot:
-		return "超管"
-	default:
-		return "未知"
+	if name, ok := roleNames[r]; ok {
+		return name
 	}
+	return "未知"
 }
 
 type Email string
