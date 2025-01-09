@@ -8,7 +8,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// Role 角色: 0 访客, 1 封禁, 2 禁言, 3 用户, 4 会员, 5 编辑, 6 管理, 7 超管
+// Role 角色: 0 访客, 1 封禁, 2 禁言, 3 用户, 4 会员, 5 编辑, 6 管理, 7 站长
 type Role int8
 
 const (
