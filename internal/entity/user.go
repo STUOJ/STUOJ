@@ -2,32 +2,25 @@ package entity
 
 import (
 	"errors"
+	"golang.org/x/crypto/bcrypt"
 	"regexp"
 	"time"
-
-	"golang.org/x/crypto/bcrypt"
 )
 
-// Role 角色: 0 访客, 1 封禁, 2 禁言, 3 用户, 4 会员, 5 编辑, 6 管理, 7 站长
+// Role 角色：0 访客，1 用户，2 编辑，3 管理，4 站长
 type Role int8
 
 const (
 	RoleVisitor Role = 0
-	RoleBanned  Role = 1
-	RoleMuted   Role = 2
-	RoleUser    Role = 3
-	RoleVip     Role = 4
-	RoleEditor  Role = 5
-	RoleAdmin   Role = 6
-	RoleRoot    Role = 7
+	RoleUser    Role = 1
+	RoleEditor  Role = 2
+	RoleAdmin   Role = 3
+	RoleRoot    Role = 4
 )
 
 var roleNames = map[Role]string{
 	RoleVisitor: "访客",
-	RoleBanned:  "封禁",
-	RoleMuted:   "禁言",
 	RoleUser:    "用户",
-	RoleVip:     "会员",
 	RoleEditor:  "编辑",
 	RoleAdmin:   "管理",
 	RoleRoot:    "站长",
