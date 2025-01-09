@@ -14,13 +14,8 @@ type ProblemPage struct {
 
 // 根据ID查询题目数据
 func SelectById(id uint64, admin ...bool) (model.ProblemData, error) {
-	condition := dao.ProblemWhere{}
-	condition.Id.Set(id)
-	if len(admin) == 0 || !admin[0] {
-		condition.Status.Set(entity.ProblemStatusPublic)
-	}
 	// 获取题目信息
-	p, err := dao.SelectProblem(condition)
+	p, err := dao.SelectProblemById(id)
 	if err != nil {
 		return model.ProblemData{}, errors.New("获取题目信息失败")
 	}
@@ -47,11 +42,15 @@ func SelectById(id uint64, admin ...bool) (model.ProblemData, error) {
 		if err != nil {
 			return model.ProblemData{}, errors.New("获取题解数据失败")
 		}
+	} else {
+		if p.Status != entity.ProblemStatusPublic {
+			return model.ProblemData{}, errors.New("题目未公开")
+		}
 	}
 
 	// 封装题目数据
 	pd := model.ProblemData{
-		Problem:   p[0],
+		Problem:   p,
 		Tags:      tags,
 		Testcases: testcases,
 		Solutions: solutions,
