@@ -50,20 +50,25 @@ func TokenGetInfo() gin.HandlerFunc {
 
 func TokenAuthUser() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		role, _ := c.Get("role")
-		switch role {
-		case entity.RoleVisitor:
-			c.JSON(http.StatusUnauthorized, model.RespError("拒绝访问，未登录用户", nil))
+		role, _ := utils.GetUserInfo(c)
+		if role < entity.RoleUser {
+			c.JSON(http.StatusForbidden, model.RespError("请登录", nil))
 			c.Abort()
 			return
-		case entity.RoleBanned:
-			c.JSON(http.StatusUnauthorized, model.RespError("拒绝访问，用户已被封禁", nil))
-			c.Abort()
-			return
-		default:
-			break
 		}
+		// 放行
+		c.Next()
+	}
+}
 
+func TokenAuthEditor() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		role, _ := utils.GetUserInfo(c)
+		if role < entity.RoleEditor {
+			c.JSON(http.StatusForbidden, model.RespError("权限不足", nil))
+			c.Abort()
+			return
+		}
 		// 放行
 		c.Next()
 	}
@@ -71,23 +76,9 @@ func TokenAuthUser() gin.HandlerFunc {
 
 func TokenAuthAdmin() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		role, _ := c.Get("role")
-		//log.Println(role)
-		switch role {
-		case entity.RoleVisitor:
-			c.JSON(http.StatusUnauthorized, model.RespError("拒绝访问，未登录用户", nil))
-			c.Abort()
-			return
-		case entity.RoleBanned:
-			c.JSON(http.StatusUnauthorized, model.RespError("拒绝访问，用户已被封禁", nil))
-			c.Abort()
-			return
-		case entity.RoleAdmin:
-			break
-		case entity.RoleRoot:
-			break
-		default:
-			c.JSON(http.StatusUnauthorized, model.RespError("拒绝访问，用户权限不足", nil))
+		role, _ := utils.GetUserInfo(c)
+		if role < entity.RoleAdmin {
+			c.JSON(http.StatusForbidden, model.RespError("权限不足", nil))
 			c.Abort()
 			return
 		}
@@ -99,23 +90,13 @@ func TokenAuthAdmin() gin.HandlerFunc {
 
 func TokenAuthRoot() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		role, _ := c.Get("role")
-		switch role {
-		case entity.RoleVisitor:
-			c.JSON(http.StatusUnauthorized, model.RespError("拒绝访问，未登录用户", nil))
-			c.Abort()
-			return
-		case entity.RoleBanned:
-			c.JSON(http.StatusUnauthorized, model.RespError("拒绝访问，用户已被封禁", nil))
-			c.Abort()
-			return
-		case entity.RoleRoot:
-			break
-		default:
-			c.JSON(http.StatusUnauthorized, model.RespError("拒绝访问，用户权限不足", nil))
+		role, _ := utils.GetUserInfo(c)
+		if role < entity.RoleRoot {
+			c.JSON(http.StatusForbidden, model.RespError("权限不足", nil))
 			c.Abort()
 			return
 		}
+
 		// 放行
 		c.Next()
 	}
