@@ -14,7 +14,7 @@ import (
 func InitNekoAcm() error {
 	config = conf.Conf.NekoAcm
 	preUrl = config.Host + ":" + config.Port + "/api"
-	log.Println("Connecting to NekoAcm service: " + preUrl)
+	log.Println("Connecting to NekoACM service: " + preUrl)
 
 	// 发送请求
 	bodyStr, err := httpInteraction("/", "GET", nil)

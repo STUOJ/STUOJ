@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-// 难度：0 未知，1 入门，2 简单，3 中等，4 较难，5 困难，6 超难
+// Difficulty 难度：0 未知，1 入门，2 简单，3 中等，4 较难，5 困难，6 超难
 type Difficulty uint8
 
 const (
@@ -38,26 +38,35 @@ func (d Difficulty) String() string {
 	}
 }
 
-// 状态：0 作废，1 公开，2 出题中，3 调试中
+// ProblemStatus 题目状态: 1 作废, 2 出题, 3 调试, 4 隐藏, 5 比赛, 6 会员, 7 公开
 type ProblemStatus uint8
 
 const (
-	ProblemStatusInvalid   ProblemStatus = 0
-	ProblemStatusPublic    ProblemStatus = 1
+	ProblemStatusInvalid   ProblemStatus = 1
 	ProblemStatusEditing   ProblemStatus = 2
 	ProblemStatusDebugging ProblemStatus = 3
+	ProblemStatusHidden    ProblemStatus = 4
+	ProblemStatusContest   ProblemStatus = 5
+	ProblemStatusVip       ProblemStatus = 6
+	ProblemStatusPublic    ProblemStatus = 7
 )
 
 func (s ProblemStatus) String() string {
 	switch s {
 	case ProblemStatusInvalid:
 		return "作废"
-	case ProblemStatusPublic:
-		return "公开"
 	case ProblemStatusEditing:
 		return "出题"
 	case ProblemStatusDebugging:
 		return "调试"
+	case ProblemStatusHidden:
+		return "隐藏"
+	case ProblemStatusContest:
+		return "比赛"
+	case ProblemStatusVip:
+		return "会员"
+	case ProblemStatusPublic:
+		return "公开"
 	default:
 		return "未知"
 	}
