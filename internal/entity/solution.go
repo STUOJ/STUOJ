@@ -6,8 +6,8 @@ type Solution struct {
 	LanguageId uint64   `gorm:"not null;default:0;comment:语言ID" json:"language_id"`
 	ProblemId  uint64   `gorm:"not null;default:0;comment:题目ID" json:"problem_id"`
 	SourceCode string   `gorm:"type:longtext;not null;comment:源代码" json:"source_code"`
-	Language   Language `gorm:"foreignKey:LanguageID;references:ID;constraint:OnUpdate:RESTRICT,OnDelete:RESTRICT" json:"language"`
-	Problem    Problem  `gorm:"foreignKey:ProblemID;references:ID;constraint:OnUpdate:RESTRICT,OnDelete:CASCADE" json:"problem"`
+	Language   Language `gorm:"foreignKey:LanguageId;references:Id;constraint:OnUpdate:RESTRICT,OnDelete:RESTRICT" json:"language"`
+	Problem    Problem  `gorm:"foreignKey:ProblemId;references:Id;constraint:OnUpdate:RESTRICT,OnDelete:CASCADE" json:"problem"`
 }
 
 func (Solution) TableName() string {

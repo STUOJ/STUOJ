@@ -40,7 +40,7 @@ type Blog struct {
 	Status     BlogStatus `gorm:"not null;default:1;comment:状态" json:"status"`
 	CreateTime time.Time  `gorm:"not null;default:CURRENT_TIMESTAMP;comment:创建时间" json:"create_time"`
 	UpdateTime time.Time  `gorm:"not null;default:CURRENT_TIMESTAMP;comment:更新时间" json:"update_time"`
-	User       User       `gorm:"foreignKey:UserID;references:ID;constraint:OnUpdate:RESTRICT,OnDelete:RESTRICT" json:"user"`
+	User       User       `gorm:"foreignKey:UserId;references:Id;constraint:OnUpdate:RESTRICT,OnDelete:RESTRICT" json:"user"`
 }
 
 func (Blog) TableName() string {

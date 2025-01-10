@@ -18,9 +18,9 @@ type Submission struct {
 	SourceCode string      `gorm:"type:longtext;not null;comment:源代码" json:"source_code"`
 	CreateTime time.Time   `gorm:"not null;default:CURRENT_TIMESTAMP;comment:创建时间" json:"create_time"`
 	UpdateTime time.Time   `gorm:"not null;default:CURRENT_TIMESTAMP;comment:更新时间" json:"update_time"`
-	User       User        `gorm:"foreignKey:UserID;references:ID;constraint:OnUpdate:RESTRICT,OnDelete:RESTRICT" json:"user"`
-	Problem    Problem     `gorm:"foreignKey:ProblemID;references:ID;constraint:OnUpdate:RESTRICT,OnDelete:RESTRICT" json:"problem"`
-	Language   Language    `gorm:"foreignKey:LanguageID;references:ID;constraint:OnUpdate:RESTRICT,OnDelete:RESTRICT" json:"language"`
+	User       User        `gorm:"foreignKey:UserId;references:Id;constraint:OnUpdate:RESTRICT,OnDelete:RESTRICT" json:"user"`
+	Problem    Problem     `gorm:"foreignKey:ProblemId;references:Id;constraint:OnUpdate:RESTRICT,OnDelete:RESTRICT" json:"problem"`
+	Language   Language    `gorm:"foreignKey:LanguageId;references:Id;constraint:OnUpdate:RESTRICT,OnDelete:RESTRICT" json:"language"`
 }
 
 func (Submission) TableName() string {
