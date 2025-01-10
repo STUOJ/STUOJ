@@ -1,6 +1,6 @@
 package entity
 
-// 评测状态：0 Pend, 1 In Queue, 2 Proc, 3 AC, 4 WA, 5 TLE, 6 CE, 7 RE(SIGSEGV), 8 RE(SIGXFSZ), 9 RE(SIGFPE), 10 RE(SIGABRT), 11 RE(NZEC), 12 RE(Other), 13 IE, 14 EFE
+// JudgeStatus 评测状态：0 Pend, 1 In Queue, 2 Proc, 3 AC, 4 WA, 5 TLE, 6 CE, 7 RE(SIGSEGV), 8 RE(SIGXFSZ), 9 RE(SIGFPE), 10 RE(SIGABRT), 11 RE(NZEC), 12 RE(Other), 13 IE, 14 EFE
 type JudgeStatus uint64
 
 const (
@@ -58,18 +58,19 @@ func (s JudgeStatus) String() string {
 	}
 }
 
-// 评测点结果
+// Judgement 评测点结果
 type Judgement struct {
-	Id            uint64      `gorm:"primaryKey;autoIncrement;comment:评测点结果ID" json:"id,omitempty"`
-	SubmissionId  uint64      `gorm:"not null;default:0;comment:提交记录ID" json:"submission_id,omitempty"`
-	TestcaseId    uint64      `gorm:"not null;default:0;comment:评测点数据ID" json:"testcase_id,omitempty"`
-	Time          float64     `gorm:"not null;default:0;comment:运行耗时（s）" json:"time,omitempty"`
-	Memory        uint64      `gorm:"not null;default:0;comment:内存（kb）" json:"memory,omitempty"`
-	Stdout        string      `gorm:"type:longtext;not null;comment:标准输出" json:"stdout,omitempty"`
-	Stderr        string      `gorm:"type:longtext;not null;comment:标准错误输出" json:"stderr,omitempty"`
-	CompileOutput string      `gorm:"type:longtext;not null;comment:编译输出" json:"compile_output,omitempty"`
-	Message       string      `gorm:"type:longtext;not null;comment:信息" json:"message,omitempty"`
-	Status        JudgeStatus `gorm:"not null;default:0;comment:状态" json:"status"`
+	ID            uint64      `gorm:"primaryKey;autoIncrement;comment:评测点ID" json:"id"`
+	SubmissionID  uint64      `gorm:"not null;default:0;comment:提交记录ID" json:"submission_id"`
+	TestcaseID    uint64      `gorm:"not null;default:0;comment:评测点ID" json:"testcase_id"`
+	Time          float64     `gorm:"not null;default:0;comment:运行耗时（s）" json:"time"`
+	Memory        uint64      `gorm:"not null;default:0;comment:内存（kb）" json:"memory"`
+	Stdout        string      `gorm:"type:longtext;not null;comment:标准输出" json:"stdout"`
+	Stderr        string      `gorm:"type:longtext;not null;comment:标准错误输出" json:"stderr"`
+	CompileOutput string      `gorm:"type:longtext;not null;comment:编译输出" json:"compile_output"`
+	Message       string      `gorm:"type:longtext;not null;comment:信息" json:"message"`
+	Status        JudgeStatus `gorm:"not null;default:1;comment:状态" json:"status"`
+	Submission    Submission  `gorm:"foreignKey:SubmissionID;references:ID;constraint:OnUpdate:RESTRICT,OnDelete:CASCADE" json:"submission"`
 }
 
 func (Judgement) TableName() string {
