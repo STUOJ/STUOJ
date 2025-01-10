@@ -1,57 +1,57 @@
 package entity
 
-// JudgeStatus 评测状态：0 Pend, 1 In Queue, 2 Proc, 3 AC, 4 WA, 5 TLE, 6 CE, 7 RE(SIGSEGV), 8 RE(SIGXFSZ), 9 RE(SIGFPE), 10 RE(SIGABRT), 11 RE(NZEC), 12 RE(Other), 13 IE, 14 EFE
+// JudgeStatus 评测状态：0 Pending, 1 In Queue, 2 Processing, 3 AC, 4 WA, 5 TLE, 6 CE, 7 RE(SIGSEGV), 8 RE(SIGXFSZ), 9 RE(SIGFPE), 10 RE(SIGABRT), 11 RE(NZEC), 12 RE(Other), 13 IE, 14 EFE
 type JudgeStatus uint64
 
 const (
-	JudgeStatusPend      JudgeStatus = 0
-	JudgeStatusIQ        JudgeStatus = 1
-	JudgeStatusProc      JudgeStatus = 2
-	JudgeStatusAC        JudgeStatus = 3
-	JudgeStatusWA        JudgeStatus = 4
-	JudgeStatusTLE       JudgeStatus = 5
-	JudgeStatusCE        JudgeStatus = 6
-	JudgeStatusRESIGSEGV JudgeStatus = 7
-	JudgeStatusRESIGXFSZ JudgeStatus = 8
-	JudgeStatusRESIGFPE  JudgeStatus = 9
-	JudgeStatusRESIGABRT JudgeStatus = 10
-	JudgeStatusRENZEC    JudgeStatus = 11
-	JudgeStatusREOther   JudgeStatus = 12
-	JudgeStatusIE        JudgeStatus = 13
-	JudgeStatusEFE       JudgeStatus = 14
+	JudgePD        JudgeStatus = 0
+	JudgeIQ        JudgeStatus = 1
+	JudgePR        JudgeStatus = 2
+	JudgeAC        JudgeStatus = 3
+	JudgeWA        JudgeStatus = 4
+	JudgeTLE       JudgeStatus = 5
+	JudgeCE        JudgeStatus = 6
+	JudgeRESIGSEGV JudgeStatus = 7
+	JudgeRESIGXFSZ JudgeStatus = 8
+	JudgeRESIGFPE  JudgeStatus = 9
+	JudgeRESIGABRT JudgeStatus = 10
+	JudgeRENZEC    JudgeStatus = 11
+	JudgeRE        JudgeStatus = 12
+	JudgeIE        JudgeStatus = 13
+	JudgeEFE       JudgeStatus = 14
 )
 
 func (s JudgeStatus) String() string {
 	switch s {
-	case JudgeStatusPend:
+	case JudgePD:
 		return "Pending"
-	case JudgeStatusIQ:
+	case JudgeIQ:
 		return "In Queue"
-	case JudgeStatusProc:
+	case JudgePR:
 		return "Processing"
-	case JudgeStatusAC:
+	case JudgeAC:
 		return "Accepted"
-	case JudgeStatusWA:
+	case JudgeWA:
 		return "Wrong Answer"
-	case JudgeStatusTLE:
+	case JudgeTLE:
 		return "Time Limit Exceeded"
-	case JudgeStatusCE:
+	case JudgeCE:
 		return "Compilation Error"
-	case JudgeStatusRESIGSEGV:
+	case JudgeRESIGSEGV:
 		return "Runtime Error (SIGSEGV)"
-	case JudgeStatusRESIGXFSZ:
+	case JudgeRESIGXFSZ:
 		return "Runtime Error (SIGXFSZ)"
-	case JudgeStatusRESIGFPE:
+	case JudgeRESIGFPE:
 		return "Runtime Error (SIGFPE)"
-	case JudgeStatusRESIGABRT:
+	case JudgeRESIGABRT:
 		return "Runtime Error (SIGABRT)"
-	case JudgeStatusRENZEC:
+	case JudgeRENZEC:
 		return "Runtime Error (NZEC)"
-	case JudgeStatusREOther:
-		return "Runtime Error (Other)"
-	case JudgeStatusIE:
+	case JudgeRE:
+		return "Runtime Error"
+	case JudgeIE:
 		return "Internal Error"
-	case JudgeStatusEFE:
+	case JudgeEFE:
 		return "Exec Format Error"
 	default:
 		return "Unknown"

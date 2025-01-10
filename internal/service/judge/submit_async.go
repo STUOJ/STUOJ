@@ -49,7 +49,7 @@ func AsyncSubmit(s entity.Submission) (uint64, error) {
 
 // 异步提交
 func asyncSubmit(s entity.Submission, p entity.Problem, ts []entity.Testcase) {
-	s.Status = entity.JudgeStatusAC
+	s.Status = entity.JudgeAC
 	chJudgement := make(chan entity.Judgement)
 
 	// 提交评测点
@@ -81,8 +81,8 @@ func asyncSubmit(s entity.Submission, p entity.Problem, ts []entity.Testcase) {
 		s.Time = math.Max(s.Time, j.Time)
 		s.Memory = max(s.Memory, j.Memory)
 		// 如果评测点结果不是AC，更新提交状态
-		if j.Status != entity.JudgeStatusAC {
-			if s.Status != entity.JudgeStatusWA {
+		if j.Status != entity.JudgeAC {
+			if s.Status != entity.JudgeWA {
 				s.Status = max(s.Status, j.Status)
 			}
 		}
@@ -105,7 +105,7 @@ func asyncJudge(s entity.Submission, p entity.Problem, t entity.Testcase, ch cha
 	j := entity.Judgement{
 		SubmissionId: s.Id,
 		TestcaseId:   t.Id,
-		Status:       entity.JudgeStatusPend,
+		Status:       entity.JudgePD,
 	}
 
 	// 更新提交更新时间
@@ -138,7 +138,7 @@ func asyncJudge(s entity.Submission, p entity.Problem, t entity.Testcase, ch cha
 	result, err := judge0.Submit(judgeSubmission)
 	if err != nil {
 		log.Println(err)
-		j.Status = entity.JudgeStatusIE
+		j.Status = entity.JudgeIE
 		ch <- j
 		return
 	}
@@ -150,7 +150,7 @@ func asyncJudge(s entity.Submission, p entity.Problem, t entity.Testcase, ch cha
 		time, err = strconv.ParseFloat(result.Time, 64)
 		if err != nil {
 			log.Println(err)
-			j.Status = entity.JudgeStatusIE
+			j.Status = entity.JudgeIE
 			ch <- j
 			return
 		}
