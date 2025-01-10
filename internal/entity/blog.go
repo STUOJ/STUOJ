@@ -32,15 +32,15 @@ func (s BlogStatus) String() string {
 
 // Blog 博客
 type Blog struct {
-	Id         uint64     `gorm:"primaryKey;autoIncrement;comment:博客ID" json:"id"`
-	UserId     uint64     `gorm:"not null;default:0;comment:用户ID" json:"user_id"`
-	ProblemId  uint64     `gorm:"not null;default:0;comment:关联题目ID" json:"problem_id"`
-	Title      string     `gorm:"type:text;not null;comment:标题" json:"title"`
-	Content    string     `gorm:"type:longtext;not null;comment:内容" json:"content"`
-	Status     BlogStatus `gorm:"not null;default:1;comment:状态" json:"status"`
-	CreateTime time.Time  `gorm:"not null;default:CURRENT_TIMESTAMP;comment:创建时间" json:"create_time"`
-	UpdateTime time.Time  `gorm:"not null;default:CURRENT_TIMESTAMP;comment:更新时间" json:"update_time"`
-	User       User       `gorm:"foreignKey:UserId;references:Id" json:"user"`
+	ID         uint64    `gorm:"primaryKey;autoIncrement;comment:博客ID" json:"id"`
+	UserID     uint64    `gorm:"not null;default:0;comment:用户ID" json:"user_id"`
+	ProblemID  uint64    `gorm:"not null;default:0;comment:关联题目ID" json:"problem_id"`
+	Title      string    `gorm:"type:text;not null;comment:标题" json:"title"`
+	Content    string    `gorm:"type:longtext;not null;comment:内容" json:"content"`
+	Status     uint64    `gorm:"not null;default:1;comment:状态" json:"status"`
+	CreateTime time.Time `gorm:"not null;default:CURRENT_TIMESTAMP;comment:创建时间" json:"create_time"`
+	UpdateTime time.Time `gorm:"not null;default:CURRENT_TIMESTAMP;comment:更新时间" json:"update_time"`
+	User       User      `gorm:"foreignKey:UserID;references:ID;constraint:OnUpdate:RESTRICT,OnDelete:RESTRICT" json:"user"`
 }
 
 func (Blog) TableName() string {
