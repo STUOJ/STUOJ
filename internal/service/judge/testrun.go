@@ -4,6 +4,8 @@ import (
 	"STUOJ/external/judge0"
 	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
+	"STUOJ/internal/service/language"
+	"errors"
 	"log"
 	"strconv"
 )
@@ -12,10 +14,18 @@ func TestRun(s entity.Submission, stdin string) (entity.Judgement, error) {
 	var err error
 	j := entity.Judgement{}
 
+	lang, err := language.SelectById(s.LanguageId)
+	if err != nil {
+		return entity.Judgement{}, errors.New("获取语言信息失败")
+	}
+	if lang.Status != 3 {
+		return entity.Judgement{}, errors.New("该语言不可用")
+	}
+
 	// 初始化评测点评测对象
 	js := model.JudgeSubmission{
 		SourceCode:     s.SourceCode,
-		LanguageId:     s.LanguageId,
+		LanguageId:     lang.MapId,
 		Stdin:          stdin,
 		ExpectedOutput: "",
 		CPUTimeLimit:   2,
