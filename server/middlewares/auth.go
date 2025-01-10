@@ -138,7 +138,7 @@ func getUserRole(uid uint64) (entity.Role, error) {
 	// 获取用户信息
 	u, err := user.SelectById(uid)
 	if err != nil {
-		return -1, err
+		return 0, err
 	}
 
 	return u.Role, nil

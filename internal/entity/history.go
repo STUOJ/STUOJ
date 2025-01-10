@@ -5,7 +5,7 @@ import (
 )
 
 // Operation 操作：0 未知，1 添加，2 修改，3 删除
-type Operation uint64
+type Operation uint8
 
 const (
 	OperationUnknown Operation = 0

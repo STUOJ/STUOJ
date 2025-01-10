@@ -3,7 +3,7 @@ package entity
 import "time"
 
 // CommentStatus 状态：1 屏蔽, 2 公开
-type CommentStatus uint64
+type CommentStatus uint8
 
 const (
 	CommentStatusBanned CommentStatus = 1

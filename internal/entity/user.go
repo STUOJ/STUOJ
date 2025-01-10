@@ -8,7 +8,7 @@ import (
 )
 
 // Role 角色：0 访客，1 用户，2 编辑，3 管理，4 站长
-type Role int8
+type Role uint8
 
 const (
 	RoleVisitor Role = 0
