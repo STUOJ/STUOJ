@@ -3,7 +3,14 @@ package dao
 import (
 	"STUOJ/internal/db"
 	"STUOJ/internal/entity"
+	"STUOJ/internal/model"
+
+	"gorm.io/gorm"
 )
+
+type LanguageWhere struct {
+	Status model.Field[uint64]
+}
 
 // 插入语言
 func InsertLanguage(l entity.Language) (uint64, error) {
@@ -16,10 +23,12 @@ func InsertLanguage(l entity.Language) (uint64, error) {
 }
 
 // 查询所有语言
-func SelectAllLanguages() ([]entity.Language, error) {
+func SelectLanguage(con LanguageWhere) ([]entity.Language, error) {
 	var languages []entity.Language
-
-	tx := db.Db.Find(&languages)
+	where := generateLanguageWhereCondition(con)
+	tx := db.Db.Model(&entity.Language{})
+	tx = where(tx)
+	tx = tx.Find(&languages)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
@@ -50,6 +59,15 @@ func SelectLanguageLikeName(name string) (entity.Language, error) {
 	return l, nil
 }
 
+func UpdateLanguage(l entity.Language) error {
+	tx := db.Db.Model(&l).Updates(l)
+	if tx.Error != nil {
+		return tx.Error
+	}
+
+	return nil
+}
+
 // 删除所有语言
 func DeleteAllLanguages() error {
 	tx := db.Db.Where("1 = 1").Delete(&entity.Language{})
@@ -70,4 +88,15 @@ func CountLanguages() (uint64, error) {
 	}
 
 	return uint64(count), nil
+}
+
+func generateLanguageWhereCondition(con LanguageWhere) func(*gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		whereClause := map[string]interface{}{}
+
+		if con.Status.Exist() {
+			whereClause["status"] = con.Status.Value()
+		}
+		return db.Where(whereClause)
+	}
 }
