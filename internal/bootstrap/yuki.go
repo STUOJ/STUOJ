@@ -9,8 +9,8 @@ func initYuki() {
 	err := yuki.InitYukiImage()
 	if err != nil {
 		log.Println(err)
-		log.Println("Init yuki-image error!")
+		log.Println("初始化 yuki-image 失败！")
 		return
 	}
-	log.Println("Init yuki-image success.")
+	log.Println("初始化 yuki-image 成功")
 }

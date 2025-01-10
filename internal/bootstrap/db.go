@@ -8,8 +8,8 @@ import (
 func initDatabase() {
 	err := db.InitDatabase()
 	if err != nil {
-		log.Println("Init database failed!")
+		log.Println("初始化数据库失败！")
 		panic(err)
 	}
-	log.Println("Init database success.")
+	log.Println("初始化数据库成功")
 }

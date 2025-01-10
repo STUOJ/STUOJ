@@ -12,21 +12,22 @@ func initJudge0() {
 	err = judge0.InitJudge()
 	if err != nil {
 		log.Println(err)
-		log.Println("Init judge0 failed!")
+		log.Println("初始化评测机失败！")
 		return
 	}
 
-	err = InitJudgePrintInfo()
-	if err != nil {
-		log.Println(err)
-		log.Println("Init judge0 failed!")
-		return
-	}
+	/*	err = InitJudgePrintInfo()
+		if err != nil {
+			log.Println(err)
+			log.Println("Init judge0 failed!")
+			return
+		}
+	*/
 
 	err = InitJudgeLanguages()
 	if err != nil {
 		log.Println(err)
-		log.Println("Init judge0 failed!")
+		log.Println("初始化评测机语言失败！")
 		return
 	}
 
@@ -40,10 +41,11 @@ func InitJudgeLanguages() error {
 		return err
 	}
 
-	log.Println("Judge support languages:")
-	for k, v := range languages {
-		log.Println(k, v)
-	}
+	/*	log.Println("Judge support languages:")
+		for k, v := range languages {
+			log.Println(k, v)
+		}
+	*/
 
 	// 清空数据库语言表
 	err = language.DeleteAll()
