@@ -27,7 +27,7 @@ func TestRun(s entity.Submission, stdin string) (entity.Judgement, error) {
 	result, err := judge0.Submit(js)
 	if err != nil {
 		log.Println(err)
-		j.Status = entity.JudgeStatusIE
+		j.Status = entity.JudgeIE
 		return j, err
 	}
 	//log.Println(result)
@@ -38,7 +38,7 @@ func TestRun(s entity.Submission, stdin string) (entity.Judgement, error) {
 		time, err = strconv.ParseFloat(result.Time, 64)
 		if err != nil {
 			log.Println(err)
-			j.Status = entity.JudgeStatusIE
+			j.Status = entity.JudgeIE
 			return j, err
 		}
 	}

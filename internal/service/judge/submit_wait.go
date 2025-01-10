@@ -42,14 +42,14 @@ func WaitSubmit(s entity.Submission) (uint64, error) {
 		return 0, errors.New("插入提交信息失败")
 	}
 
-	s.Status = entity.JudgeStatusAC
+	s.Status = entity.JudgeAC
 
 	// 提交评测点
 	for _, t := range ts {
 		j, err := waitJudge(s, p, t)
 		if err != nil {
 			log.Println(err)
-			s.Status = entity.JudgeStatusIE
+			s.Status = entity.JudgeIE
 			continue
 		}
 		//log.Println(j)
@@ -58,7 +58,7 @@ func WaitSubmit(s entity.Submission) (uint64, error) {
 		err = dao.UpdateSubmissionUpdateTimeById(j.SubmissionId)
 		if err != nil {
 			log.Println(err)
-			s.Status = entity.JudgeStatusIE
+			s.Status = entity.JudgeIE
 			continue
 		}
 
@@ -66,7 +66,7 @@ func WaitSubmit(s entity.Submission) (uint64, error) {
 		err = dao.UpdateJudgementById(j)
 		if err != nil {
 			log.Println(err)
-			s.Status = entity.JudgeStatusIE
+			s.Status = entity.JudgeIE
 			continue
 		}
 
@@ -74,8 +74,8 @@ func WaitSubmit(s entity.Submission) (uint64, error) {
 		s.Time = math.Max(s.Time, j.Time)
 		s.Memory = max(s.Memory, j.Memory)
 		// 如果评测点结果不是AC，更新提交状态
-		if j.Status != entity.JudgeStatusAC {
-			if s.Status != entity.JudgeStatusWA {
+		if j.Status != entity.JudgeAC {
+			if s.Status != entity.JudgeWA {
 				s.Status = max(s.Status, j.Status)
 			}
 		}
@@ -100,20 +100,20 @@ func waitJudge(s entity.Submission, p entity.Problem, t entity.Testcase) (entity
 	j := entity.Judgement{
 		SubmissionId: s.Id,
 		TestcaseId:   t.Id,
-		Status:       entity.JudgeStatusPend,
+		Status:       entity.JudgePD,
 	}
 
 	// 更新提交更新时间
 	err = dao.UpdateSubmissionUpdateTimeById(j.SubmissionId)
 	if err != nil {
-		j.Status = entity.JudgeStatusIE
+		j.Status = entity.JudgeIE
 		return j, err
 	}
 
 	// 插入评测点结果
 	j.Id, err = dao.InsertJudgement(j)
 	if err != nil {
-		j.Status = entity.JudgeStatusIE
+		j.Status = entity.JudgeIE
 		return j, err
 	}
 
@@ -132,7 +132,7 @@ func waitJudge(s entity.Submission, p entity.Problem, t entity.Testcase) (entity
 	result, err := judge0.Submit(judgeSubmission)
 	if err != nil {
 		log.Println(err)
-		j.Status = entity.JudgeStatusIE
+		j.Status = entity.JudgeIE
 		return j, err
 	}
 	//log.Println(result)
@@ -143,7 +143,7 @@ func waitJudge(s entity.Submission, p entity.Problem, t entity.Testcase) (entity
 		time, err = strconv.ParseFloat(result.Time, 64)
 		if err != nil {
 			log.Println(err)
-			j.Status = entity.JudgeStatusIE
+			j.Status = entity.JudgeIE
 			return j, err
 		}
 	}

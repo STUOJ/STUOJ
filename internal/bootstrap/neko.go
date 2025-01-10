@@ -9,8 +9,8 @@ func initNeko() {
 	err := neko.InitNekoAcm()
 	if err != nil {
 		log.Println(err)
-		log.Println("Init NekoACM error!")
+		log.Println("初始化 NekoACM 失败！")
 		return
 	}
-	log.Println("Init NekoACM success.")
+	log.Println("初始化 NekoACM 成功")
 }
