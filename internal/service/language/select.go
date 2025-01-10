@@ -8,13 +8,18 @@ import (
 )
 
 // 查询所有语言
-func Select(condition dao.LanguageWhere) ([]entity.Language, error) {
+func Select(condition dao.LanguageWhere, role entity.Role) ([]entity.Language, error) {
 	var languages []entity.Language
 
 	languages, err := dao.SelectLanguage(condition)
 	if err != nil {
 		log.Println(err)
 		return nil, errors.New("查询语言失败")
+	}
+	if role < entity.RoleRoot {
+		for i := range languages {
+			languages[i].MapId = 0
+		}
 	}
 
 	return languages, nil
