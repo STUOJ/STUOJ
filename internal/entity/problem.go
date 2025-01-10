@@ -72,24 +72,24 @@ func (s ProblemStatus) String() string {
 	}
 }
 
-// 题目
+// Problem 题目
 type Problem struct {
-	Id           uint64        `gorm:"primaryKey;autoIncrement;comment:题目ID" json:"id,omitempty"`
-	Title        string        `gorm:"type:text;not null;comment:标题" json:"title,omitempty"`
-	Source       string        `gorm:"type:text;not null;comment:题目来源" json:"source,omitempty"`
+	ID           uint64        `gorm:"primaryKey;autoIncrement;comment:题目ID" json:"id"`
+	Title        string        `gorm:"type:text;not null;comment:标题" json:"title"`
+	Source       string        `gorm:"type:text;not null;comment:题目来源" json:"source"`
 	Difficulty   Difficulty    `gorm:"not null;default:0;comment:难度" json:"difficulty"`
-	TimeLimit    float64       `gorm:"not null;default:1;comment:时间限制（s）" json:"time_limit,omitempty"`
-	MemoryLimit  uint64        `gorm:"not null;default:131072;comment:内存限制（kb）" json:"memory_limit,omitempty"`
-	Description  string        `gorm:"type:longtext;not null;comment:题面" json:"description,omitempty"`
-	Input        string        `gorm:"type:longtext;not null;comment:输入说明" json:"input,omitempty"`
-	Output       string        `gorm:"type:longtext;not null;comment:输出说明" json:"output,omitempty"`
-	SampleInput  string        `gorm:"type:longtext;not null;comment:输入样例" json:"sample_input,omitempty"`
-	SampleOutput string        `gorm:"type:longtext;not null;comment:输出样例" json:"sample_output,omitempty"`
-	Hint         string        `gorm:"type:longtext;not null;comment:提示" json:"hint,omitempty"`
-	Status       ProblemStatus `gorm:"not null;default:0;comment:状态" json:"status"`
+	TimeLimit    float64       `gorm:"not null;default:1;comment:时间限制（s）" json:"time_limit"`
+	MemoryLimit  uint64        `gorm:"not null;default:131072;comment:内存限制（kb）" json:"memory_limit"`
+	Description  string        `gorm:"type:longtext;not null;comment:题面" json:"description"`
+	Input        string        `gorm:"type:longtext;not null;comment:输入说明" json:"input"`
+	Output       string        `gorm:"type:longtext;not null;comment:输出说明" json:"output"`
+	SampleInput  string        `gorm:"type:longtext;not null;comment:输入样例" json:"sample_input"`
+	SampleOutput string        `gorm:"type:longtext;not null;comment:输出样例" json:"sample_output"`
+	Hint         string        `gorm:"type:longtext;not null;comment:提示" json:"hint"`
+	Status       ProblemStatus `gorm:"not null;default:1;comment:状态" json:"status"`
+	CreateTime   time.Time     `gorm:"not null;default:CURRENT_TIMESTAMP;comment:创建时间" json:"create_time"`
+	UpdateTime   time.Time     `gorm:"not null;default:CURRENT_TIMESTAMP;comment:更新时间" json:"update_time"`
 	ProblemTag   []*Tag        `gorm:"many2many:tbl_problem_tag;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;association_jointable_foreignkey:tag_id;jointable_foreignkey:problem_id" json:"problem_tag,omitempty"`
-	CreateTime   time.Time     `gorm:"not null;default:CURRENT_TIMESTAMP;comment:创建时间" json:"create_time,omitempty"`
-	UpdateTime   time.Time     `gorm:"not null;default:CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;comment:更新时间" json:"update_time,omitempty"`
 }
 
 func (Problem) TableName() string {
