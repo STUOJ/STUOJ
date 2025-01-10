@@ -1,7 +1,7 @@
 package routes
 
 import (
-	handler_admin "STUOJ/server/handler-admin"
+	"STUOJ/server/handler-admin"
 	"STUOJ/server/middlewares"
 
 	"github.com/gin-gonic/gin"
@@ -26,8 +26,6 @@ func InitAdminRoute(ginServer *gin.Engine) {
 			adminPrivateRoute.DELETE("/problem/tag", handler_admin.AdminProblemRemoveTag)
 			adminPrivateRoute.POST("/problem/fps", handler_admin.AdminProblemParseFromFps)
 			adminPrivateRoute.GET("/history/problem/:id", handler_admin.AdminHistoryListOfProblem)
-			adminPrivateRoute.POST("/problem/generate", handler_admin.AdminProblemGenerate)
-			adminPrivateRoute.POST("/problem/translate", handler_admin.AdminProblemTranslate)
 		}
 		{
 			adminPrivateRoute.DELETE("/record/:id", handler_admin.AdminRecordRemove)
@@ -38,7 +36,6 @@ func InitAdminRoute(ginServer *gin.Engine) {
 			adminPrivateRoute.PUT("/testcase", handler_admin.AdminTestcaseModify)
 			adminPrivateRoute.DELETE("/testcase/:id", handler_admin.AdminTestcaseRemove)
 			adminPrivateRoute.POST("/testcase/datamake", handler_admin.AdminTestcaseDataMake)
-			adminPrivateRoute.POST("/testcase/generate", handler_admin.AdminTestcaseGenerate)
 		}
 		{
 			adminPrivateRoute.GET("/tag", handler_admin.AdminTagList)
@@ -51,7 +48,6 @@ func InitAdminRoute(ginServer *gin.Engine) {
 			adminPrivateRoute.POST("/solution", handler_admin.AdminSolutionAdd)
 			adminPrivateRoute.PUT("/solution", handler_admin.AdminSolutionModify)
 			adminPrivateRoute.DELETE("/solution/:id", handler_admin.AdminSolutionRemove)
-			adminPrivateRoute.POST("/solution/generate", handler_admin.AdminSolutionGenerate)
 		}
 		{
 			adminPrivateRoute.PUT("/comment", handler_admin.AdminCommentModify)

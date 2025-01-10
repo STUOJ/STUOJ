@@ -148,25 +148,3 @@ func AdminTestcaseDataMake(c *gin.Context) {
 	// 返回结果
 	c.JSON(http.StatusOK, model.RespOk("OK", tc.String()))
 }
-
-// 生成测试用例
-func AdminTestcaseGenerate(c *gin.Context) {
-	var req model.NekoTestcaseInstruction
-
-	// 参数绑定
-	err := c.ShouldBindBodyWithJSON(&req)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
-		return
-	}
-
-	t, err := testcase.Generate(req)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
-		return
-	}
-
-	// 返回结果
-	c.JSON(http.StatusOK, model.RespOk("OK", t))
-}
