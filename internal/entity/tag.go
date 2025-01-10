@@ -4,7 +4,7 @@ package entity
 type Tag struct {
 	Id       uint64    `gorm:"primaryKey;autoIncrement;comment:标签ID" json:"id,omitempty"`
 	Name     string    `gorm:"type:varchar(255);not null;unique;default:'';comment:标签名" json:"name,omitempty"`
-	Problems []Problem `gorm:"many2many:tbl_problem_tag;constraint:OnUpdate:RESTRICT,OnDelete:CASCADE" json:"problems"`
+	Problems []Problem `gorm:"many2many:tbl_problem_tag;constraint:OnUpdate:RESTRICT,OnDelete:CASCADE" json:"-"`
 }
 
 func (Tag) TableName() string {

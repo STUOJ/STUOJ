@@ -30,8 +30,8 @@ type Comment struct {
 	Status     CommentStatus `gorm:"not null;default:1;comment:状态" json:"status"`
 	CreateTime time.Time     `gorm:"type:timestamp;not null;default:CURRENT_TIMESTAMP;comment:创建时间" json:"create_time"`
 	UpdateTime time.Time     `gorm:"type:timestamp;not null;default:CURRENT_TIMESTAMP;comment:更新时间" json:"update_time"`
-	User       User          `gorm:"foreignKey:UserId;references:Id;constraint:OnUpdate:RESTRICT,OnDelete:RESTRICT" json:"user"`
-	Blog       Blog          `gorm:"foreignKey:BlogId;references:Id;constraint:OnUpdate:RESTRICT,OnDelete:CASCADE" json:"blog"`
+	User       User          `gorm:"foreignKey:UserId;references:Id;constraint:OnUpdate:RESTRICT,OnDelete:RESTRICT" json:"-"`
+	Blog       Blog          `gorm:"foreignKey:BlogId;references:Id;constraint:OnUpdate:RESTRICT,OnDelete:CASCADE" json:"-"`
 }
 
 func (Comment) TableName() string {
