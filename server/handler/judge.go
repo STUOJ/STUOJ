@@ -16,8 +16,9 @@ import (
 
 // 获取语言列表
 func JudgeLanguageList(c *gin.Context) {
+	role, _ := utils.GetUserInfo(c)
 	con := parseLanguageWhere(c)
-	languages, err := language.Select(con)
+	languages, err := language.Select(con, role)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespOk(err.Error(), nil))
 		return
