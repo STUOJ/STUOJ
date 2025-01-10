@@ -3,7 +3,7 @@ package entity
 import "time"
 
 // BlogStatus 状态：1 屏蔽, 2 草稿, 3 审核, 4 公开, 5 公告
-type BlogStatus uint8
+type BlogStatus uint64
 
 const (
 	BLogStatusBanned BlogStatus = 1

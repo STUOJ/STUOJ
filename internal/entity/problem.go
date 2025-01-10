@@ -39,7 +39,7 @@ func (d Difficulty) String() string {
 }
 
 // ProblemStatus 题目状态: 1 作废, 2 出题, 3 调试, 4 隐藏, 5 比赛, 6 会员, 7 公开
-type ProblemStatus uint8
+type ProblemStatus uint64
 
 const (
 	ProblemStatusInvalid   ProblemStatus = 1
