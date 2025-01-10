@@ -89,7 +89,7 @@ type Problem struct {
 	Status       ProblemStatus `gorm:"not null;default:1;comment:状态" json:"status"`
 	CreateTime   time.Time     `gorm:"type:timestamp;not null;default:CURRENT_TIMESTAMP;comment:创建时间" json:"create_time"`
 	UpdateTime   time.Time     `gorm:"type:timestamp;not null;default:CURRENT_TIMESTAMP;comment:更新时间" json:"update_time"`
-	Tags         []Tag         `gorm:"many2many:tbl_problem_tag;constraint:OnUpdate:RESTRICT,OnDelete:CASCADE"`
+	Tags         []Tag         `gorm:"many2many:tbl_problem_tag;constraint:OnUpdate:RESTRICT,OnDelete:CASCADE" json:"-"`
 }
 
 func (Problem) TableName() string {
