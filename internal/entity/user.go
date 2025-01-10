@@ -41,7 +41,7 @@ func (e Email) Verify() error {
 	// 编译正则表达式
 	re := regexp.MustCompile(emailRegex)
 	if !re.MatchString(string(e)) {
-		return errors.New("邮箱格式不正确")
+		return errors.New("邮箱格式不正确！")
 	}
 	return nil
 }
@@ -50,17 +50,17 @@ func (e Email) String() string {
 	return string(e)
 }
 
-// 用户
+// User 用户
 type User struct {
-	Id         uint64    `gorm:"primaryKey;autoIncrement;comment:用户ID" json:"id,omitempty"`
-	Username   string    `gorm:"type:varchar(255);not null;unique;comment:用户名" json:"username,omitempty"`
-	Password   string    `gorm:"type:varchar(255);not null;default:'123456';comment:密码" json:"password,omitempty"`
+	ID         uint64    `gorm:"primaryKey;autoIncrement;comment:用户ID" json:"id"`
+	Username   string    `gorm:"type:varchar(255);not null;comment:用户名;unique" json:"username"`
+	Password   string    `gorm:"type:varchar(255);not null;default:123456;comment:密码" json:"password"`
 	Role       Role      `gorm:"not null;default:1;comment:角色" json:"role"`
-	Email      Email     `gorm:"type:varchar(255);not null;unique;comment:邮箱" json:"email,omitempty"`
-	Avatar     string    `gorm:"type:text;not null;comment:头像URL" json:"avatar,omitempty"`
-	Signature  string    `gorm:"type:text;not null;comment:个性签名" json:"signature,omitempty"`
-	CreateTime time.Time `gorm:"not null;default:CURRENT_TIMESTAMP;comment:创建时间" json:"create_time,omitempty"`
-	UpdateTime time.Time `gorm:"not null;default:CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;comment:更新时间" json:"update_time,omitempty"`
+	Email      Email     `gorm:"type:varchar(255);not null;comment:邮箱;unique" json:"email"`
+	Avatar     string    `gorm:"type:text;not null;comment:头像URL" json:"avatar"`
+	Signature  string    `gorm:"type:text;not null;comment:个性签名" json:"signature"`
+	CreateTime time.Time `gorm:"not null;default:CURRENT_TIMESTAMP;comment:创建时间" json:"create_time"`
+	UpdateTime time.Time `gorm:"not null;default:CURRENT_TIMESTAMP;comment:更新时间" json:"update_time"`
 }
 
 func (User) TableName() string {
