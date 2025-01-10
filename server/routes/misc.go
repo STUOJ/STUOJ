@@ -14,11 +14,6 @@ func InitMiscRoute(ginServer *gin.Engine) {
 		uploadRoute.POST("/image", handler.UploadImage)
 	}
 
-	miscRoute := ginServer.Group("/misc")
-	{
-		miscRoute.GET("/joke", handler.GetJoke)
-	}
-
 	emailRoute := ginServer.Group("/email")
 	{
 		emailRoute.POST("/send", handler.SendVerificationCode)

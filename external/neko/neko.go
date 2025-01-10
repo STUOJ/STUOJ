@@ -23,7 +23,7 @@ func InitNekoAcm() error {
 	}
 
 	// 解析返回值
-	var resp model.NekoRespObj
+	var resp model.NekoResp
 	err = json.Unmarshal([]byte(bodyStr), &resp)
 	if err != nil {
 		return err

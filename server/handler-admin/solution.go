@@ -122,25 +122,3 @@ func AdminSolutionRemove(c *gin.Context) {
 	// 返回结果
 	c.JSON(http.StatusOK, model.RespOk("删除成功", nil))
 }
-
-// 生成题解
-func AdminSolutionGenerate(c *gin.Context) {
-	var req model.NekoSolutionInstruction
-
-	// 参数绑定
-	err := c.ShouldBindBodyWithJSON(&req)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
-		return
-	}
-
-	s, err := solution.Generate(req)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
-		return
-	}
-
-	// 返回结果
-	c.JSON(http.StatusOK, model.RespOk("OK", s))
-}
