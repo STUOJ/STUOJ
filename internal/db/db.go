@@ -2,12 +2,13 @@ package db
 
 import (
 	"STUOJ/internal/conf"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
 	"log"
 	"os"
 	"time"
+
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 // 初始化数据库
@@ -40,10 +41,5 @@ func InitDatabase() error {
 		return err
 	}
 
-	err = autoMigrate()
-	if err != nil {
-		log.Println("数据库自动建表失败！")
-		return err
-	}
 	return nil
 }
