@@ -8,10 +8,10 @@ import (
 )
 
 // 查询所有语言
-func SelectAll() ([]entity.Language, error) {
+func Select(condition dao.LanguageWhere) ([]entity.Language, error) {
 	var languages []entity.Language
 
-	languages, err := dao.SelectAllLanguages()
+	languages, err := dao.SelectLanguage(condition)
 	if err != nil {
 		log.Println(err)
 		return nil, errors.New("查询语言失败")
