@@ -62,15 +62,16 @@ func asyncSubmit(s entity.Submission, p entity.Problem, ts []entity.Testcase) {
 	chJudgement := make(chan entity.Judgement)
 
 	lang, _ := language.SelectById(s.LanguageId)
-	s_ := s
-	s_.LanguageId = lang.MapId
+	s1 := s
+	s1.LanguageId = lang.MapId
 
 	// 提交评测点
 	for _, t := range ts {
 		// 异步评测
-		go asyncJudge(s_, p, t, chJudgement)
+		go asyncJudge(s1, p, t, chJudgement)
 	}
 
+	var acCount uint64 = 0
 	for _, _ = range ts {
 		// 接收评测点结果
 		j := <-chJudgement
@@ -98,7 +99,14 @@ func asyncSubmit(s entity.Submission, p entity.Problem, ts []entity.Testcase) {
 			if s.Status != entity.JudgeWA {
 				s.Status = max(s.Status, j.Status)
 			}
+		} else {
+			acCount++
 		}
+	}
+
+	// 计算分数
+	if acCount > 0 {
+		s.Score = 100 * acCount / uint64(len(ts))
 	}
 
 	// 更新提交信息

@@ -53,7 +53,7 @@ func InitJudgeLanguages() error {
 	for i := range languages {
 		if lang, exists := oldLangMap[languages[i].Name]; exists {
 			lang.MapId = languages[i].Id
-			log.Println(*lang)
+			//log.Println(*lang)
 			if err := dao.UpdateLanguage(*lang); err != nil {
 				return err
 			}

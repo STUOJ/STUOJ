@@ -44,6 +44,8 @@ func WaitSubmit(s entity.Submission) (uint64, error) {
 	}
 
 	s.Status = entity.JudgeAC
+	s.Score = 0
+
 	lang, err := language.SelectById(s.LanguageId)
 	if err != nil {
 		return 0, errors.New("获取语言信息失败")
@@ -51,12 +53,14 @@ func WaitSubmit(s entity.Submission) (uint64, error) {
 	if lang.Status != 3 {
 		return 0, errors.New("该语言不可用")
 	}
-	s_ := s
-	s_.LanguageId = lang.MapId
+	s1 := s
+	s1.LanguageId = lang.MapId
+
+	var acCount uint64 = 0
 
 	// 提交评测点
 	for _, t := range ts {
-		j, err := waitJudge(s_, p, t)
+		j, err := waitJudge(s1, p, t)
 		if err != nil {
 			log.Println(err)
 			s.Status = entity.JudgeIE
@@ -83,12 +87,19 @@ func WaitSubmit(s entity.Submission) (uint64, error) {
 		// 更新提交数据
 		s.Time = math.Max(s.Time, j.Time)
 		s.Memory = max(s.Memory, j.Memory)
-		// 如果评测点结果不是AC，更新提交状态
 		if j.Status != entity.JudgeAC {
+			// 如果评测点结果不是AC，更新提交状态
 			if s.Status != entity.JudgeWA {
 				s.Status = max(s.Status, j.Status)
 			}
+		} else {
+			acCount++
 		}
+	}
+
+	// 计算分数
+	if acCount > 0 {
+		s.Score = 100 * acCount / uint64(len(ts))
 	}
 
 	// 更新提交信息
