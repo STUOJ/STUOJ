@@ -38,8 +38,8 @@ type Blog struct {
 	Title      string     `gorm:"type:text;not null;comment:标题" json:"title"`
 	Content    string     `gorm:"type:longtext;not null;comment:内容" json:"content"`
 	Status     BlogStatus `gorm:"not null;default:1;comment:状态" json:"status"`
-	CreateTime time.Time  `gorm:"not null;default:CURRENT_TIMESTAMP;comment:创建时间" json:"create_time"`
-	UpdateTime time.Time  `gorm:"not null;default:CURRENT_TIMESTAMP;comment:更新时间" json:"update_time"`
+	CreateTime time.Time  `gorm:"type:timestamp;not null;default:CURRENT_TIMESTAMP;comment:创建时间" json:"create_time"`
+	UpdateTime time.Time  `gorm:"type:timestamp;not null;default:CURRENT_TIMESTAMP;comment:更新时间" json:"update_time"`
 	User       User       `gorm:"foreignKey:UserId;references:Id;constraint:OnUpdate:RESTRICT,OnDelete:RESTRICT" json:"user"`
 }
 
