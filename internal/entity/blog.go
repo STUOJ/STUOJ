@@ -2,7 +2,7 @@ package entity
 
 import "time"
 
-// 1 被屏蔽, 2 草稿, 3 待审核, 4 公开, 5 公告
+// BlogStatus 状态：1 被屏蔽, 2 草稿, 3 待审核, 4 公开, 5 公告
 type BlogStatus uint8
 
 const (
