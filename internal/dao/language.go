@@ -22,7 +22,7 @@ func InsertLanguage(l entity.Language) (uint64, error) {
 	return l.Id, nil
 }
 
-// 查询所有语言
+// 查询语言
 func SelectLanguage(con LanguageWhere) ([]entity.Language, error) {
 	var languages []entity.Language
 	where := generateLanguageWhereCondition(con)
