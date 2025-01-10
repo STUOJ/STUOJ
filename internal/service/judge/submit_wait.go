@@ -5,6 +5,7 @@ import (
 	"STUOJ/internal/dao"
 	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
+	"STUOJ/internal/service/language"
 	"errors"
 	"log"
 	"math"
@@ -43,10 +44,19 @@ func WaitSubmit(s entity.Submission) (uint64, error) {
 	}
 
 	s.Status = entity.JudgeAC
+	lang, err := language.SelectById(s.LanguageId)
+	if err != nil {
+		return 0, errors.New("获取语言信息失败")
+	}
+	if lang.Status != 3 {
+		return 0, errors.New("该语言不可用")
+	}
+	s_ := s
+	s_.LanguageId = lang.MapId
 
 	// 提交评测点
 	for _, t := range ts {
-		j, err := waitJudge(s, p, t)
+		j, err := waitJudge(s_, p, t)
 		if err != nil {
 			log.Println(err)
 			s.Status = entity.JudgeIE
