@@ -23,9 +23,9 @@ func (s CommentStatus) String() string {
 
 // Comment 评论
 type Comment struct {
-	ID         uint64        `gorm:"primaryKey;autoIncrement;comment:评论ID" json:"id"`
-	UserID     uint64        `gorm:"not null;default:0;comment:用户ID" json:"user_id"`
-	BlogID     uint64        `gorm:"not null;default:0;comment:博客ID" json:"blog_id"`
+	Id         uint64        `gorm:"primaryKey;autoIncrement;comment:评论ID" json:"id"`
+	UserId     uint64        `gorm:"not null;default:0;comment:用户ID" json:"user_id"`
+	BlogId     uint64        `gorm:"not null;default:0;comment:博客ID" json:"blog_id"`
 	Content    string        `gorm:"type:longtext;not null;comment:内容" json:"content"`
 	Status     CommentStatus `gorm:"not null;default:1;comment:状态" json:"status"`
 	CreateTime time.Time     `gorm:"not null;default:CURRENT_TIMESTAMP;comment:创建时间" json:"create_time"`

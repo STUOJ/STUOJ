@@ -52,7 +52,7 @@ func (e Email) String() string {
 
 // User 用户
 type User struct {
-	ID         uint64    `gorm:"primaryKey;autoIncrement;comment:用户ID" json:"id"`
+	Id         uint64    `gorm:"primaryKey;autoIncrement;comment:用户ID" json:"id"`
 	Username   string    `gorm:"type:varchar(255);not null;comment:用户名;unique" json:"username"`
 	Password   string    `gorm:"type:varchar(255);not null;default:123456;comment:密码" json:"password"`
 	Role       Role      `gorm:"not null;default:1;comment:角色" json:"role"`

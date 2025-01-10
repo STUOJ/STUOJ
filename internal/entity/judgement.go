@@ -60,9 +60,9 @@ func (s JudgeStatus) String() string {
 
 // Judgement 评测点结果
 type Judgement struct {
-	ID            uint64      `gorm:"primaryKey;autoIncrement;comment:评测点ID" json:"id"`
-	SubmissionID  uint64      `gorm:"not null;default:0;comment:提交记录ID" json:"submission_id"`
-	TestcaseID    uint64      `gorm:"not null;default:0;comment:评测点ID" json:"testcase_id"`
+	Id            uint64      `gorm:"primaryKey;autoIncrement;comment:评测点ID" json:"id"`
+	SubmissionId  uint64      `gorm:"not null;default:0;comment:提交记录ID" json:"submission_id"`
+	TestcaseId    uint64      `gorm:"not null;default:0;comment:评测点ID" json:"testcase_id"`
 	Time          float64     `gorm:"not null;default:0;comment:运行耗时（s）" json:"time"`
 	Memory        uint64      `gorm:"not null;default:0;comment:内存（kb）" json:"memory"`
 	Stdout        string      `gorm:"type:longtext;not null;comment:标准输出" json:"stdout"`

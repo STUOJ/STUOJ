@@ -32,9 +32,9 @@ func (s BlogStatus) String() string {
 
 // Blog 博客
 type Blog struct {
-	ID         uint64     `gorm:"primaryKey;autoIncrement;comment:博客ID" json:"id"`
-	UserID     uint64     `gorm:"not null;default:0;comment:用户ID" json:"user_id"`
-	ProblemID  uint64     `gorm:"not null;default:0;comment:关联题目ID" json:"problem_id"`
+	Id         uint64     `gorm:"primaryKey;autoIncrement;comment:博客ID" json:"id"`
+	UserId     uint64     `gorm:"not null;default:0;comment:用户ID" json:"user_id"`
+	ProblemId  uint64     `gorm:"not null;default:0;comment:关联题目ID" json:"problem_id"`
 	Title      string     `gorm:"type:text;not null;comment:标题" json:"title"`
 	Content    string     `gorm:"type:longtext;not null;comment:内容" json:"content"`
 	Status     BlogStatus `gorm:"not null;default:1;comment:状态" json:"status"`
