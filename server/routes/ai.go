@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"STUOJ/server/handler"
+	"STUOJ/external/neko"
 	"STUOJ/server/middlewares"
 	"github.com/gin-gonic/gin"
 )
@@ -11,19 +11,19 @@ func InitAiRouter(ginServer *gin.Engine) {
 	{
 		aiUserRouter.Use(middlewares.TokenAuthUser())
 
-		aiUserRouter.POST("/chat/assistant", handler.ChatAssistant)
-		aiUserRouter.GET("/misc/joke", handler.TellJoke)
-		aiUserRouter.POST("/judge/submit", handler.SubmitVirtualJudge)
+		aiUserRouter.POST("/chat/assistant", neko.ForwardHandler)
+		aiUserRouter.GET("/misc/joke", neko.ForwardHandler)
+		aiUserRouter.POST("/judge/submit", neko.ForwardHandler)
 	}
 
 	aiEditorRouter := ginServer.Group("/ai")
 	{
 		aiEditorRouter.Use(middlewares.TokenAuthEditor())
 
-		aiEditorRouter.POST("/problem/parse", handler.ParseProblem)
-		aiEditorRouter.POST("/problem/translate", handler.TranslateProblem)
-		aiEditorRouter.POST("/problem/generate", handler.GenerateProblem)
-		aiEditorRouter.POST("/testcase/generate", handler.GenerateTestcase)
-		aiEditorRouter.POST("/solution/generate", handler.GenerateSolution)
+		aiEditorRouter.POST("/problem/parse", neko.ForwardHandler)
+		aiEditorRouter.POST("/problem/translate", neko.ForwardHandler)
+		aiEditorRouter.POST("/problem/generate", neko.ForwardHandler)
+		aiEditorRouter.POST("/testcase/generate", neko.ForwardHandler)
+		aiEditorRouter.POST("/solution/generate", neko.ForwardHandler)
 	}
 }
