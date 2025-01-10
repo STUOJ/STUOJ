@@ -27,33 +27,23 @@ func InitDatabase() error {
 	}
 
 	dsn := config.User + ":" + config.Pwd + "@tcp(" + config.Host + ":" + config.Port + ")/" + config.Name + "?charset=utf8mb4&parseTime=True&loc=Local"
-	log.Println("Connecting to MySQL:", dsn)
+	log.Println("正在连接数据库：", dsn)
 	Db, err = gorm.Open(mysql.Open(dsn), gormConfig)
 	if err != nil {
-		log.Println("Failed to connect database!")
+		log.Println("连接数据库失败！")
 		return err
 	}
 
-	SqlDb, err = Db.DB()
+	err = createSqlDb()
 	if err != nil {
-		log.Println("Failed to get sql.SqlDb!")
+		log.Println("连接数据库失败！")
 		return err
 	}
 
-	// SetMaxIdleConns 设置空闲连接池中连接的最大数量
-	SqlDb.SetMaxIdleConns(config.MaxIdle)
-
-	// SetMaxOpenConns 设置打开数据库连接的最大数量。
-	SqlDb.SetMaxOpenConns(config.MaxConn)
-
-	// SetConnMaxLifetime 设置了连接可复用的最大时间。
-	SqlDb.SetConnMaxLifetime(time.Hour)
-
-	/*		err = SqlDb.Ping()
-			if err != nil {
-				log.Println("Error pinging the database!")
-				return err
-			}
-	*/
+	err = autoMigrate()
+	if err != nil {
+		log.Println("数据库自动建表失败！")
+		return err
+	}
 	return nil
 }
