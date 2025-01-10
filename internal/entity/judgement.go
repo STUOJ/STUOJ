@@ -70,7 +70,7 @@ type Judgement struct {
 	CompileOutput string      `gorm:"type:longtext;not null;comment:编译输出" json:"compile_output"`
 	Message       string      `gorm:"type:longtext;not null;comment:信息" json:"message"`
 	Status        JudgeStatus `gorm:"not null;default:1;comment:状态" json:"status"`
-	Submission    Submission  `gorm:"foreignKey:SubmissionId;references:Id;constraint:OnUpdate:RESTRICT,OnDelete:CASCADE" json:"submission"`
+	Submission    Submission  `gorm:"foreignKey:SubmissionId;references:Id;constraint:OnUpdate:RESTRICT,OnDelete:CASCADE"`
 }
 
 func (Judgement) TableName() string {
