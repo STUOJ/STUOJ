@@ -12,12 +12,19 @@ func InitCommentRoute(ginServer *gin.Engine) {
 	{
 		commentPublicRoute.GET("/", handler.CommentList)
 	}
-	commentPrivateRoute := ginServer.Group("/comment")
+	commentUserRoute := ginServer.Group("/comment")
 	{
 		// 使用中间件
-		commentPrivateRoute.Use(middlewares.TokenAuthUser())
+		commentUserRoute.Use(middlewares.TokenAuthUser())
 
-		commentPrivateRoute.POST("/", handler.CommentAdd)
-		commentPrivateRoute.DELETE("/:id", handler.CommentRemove)
+		commentUserRoute.POST("/", handler.CommentAdd)
+		commentUserRoute.DELETE("/:id", handler.CommentRemove)
+	}
+	commentAdminRoute := ginServer.Group("/comment")
+	{
+		// 使用中间件
+		commentAdminRoute.Use(middlewares.TokenAuthAdmin())
+
+		commentAdminRoute.PUT("/", handler.CommentModify)
 	}
 }

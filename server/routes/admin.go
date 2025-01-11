@@ -50,7 +50,6 @@ func InitAdminRoute(ginServer *gin.Engine) {
 			adminPrivateRoute.DELETE("/solution/:id", handler_admin.AdminSolutionRemove)
 		}
 		{
-			adminPrivateRoute.PUT("/comment", handler_admin.AdminCommentModify)
 		}
 		{
 			adminPrivateRoute.GET("/statistics/user", handler_admin.AdminStatisticsUser)

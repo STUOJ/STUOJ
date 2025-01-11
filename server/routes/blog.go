@@ -13,14 +13,14 @@ func InitBlogRoute(ginServer *gin.Engine) {
 		blogPublicRoute.GET("/", handler.BlogList)
 		blogPublicRoute.GET("/:id", handler.BlogInfo)
 	}
-	blogPrivateRoute := ginServer.Group("/blog")
+	blogUserRoute := ginServer.Group("/blog")
 	{
 		// 使用中间件
-		blogPrivateRoute.Use(middlewares.TokenAuthUser())
+		blogUserRoute.Use(middlewares.TokenAuthUser())
 
-		blogPrivateRoute.POST("/", handler.BlogUpload)
-		blogPrivateRoute.PUT("/", handler.BlogEdit)
-		blogPrivateRoute.PUT("/:id", handler.BlogSubmit)
-		blogPrivateRoute.DELETE("/:id", handler.BlogRemove)
+		blogUserRoute.POST("/", handler.BlogUpload)
+		blogUserRoute.PUT("/", handler.BlogEdit)
+		blogUserRoute.PUT("/:id", handler.BlogSubmit)
+		blogUserRoute.DELETE("/:id", handler.BlogRemove)
 	}
 }
