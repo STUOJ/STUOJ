@@ -3,6 +3,7 @@ package routes
 import (
 	"STUOJ/server/handler"
 	"STUOJ/server/middlewares"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -30,14 +31,14 @@ func InitUserRoute(ginServer *gin.Engine) {
 
 		userAdminRoute.GET("/", handler.UserList)
 		userAdminRoute.POST("/", handler.UserAdd)
-		userAdminRoute.DELETE("/:id", handler.UserRemove)
+		userAdminRoute.PUT("/role", handler.UserModifyRole)
+
 	}
 
 	userRootRoute := ginServer.Group("/user")
 	{
 		// 使用中间件
 		userRootRoute.Use(middlewares.TokenAuthRoot())
-
-		userRootRoute.PUT("/role", handler.UserModifyRole)
+		userRootRoute.DELETE("/:id", handler.UserRemove)
 	}
 }
