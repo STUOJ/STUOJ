@@ -32,7 +32,7 @@ func (o Operation) String() string {
 // History 题目历史记录
 type History struct {
 	Id           uint64     `gorm:"primaryKey;autoIncrement;comment:记录ID" json:"id"`
-	UserId       uint64     `gorm:"not null;default:0;comment:用户ID" json:"user_id"`
+	UserId       uint64     `gorm:"not null;default:0;comment:用户ID" json:"-"`
 	ProblemId    uint64     `gorm:"not null;default:0;comment:题目ID" json:"problem_id"`
 	Title        string     `gorm:"type:text;not null;comment:标题" json:"title"`
 	Source       string     `gorm:"type:text;not null;comment:题目来源" json:"source"`
@@ -47,7 +47,7 @@ type History struct {
 	Hint         string     `gorm:"type:longtext;not null;comment:提示" json:"hint"`
 	Operation    Operation  `gorm:"not null;default:0;comment:操作" json:"operation"`
 	CreateTime   time.Time  `gorm:"type:timestamp;not null;default:CURRENT_TIMESTAMP;comment:创建时间" json:"create_time"`
-	User         User       `gorm:"foreignKey:UserId;references:Id;constraint:OnUpdate:RESTRICT,OnDelete:RESTRICT" json:"-"`
+	User         User       `gorm:"foreignKey:UserId;references:Id;constraint:OnUpdate:RESTRICT,OnDelete:RESTRICT" json:"user"`
 }
 
 func (History) TableName() string {
