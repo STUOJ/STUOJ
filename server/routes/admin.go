@@ -19,15 +19,6 @@ func InitAdminRoute(ginServer *gin.Engine) {
 			adminPrivateRoute.DELETE("/user/:id", handler_admin.AdminUserRemove)
 		}
 		{
-			adminPrivateRoute.POST("/problem", handler_admin.AdminProblemAdd)
-			adminPrivateRoute.PUT("/problem", handler_admin.AdminProblemModify)
-			adminPrivateRoute.DELETE("/problem/:id", handler_admin.AdminProblemRemove)
-			adminPrivateRoute.POST("/problem/tag", handler_admin.AdminProblemAddTag)
-			adminPrivateRoute.DELETE("/problem/tag", handler_admin.AdminProblemRemoveTag)
-			adminPrivateRoute.POST("/problem/fps", handler_admin.AdminProblemParseFromFps)
-			adminPrivateRoute.GET("/history/problem/:id", handler_admin.AdminHistoryListOfProblem)
-		}
-		{
 			adminPrivateRoute.DELETE("/record/:id", handler_admin.AdminRecordRemove)
 		}
 		{

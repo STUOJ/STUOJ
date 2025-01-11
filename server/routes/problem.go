@@ -14,4 +14,14 @@ func InitProblemRoute(ginServer *gin.Engine) {
 
 		problemPublicRoute.GET("/tag", handler.TagList)
 	}
+	problemAdminRoute := ginServer.Group("/problem")
+	{
+		problemAdminRoute.POST("/problem", handler.ProblemAdd)
+		problemAdminRoute.PUT("/problem", handler.ProblemModify)
+		problemAdminRoute.DELETE("/problem/:id", handler.ProblemRemove)
+		problemAdminRoute.POST("/problem/tag", handler.ProblemAddTag)
+		problemAdminRoute.DELETE("/problem/tag", handler.ProblemRemoveTag)
+		problemAdminRoute.POST("/problem/fps", handler.ProblemParseFromFps)
+		problemAdminRoute.GET("/history/problem/:id", handler.HistoryListOfProblem)
+	}
 }
