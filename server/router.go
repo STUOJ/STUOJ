@@ -31,6 +31,7 @@ func InitRoute() error {
 	routes.InitBlogRoute(ginServer)
 	routes.InitCommentRoute(ginServer)
 	routes.InitAiRouter(ginServer)
+	routes.InitStatisticsRoute(ginServer)
 	routes.InitAdminRoute(ginServer)
 	routes.InitSystemRoute(ginServer)
 	routes.InitMiscRoute(ginServer)

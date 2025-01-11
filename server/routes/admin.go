@@ -31,28 +31,5 @@ func InitAdminRoute(ginServer *gin.Engine) {
 			adminPrivateRoute.PUT("/tag", handler_admin.AdminTagModify)
 			adminPrivateRoute.DELETE("/tag/:id", handler_admin.AdminTagRemove)
 		}
-		{
-			adminPrivateRoute.GET("/statistics/user", handler_admin.AdminStatisticsUser)
-			adminPrivateRoute.GET("/statistics/user/role", handler_admin.AdminStatisticsUserOfRole)
-			adminPrivateRoute.GET("/statistics/user/register", handler_admin.AdminStatisticsUserOfRegister)
-
-			adminPrivateRoute.GET("/statistics/tag", handler_admin.AdminStatisticsTag)
-			adminPrivateRoute.GET("/statistics/problem", handler_admin.AdminStatisticsProblem)
-			adminPrivateRoute.GET("/statistics/problem/insert", handler_admin.AdminStatisticsProblemOfInsert)
-			adminPrivateRoute.GET("/statistics/problem/update", handler_admin.AdminStatisticsProblemOfUpdate)
-			adminPrivateRoute.GET("/statistics/problem/delete", handler_admin.AdminStatisticsProblemOfDelete)
-
-			adminPrivateRoute.GET("/statistics/judge", handler_admin.AdminStatisticsJudge)
-
-			adminPrivateRoute.GET("/statistics/record", handler_admin.AdminStatisticsRecord)
-			adminPrivateRoute.GET("/statistics/record/submit", handler_admin.AdminStatisticsRecordOfSubmit)
-			adminPrivateRoute.GET("/statistics/record/language", handler_admin.AdminStatisticsRecordOfLanguage)
-			adminPrivateRoute.GET("/statistics/submission/status", handler_admin.AdminStatisticsSubmissionOfStatus)
-			adminPrivateRoute.GET("/statistics/judgement/status", handler_admin.AdminStatisticsJudgementOfStatus)
-
-			adminPrivateRoute.GET("/statistics/blog", handler_admin.AdminStatisticsBlog)
-			adminPrivateRoute.GET("/statistics/blog/submit", handler_admin.AdminStatisticsBlogOfSubmit)
-			adminPrivateRoute.GET("/statistics/comment/submit", handler_admin.AdminStatisticsCommentOfSubmit)
-		}
 	}
 }

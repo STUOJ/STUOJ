@@ -1,4 +1,4 @@
-package handler_admin
+package handler
 
 import (
 	"STUOJ/internal/dao"
@@ -17,7 +17,7 @@ import (
 )
 
 // 获取用户统计信息
-func AdminStatisticsUser(c *gin.Context) {
+func StatisticsUser(c *gin.Context) {
 	// 获取用户统计信息
 	stats, err := user.GetStatistics()
 	if err != nil {
@@ -29,7 +29,7 @@ func AdminStatisticsUser(c *gin.Context) {
 }
 
 // 获取用户角色统计信息
-func AdminStatisticsUserOfRole(c *gin.Context) {
+func StatisticsUserOfRole(c *gin.Context) {
 	// 获取用户统计信息
 	stats, err := user.GetStatisticsOfRole()
 	if err != nil {
@@ -41,7 +41,7 @@ func AdminStatisticsUserOfRole(c *gin.Context) {
 }
 
 // 获取用户注册统计信息
-func AdminStatisticsUserOfRegister(c *gin.Context) {
+func StatisticsUserOfRegister(c *gin.Context) {
 	p, err := utils.GetPeriod(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.RespError(err.Error(), nil))
@@ -59,7 +59,7 @@ func AdminStatisticsUserOfRegister(c *gin.Context) {
 }
 
 // 获取题目统计信息
-func AdminStatisticsProblem(c *gin.Context) {
+func StatisticsProblem(c *gin.Context) {
 	// 获取题目统计信息
 	stats, err := problem.GetStatistics()
 	if err != nil {
@@ -71,7 +71,7 @@ func AdminStatisticsProblem(c *gin.Context) {
 }
 
 // 获取插入题目统计信息
-func AdminStatisticsProblemOfInsert(c *gin.Context) {
+func StatisticsProblemOfInsert(c *gin.Context) {
 	p, err := utils.GetPeriod(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.RespError(err.Error(), nil))
@@ -89,7 +89,7 @@ func AdminStatisticsProblemOfInsert(c *gin.Context) {
 }
 
 // 获取更新题目统计信息
-func AdminStatisticsProblemOfUpdate(c *gin.Context) {
+func StatisticsProblemOfUpdate(c *gin.Context) {
 	p, err := utils.GetPeriod(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.RespError(err.Error(), nil))
@@ -107,7 +107,7 @@ func AdminStatisticsProblemOfUpdate(c *gin.Context) {
 }
 
 // 获取删除题目统计信息
-func AdminStatisticsProblemOfDelete(c *gin.Context) {
+func StatisticsProblemOfDelete(c *gin.Context) {
 	p, err := utils.GetPeriod(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.RespError(err.Error(), nil))
@@ -125,7 +125,7 @@ func AdminStatisticsProblemOfDelete(c *gin.Context) {
 }
 
 // 获取标签统计信息
-func AdminStatisticsTag(c *gin.Context) {
+func StatisticsTag(c *gin.Context) {
 	// 获取标签统计信息
 	stats, err := tag.GetStatistics()
 	if err != nil {
@@ -137,7 +137,7 @@ func AdminStatisticsTag(c *gin.Context) {
 }
 
 // 获取评测机统计信息
-func AdminStatisticsJudge(c *gin.Context) {
+func StatisticsJudge(c *gin.Context) {
 	statistics, err := judge.GetStatistics()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
@@ -148,7 +148,7 @@ func AdminStatisticsJudge(c *gin.Context) {
 }
 
 // 获取提交记录提交信息
-func AdminStatisticsRecord(c *gin.Context) {
+func StatisticsRecord(c *gin.Context) {
 
 	// 获取提交记录统计信息
 	stats, err := record.GetStatistics(dao.SubmissionWhere{})
@@ -161,7 +161,7 @@ func AdminStatisticsRecord(c *gin.Context) {
 }
 
 // 获取提交语言统计信息
-func AdminStatisticsRecordOfLanguage(c *gin.Context) {
+func StatisticsRecordOfLanguage(c *gin.Context) {
 	// 获取提交记录统计信息
 	stats, err := record.GetStatisticsOfSubmissionLanguage()
 	if err != nil {
@@ -173,7 +173,7 @@ func AdminStatisticsRecordOfLanguage(c *gin.Context) {
 }
 
 // 获取提交状态统计信息
-func AdminStatisticsSubmissionOfStatus(c *gin.Context) {
+func StatisticsSubmissionOfStatus(c *gin.Context) {
 	// 获取提交记录统计信息
 	stats, err := record.GetStatisticsOfSubmissionStatus()
 	if err != nil {
@@ -185,7 +185,7 @@ func AdminStatisticsSubmissionOfStatus(c *gin.Context) {
 }
 
 // 获取评测状态统计信息
-func AdminStatisticsJudgementOfStatus(c *gin.Context) {
+func StatisticsJudgementOfStatus(c *gin.Context) {
 	// 获取提交记录统计信息
 	stats, err := record.GetStatisticsOfJudgementStatus()
 	if err != nil {
@@ -197,7 +197,7 @@ func AdminStatisticsJudgementOfStatus(c *gin.Context) {
 }
 
 // 获取提交记录提交信息
-func AdminStatisticsRecordOfSubmit(c *gin.Context) {
+func StatisticsRecordOfSubmit(c *gin.Context) {
 	p, err := utils.GetPeriod(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.RespError(err.Error(), nil))
@@ -215,7 +215,7 @@ func AdminStatisticsRecordOfSubmit(c *gin.Context) {
 }
 
 // 获取博客统计信息
-func AdminStatisticsBlog(c *gin.Context) {
+func StatisticsBlog(c *gin.Context) {
 	// 获取博客统计信息
 	stats, err := blog.GetStatistics(dao.BlogWhere{})
 	if err != nil {
@@ -227,7 +227,7 @@ func AdminStatisticsBlog(c *gin.Context) {
 }
 
 // 获取博客提交统计信息
-func AdminStatisticsBlogOfSubmit(c *gin.Context) {
+func StatisticsBlogOfSubmit(c *gin.Context) {
 	p, err := utils.GetPeriod(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.RespError(err.Error(), nil))
@@ -245,7 +245,7 @@ func AdminStatisticsBlogOfSubmit(c *gin.Context) {
 }
 
 // 获取评论提交统计信息
-func AdminStatisticsCommentOfSubmit(c *gin.Context) {
+func StatisticsCommentOfSubmit(c *gin.Context) {
 	p, err := utils.GetPeriod(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.RespError(err.Error(), nil))
