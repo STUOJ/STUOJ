@@ -75,15 +75,4 @@ func InitAdminRoute(ginServer *gin.Engine) {
 			adminPrivateRoute.GET("/statistics/comment/submit", handler_admin.AdminStatisticsCommentOfSubmit)
 		}
 	}
-
-	rootPrivateRoute := ginServer.Group("/admin")
-	{
-		// 使用中间件
-		rootPrivateRoute.Use(middlewares.TokenAuthRoot())
-
-		rootPrivateRoute.PUT("/user/role", handler_admin.AdminUserModifyRole)
-
-		rootPrivateRoute.GET("/config", handler_admin.AdminConfigList)
-		//rootPrivateRoute.PUT("/config", handler-admin.AdminConfigModify)
-	}
 }

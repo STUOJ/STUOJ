@@ -1,4 +1,4 @@
-package handler_admin
+package handler
 
 import (
 	"STUOJ/external/judge0"
@@ -10,7 +10,7 @@ import (
 )
 
 // 获取设置列表
-func AdminConfigList(c *gin.Context) {
+func ConfigList(c *gin.Context) {
 	var err error
 	configuration := model.Configuration{}
 
