@@ -5,7 +5,14 @@ import (
 	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
 	"time"
+
+	"gorm.io/gorm"
 )
+
+type auxiliaryHistory struct {
+	entity.History
+	BriefUser
+}
 
 // 插入题目历史记录
 func InsertHistory(ph entity.History) (uint64, error) {
@@ -19,11 +26,24 @@ func InsertHistory(ph entity.History) (uint64, error) {
 
 // 根据题目ID查询题目历史记录
 func SelectHistoriesByProblemId(pid uint64) ([]entity.History, error) {
+	var auxiliaryHistorys []auxiliaryHistory
 	var phs []entity.History
 
-	tx := db.Db.Model(&entity.History{}).Where("problem_id = ?", pid).Find(&phs)
+	tx := db.Db.Model(&entity.History{}).Where("tbl_history.problem_id = ?", pid)
+	tx = historyUnionJoins(tx)
+	tx = tx.Find(&auxiliaryHistorys)
 	if tx.Error != nil {
 		return nil, tx.Error
+	}
+	for _, auxiliaryHistory := range auxiliaryHistorys {
+		ph := auxiliaryHistory.History
+		ph.User = entity.User{
+			Id:       auxiliaryHistory.UserId,
+			Username: auxiliaryHistory.Username,
+			Role:     auxiliaryHistory.Role,
+			Avatar:   auxiliaryHistory.Avatar,
+		}
+		phs = append(phs, ph)
 	}
 
 	return phs, nil
@@ -39,4 +59,12 @@ func CountHistoriesBetweenCreateTimeByOperation(startTime time.Time, endTime tim
 	}
 
 	return countByDate, nil
+}
+
+func historyUnionJoins(tx *gorm.DB) *gorm.DB {
+	query := []string{"tbl_history.*"}
+	query = append(query, briefUserSelect()...)
+	tx = tx.Select(query)
+	tx = briefUserJoins(tx, "tbl_history")
+	return tx
 }
