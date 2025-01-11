@@ -27,6 +27,7 @@ func InitRoute() error {
 	routes.InitProblemRoute(ginServer)
 	routes.InitJudgeRoute(ginServer)
 	routes.InitRecordRoute(ginServer)
+	routes.InitSolutionRoute(ginServer)
 	routes.InitBlogRoute(ginServer)
 	routes.InitCommentRoute(ginServer)
 	routes.InitAiRouter(ginServer)

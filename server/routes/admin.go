@@ -19,9 +19,6 @@ func InitAdminRoute(ginServer *gin.Engine) {
 			adminPrivateRoute.DELETE("/user/:id", handler_admin.AdminUserRemove)
 		}
 		{
-			adminPrivateRoute.DELETE("/record/:id", handler_admin.AdminRecordRemove)
-		}
-		{
 			adminPrivateRoute.GET("/testcase/:id", handler_admin.AdminTestcaseInfo)
 			adminPrivateRoute.POST("/testcase", handler_admin.AdminTestcaseAdd)
 			adminPrivateRoute.PUT("/testcase", handler_admin.AdminTestcaseModify)
@@ -33,14 +30,6 @@ func InitAdminRoute(ginServer *gin.Engine) {
 			adminPrivateRoute.POST("/tag", handler_admin.AdminTagAdd)
 			adminPrivateRoute.PUT("/tag", handler_admin.AdminTagModify)
 			adminPrivateRoute.DELETE("/tag/:id", handler_admin.AdminTagRemove)
-		}
-		{
-			adminPrivateRoute.GET("/solution/:id", handler_admin.AdminSolutionInfo)
-			adminPrivateRoute.POST("/solution", handler_admin.AdminSolutionAdd)
-			adminPrivateRoute.PUT("/solution", handler_admin.AdminSolutionModify)
-			adminPrivateRoute.DELETE("/solution/:id", handler_admin.AdminSolutionRemove)
-		}
-		{
 		}
 		{
 			adminPrivateRoute.GET("/statistics/user", handler_admin.AdminStatisticsUser)

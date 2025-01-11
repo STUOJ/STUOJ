@@ -2,6 +2,7 @@ package routes
 
 import (
 	"STUOJ/server/handler"
+	"STUOJ/server/middlewares"
 
 	"github.com/gin-gonic/gin"
 )
@@ -16,12 +17,15 @@ func InitProblemRoute(ginServer *gin.Engine) {
 	}
 	problemAdminRoute := ginServer.Group("/problem")
 	{
-		problemAdminRoute.POST("/problem", handler.ProblemAdd)
-		problemAdminRoute.PUT("/problem", handler.ProblemModify)
-		problemAdminRoute.DELETE("/problem/:id", handler.ProblemRemove)
-		problemAdminRoute.POST("/problem/tag", handler.ProblemAddTag)
-		problemAdminRoute.DELETE("/problem/tag", handler.ProblemRemoveTag)
-		problemAdminRoute.POST("/problem/fps", handler.ProblemParseFromFps)
-		problemAdminRoute.GET("/history/problem/:id", handler.HistoryListOfProblem)
+		// 使用中间件
+		problemAdminRoute.Use(middlewares.TokenAuthAdmin())
+
+		problemAdminRoute.POST("/", handler.ProblemAdd)
+		problemAdminRoute.PUT("/", handler.ProblemModify)
+		problemAdminRoute.DELETE("/:id", handler.ProblemRemove)
+		problemAdminRoute.POST("/tag", handler.ProblemAddTag)
+		problemAdminRoute.DELETE("/tag", handler.ProblemRemoveTag)
+		problemAdminRoute.POST("/fps", handler.ProblemParseFromFps)
+		problemAdminRoute.GET("/history/:id", handler.HistoryListOfProblem)
 	}
 }
