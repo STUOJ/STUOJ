@@ -25,12 +25,16 @@ func InitRoute() error {
 	// 初始化路由
 	routes.InitUserRoute(ginServer)
 	routes.InitProblemRoute(ginServer)
+	routes.InitTagRoute(ginServer)
+	routes.InitSolutionRoute(ginServer)
+	routes.InitTestcaseRoute(ginServer)
 	routes.InitJudgeRoute(ginServer)
 	routes.InitRecordRoute(ginServer)
 	routes.InitBlogRoute(ginServer)
 	routes.InitCommentRoute(ginServer)
 	routes.InitAiRouter(ginServer)
-	routes.InitAdminRoute(ginServer)
+	routes.InitStatisticsRoute(ginServer)
+	routes.InitSystemRoute(ginServer)
 	routes.InitMiscRoute(ginServer)
 
 	return nil

@@ -1,4 +1,4 @@
-package handler_admin
+package handler
 
 import (
 	"STUOJ/internal/entity"
@@ -12,7 +12,7 @@ import (
 )
 
 // 获取评测点数据
-func AdminTestcaseInfo(c *gin.Context) {
+func TestcaseInfo(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
@@ -40,7 +40,7 @@ type ReqTestcaseAdd struct {
 	TestOutput string `json:"test_output,omitempty" binding:"required"`
 }
 
-func AdminTestcaseAdd(c *gin.Context) {
+func TestcaseAdd(c *gin.Context) {
 	var req ReqTestcaseAdd
 
 	// 参数绑定
@@ -79,7 +79,7 @@ type ReqTestcaseModify struct {
 	TestOutput string `json:"test_output,omitempty" binding:"required"`
 }
 
-func AdminTestcaseModify(c *gin.Context) {
+func TestcaseModify(c *gin.Context) {
 	var req ReqTestcaseModify
 
 	// 参数绑定
@@ -111,7 +111,7 @@ func AdminTestcaseModify(c *gin.Context) {
 }
 
 // 删除评测点数据
-func AdminTestcaseRemove(c *gin.Context) {
+func TestcaseRemove(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
@@ -131,7 +131,8 @@ func AdminTestcaseRemove(c *gin.Context) {
 	c.JSON(http.StatusOK, model.RespOk("删除成功", nil))
 }
 
-func AdminTestcaseDataMake(c *gin.Context) {
+// 生成测试用例数据
+func TestcaseDataMake(c *gin.Context) {
 	var t model.CommonTestcaseInput
 	if err := c.ShouldBindJSON(&t); err != nil {
 		log.Println(err)

@@ -1,4 +1,4 @@
-package handler_admin
+package handler
 
 import (
 	"STUOJ/internal/entity"
@@ -12,7 +12,7 @@ import (
 )
 
 // 获取题解数据
-func AdminSolutionInfo(c *gin.Context) {
+func SolutionInfo(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
@@ -38,7 +38,7 @@ type ReqSolutionAdd struct {
 	SourceCode string `json:"source_code" binding:"required"`
 }
 
-func AdminSolutionAdd(c *gin.Context) {
+func SolutionAdd(c *gin.Context) {
 	var req ReqSolutionAdd
 
 	// 参数绑定
@@ -74,7 +74,7 @@ type ReqSolutionModify struct {
 	SourceCode string `json:"source_code,omitempty" binding:"required"`
 }
 
-func AdminSolutionModify(c *gin.Context) {
+func SolutionModify(c *gin.Context) {
 	var req ReqSolutionModify
 
 	// 参数绑定
@@ -103,7 +103,7 @@ func AdminSolutionModify(c *gin.Context) {
 }
 
 // 删除题解
-func AdminSolutionRemove(c *gin.Context) {
+func SolutionRemove(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
