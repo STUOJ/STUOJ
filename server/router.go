@@ -33,7 +33,7 @@ func InitRoute() error {
 	routes.InitCommentRoute(ginServer)
 	routes.InitAiRouter(ginServer)
 	routes.InitStatisticsRoute(ginServer)
-	routes.InitAdminRoute(ginServer)
+	routes.InitTestcaseRoute(ginServer)
 	routes.InitSystemRoute(ginServer)
 	routes.InitMiscRoute(ginServer)
 
