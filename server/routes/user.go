@@ -38,6 +38,6 @@ func InitUserRoute(ginServer *gin.Engine) {
 		// 使用中间件
 		userRootRoute.Use(middlewares.TokenAuthRoot())
 
-		userRootRoute.PUT("/user/role", handler.UserModifyRole)
+		userRootRoute.PUT("/role", handler.UserModifyRole)
 	}
 }

@@ -28,3 +28,44 @@ func InitProblemRoute(ginServer *gin.Engine) {
 		problemEditorRoute.GET("/history/:id", handler.HistoryListOfProblem)
 	}
 }
+
+func InitTagRoute(ginServer *gin.Engine) {
+	tagPublicRoute := ginServer.Group("/tag")
+	{
+		tagPublicRoute.GET("/", handler.TagList)
+	}
+
+	tagEditorRoute := ginServer.Group("/tag")
+	{
+		tagEditorRoute.POST("/", handler.TagAdd)
+		tagEditorRoute.PUT("/", handler.TagModify)
+		tagEditorRoute.DELETE("/:id", handler.TagRemove)
+	}
+}
+
+func InitTestcaseRoute(ginServer *gin.Engine) {
+	testcaseEditorRoute := ginServer.Group("/testcase")
+	{
+		// 使用中间件
+		testcaseEditorRoute.Use(middlewares.TokenAuthAdmin())
+
+		testcaseEditorRoute.GET("/:id", handler.TestcaseInfo)
+		testcaseEditorRoute.POST("/", handler.TestcaseAdd)
+		testcaseEditorRoute.PUT("/", handler.TestcaseModify)
+		testcaseEditorRoute.DELETE("/:id", handler.TestcaseRemove)
+		testcaseEditorRoute.POST("/datamake", handler.TestcaseDataMake)
+	}
+}
+
+func InitSolutionRoute(ginServer *gin.Engine) {
+	solutionEditorRoute := ginServer.Group("/solution")
+	{
+		// 使用中间件
+		solutionEditorRoute.Use(middlewares.TokenAuthAdmin())
+
+		solutionEditorRoute.GET("/:id", handler.SolutionInfo)
+		solutionEditorRoute.POST("/", handler.SolutionAdd)
+		solutionEditorRoute.PUT("/", handler.SolutionModify)
+		solutionEditorRoute.DELETE("/:id", handler.SolutionRemove)
+	}
+}
