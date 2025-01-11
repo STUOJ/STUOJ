@@ -12,20 +12,18 @@ func InitProblemRoute(ginServer *gin.Engine) {
 	{
 		problemPublicRoute.GET("/", handler.ProblemList)
 		problemPublicRoute.GET("/:id", handler.ProblemInfo)
-
-		problemPublicRoute.GET("/tag", handler.TagList)
 	}
-	problemAdminRoute := ginServer.Group("/problem")
+	problemEditorRoute := ginServer.Group("/problem")
 	{
 		// 使用中间件
-		problemAdminRoute.Use(middlewares.TokenAuthAdmin())
+		problemEditorRoute.Use(middlewares.TokenAuthAdmin())
 
-		problemAdminRoute.POST("/", handler.ProblemAdd)
-		problemAdminRoute.PUT("/", handler.ProblemModify)
-		problemAdminRoute.DELETE("/:id", handler.ProblemRemove)
-		problemAdminRoute.POST("/tag", handler.ProblemAddTag)
-		problemAdminRoute.DELETE("/tag", handler.ProblemRemoveTag)
-		problemAdminRoute.POST("/fps", handler.ProblemParseFromFps)
-		problemAdminRoute.GET("/history/:id", handler.HistoryListOfProblem)
+		problemEditorRoute.POST("/", handler.ProblemAdd)
+		problemEditorRoute.PUT("/", handler.ProblemModify)
+		problemEditorRoute.DELETE("/:id", handler.ProblemRemove)
+		problemEditorRoute.POST("/tag", handler.ProblemAddTag)
+		problemEditorRoute.DELETE("/tag", handler.ProblemRemoveTag)
+		problemEditorRoute.POST("/fps", handler.ProblemParseFromFps)
+		problemEditorRoute.GET("/history/:id", handler.HistoryListOfProblem)
 	}
 }

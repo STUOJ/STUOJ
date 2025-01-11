@@ -7,14 +7,14 @@ import (
 )
 
 func InitSolutionRoute(ginServer *gin.Engine) {
-	solutionAdminRoute := ginServer.Group("/solution")
+	solutionEditorRoute := ginServer.Group("/solution")
 	{
 		// 使用中间件
-		solutionAdminRoute.Use(middlewares.TokenAuthAdmin())
+		solutionEditorRoute.Use(middlewares.TokenAuthAdmin())
 
-		solutionAdminRoute.GET("/:id", handler.SolutionInfo)
-		solutionAdminRoute.POST("/", handler.SolutionAdd)
-		solutionAdminRoute.PUT("/", handler.SolutionModify)
-		solutionAdminRoute.DELETE("/:id", handler.SolutionRemove)
+		solutionEditorRoute.GET("/:id", handler.SolutionInfo)
+		solutionEditorRoute.POST("/", handler.SolutionAdd)
+		solutionEditorRoute.PUT("/", handler.SolutionModify)
+		solutionEditorRoute.DELETE("/:id", handler.SolutionRemove)
 	}
 }

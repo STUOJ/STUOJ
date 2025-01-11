@@ -25,11 +25,5 @@ func InitAdminRoute(ginServer *gin.Engine) {
 			adminPrivateRoute.DELETE("/testcase/:id", handler_admin.AdminTestcaseRemove)
 			adminPrivateRoute.POST("/testcase/datamake", handler_admin.AdminTestcaseDataMake)
 		}
-		{
-			adminPrivateRoute.GET("/tag", handler_admin.AdminTagList)
-			adminPrivateRoute.POST("/tag", handler_admin.AdminTagAdd)
-			adminPrivateRoute.PUT("/tag", handler_admin.AdminTagModify)
-			adminPrivateRoute.DELETE("/tag/:id", handler_admin.AdminTagRemove)
-		}
 	}
 }
