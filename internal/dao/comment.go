@@ -19,13 +19,34 @@ type CommentWhere struct {
 	Size      model.Field[uint64]
 }
 
+type auxiliaryComment struct {
+	entity.Comment
+	BriefUser
+	BriefBlog
+}
+
 // 根据ID查询评论
 func SelectCommentById(id uint64) (entity.Comment, error) {
+	var auxiliaryComment auxiliaryComment
 	var c entity.Comment
 
-	tx := db.Db.Where("id = ?", id).First(&c)
+	tx := db.Db.Where(&entity.Comment{Id: id})
+	tx = commentUnionJoins(tx)
+	tx = tx.First(&auxiliaryComment)
 	if tx.Error != nil {
 		return entity.Comment{}, tx.Error
+	}
+	c = auxiliaryComment.Comment
+	c.User = entity.User{
+		Id:       auxiliaryComment.UserId,
+		Username: auxiliaryComment.Username,
+		Role:     auxiliaryComment.Role,
+		Avatar:   auxiliaryComment.Avatar,
+	}
+	c.Blog = entity.Blog{
+		Id:     auxiliaryComment.BlogId,
+		Title:  auxiliaryComment.BlogTitle,
+		Status: auxiliaryComment.BlogStatus,
 	}
 
 	return c, nil
@@ -33,13 +54,30 @@ func SelectCommentById(id uint64) (entity.Comment, error) {
 
 // 查询评论
 func SelectComments(condition CommentWhere) ([]entity.Comment, error) {
+	var auxiliaryComments []auxiliaryComment
 	var comments []entity.Comment
 	where := generateCommentWhereCondition(condition)
 	tx := db.Db.Model(&entity.Comment{})
 	tx = where(tx)
-	tx = tx.Find(&comments)
+	tx = commentUnionJoins(tx)
+	tx = tx.Find(&auxiliaryComments)
 	if tx.Error != nil {
 		return nil, tx.Error
+	}
+	for _, auxiliaryComment := range auxiliaryComments {
+		comment := auxiliaryComment.Comment
+		comment.User = entity.User{
+			Id:       auxiliaryComment.UserId,
+			Username: auxiliaryComment.Username,
+			Role:     auxiliaryComment.Role,
+			Avatar:   auxiliaryComment.Avatar,
+		}
+		comment.Blog = entity.Blog{
+			Id:     auxiliaryComment.BlogId,
+			Title:  auxiliaryComment.BlogTitle,
+			Status: auxiliaryComment.BlogStatus,
+		}
+		comments = append(comments, comment)
 	}
 
 	return comments, nil
@@ -107,20 +145,20 @@ func generateCommentWhereConditionWithNoPage(con CommentWhere) func(*gorm.DB) *g
 		whereClause := map[string]interface{}{}
 
 		if con.UserId.Exist() {
-			whereClause["user_id"] = con.UserId.Value()
+			whereClause["tbl_comment.user_id"] = con.UserId.Value()
 		}
 		if con.BlogId.Exist() {
-			whereClause["blog_id"] = con.BlogId.Value()
+			whereClause["tbl_comment.blog_id"] = con.BlogId.Value()
 		}
 		if con.Status.Exist() {
-			whereClause["status"] = con.Status.Value()
+			whereClause["tbl_comment.status"] = con.Status.Value()
 		}
 		where := db.Where(whereClause)
 		if con.StartTime.Exist() {
-			where.Where("create_time >= ?", con.StartTime.Value())
+			where.Where("tbl_comment.create_time >= ?", con.StartTime.Value())
 		}
 		if con.EndTime.Exist() {
-			where.Where("create_time <= ?", con.EndTime.Value())
+			where.Where("tbl_comment.create_time <= ?", con.EndTime.Value())
 		}
 		return where
 	}
@@ -131,4 +169,14 @@ func generateCommentWhereCondition(con CommentWhere) func(*gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		return where(db).Offset(int((con.Page.Value() - 1) * con.Size.Value())).Limit(int(con.Size.Value()))
 	}
+}
+
+func commentUnionJoins(tx *gorm.DB) *gorm.DB {
+	query := []string{"tbl_comment.*"}
+	query = append(query, briefUserSelect()...)
+	query = append(query, briefBlogSelect()...)
+	tx = tx.Select(query)
+	tx = briefUserJoins(tx, "tbl_comment")
+	tx = briefBlogJoins(tx, "tbl_comment")
+	return tx
 }

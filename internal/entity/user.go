@@ -2,9 +2,10 @@ package entity
 
 import (
 	"errors"
-	"golang.org/x/crypto/bcrypt"
 	"regexp"
 	"time"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 // Role 角色：0 访客，1 用户，2 编辑，3 管理，4 站长
@@ -54,11 +55,11 @@ func (e Email) String() string {
 type User struct {
 	Id         uint64    `gorm:"primaryKey;autoIncrement;comment:用户ID" json:"id"`
 	Username   string    `gorm:"type:varchar(255);not null;comment:用户名;unique" json:"username"`
-	Password   string    `gorm:"type:varchar(255);not null;default:123456;comment:密码" json:"password"`
+	Password   string    `gorm:"type:varchar(255);not null;default:123456;comment:密码" json:"password,omitempty"`
 	Role       Role      `gorm:"not null;default:1;comment:角色" json:"role"`
-	Email      Email     `gorm:"type:varchar(255);not null;comment:邮箱;unique" json:"email"`
+	Email      Email     `gorm:"type:varchar(255);not null;comment:邮箱;unique" json:"email,omitempty"`
 	Avatar     string    `gorm:"type:text;not null;comment:头像URL" json:"avatar"`
-	Signature  string    `gorm:"type:text;not null;comment:个性签名" json:"signature"`
+	Signature  string    `gorm:"type:text;not null;comment:个性签名" json:"signature,omitempty"`
 	CreateTime time.Time `gorm:"type:timestamp;not null;default:CURRENT_TIMESTAMP;comment:创建时间" json:"create_time"`
 	UpdateTime time.Time `gorm:"type:timestamp;not null;default:CURRENT_TIMESTAMP;comment:更新时间" json:"update_time"`
 }
