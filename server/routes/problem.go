@@ -42,9 +42,17 @@ func InitTagRoute(ginServer *gin.Engine) {
 
 	tagEditorRoute := ginServer.Group("/tag")
 	{
+		// 使用中间件
+		tagEditorRoute.Use(middlewares.TokenAuthEditor())
 		tagEditorRoute.POST("/", handler.TagAdd)
 		tagEditorRoute.PUT("/", handler.TagModify)
-		tagEditorRoute.DELETE("/:id", handler.TagRemove)
+	}
+
+	tagAdminRoute := ginServer.Group("/tag")
+	{
+		// 使用中间件
+		tagAdminRoute.Use(middlewares.TokenAuthAdmin())
+		tagAdminRoute.DELETE("/:id", handler.TagRemove)
 	}
 }
 
