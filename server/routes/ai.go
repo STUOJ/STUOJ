@@ -9,6 +9,7 @@ import (
 func InitAiRouter(ginServer *gin.Engine) {
 	aiUserRouter := ginServer.Group("/ai")
 	{
+		// 使用中间件
 		aiUserRouter.Use(middlewares.TokenAuthUser())
 
 		aiUserRouter.POST("/chat/assistant", neko.ForwardHandler)
@@ -18,6 +19,7 @@ func InitAiRouter(ginServer *gin.Engine) {
 
 	aiEditorRouter := ginServer.Group("/ai")
 	{
+		// 使用中间件
 		aiEditorRouter.Use(middlewares.TokenAuthEditor())
 
 		aiEditorRouter.POST("/problem/parse", neko.ForwardHandler)

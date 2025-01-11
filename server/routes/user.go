@@ -3,7 +3,6 @@ package routes
 import (
 	"STUOJ/server/handler"
 	"STUOJ/server/middlewares"
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -15,13 +14,30 @@ func InitUserRoute(ginServer *gin.Engine) {
 		userPublicRoute.POST("/register", handler.UserRegister)
 		userPublicRoute.PUT("/password", handler.UserChangePassword)
 	}
-	userProtectedRoute := ginServer.Group("/user")
+	userUserRoute := ginServer.Group("/user")
 	{
 		// 使用中间件
-		userProtectedRoute.Use(middlewares.TokenAuthUser())
+		userUserRoute.Use(middlewares.TokenAuthUser())
 
-		userProtectedRoute.GET("/current", handler.UserCurrentId)
-		userProtectedRoute.PUT("/modify/:id", handler.UserModify)
-		userProtectedRoute.POST("/avatar/:id", handler.ModifyUserAvatar)
+		userUserRoute.GET("/current", handler.UserCurrentId)
+		userUserRoute.PUT("/modify/:id", handler.UserModify)
+		userUserRoute.POST("/avatar/:id", handler.ModifyUserAvatar)
+	}
+	userAdminRoute := ginServer.Group("/user")
+	{
+		// 使用中间件
+		userAdminRoute.Use(middlewares.TokenAuthAdmin())
+
+		userAdminRoute.GET("/", handler.UserList)
+		userAdminRoute.POST("/", handler.UserAdd)
+		userAdminRoute.DELETE("/:id", handler.UserRemove)
+	}
+
+	userRootRoute := ginServer.Group("/user")
+	{
+		// 使用中间件
+		userRootRoute.Use(middlewares.TokenAuthRoot())
+
+		userRootRoute.PUT("/user/role", handler.UserModifyRole)
 	}
 }

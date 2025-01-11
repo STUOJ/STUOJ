@@ -12,6 +12,7 @@ func InitCommentRoute(ginServer *gin.Engine) {
 	{
 		commentPublicRoute.GET("/", handler.CommentList)
 	}
+
 	commentUserRoute := ginServer.Group("/comment")
 	{
 		// 使用中间件
@@ -20,6 +21,7 @@ func InitCommentRoute(ginServer *gin.Engine) {
 		commentUserRoute.POST("/", handler.CommentAdd)
 		commentUserRoute.DELETE("/:id", handler.CommentRemove)
 	}
+
 	commentAdminRoute := ginServer.Group("/comment")
 	{
 		// 使用中间件

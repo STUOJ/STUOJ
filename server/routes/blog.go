@@ -13,6 +13,7 @@ func InitBlogRoute(ginServer *gin.Engine) {
 		blogPublicRoute.GET("/", handler.BlogList)
 		blogPublicRoute.GET("/:id", handler.BlogInfo)
 	}
+
 	blogUserRoute := ginServer.Group("/blog")
 	{
 		// 使用中间件

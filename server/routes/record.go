@@ -13,6 +13,7 @@ func InitRecordRoute(ginServer *gin.Engine) {
 		recordPublicRoute.GET("/", handler.RecordList)
 		recordPublicRoute.GET("/:id", handler.RecordInfo)
 	}
+
 	recordAdminRoute := ginServer.Group("/record")
 	{
 		// 使用中间件

@@ -13,6 +13,7 @@ func InitProblemRoute(ginServer *gin.Engine) {
 		problemPublicRoute.GET("/", handler.ProblemList)
 		problemPublicRoute.GET("/:id", handler.ProblemInfo)
 	}
+
 	problemEditorRoute := ginServer.Group("/problem")
 	{
 		// 使用中间件

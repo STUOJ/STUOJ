@@ -10,6 +10,7 @@ func InitTagRoute(ginServer *gin.Engine) {
 	{
 		tagPublicRoute.GET("/", handler.TagList)
 	}
+
 	tagEditorRoute := ginServer.Group("/tag")
 	{
 		tagEditorRoute.POST("/", handler.TagAdd)
