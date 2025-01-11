@@ -331,6 +331,7 @@ type ReqUserModifyRole struct {
 }
 
 func UserModifyRole(c *gin.Context) {
+	role, _ := utils.GetUserInfo(c)
 	var req ReqUserModifyRole
 
 	// 参数绑定
@@ -348,7 +349,7 @@ func UserModifyRole(c *gin.Context) {
 	}
 
 	// 修改用户
-	err = user.UpdateRoleById(u)
+	err = user.UpdateRoleById(u, role)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))

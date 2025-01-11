@@ -107,11 +107,17 @@ func UpdatePasswordById(uid uint64, pw string) error {
 }
 
 // 根据ID更新用户角色
-func UpdateRoleById(u entity.User) error {
+func UpdateRoleById(u entity.User, role entity.Role) error {
 	// 读取用户
 	u0, err := SelectById(u.Id)
 	if err != nil {
 		return errors.New("用户不存在")
+	}
+	if u.Role >= role {
+		return errors.New("权限不足")
+	}
+	if u0.Role >= role {
+		return errors.New("权限不足")
 	}
 
 	updateTime := time.Now()
