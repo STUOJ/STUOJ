@@ -60,7 +60,7 @@ func InitTestcaseRoute(ginServer *gin.Engine) {
 	testcaseEditorRoute := ginServer.Group("/testcase")
 	{
 		// 使用中间件
-		testcaseEditorRoute.Use(middlewares.TokenAuthAdmin())
+		testcaseEditorRoute.Use(middlewares.TokenAuthEditor())
 
 		testcaseEditorRoute.GET("/:id", handler.TestcaseInfo)
 		testcaseEditorRoute.POST("/", handler.TestcaseAdd)
