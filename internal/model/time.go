@@ -44,7 +44,5 @@ func (p *Period) FromString(startTimeStr string, endTimeStr string, layout strin
 		return errors.New("结束时间格式错误")
 	}
 
-	log.Println(p.StartTime, p.EndTime)
-
 	return nil
 }
