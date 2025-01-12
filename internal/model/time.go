@@ -28,16 +28,23 @@ func (p *Period) FromString(startTimeStr string, endTimeStr string, layout strin
 		return errors.New("参数错误")
 	}
 
-	p.StartTime, err = time.Parse(layout, startTimeStr)
+	location, err := time.LoadLocation("Asia/Shanghai")
+	if err != nil {
+		return errors.New("加载时区失败")
+	}
+
+	p.StartTime, err = time.ParseInLocation(layout, startTimeStr, location)
 	if err != nil {
 		log.Println(err)
 		return errors.New("开始时间格式错误")
 	}
-	p.EndTime, err = time.Parse(layout, endTimeStr)
+	p.EndTime, err = time.ParseInLocation(layout, endTimeStr, location)
 	if err != nil {
 		log.Println(err)
 		return errors.New("结束时间格式错误")
 	}
+
+	log.Println(p.StartTime, p.EndTime)
 
 	return nil
 }
