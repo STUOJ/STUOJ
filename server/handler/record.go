@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -52,20 +53,32 @@ func RecordList(c *gin.Context) {
 func parseRecordWhere(c *gin.Context) dao.SubmissionWhere {
 	condition := dao.SubmissionWhere{}
 	if c.Query("problem") != "" {
-		problem, err := strconv.Atoi(c.Query("problem"))
-		if err != nil {
-			log.Println(err)
-		} else {
-			condition.ProblemId.Set(uint64(problem))
+		problemQuery := c.Query("problem")
+		problems := strings.Split(problemQuery, ",")
+		var problemsInt []uint64
+		for _, problem := range problems {
+			problemInt, err := strconv.Atoi(problem)
+			if err != nil {
+				log.Println(err)
+			} else {
+				problemsInt = append(problemsInt, uint64(problemInt))
+			}
 		}
+		condition.ProblemId.Set(problemsInt)
 	}
 	if c.Query("user") != "" {
-		user, err := strconv.Atoi(c.Query("user"))
-		if err != nil {
-			log.Println(err)
-		} else {
-			condition.UserId.Set(uint64(user))
+		userQuery := c.Query("user")
+		users := strings.Split(userQuery, ",")
+		var usersInt []uint64
+		for _, user := range users {
+			userInt, err := strconv.Atoi(user)
+			if err != nil {
+				log.Println(err)
+			} else {
+				usersInt = append(usersInt, uint64(userInt))
+			}
 		}
+		condition.UserId.Set(usersInt)
 	}
 	if c.Query("language") != "" {
 		language, err := strconv.Atoi(c.Query("language"))
