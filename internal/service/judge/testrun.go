@@ -25,7 +25,7 @@ func TestRun(s entity.Submission, stdin string) (entity.Judgement, error) {
 	// 初始化评测点评测对象
 	js := model.JudgeSubmission{
 		SourceCode:     s.SourceCode,
-		LanguageId:     lang.MapId,
+		LanguageId:     uint64(lang.MapId),
 		Stdin:          stdin,
 		ExpectedOutput: "",
 		CPUTimeLimit:   2,

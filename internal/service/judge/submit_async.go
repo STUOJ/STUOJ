@@ -27,7 +27,7 @@ func AsyncSubmit(s entity.Submission) (uint64, error) {
 	updateTime := time.Now()
 	s.UpdateTime = updateTime
 	s.CreateTime = updateTime
-	s.Length = uint64(len(s.SourceCode))
+	s.Length = uint32(len(s.SourceCode))
 
 	// 获取题目信息
 	p, err := dao.SelectProblemById(s.ProblemId)
@@ -63,7 +63,7 @@ func asyncSubmit(s entity.Submission, p entity.Problem, ts []entity.Testcase) {
 
 	lang, _ := language.SelectById(s.LanguageId)
 	s1 := s
-	s1.LanguageId = lang.MapId
+	s1.LanguageId = uint64(lang.MapId)
 
 	// 提交评测点
 	for _, t := range ts {
@@ -106,7 +106,7 @@ func asyncSubmit(s entity.Submission, p entity.Problem, ts []entity.Testcase) {
 
 	// 计算分数
 	if acCount > 0 {
-		s.Score = 100 * acCount / uint64(len(ts))
+		s.Score = uint8(100 * acCount / uint64(len(ts)))
 	}
 
 	// 更新提交信息

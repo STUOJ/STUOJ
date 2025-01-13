@@ -38,7 +38,7 @@ func (d Difficulty) String() string {
 	}
 }
 
-// ProblemStatus 题目状态: 1 作废, 2 出题, 3 调试, 4 隐藏, 5 比赛, 6 会员, 7 公开
+// ProblemStatus 题目状态: 1 作废, 2 出题, 3 调试, 4 隐藏, 5 公开
 type ProblemStatus uint64
 
 const (
@@ -46,9 +46,7 @@ const (
 	ProblemStatusEditing   ProblemStatus = 2
 	ProblemStatusDebugging ProblemStatus = 3
 	ProblemStatusHidden    ProblemStatus = 4
-	ProblemStatusContest   ProblemStatus = 5
-	ProblemStatusVip       ProblemStatus = 6
-	ProblemStatusPublic    ProblemStatus = 7
+	ProblemStatusPublic    ProblemStatus = 5
 )
 
 func (s ProblemStatus) String() string {
@@ -61,10 +59,6 @@ func (s ProblemStatus) String() string {
 		return "调试"
 	case ProblemStatusHidden:
 		return "隐藏"
-	case ProblemStatusContest:
-		return "比赛"
-	case ProblemStatusVip:
-		return "会员"
 	case ProblemStatusPublic:
 		return "公开"
 	default:
