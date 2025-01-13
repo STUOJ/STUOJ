@@ -20,7 +20,7 @@ func WaitSubmit(s entity.Submission) (uint64, error) {
 	updateTime := time.Now()
 	s.UpdateTime = updateTime
 	s.CreateTime = updateTime
-	s.Length = uint64(len(s.SourceCode))
+	s.Length = uint32(len(s.SourceCode))
 
 	// 获取题目信息
 	p, err := dao.SelectProblemById(s.ProblemId)
@@ -54,7 +54,7 @@ func WaitSubmit(s entity.Submission) (uint64, error) {
 		return 0, errors.New("该语言不可用")
 	}
 	s1 := s
-	s1.LanguageId = lang.MapId
+	s1.LanguageId = uint64(lang.MapId)
 
 	var acCount uint64 = 0
 
@@ -99,7 +99,7 @@ func WaitSubmit(s entity.Submission) (uint64, error) {
 
 	// 计算分数
 	if acCount > 0 {
-		s.Score = 100 * acCount / uint64(len(ts))
+		s.Score = uint8(100 * acCount / uint64(len(ts)))
 	}
 
 	// 更新提交信息

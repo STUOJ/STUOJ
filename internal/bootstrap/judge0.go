@@ -52,13 +52,13 @@ func InitJudgeLanguages() error {
 	}
 	for i := range languages {
 		if lang, exists := oldLangMap[languages[i].Name]; exists {
-			lang.MapId = languages[i].Id
+			lang.MapId = uint32(languages[i].Id)
 			//log.Println(*lang)
 			if err := dao.UpdateLanguage(*lang); err != nil {
 				return err
 			}
 		} else {
-			if _, err := dao.InsertLanguage(entity.Language{Name: languages[i].Name, MapId: languages[i].Id}); err != nil {
+			if _, err := dao.InsertLanguage(entity.Language{Name: languages[i].Name, MapId: uint32(languages[i].Id)}); err != nil {
 				return err
 			}
 		}

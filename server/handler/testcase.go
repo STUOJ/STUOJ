@@ -53,7 +53,7 @@ func TestcaseAdd(c *gin.Context) {
 
 	// 初始化题目
 	t := entity.Testcase{
-		Serial:     req.Serial,
+		Serial:     uint16(req.Serial),
 		ProblemId:  req.ProblemId,
 		TestInput:  req.TestInput,
 		TestOutput: req.TestOutput,
@@ -93,7 +93,7 @@ func TestcaseModify(c *gin.Context) {
 	// 修改评测点数据
 	t := entity.Testcase{
 		Id:         req.Id,
-		Serial:     req.Serial,
+		Serial:     uint16(req.Serial),
 		ProblemId:  req.ProblemId,
 		TestInput:  req.TestInput,
 		TestOutput: req.TestOutput,
