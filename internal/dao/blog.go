@@ -204,8 +204,8 @@ func blogUnionJoins(tx *gorm.DB) *gorm.DB {
 
 func briefBlogSelect() []string {
 	return []string{
-		"tbl_blog.title as problem_title",
-		"tbl_blog.status as problem_status",
+		"tbl_blog.title as blog_title",
+		"tbl_blog.status as blog_status",
 	}
 }
 
