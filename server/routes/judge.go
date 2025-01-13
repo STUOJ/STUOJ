@@ -11,12 +11,13 @@ func InitJudgeRoute(ginServer *gin.Engine) {
 	{
 		judgePublicRoute.GET("/language", handler.JudgeLanguageList)
 	}
-	judgePrivateRoute := ginServer.Group("/judge")
+
+	judgeUserRoute := ginServer.Group("/judge")
 	{
 		// 使用中间件
-		judgePrivateRoute.Use(middlewares.TokenAuthUser())
+		judgeUserRoute.Use(middlewares.TokenAuthUser())
 
-		judgePrivateRoute.POST("/submit", handler.JudgeSubmit)
-		judgePrivateRoute.POST("/testrun", handler.JudgeTestRun)
+		judgeUserRoute.POST("/submit", handler.JudgeSubmit)
+		judgeUserRoute.POST("/testrun", handler.JudgeTestRun)
 	}
 }

@@ -4,6 +4,7 @@ import (
 	"STUOJ/internal/db"
 	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
+	"fmt"
 	"time"
 
 	"gorm.io/gorm"
@@ -13,6 +14,12 @@ type UserWhere struct {
 	Role model.Field[entity.Role]
 	Page model.Field[uint64]
 	Size model.Field[uint64]
+}
+
+type BriefUser struct {
+	Username string      `gorm:"column:user_username"`
+	Role     entity.Role `gorm:"column:user_role"`
+	Avatar   string      `gorm:"column:user_avatar"`
 }
 
 // 插入用户
@@ -28,7 +35,7 @@ func InsertUser(u entity.User) (uint64, error) {
 func SelectUserById(id uint64) (entity.User, error) {
 	var user entity.User
 
-	tx := db.Db.Where("id = ?", id).First(&user)
+	tx := db.Db.Where(&entity.User{Id: id}).First(&user)
 	if tx.Error != nil {
 		return entity.User{}, tx.Error
 	}
@@ -136,4 +143,17 @@ func generateUserWhereCondition(con UserWhere) func(*gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		return where(db).Offset(int((con.Page.Value() - 1) * con.Size.Value())).Limit(int(con.Size.Value()))
 	}
+}
+
+func briefUserSelect() []string {
+	return []string{
+		"tbl_user.username as user_username",
+		"tbl_user.role as user_role",
+		"tbl_user.avatar as user_avatar",
+	}
+}
+
+func briefUserJoins(db *gorm.DB, tbl string) *gorm.DB {
+	db = db.Joins(fmt.Sprintf("LEFT JOIN tbl_user ON %s.user_id = tbl_user.id", tbl))
+	return db
 }

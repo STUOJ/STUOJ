@@ -5,6 +5,7 @@ import (
 	"STUOJ/internal/dao"
 	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
+	"STUOJ/internal/service/language"
 	"errors"
 	"log"
 	"math"
@@ -14,6 +15,14 @@ import (
 
 func AsyncSubmit(s entity.Submission) (uint64, error) {
 	var err error
+
+	lang, err := language.SelectById(s.LanguageId)
+	if err != nil {
+		return 0, errors.New("获取语言信息失败")
+	}
+	if lang.Status != 3 {
+		return 0, errors.New("该语言不可用")
+	}
 
 	updateTime := time.Now()
 	s.UpdateTime = updateTime
@@ -52,12 +61,17 @@ func asyncSubmit(s entity.Submission, p entity.Problem, ts []entity.Testcase) {
 	s.Status = entity.JudgeAC
 	chJudgement := make(chan entity.Judgement)
 
+	lang, _ := language.SelectById(s.LanguageId)
+	s1 := s
+	s1.LanguageId = lang.MapId
+
 	// 提交评测点
 	for _, t := range ts {
 		// 异步评测
-		go asyncJudge(s, p, t, chJudgement)
+		go asyncJudge(s1, p, t, chJudgement)
 	}
 
+	var acCount uint64 = 0
 	for _, _ = range ts {
 		// 接收评测点结果
 		j := <-chJudgement
@@ -85,7 +99,14 @@ func asyncSubmit(s entity.Submission, p entity.Problem, ts []entity.Testcase) {
 			if s.Status != entity.JudgeWA {
 				s.Status = max(s.Status, j.Status)
 			}
+		} else {
+			acCount++
 		}
+	}
+
+	// 计算分数
+	if acCount > 0 {
+		s.Score = 100 * acCount / uint64(len(ts))
 	}
 
 	// 更新提交信息

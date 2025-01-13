@@ -2,7 +2,8 @@ package bootstrap
 
 import (
 	"STUOJ/external/judge0"
-	"STUOJ/internal/service/language"
+	"STUOJ/internal/dao"
+	"STUOJ/internal/entity"
 	"STUOJ/utils"
 	"log"
 )
@@ -41,34 +42,27 @@ func InitJudgeLanguages() error {
 		return err
 	}
 
-	/*	log.Println("Judge support languages:")
-		for k, v := range languages {
-			log.Println(k, v)
-		}
-	*/
-
-	// 清空数据库语言表
-	err = language.DeleteAll()
+	oldLangs, err := dao.SelectLanguage(dao.LanguageWhere{})
 	if err != nil {
-		log.Println(err)
+		return err
 	}
-
-	// 插入数据库语言表
-	for _, l := range languages {
-		//log.Println(v)
-
-		// 初始化对象
-		// language := entity.Language{
-		// 	Id:   uint64(v["id"].(float64)),
-		// 	Name: v["name"].(string),
-		// }
-
-		_, err := language.Insert(l)
-		if err != nil {
-			return err
+	oldLangMap := make(map[string]*entity.Language, len(oldLangs))
+	for i := range oldLangs {
+		oldLangMap[oldLangs[i].Name] = &oldLangs[i]
+	}
+	for i := range languages {
+		if lang, exists := oldLangMap[languages[i].Name]; exists {
+			lang.MapId = languages[i].Id
+			//log.Println(*lang)
+			if err := dao.UpdateLanguage(*lang); err != nil {
+				return err
+			}
+		} else {
+			if _, err := dao.InsertLanguage(entity.Language{Name: languages[i].Name, MapId: languages[i].Id}); err != nil {
+				return err
+			}
 		}
 	}
-
 	return nil
 }
 

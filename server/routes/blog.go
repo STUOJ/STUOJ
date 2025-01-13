@@ -13,14 +13,39 @@ func InitBlogRoute(ginServer *gin.Engine) {
 		blogPublicRoute.GET("/", handler.BlogList)
 		blogPublicRoute.GET("/:id", handler.BlogInfo)
 	}
-	blogPrivateRoute := ginServer.Group("/blog")
+
+	blogUserRoute := ginServer.Group("/blog")
 	{
 		// 使用中间件
-		blogPrivateRoute.Use(middlewares.TokenAuthUser())
+		blogUserRoute.Use(middlewares.TokenAuthUser())
 
-		blogPrivateRoute.POST("/", handler.BlogUpload)
-		blogPrivateRoute.PUT("/", handler.BlogEdit)
-		blogPrivateRoute.PUT("/:id", handler.BlogSubmit)
-		blogPrivateRoute.DELETE("/:id", handler.BlogRemove)
+		blogUserRoute.POST("/", handler.BlogUpload)
+		blogUserRoute.PUT("/", handler.BlogEdit)
+		blogUserRoute.PUT("/:id", handler.BlogSubmit)
+		blogUserRoute.DELETE("/:id", handler.BlogRemove)
+	}
+}
+
+func InitCommentRoute(ginServer *gin.Engine) {
+	commentPublicRoute := ginServer.Group("/comment")
+	{
+		commentPublicRoute.GET("/", handler.CommentList)
+	}
+
+	commentUserRoute := ginServer.Group("/comment")
+	{
+		// 使用中间件
+		commentUserRoute.Use(middlewares.TokenAuthUser())
+
+		commentUserRoute.POST("/", handler.CommentAdd)
+		commentUserRoute.DELETE("/:id", handler.CommentRemove)
+	}
+
+	commentAdminRoute := ginServer.Group("/comment")
+	{
+		// 使用中间件
+		commentAdminRoute.Use(middlewares.TokenAuthAdmin())
+
+		commentAdminRoute.PUT("/", handler.CommentModify)
 	}
 }

@@ -20,6 +20,12 @@ type SubmissionWhere struct {
 	Size       model.Field[uint64]
 }
 
+type auxiliarySubmission struct {
+	entity.Submission
+	BriefUser
+	BriefProblem
+}
+
 // 插入提交记录
 func InsertSubmission(s entity.Submission) (uint64, error) {
 	updateTime := time.Now()
@@ -33,16 +39,35 @@ func InsertSubmission(s entity.Submission) (uint64, error) {
 	return s.Id, nil
 }
 
-// 查询所有提交记录
+// 查询提交记录
 func SelectSubmissions(condition SubmissionWhere) ([]entity.Submission, error) {
+	var auxiliarySubmissions []auxiliarySubmission
 	var submissions []entity.Submission
 
 	where := generateSubmissionWhereCondition(condition)
 	tx := db.Db.Model(&entity.Submission{})
 	tx = where(tx)
-	tx = tx.Find(&submissions)
+	tx = submissionUnionJoins(tx)
+	tx = tx.Find(&auxiliarySubmissions)
 	if tx.Error != nil {
 		return nil, tx.Error
+	}
+
+	for _, auxiliarySubmission := range auxiliarySubmissions {
+		submission := auxiliarySubmission.Submission
+		submission.User = entity.User{
+			Id:       auxiliarySubmission.UserId,
+			Username: auxiliarySubmission.Username,
+			Role:     auxiliarySubmission.Role,
+			Avatar:   auxiliarySubmission.Avatar,
+		}
+		submission.Problem = entity.Problem{
+			Id:         auxiliarySubmission.ProblemId,
+			Title:      auxiliarySubmission.ProblemTitle,
+			Status:     auxiliarySubmission.ProblemStatus,
+			Difficulty: auxiliarySubmission.ProblemDifficulty,
+		}
+		submissions = append(submissions, submission)
 	}
 
 	return submissions, nil
@@ -50,11 +75,27 @@ func SelectSubmissions(condition SubmissionWhere) ([]entity.Submission, error) {
 
 // 根据ID查询提交记录
 func SelectSubmissionById(id uint64) (entity.Submission, error) {
+	var auxiliarySubmission auxiliarySubmission
 	var s entity.Submission
 
-	tx := db.Db.Where("id = ?", id).First(&s)
+	tx := db.Db.Where(&entity.Submission{Id: id})
+	tx = submissionUnionJoins(tx)
+	tx = tx.First(&auxiliarySubmission)
 	if tx.Error != nil {
 		return entity.Submission{}, tx.Error
+	}
+	s = auxiliarySubmission.Submission
+	s.User = entity.User{
+		Id:       auxiliarySubmission.UserId,
+		Username: auxiliarySubmission.Username,
+		Role:     auxiliarySubmission.Role,
+		Avatar:   auxiliarySubmission.Avatar,
+	}
+	s.Problem = entity.Problem{
+		Id:         auxiliarySubmission.ProblemId,
+		Title:      auxiliarySubmission.ProblemTitle,
+		Status:     auxiliarySubmission.ProblemStatus,
+		Difficulty: auxiliarySubmission.ProblemDifficulty,
 	}
 
 	return s, nil
@@ -62,7 +103,7 @@ func SelectSubmissionById(id uint64) (entity.Submission, error) {
 
 // 更新提交记录
 func UpdateSubmissionById(s entity.Submission) error {
-	tx := db.Db.Model(&s).Where("id = ?", s.Id).Updates(s)
+	tx := db.Db.Model(&s).Updates(s)
 	if tx.Error != nil {
 		return tx.Error
 	}
@@ -145,23 +186,23 @@ func generateSubmissionWhereConditionWithNoPage(con SubmissionWhere) func(*gorm.
 		whereClause := map[string]interface{}{}
 
 		if con.ProblemId.Exist() {
-			whereClause["problem_id"] = con.ProblemId.Value()
+			whereClause["tbl_submission.problem_id"] = con.ProblemId.Value()
 		}
 		if con.UserId.Exist() {
-			whereClause["user_id"] = con.UserId.Value()
+			whereClause["tbl_submission.user_id"] = con.UserId.Value()
 		}
 		if con.LanguageId.Exist() {
-			whereClause["language_id"] = con.LanguageId.Value()
+			whereClause["tbl_submission.language_id"] = con.LanguageId.Value()
 		}
 		if con.Status.Exist() {
-			whereClause["status"] = con.Status.Value()
+			whereClause["tbl_submission.status"] = con.Status.Value()
 		}
 		where := db.Where(whereClause)
 		if con.StartTime.Exist() {
-			where.Where("create_time >= ?", con.StartTime.Value())
+			where.Where("tbl_submission.create_time >= ?", con.StartTime.Value())
 		}
 		if con.EndTime.Exist() {
-			where.Where("create_time <= ?", con.EndTime.Value())
+			where.Where("tbl_submission.create_time <= ?", con.EndTime.Value())
 		}
 		return where
 	}
@@ -172,4 +213,14 @@ func generateSubmissionWhereCondition(con SubmissionWhere) func(*gorm.DB) *gorm.
 	return func(db *gorm.DB) *gorm.DB {
 		return where(db).Offset(int((con.Page.Value() - 1) * con.Size.Value())).Limit(int(con.Size.Value()))
 	}
+}
+
+func submissionUnionJoins(tx *gorm.DB) *gorm.DB {
+	query := []string{"tbl_submission.*"}
+	query = append(query, briefUserSelect()...)
+	query = append(query, briefProblemSelect()...)
+	tx = tx.Select(query)
+	tx = briefProblemJoins(tx, "tbl_submission")
+	tx = briefUserJoins(tx, "tbl_submission")
+	return tx
 }

@@ -8,19 +8,16 @@ import (
 )
 
 func InitMiscRoute(ginServer *gin.Engine) {
-	uploadRoute := ginServer.Group("/upload")
+	uploadUserRoute := ginServer.Group("/upload")
 	{
-		uploadRoute.Use(middlewares.TokenAuthUser())
-		uploadRoute.POST("/image", handler.UploadImage)
+		// 使用中间件
+		uploadUserRoute.Use(middlewares.TokenAuthUser())
+
+		uploadUserRoute.POST("/image", handler.UploadImage)
 	}
 
-	miscRoute := ginServer.Group("/misc")
+	emailPublicRoute := ginServer.Group("/email")
 	{
-		miscRoute.GET("/joke", handler.GetJoke)
-	}
-
-	emailRoute := ginServer.Group("/email")
-	{
-		emailRoute.POST("/send", handler.SendVerificationCode)
+		emailPublicRoute.POST("/send", handler.SendVerificationCode)
 	}
 }

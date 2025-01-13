@@ -4,6 +4,7 @@ import (
 	"STUOJ/internal/db"
 	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
+	"fmt"
 	"time"
 
 	"gorm.io/gorm"
@@ -19,6 +20,12 @@ type ProblemWhere struct {
 	Size       model.Field[uint64]
 }
 
+type BriefProblem struct {
+	ProblemTitle      string               `gorm:"column:problem_title"`
+	ProblemStatus     entity.ProblemStatus `gorm:"column:problem_status"`
+	ProblemDifficulty entity.Difficulty    `gorm:"column:problem_difficulty"`
+}
+
 // 插入题目
 func InsertProblem(p entity.Problem) (uint64, error) {
 	tx := db.Db.Create(&p)
@@ -32,7 +39,7 @@ func InsertProblem(p entity.Problem) (uint64, error) {
 func SelectProblemById(id uint64) (entity.Problem, error) {
 	var p entity.Problem
 
-	tx := db.Db.Where("id = ?", id).First(&p)
+	tx := db.Db.Where(&entity.Problem{Id: id}).First(&p)
 	if tx.Error != nil {
 		return entity.Problem{}, tx.Error
 	}
@@ -116,13 +123,13 @@ func generateProblemWhereConditionWithNoPage(con ProblemWhere) func(*gorm.DB) *g
 		whereClause := map[string]interface{}{}
 
 		if con.Id.Exist() {
-			whereClause["id"] = con.Id.Value()
+			whereClause["tbl_problem.id"] = con.Id.Value()
 		}
 		if con.Status.Exist() {
-			whereClause["status"] = con.Status.Value()
+			whereClause["tbl_problem.status"] = con.Status.Value()
 		}
 		if con.Difficulty.Exist() {
-			whereClause["difficulty"] = con.Difficulty.Value()
+			whereClause["tbl_problem.difficulty"] = con.Difficulty.Value()
 		}
 
 		where := db.Where(whereClause)
@@ -130,7 +137,7 @@ func generateProblemWhereConditionWithNoPage(con ProblemWhere) func(*gorm.DB) *g
 			where = where.Where("id IN (SELECT problem_id FROM tbl_problem_tag WHERE tag_id In(?) GROUP BY problem_id HAVING COUNT(DISTINCT tag_id) =?)", con.Tag.Value(), len(con.Tag.Value()))
 		}
 		if con.Title.Exist() {
-			where = where.Where("title LIKE ?", "%"+con.Title.Value()+"%")
+			where = where.Where("tbl_problem.title LIKE ?", "%"+con.Title.Value()+"%")
 		}
 		return where
 	}
@@ -141,4 +148,17 @@ func generateProblemWhereCondition(con ProblemWhere) func(*gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		return where(db).Offset(int((con.Page.Value() - 1) * con.Size.Value())).Limit(int(con.Size.Value()))
 	}
+}
+
+func briefProblemSelect() []string {
+	return []string{
+		"tbl_problem.title as problem_title",
+		"tbl_problem.status as problem_status",
+		"tbl_problem.difficulty as problem_difficulty",
+	}
+}
+
+func briefProblemJoins(db *gorm.DB, tbl string) *gorm.DB {
+	db = db.Joins(fmt.Sprintf("LEFT JOIN tbl_problem ON %s.problem_id = tbl_problem.id", tbl))
+	return db
 }

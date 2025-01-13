@@ -48,6 +48,7 @@ func RecordList(c *gin.Context) {
 	c.JSON(http.StatusOK, model.RespOk("OK", records))
 }
 
+// 条件查询提交记录
 func parseRecordWhere(c *gin.Context) dao.SubmissionWhere {
 	condition := dao.SubmissionWhere{}
 	if c.Query("problem") != "" {
@@ -106,4 +107,23 @@ func parseRecordWhere(c *gin.Context) dao.SubmissionWhere {
 		}
 	}
 	return condition
+}
+
+// 删除提交记录（提交信息+评测结果）
+func RecordRemove(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		return
+	}
+
+	sid := uint64(id)
+	err = record.DeleteBySubmissionId(sid)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		return
+	}
+
+	c.JSON(http.StatusOK, model.RespOk("删除成功", nil))
 }
