@@ -26,9 +26,15 @@ func SelectById(id uint64, userId uint64, admin ...bool) (entity.Blog, error) {
 	return b, nil
 }
 
-func Select(condition dao.BlogWhere, userId uint64, admin ...bool) (BlogPage, error) {
-	if len(admin) == 0 || !admin[0] && (!condition.UserId.Exist() || condition.UserId.Value() != userId) {
+func Select(condition dao.BlogWhere, userId uint64, role entity.Role) (BlogPage, error) {
+	if !condition.Status.Exist() {
 		condition.Status.Set(entity.BlogStatusPublic)
+	} else {
+		if condition.Status.Value() < entity.BlogStatusPublic {
+			if role < entity.RoleAdmin {
+				condition.UserId.Set(userId)
+			}
+		}
 	}
 	if !condition.Page.Exist() {
 		condition.Page.Set(1)

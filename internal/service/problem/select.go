@@ -59,7 +59,18 @@ func SelectById(id uint64, admin ...bool) (model.ProblemData, error) {
 	return pd, nil
 }
 
-func Select(condition dao.ProblemWhere) (ProblemPage, error) {
+func Select(condition dao.ProblemWhere, userId uint64, role entity.Role) (ProblemPage, error) {
+	if !condition.Status.Exist() {
+		condition.Status.Set(entity.ProblemStatusPublic)
+	} else {
+		if condition.Status.Value() < entity.ProblemStatusPublic {
+			if role <= entity.RoleUser {
+				condition.Status.Set(entity.ProblemStatusPublic)
+			} else if role == entity.RoleEditor {
+				condition.UserId.Set(userId)
+			}
+		}
+	}
 	if !condition.Page.Exist() {
 		condition.Page.Set(1)
 	}

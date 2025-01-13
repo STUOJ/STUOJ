@@ -16,6 +16,7 @@ type ProblemWhere struct {
 	Difficulty model.Field[entity.Difficulty]
 	Status     model.Field[entity.ProblemStatus]
 	Tag        model.FieldList[uint64]
+	UserId     model.Field[uint64]
 	Page       model.Field[uint64]
 	Size       model.Field[uint64]
 }
@@ -138,6 +139,9 @@ func generateProblemWhereConditionWithNoPage(con ProblemWhere) func(*gorm.DB) *g
 		}
 		if con.Title.Exist() {
 			where = where.Where("tbl_problem.title LIKE ?", "%"+con.Title.Value()+"%")
+		}
+		if con.UserId.Exist() {
+			where = where.Where("tbl_problem.id IN (SELECT problem_id FROM tbl_history WHERE user_id = ?)", con.UserId.Value())
 		}
 		return where
 	}

@@ -12,8 +12,8 @@ import (
 
 type BlogWhere struct {
 	Id        model.Field[uint64]
-	UserId    model.Field[uint64]
-	ProblemId model.Field[uint64]
+	UserId    model.FieldList[uint64]
+	ProblemId model.FieldList[uint64]
 	Title     model.Field[string]
 	Status    model.Field[entity.BlogStatus]
 	StartTime model.Field[time.Time]
@@ -161,17 +161,17 @@ func generateBlogWhereConditionWithNoPage(con BlogWhere) func(*gorm.DB) *gorm.DB
 		if con.Id.Exist() {
 			whereClause["tbl_blog.id"] = con.Id.Value()
 		}
-		if con.ProblemId.Exist() {
-			whereClause["tbl_blog.problem_id"] = con.ProblemId.Value()
-		}
-		if con.UserId.Exist() {
-			whereClause["tbl_blog.user_id"] = con.UserId.Value()
-		}
 		if con.Status.Exist() {
 			whereClause["tbl_blog.status"] = con.Status.Value()
 		}
 		where := db.Where(whereClause)
 
+		if con.UserId.Exist() {
+			where.Where("tbl_blog.user_id in ?", con.UserId.Value())
+		}
+		if con.ProblemId.Exist() {
+			where.Where("tbl_blog.problem_id in ?", con.ProblemId.Value())
+		}
 		if con.Title.Exist() {
 			where = where.Where("tbl_blog.title LIKE ?", "%"+con.Title.Value()+"%")
 		}
