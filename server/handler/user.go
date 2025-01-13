@@ -16,10 +16,10 @@ import (
 
 // 用户注册
 type ReqUserRegister struct {
-	Username   string       `json:"username" binding:"required"`
-	Password   string       `json:"password" binding:"required"`
-	Email      entity.Email `json:"email" binding:"required"`
-	VerifyCode string       `json:"verify_code" binding:"required"`
+	Username   string       `json:"username" binding:"required,min=3,max=16"`
+	Password   string       `json:"password" binding:"required,min=6,max=16"`
+	Email      entity.Email `json:"email" binding:"required,max=50"`
+	VerifyCode string       `json:"verify_code" binding:"required,max=10"`
 }
 
 func UserRegister(c *gin.Context) {
@@ -62,8 +62,8 @@ func UserRegister(c *gin.Context) {
 
 // 用户登录
 type ReqUserLogin struct {
-	Password string       `json:"password" binding:"required"`
-	Email    entity.Email `json:"email" binding:"required"`
+	Password string       `json:"password" binding:"required,min=6,max=16"`
+	Email    entity.Email `json:"email" binding:"required,max=50"`
 }
 
 func UserLogin(c *gin.Context) {
@@ -124,9 +124,9 @@ func UserCurrentId(c *gin.Context) {
 
 // 修改用户信息
 type ReqUserModify struct {
-	Username  string       `json:"username" binding:"required"`
-	Email     entity.Email `json:"email" binding:"required"`
-	Signature string       `json:"signature" binding:"required"`
+	Username  string       `json:"username" binding:"required,min=3,max=16"`
+	Email     entity.Email `json:"email" binding:"required,max=50"`
+	Signature string       `json:"signature" binding:"required,max=50"`
 }
 
 func UserModify(c *gin.Context) {
@@ -173,9 +173,9 @@ func UserModify(c *gin.Context) {
 
 // 修改用户密码
 type ReqUserChangePassword struct {
-	Email      entity.Email `json:"email" binding:"required"`
-	Password   string       `json:"password" binding:"required"`
-	VerifyCode string       `json:"verify_code" binding:"required"`
+	Email      entity.Email `json:"email" binding:"required,min=3,max=16"`
+	Password   string       `json:"password" binding:"required,min=6,max=16"`
+	VerifyCode string       `json:"verify_code" binding:"required,max=10"`
 }
 
 func UserChangePassword(c *gin.Context) {
@@ -269,11 +269,11 @@ func UserList(c *gin.Context) {
 
 // 添加普通用户
 type ReqUserAdd struct {
-	Username  string       `json:"username" binding:"required"`
-	Password  string       `json:"password" binding:"required"`
-	Email     entity.Email `json:"email" binding:"required"`
+	Username  string       `json:"username" binding:"required,min=3,max=16"`
+	Password  string       `json:"password" binding:"required,min=6,max=20"`
+	Email     entity.Email `json:"email" binding:"required,max=50"`
 	Avatar    string       `json:"avatar" binding:"required"`
-	Signature string       `json:"signature" binding:"required"`
+	Signature string       `json:"signature" binding:"required,max=50"`
 }
 
 func UserAdd(c *gin.Context) {
