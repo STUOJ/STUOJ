@@ -10,8 +10,8 @@ import (
 )
 
 type SubmissionWhere struct {
-	ProblemId  model.Field[uint64]
-	UserId     model.Field[uint64]
+	ProblemId  model.FieldList[uint64]
+	UserId     model.FieldList[uint64]
 	LanguageId model.Field[uint64]
 	StartTime  model.Field[time.Time]
 	EndTime    model.Field[time.Time]
@@ -185,12 +185,6 @@ func generateSubmissionWhereConditionWithNoPage(con SubmissionWhere) func(*gorm.
 	return func(db *gorm.DB) *gorm.DB {
 		whereClause := map[string]interface{}{}
 
-		if con.ProblemId.Exist() {
-			whereClause["tbl_submission.problem_id"] = con.ProblemId.Value()
-		}
-		if con.UserId.Exist() {
-			whereClause["tbl_submission.user_id"] = con.UserId.Value()
-		}
 		if con.LanguageId.Exist() {
 			whereClause["tbl_submission.language_id"] = con.LanguageId.Value()
 		}
@@ -198,6 +192,12 @@ func generateSubmissionWhereConditionWithNoPage(con SubmissionWhere) func(*gorm.
 			whereClause["tbl_submission.status"] = con.Status.Value()
 		}
 		where := db.Where(whereClause)
+		if con.UserId.Exist() {
+			where.Where("tbl_submission.user_id in ?", con.UserId.Value())
+		}
+		if con.ProblemId.Exist() {
+			where.Where("tbl_submission.problem_id in ?", con.ProblemId.Value())
+		}
 		if con.StartTime.Exist() {
 			where.Where("tbl_submission.create_time >= ?", con.StartTime.Value())
 		}
