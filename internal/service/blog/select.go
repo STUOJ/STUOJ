@@ -14,13 +14,13 @@ type BlogPage struct {
 }
 
 // 根据ID查询博客
-func SelectById(id uint64, userId uint64, admin ...bool) (entity.Blog, error) {
+func SelectById(id uint64, userId uint64, role entity.Role) (entity.Blog, error) {
 	b, err := dao.SelectBlogById(id)
 	if err != nil {
 		log.Println(err)
 		return entity.Blog{}, errors.New("获取博客失败")
 	}
-	if b.Status != entity.BlogPublic && (len(admin) == 0 || !admin[0]) && b.UserId != userId {
+	if b.Status != entity.BlogPublic && role < entity.RoleAdmin && b.UserId != userId {
 		return entity.Blog{}, errors.New("该博客未公开")
 	}
 	return b, nil
@@ -49,7 +49,7 @@ func Select(condition model.BlogWhere, userId uint64, role entity.Role) (BlogPag
 	}
 	count, err := dao.CountBlogs(condition)
 
-	hideBlogContent(blogs)
+	cutBlogContent(blogs)
 
 	if err != nil {
 		log.Println(err)
@@ -67,8 +67,10 @@ func Select(condition model.BlogWhere, userId uint64, role entity.Role) (BlogPag
 }
 
 // 不返回正文
-func hideBlogContent(blogs []entity.Blog) {
+func cutBlogContent(blogs []entity.Blog) {
 	for i := range blogs {
-		blogs[i].Content = ""
+		if len(blogs[i].Content) > 256 {
+			blogs[i].Content = blogs[i].Content[:256] + "..."
+		}
 	}
 }
