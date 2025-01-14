@@ -6,21 +6,21 @@ import "time"
 type BlogStatus uint8
 
 const (
-	BLogStatusBanned BlogStatus = 1
-	BlogStatusDraft  BlogStatus = 2
-	BlogStatusPublic BlogStatus = 3
-	BlogStatusNotice BlogStatus = 4
+	BlogBanned BlogStatus = 1
+	BlogDraft  BlogStatus = 2
+	BlogPublic BlogStatus = 3
+	BlogNotice BlogStatus = 4
 )
 
 func (s BlogStatus) String() string {
 	switch s {
-	case BLogStatusBanned:
+	case BlogBanned:
 		return "屏蔽"
-	case BlogStatusPublic:
+	case BlogPublic:
 		return "公开"
-	case BlogStatusDraft:
+	case BlogDraft:
 		return "草稿"
-	case BlogStatusNotice:
+	case BlogNotice:
 		return "公告"
 	default:
 		return "未知"

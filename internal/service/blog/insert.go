@@ -26,18 +26,16 @@ func Insert(b entity.Blog) (uint64, error) {
 	return b.Id, nil
 }
 
-func BlogUpload(b entity.Blog, admin ...bool) (uint64, error) {
+func BlogUpload(b entity.Blog, role entity.Role) (uint64, error) {
 	var err error
+
+	if b.Status == entity.BlogBanned || (b.Status == entity.BlogNotice && role < entity.RoleAdmin) {
+		b.Status = entity.BlogDraft
+	}
 
 	updateTime := time.Now()
 	b.UpdateTime = updateTime
 	b.CreateTime = updateTime
-
-	if len(admin) == 0 || !admin[0] || b.Status == 0 {
-		if b.Status > entity.BLogStatusReview || b.Status == 0 {
-			b.Status = entity.BlogStatusDraft
-		}
-	}
 
 	// 插入博客
 	b.Id, err = dao.InsertBlog(b)
