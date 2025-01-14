@@ -60,9 +60,9 @@ func sendVerificationCode(to string, code string) error {
 
 	header := make(map[string]string)
 
-	header["From"] = "stuoj" + "<" + FromEmail + ">"
+	header["From"] = "STUOJ" + "<" + FromEmail + ">"
 	header["To"] = to
-	header["Subject"] = "stuoj邮箱验证"
+	header["Subject"] = "STUOJ 邮箱验证"
 	header["Content-Type"] = "text/html;chartset=UTF-8"
 
 	body := fmt.Sprintf("您的验证码是: %s", code)
