@@ -9,16 +9,6 @@ import (
 	"gorm.io/gorm"
 )
 
-type CommentWhere struct {
-	UserId    model.Field[uint64]
-	BlogId    model.Field[uint64]
-	Status    model.Field[entity.CommentStatus]
-	StartTime model.Field[time.Time]
-	EndTime   model.Field[time.Time]
-	Page      model.Field[uint64]
-	Size      model.Field[uint64]
-}
-
 type auxiliaryComment struct {
 	entity.Comment
 	BriefUser
@@ -53,10 +43,10 @@ func SelectCommentById(id uint64) (entity.Comment, error) {
 }
 
 // 查询评论
-func SelectComments(condition CommentWhere) ([]entity.Comment, error) {
+func SelectComments(condition model.CommentWhere) ([]entity.Comment, error) {
 	var auxiliaryComments []auxiliaryComment
 	var comments []entity.Comment
-	where := generateCommentWhereCondition(condition)
+	where := condition.GenerateWhere()
 	tx := db.Db.Model(&entity.Comment{})
 	tx = where(tx)
 	tx = commentUnionJoins(tx)
@@ -114,9 +104,9 @@ func DeleteCommentById(id uint64) error {
 }
 
 // 统计评论数量
-func CountComments(condition CommentWhere) (uint64, error) {
+func CountComments(condition model.CommentWhere) (uint64, error) {
 	var count int64
-	where := generateCommentWhereConditionWithNoPage(condition)
+	where := condition.GenerateWhereWithNoPage()
 
 	tx := db.Db.Model(&entity.Comment{})
 	tx = where(tx)
@@ -138,37 +128,6 @@ func CountCommentsBetweenCreateTime(startTime time.Time, endTime time.Time) ([]m
 	}
 
 	return counts, nil
-}
-
-func generateCommentWhereConditionWithNoPage(con CommentWhere) func(*gorm.DB) *gorm.DB {
-	return func(db *gorm.DB) *gorm.DB {
-		whereClause := map[string]interface{}{}
-
-		if con.UserId.Exist() {
-			whereClause["tbl_comment.user_id"] = con.UserId.Value()
-		}
-		if con.BlogId.Exist() {
-			whereClause["tbl_comment.blog_id"] = con.BlogId.Value()
-		}
-		if con.Status.Exist() {
-			whereClause["tbl_comment.status"] = con.Status.Value()
-		}
-		where := db.Where(whereClause)
-		if con.StartTime.Exist() {
-			where.Where("tbl_comment.create_time >= ?", con.StartTime.Value())
-		}
-		if con.EndTime.Exist() {
-			where.Where("tbl_comment.create_time <= ?", con.EndTime.Value())
-		}
-		return where
-	}
-}
-
-func generateCommentWhereCondition(con CommentWhere) func(*gorm.DB) *gorm.DB {
-	where := generateCommentWhereConditionWithNoPage(con)
-	return func(db *gorm.DB) *gorm.DB {
-		return where(db).Offset(int((con.Page.Value() - 1) * con.Size.Value())).Limit(int(con.Size.Value()))
-	}
 }
 
 func commentUnionJoins(tx *gorm.DB) *gorm.DB {
