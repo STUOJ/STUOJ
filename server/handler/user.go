@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"STUOJ/internal/dao"
 	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
 	"STUOJ/internal/service/user"
@@ -257,7 +256,9 @@ func ModifyUserAvatar(c *gin.Context) {
 
 // 获取用户列表
 func UserList(c *gin.Context) {
-	condition := parseUserWhere(c)
+
+	condition := model.UserWhere{}
+	condition.Parse(c)
 	users, err := user.Select(condition)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
@@ -358,35 +359,4 @@ func UserModifyRole(c *gin.Context) {
 
 	// 返回结果
 	c.JSON(http.StatusOK, model.RespOk("修改成功", nil))
-}
-
-// 条件查询用户
-func parseUserWhere(c *gin.Context) dao.UserWhere {
-	condition := dao.UserWhere{}
-	if c.Query("role") != "" {
-		role, err := strconv.Atoi(c.Query("role"))
-		if err != nil {
-			log.Println(err)
-		} else {
-			condition.Role.Set(entity.Role(role))
-		}
-	}
-	if c.Query("page") != "" {
-		page, err := strconv.Atoi(c.Query("page"))
-		if err != nil {
-			log.Println(err)
-		} else {
-			condition.Page.Set(uint64(page))
-		}
-	}
-	if c.Query("size") != "" {
-		size, err := strconv.Atoi(c.Query("size"))
-		if err != nil {
-			log.Println(err)
-		} else {
-			condition.Size.Set(uint64(size))
-		}
-	}
-
-	return condition
 }

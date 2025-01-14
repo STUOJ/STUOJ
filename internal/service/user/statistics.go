@@ -43,7 +43,7 @@ func GetStatistics() (model.UserStatistics, error) {
 	var stats model.UserStatistics
 
 	// 统计用户数量
-	stats.UserCount, err = dao.CountUsers(dao.UserWhere{})
+	stats.UserCount, err = dao.CountUsers(model.UserWhere{})
 	if err != nil {
 		log.Println(err)
 		return model.UserStatistics{}, errors.New("统计用户数量失败")
