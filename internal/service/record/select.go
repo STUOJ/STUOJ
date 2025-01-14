@@ -14,7 +14,7 @@ type SubmissionPage struct {
 }
 
 // 查询所有提交记录（不返回源代码）
-func Select(condition dao.SubmissionWhere, userId uint64, hideCode ...bool) (SubmissionPage, error) {
+func Select(condition model.SubmissionWhere, userId uint64, hideCode ...bool) (SubmissionPage, error) {
 	if !condition.Page.Exist() {
 		condition.Page.Set(1)
 	}

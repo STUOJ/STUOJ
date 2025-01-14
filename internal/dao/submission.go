@@ -9,17 +9,6 @@ import (
 	"gorm.io/gorm"
 )
 
-type SubmissionWhere struct {
-	ProblemId  model.FieldList[uint64]
-	UserId     model.FieldList[uint64]
-	LanguageId model.Field[uint64]
-	StartTime  model.Field[time.Time]
-	EndTime    model.Field[time.Time]
-	Status     model.Field[uint64]
-	Page       model.Field[uint64]
-	Size       model.Field[uint64]
-}
-
 type auxiliarySubmission struct {
 	entity.Submission
 	BriefUser
@@ -40,11 +29,11 @@ func InsertSubmission(s entity.Submission) (uint64, error) {
 }
 
 // 查询提交记录
-func SelectSubmissions(condition SubmissionWhere) ([]entity.Submission, error) {
+func SelectSubmissions(condition model.SubmissionWhere) ([]entity.Submission, error) {
 	var auxiliarySubmissions []auxiliarySubmission
 	var submissions []entity.Submission
 
-	where := generateSubmissionWhereCondition(condition)
+	where := condition.GenerateWhere()
 	tx := db.Db.Model(&entity.Submission{})
 	tx = where(tx)
 	tx = submissionUnionJoins(tx)
@@ -132,9 +121,9 @@ func DeleteSubmissionById(id uint64) error {
 }
 
 // 统计提交信息数量
-func CountSubmissions(condition SubmissionWhere) (uint64, error) {
+func CountSubmissions(condition model.SubmissionWhere) (uint64, error) {
 	var count int64
-	where := generateSubmissionWhereConditionWithNoPage(condition)
+	where := condition.GenerateWhereWithNoPage()
 	tx := db.Db.Model(&entity.Submission{})
 	tx = where(tx)
 	tx = tx.Count(&count)
@@ -179,40 +168,6 @@ func CountSubmissionsBetweenCreateTime(startTime time.Time, endTime time.Time) (
 	}
 
 	return countByDate, nil
-}
-
-func generateSubmissionWhereConditionWithNoPage(con SubmissionWhere) func(*gorm.DB) *gorm.DB {
-	return func(db *gorm.DB) *gorm.DB {
-		whereClause := map[string]interface{}{}
-
-		if con.LanguageId.Exist() {
-			whereClause["tbl_submission.language_id"] = con.LanguageId.Value()
-		}
-		if con.Status.Exist() {
-			whereClause["tbl_submission.status"] = con.Status.Value()
-		}
-		where := db.Where(whereClause)
-		if con.UserId.Exist() {
-			where.Where("tbl_submission.user_id in ?", con.UserId.Value())
-		}
-		if con.ProblemId.Exist() {
-			where.Where("tbl_submission.problem_id in ?", con.ProblemId.Value())
-		}
-		if con.StartTime.Exist() {
-			where.Where("tbl_submission.create_time >= ?", con.StartTime.Value())
-		}
-		if con.EndTime.Exist() {
-			where.Where("tbl_submission.create_time <= ?", con.EndTime.Value())
-		}
-		return where
-	}
-}
-
-func generateSubmissionWhereCondition(con SubmissionWhere) func(*gorm.DB) *gorm.DB {
-	where := generateSubmissionWhereConditionWithNoPage(con)
-	return func(db *gorm.DB) *gorm.DB {
-		return where(db).Offset(int((con.Page.Value() - 1) * con.Size.Value())).Limit(int(con.Size.Value()))
-	}
 }
 
 func submissionUnionJoins(tx *gorm.DB) *gorm.DB {

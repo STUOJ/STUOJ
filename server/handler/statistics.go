@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"STUOJ/internal/dao"
 	"STUOJ/internal/model"
 	"STUOJ/internal/service/blog"
 	"STUOJ/internal/service/comment"
@@ -154,7 +153,7 @@ func StatisticsJudge(c *gin.Context) {
 func StatisticsRecord(c *gin.Context) {
 
 	// 获取提交记录统计信息
-	stats, err := record.GetStatistics(dao.SubmissionWhere{})
+	stats, err := record.GetStatistics(model.SubmissionWhere{})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return

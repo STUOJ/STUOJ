@@ -9,7 +9,7 @@ import (
 )
 
 // 提交记录统计
-func GetStatistics(condition dao.SubmissionWhere) (model.RecordStatistics, error) {
+func GetStatistics(condition model.SubmissionWhere) (model.RecordStatistics, error) {
 	var err error
 	var stats model.RecordStatistics
 
