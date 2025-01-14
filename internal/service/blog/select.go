@@ -49,7 +49,7 @@ func Select(condition model.BlogWhere, userId uint64, role entity.Role) (BlogPag
 	}
 	count, err := dao.CountBlogs(condition)
 
-	hideBlogContent(blogs)
+	cutBlogContent(blogs)
 
 	if err != nil {
 		log.Println(err)
@@ -67,8 +67,10 @@ func Select(condition model.BlogWhere, userId uint64, role entity.Role) (BlogPag
 }
 
 // 不返回正文
-func hideBlogContent(blogs []entity.Blog) {
+func cutBlogContent(blogs []entity.Blog) {
 	for i := range blogs {
-		blogs[i].Content = ""
+		if len(blogs[i].Content) > 256 {
+			blogs[i].Content = blogs[i].Content[:256] + "..."
+		}
 	}
 }
