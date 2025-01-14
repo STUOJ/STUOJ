@@ -2,28 +2,25 @@ package entity
 
 import "time"
 
-// BlogStatus 状态：1 屏蔽, 2 草稿, 3 审核, 4 公开, 5 公告
+// BlogStatus 状态：1 屏蔽, 2 草稿, 3 公开, 4 公告
 type BlogStatus uint8
 
 const (
-	BLogStatusBanned BlogStatus = 1
-	BlogStatusDraft  BlogStatus = 2
-	BLogStatusReview BlogStatus = 3
-	BlogStatusPublic BlogStatus = 4
-	BlogStatusNotice BlogStatus = 5
+	BlogBanned BlogStatus = 1
+	BlogDraft  BlogStatus = 2
+	BlogPublic BlogStatus = 3
+	BlogNotice BlogStatus = 4
 )
 
 func (s BlogStatus) String() string {
 	switch s {
-	case BLogStatusBanned:
+	case BlogBanned:
 		return "屏蔽"
-	case BlogStatusPublic:
+	case BlogPublic:
 		return "公开"
-	case BlogStatusDraft:
+	case BlogDraft:
 		return "草稿"
-	case BLogStatusReview:
-		return "审核"
-	case BlogStatusNotice:
+	case BlogNotice:
 		return "公告"
 	default:
 		return "未知"

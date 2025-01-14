@@ -53,8 +53,7 @@ type ReqBlogSave struct {
 }
 
 func BlogUpload(c *gin.Context) {
-	role, id_ := utils.GetUserInfo(c)
-	uid := uint64(id_)
+	role, uid := utils.GetUserInfo(c)
 	var req ReqBlogSave
 
 	// 参数绑定
@@ -74,7 +73,7 @@ func BlogUpload(c *gin.Context) {
 	}
 
 	// 插入博客
-	b.Id, err = blog.BlogUpload(b, role >= entity.RoleAdmin)
+	b.Id, err = blog.BlogUpload(b, role)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
@@ -94,8 +93,7 @@ type ReqBlogEdit struct {
 }
 
 func BlogEdit(c *gin.Context) {
-	role, id_ := utils.GetUserInfo(c)
-	uid := uint64(id_)
+	role, uid := utils.GetUserInfo(c)
 	var req ReqBlogEdit
 
 	// 参数绑定
@@ -108,7 +106,6 @@ func BlogEdit(c *gin.Context) {
 
 	b := entity.Blog{
 		Id:        req.Id,
-		UserId:    uid,
 		ProblemId: req.ProblemId,
 		Title:     req.Title,
 		Content:   req.Content,
@@ -116,7 +113,7 @@ func BlogEdit(c *gin.Context) {
 	}
 
 	// 修改博客
-	err = blog.EditByIdCheckUserId(b, role >= entity.RoleAdmin)
+	err = blog.Update(b, uid, role)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
@@ -126,31 +123,9 @@ func BlogEdit(c *gin.Context) {
 	c.JSON(http.StatusOK, model.RespOk("修改成功，需要提交审核", nil))
 }
 
-// 提交博客
-func BlogSubmit(c *gin.Context) {
-	role, id_ := utils.GetUserInfo(c)
-	uid := uint64(id_)
-	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
-		return
-	}
-
-	bid := uint64(id)
-	err = blog.SubmitByIdCheckUserId(bid, uid, role >= entity.RoleAdmin)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
-		return
-	}
-
-	c.JSON(http.StatusOK, model.RespOk("发布成功，等待管理员审核", nil))
-}
-
 // 删除博客
 func BlogRemove(c *gin.Context) {
-	role, id_ := utils.GetUserInfo(c)
-	uid := uint64(id_)
+	role, uid := utils.GetUserInfo(c)
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
@@ -160,7 +135,7 @@ func BlogRemove(c *gin.Context) {
 
 	// 删除博客
 	bid := uint64(id)
-	err = blog.DeleteByIdCheckUserId(bid, uid, role >= entity.RoleAdmin)
+	err = blog.Delete(bid, uid, role)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return

@@ -20,7 +20,7 @@ func SelectById(id uint64, userId uint64, admin ...bool) (entity.Blog, error) {
 		log.Println(err)
 		return entity.Blog{}, errors.New("获取博客失败")
 	}
-	if b.Status != entity.BlogStatusPublic && (len(admin) == 0 || !admin[0]) && b.UserId != userId {
+	if b.Status != entity.BlogPublic && (len(admin) == 0 || !admin[0]) && b.UserId != userId {
 		return entity.Blog{}, errors.New("该博客未公开")
 	}
 	return b, nil
@@ -28,9 +28,9 @@ func SelectById(id uint64, userId uint64, admin ...bool) (entity.Blog, error) {
 
 func Select(condition model.BlogWhere, userId uint64, role entity.Role) (BlogPage, error) {
 	if !condition.Status.Exist() {
-		condition.Status.Set(entity.BlogStatusPublic)
+		condition.Status.Set(entity.BlogPublic)
 	} else {
-		if condition.Status.Value() < entity.BlogStatusPublic {
+		if condition.Status.Value() < entity.BlogPublic {
 			if role < entity.RoleAdmin {
 				condition.UserId.Set(userId)
 			}

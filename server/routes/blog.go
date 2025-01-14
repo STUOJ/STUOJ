@@ -21,7 +21,6 @@ func InitBlogRoute(ginServer *gin.Engine) {
 
 		blogUserRoute.POST("/", handler.BlogUpload)
 		blogUserRoute.PUT("/", handler.BlogEdit)
-		blogUserRoute.PUT("/:id", handler.BlogSubmit)
 		blogUserRoute.DELETE("/:id", handler.BlogRemove)
 	}
 }
