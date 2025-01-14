@@ -23,16 +23,16 @@ type BlogWhere struct {
 	Size      Field[uint64]
 }
 
-func (b *BlogWhere) Parse(c *gin.Context) {
+func (con *BlogWhere) Parse(c *gin.Context) {
 	if c.Query("title") != "" {
-		b.Title.Set(c.Query("title"))
+		con.Title.Set(c.Query("title"))
 	}
 	if c.Query("status") != "" {
 		status, err := strconv.Atoi(c.Query("status"))
 		if err != nil {
 			log.Println(err)
 		} else {
-			b.Status.Set(entity.BlogStatus(status))
+			con.Status.Set(entity.BlogStatus(status))
 		}
 	}
 	if c.Query("problem") != "" {
@@ -47,7 +47,7 @@ func (b *BlogWhere) Parse(c *gin.Context) {
 				problemsInt = append(problemsInt, uint64(problemInt))
 			}
 		}
-		b.ProblemId.Set(problemsInt)
+		con.ProblemId.Set(problemsInt)
 	}
 	if c.Query("user") != "" {
 		userQuery := c.Query("user")
@@ -61,22 +61,22 @@ func (b *BlogWhere) Parse(c *gin.Context) {
 				usersInt = append(usersInt, uint64(userInt))
 			}
 		}
-		b.UserId.Set(usersInt)
+		con.UserId.Set(usersInt)
 	}
 	timePreiod := &Period{}
 	err := timePreiod.GetPeriod(c)
 	if err != nil {
 		log.Println(err)
 	} else {
-		b.StartTime.Set(timePreiod.StartTime)
-		b.EndTime.Set(timePreiod.EndTime)
+		con.StartTime.Set(timePreiod.StartTime)
+		con.EndTime.Set(timePreiod.EndTime)
 	}
 	if c.Query("page") != "" {
 		page, err := strconv.Atoi(c.Query("page"))
 		if err != nil {
 			log.Println(err)
 		} else {
-			b.Page.Set(uint64(page))
+			con.Page.Set(uint64(page))
 		}
 	}
 	if c.Query("size") != "" {
@@ -84,44 +84,44 @@ func (b *BlogWhere) Parse(c *gin.Context) {
 		if err != nil {
 			log.Println(err)
 		} else {
-			b.Size.Set(uint64(size))
+			con.Size.Set(uint64(size))
 		}
 	}
 }
 
-func (b *BlogWhere) GenerateWhereWithNoPage() func(*gorm.DB) *gorm.DB {
+func (con *BlogWhere) GenerateWhereWithNoPage() func(*gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		whereClause := map[string]interface{}{}
-		if b.Id.Exist() {
-			whereClause["tbl_blog.id"] = b.Id.Value()
+		if con.Id.Exist() {
+			whereClause["tbl_blog.id"] = con.Id.Value()
 		}
-		if b.Status.Exist() {
-			whereClause["tbl_blog.status"] = b.Status.Value()
+		if con.Status.Exist() {
+			whereClause["tbl_blog.status"] = con.Status.Value()
 		}
 		where := db.Where(whereClause)
 
-		if b.UserId.Exist() {
-			where.Where("tbl_blog.user_id in ?", b.UserId.Value())
+		if con.UserId.Exist() {
+			where.Where("tbl_blog.user_id in ?", con.UserId.Value())
 		}
-		if b.ProblemId.Exist() {
-			where.Where("tbl_blog.problem_id in ?", b.ProblemId.Value())
+		if con.ProblemId.Exist() {
+			where.Where("tbl_blog.problem_id in ?", con.ProblemId.Value())
 		}
-		if b.Title.Exist() {
-			where = where.Where("tbl_blog.title LIKE ?", "%"+b.Title.Value()+"%")
+		if con.Title.Exist() {
+			where = where.Where("tbl_blog.title LIKE ?", "%"+con.Title.Value()+"%")
 		}
-		if b.StartTime.Exist() {
-			where = where.Where("tbl_blog.create_time >= ?", b.StartTime.Value())
+		if con.StartTime.Exist() {
+			where = where.Where("tbl_blog.create_time >= ?", con.StartTime.Value())
 		}
-		if b.EndTime.Exist() {
-			where = where.Where("tbl_blog.create_time <= ?", b.EndTime.Value())
+		if con.EndTime.Exist() {
+			where = where.Where("tbl_blog.create_time <= ?", con.EndTime.Value())
 		}
 		return where
 	}
 }
 
-func (b *BlogWhere) GenerateWhere() func(*gorm.DB) *gorm.DB {
-	where := b.GenerateWhereWithNoPage()
+func (con *BlogWhere) GenerateWhere() func(*gorm.DB) *gorm.DB {
+	where := con.GenerateWhereWithNoPage()
 	return func(db *gorm.DB) *gorm.DB {
-		return where(db).Offset(int((b.Page.Value() - 1) * b.Size.Value())).Limit(int(b.Size.Value()))
+		return where(db).Offset(int((con.Page.Value() - 1) * con.Size.Value())).Limit(int(con.Size.Value()))
 	}
 }
