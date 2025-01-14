@@ -26,7 +26,7 @@ func SelectById(id uint64, userId uint64, admin ...bool) (entity.Blog, error) {
 	return b, nil
 }
 
-func Select(condition dao.BlogWhere, userId uint64, role entity.Role) (BlogPage, error) {
+func Select(condition model.BlogWhere, userId uint64, role entity.Role) (BlogPage, error) {
 	if !condition.Status.Exist() {
 		condition.Status.Set(entity.BlogStatusPublic)
 	} else {

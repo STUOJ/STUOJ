@@ -112,7 +112,8 @@ func parseCommentWhere(c *gin.Context) dao.CommentWhere {
 			condition.Status.Set(entity.CommentStatus(status))
 		}
 	}
-	timePreiod, err := utils.GetPeriod(c)
+	timePreiod := &model.Period{}
+	err := timePreiod.GetPeriod(c)
 	if err != nil {
 		log.Println(err)
 	} else {

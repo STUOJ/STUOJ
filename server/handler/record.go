@@ -88,7 +88,8 @@ func parseRecordWhere(c *gin.Context) dao.SubmissionWhere {
 			condition.LanguageId.Set(uint64(language))
 		}
 	}
-	timePreiod, err := utils.GetPeriod(c)
+	timePreiod := &model.Period{}
+	err := timePreiod.GetPeriod(c)
 	if err != nil {
 		log.Println(err)
 	} else {

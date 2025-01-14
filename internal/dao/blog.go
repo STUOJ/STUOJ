@@ -10,18 +10,6 @@ import (
 	"gorm.io/gorm"
 )
 
-type BlogWhere struct {
-	Id        model.Field[uint64]
-	UserId    model.FieldList[uint64]
-	ProblemId model.FieldList[uint64]
-	Title     model.Field[string]
-	Status    model.Field[entity.BlogStatus]
-	StartTime model.Field[time.Time]
-	EndTime   model.Field[time.Time]
-	Page      model.Field[uint64]
-	Size      model.Field[uint64]
-}
-
 type BriefBlog struct {
 	BlogTitle  string            `gorm:"column:blog_title"`
 	BlogStatus entity.BlogStatus `gorm:"column:blog_status"`
@@ -73,11 +61,11 @@ func SelectBlogById(id uint64) (entity.Blog, error) {
 	return b, nil
 }
 
-func SelectBlogs(condition BlogWhere) ([]entity.Blog, error) {
+func SelectBlogs(condition model.BlogWhere) ([]entity.Blog, error) {
 	var auxiliaryBlogs []auxiliaryBlog
 	var blogs []entity.Blog
 
-	where := generateBlogWhereCondition(condition)
+	where := condition.GenerateWhere()
 
 	tx := db.Db.Model(&entity.Blog{})
 	tx = where(tx)
@@ -129,10 +117,10 @@ func DeleteBlogById(id uint64) error {
 }
 
 // 统计博客数量
-func CountBlogs(condition BlogWhere) (uint64, error) {
+func CountBlogs(condition model.BlogWhere) (uint64, error) {
 	var count int64
 
-	where := generateBlogWhereConditionWithNoPage(condition)
+	where := condition.GenerateWhereWithNoPage()
 	tx := db.Db.Model(&entity.Blog{})
 	tx = where(tx)
 	tx = tx.Count(&count)
@@ -153,43 +141,6 @@ func CountBlogsBetweenCreateTime(startTime time.Time, endTime time.Time) ([]mode
 	}
 
 	return counts, nil
-}
-
-func generateBlogWhereConditionWithNoPage(con BlogWhere) func(*gorm.DB) *gorm.DB {
-	return func(db *gorm.DB) *gorm.DB {
-		whereClause := map[string]interface{}{}
-		if con.Id.Exist() {
-			whereClause["tbl_blog.id"] = con.Id.Value()
-		}
-		if con.Status.Exist() {
-			whereClause["tbl_blog.status"] = con.Status.Value()
-		}
-		where := db.Where(whereClause)
-
-		if con.UserId.Exist() {
-			where.Where("tbl_blog.user_id in ?", con.UserId.Value())
-		}
-		if con.ProblemId.Exist() {
-			where.Where("tbl_blog.problem_id in ?", con.ProblemId.Value())
-		}
-		if con.Title.Exist() {
-			where = where.Where("tbl_blog.title LIKE ?", "%"+con.Title.Value()+"%")
-		}
-		if con.StartTime.Exist() {
-			where = where.Where("tbl_blog.create_time >= ?", con.StartTime.Value())
-		}
-		if con.EndTime.Exist() {
-			where = where.Where("tbl_blog.create_time <= ?", con.EndTime.Value())
-		}
-		return where
-	}
-}
-
-func generateBlogWhereCondition(con BlogWhere) func(*gorm.DB) *gorm.DB {
-	where := generateBlogWhereConditionWithNoPage(con)
-	return func(db *gorm.DB) *gorm.DB {
-		return where(db).Offset(int((con.Page.Value() - 1) * con.Size.Value())).Limit(int(con.Size.Value()))
-	}
 }
 
 func blogUnionJoins(tx *gorm.DB) *gorm.DB {

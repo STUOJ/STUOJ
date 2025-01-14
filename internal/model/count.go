@@ -2,6 +2,7 @@ package model
 
 import (
 	"STUOJ/internal/entity"
+	"STUOJ/utils"
 	"time"
 )
 
@@ -59,4 +60,14 @@ type CountByTag struct {
 type CountByLanguage struct {
 	LanguageId uint64 `json:"language_id"`
 	Count      int64  `json:"count"`
+}
+
+func (m *MapCount) MapCountFillZero(startDate time.Time, endDate time.Time) {
+	dateList := utils.GenerateDateList(startDate, endDate)
+	// 填充没有结果的日期
+	for _, date := range dateList {
+		if _, ok := (*m)[date]; !ok {
+			(*m)[date] = 0
+		}
+	}
 }
