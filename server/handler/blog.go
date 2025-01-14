@@ -86,7 +86,7 @@ func BlogUpload(c *gin.Context) {
 // 编辑博客
 type ReqBlogEdit struct {
 	Id        uint64            `json:"id,omitempty" binding:"required"`
-	ProblemId uint64            `json:"problem_id,omitempty" binding:"required"`
+	ProblemId uint64            `json:"problem_id,omitempty"`
 	Title     string            `json:"title,omitempty" binding:"required"`
 	Content   string            `json:"content,omitempty" binding:"required"`
 	Status    entity.BlogStatus `json:"status,omitempty" binding:"required"`
