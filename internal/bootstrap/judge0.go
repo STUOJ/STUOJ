@@ -4,6 +4,7 @@ import (
 	"STUOJ/external/judge0"
 	"STUOJ/internal/dao"
 	"STUOJ/internal/entity"
+	"STUOJ/internal/model"
 	"STUOJ/utils"
 	"log"
 )
@@ -42,7 +43,7 @@ func InitJudgeLanguages() error {
 		return err
 	}
 
-	oldLangs, err := dao.SelectLanguage(dao.LanguageWhere{})
+	oldLangs, err := dao.SelectLanguage(model.LanguageWhere{})
 	if err != nil {
 		return err
 	}

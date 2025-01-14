@@ -4,13 +4,7 @@ import (
 	"STUOJ/internal/db"
 	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
-
-	"gorm.io/gorm"
 )
-
-type LanguageWhere struct {
-	Status model.Field[uint64]
-}
 
 // 插入语言
 func InsertLanguage(l entity.Language) (uint64, error) {
@@ -23,9 +17,9 @@ func InsertLanguage(l entity.Language) (uint64, error) {
 }
 
 // 查询语言
-func SelectLanguage(con LanguageWhere) ([]entity.Language, error) {
+func SelectLanguage(con model.LanguageWhere) ([]entity.Language, error) {
 	var languages []entity.Language
-	where := generateLanguageWhereCondition(con)
+	where := con.GenerateWhere()
 	tx := db.Db.Model(&entity.Language{})
 	tx = where(tx)
 	tx = tx.Find(&languages)
@@ -88,15 +82,4 @@ func CountLanguages() (uint64, error) {
 	}
 
 	return uint64(count), nil
-}
-
-func generateLanguageWhereCondition(con LanguageWhere) func(*gorm.DB) *gorm.DB {
-	return func(db *gorm.DB) *gorm.DB {
-		whereClause := map[string]interface{}{}
-
-		if con.Status.Exist() {
-			whereClause["status"] = con.Status.Value()
-		}
-		return db.Where(whereClause)
-	}
 }
