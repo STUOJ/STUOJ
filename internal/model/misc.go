@@ -1,6 +1,11 @@
 package model
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
+)
 
 type Page struct {
 	Page  uint64 `json:"page,omitempty"`
@@ -50,4 +55,10 @@ func (f *FieldList[T]) Set(value interface{}) error {
 		return nil
 	}
 	return fmt.Errorf("cannot set value of type %T to field of type %T", value, f.value)
+}
+
+type ConditonWhere interface {
+	Parse(c *gin.Context)
+	GenerateWhere() func(*gorm.DB) *gorm.DB
+	GenerateWhereWithNoPage() func(*gorm.DB) *gorm.DB
 }
