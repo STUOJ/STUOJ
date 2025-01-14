@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"STUOJ/internal/dao"
 	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
 	"STUOJ/internal/service/blog"
@@ -9,7 +8,6 @@ import (
 	"log"
 	"net/http"
 	"strconv"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -35,7 +33,8 @@ func BlogInfo(c *gin.Context) {
 
 func BlogList(c *gin.Context) {
 	role, userId := utils.GetUserInfo(c)
-	condition := parseBlogWhere(c)
+	condition := model.BlogWhere{}
+	condition.Parse(c)
 	blogs, err := blog.Select(condition, userId, role)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
@@ -169,74 +168,6 @@ func BlogRemove(c *gin.Context) {
 
 	// 返回结果
 	c.JSON(http.StatusOK, model.RespOk("删除成功", nil))
-}
-
-func parseBlogWhere(c *gin.Context) dao.BlogWhere {
-	condition := dao.BlogWhere{}
-	if c.Query("title") != "" {
-		condition.Title.Set(c.Query("title"))
-	}
-	if c.Query("status") != "" {
-		status, err := strconv.Atoi(c.Query("status"))
-		if err != nil {
-			log.Println(err)
-		} else {
-			condition.Status.Set(entity.BlogStatus(status))
-		}
-	}
-	if c.Query("problem") != "" {
-		problemQuery := c.Query("problem")
-		problems := strings.Split(problemQuery, ",")
-		var problemsInt []uint64
-		for _, problem := range problems {
-			problemInt, err := strconv.Atoi(problem)
-			if err != nil {
-				log.Println(err)
-			} else {
-				problemsInt = append(problemsInt, uint64(problemInt))
-			}
-		}
-		condition.ProblemId.Set(problemsInt)
-	}
-	if c.Query("user") != "" {
-		userQuery := c.Query("user")
-		users := strings.Split(userQuery, ",")
-		var usersInt []uint64
-		for _, user := range users {
-			userInt, err := strconv.Atoi(user)
-			if err != nil {
-				log.Println(err)
-			} else {
-				usersInt = append(usersInt, uint64(userInt))
-			}
-		}
-		condition.UserId.Set(usersInt)
-	}
-	timePreiod, err := utils.GetPeriod(c)
-	if err != nil {
-		log.Println(err)
-	} else {
-		condition.StartTime.Set(timePreiod.StartTime)
-		condition.EndTime.Set(timePreiod.EndTime)
-	}
-	if c.Query("page") != "" {
-		page, err := strconv.Atoi(c.Query("page"))
-		if err != nil {
-			log.Println(err)
-		} else {
-			condition.Page.Set(uint64(page))
-		}
-	}
-	if c.Query("size") != "" {
-		size, err := strconv.Atoi(c.Query("size"))
-		if err != nil {
-			log.Println(err)
-		} else {
-			condition.Size.Set(uint64(size))
-		}
-	}
-
-	return condition
 }
 
 // 添加博客

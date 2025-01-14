@@ -4,7 +4,6 @@ import (
 	"STUOJ/internal/dao"
 	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
-	"STUOJ/utils"
 	"errors"
 	"log"
 )
@@ -15,7 +14,7 @@ func GetStatistics() (model.ProblemStatistics, error) {
 	var stats model.ProblemStatistics
 
 	// 统计题目数量
-	stats.ProblemCount, err = dao.CountProblems(dao.ProblemWhere{})
+	stats.ProblemCount, err = dao.CountProblems(model.ProblemWhere{})
 	if err != nil {
 		log.Println(err)
 		return model.ProblemStatistics{}, errors.New("统计题目数量失败")
@@ -29,7 +28,7 @@ func GetStatistics() (model.ProblemStatistics, error) {
 	}
 
 	// 统计题解数量
-	stats.SolutionCount, err = dao.CountBlogs(dao.BlogWhere{})
+	stats.SolutionCount, err = dao.CountBlogs(model.BlogWhere{})
 	if err != nil {
 		log.Println(err)
 		return model.ProblemStatistics{}, errors.New("统计题解数量失败")
@@ -58,7 +57,7 @@ func GetStatisticsOfInsertByPeriod(p model.Period) (model.MapCount, error) {
 
 	mc := make(model.MapCount)
 	mc.FromCountByDate(cbds)
-	utils.MapCountFillZero(&mc, p.StartTime, p.EndTime)
+	mc.MapCountFillZero(p.StartTime, p.EndTime)
 
 	return mc, nil
 }
@@ -83,7 +82,7 @@ func GetStatisticsOfUpdateByPeriod(p model.Period) (model.MapCount, error) {
 
 	mc := make(model.MapCount)
 	mc.FromCountByDate(cbds)
-	utils.MapCountFillZero(&mc, p.StartTime, p.EndTime)
+	mc.MapCountFillZero(p.StartTime, p.EndTime)
 
 	return mc, nil
 }
@@ -108,7 +107,7 @@ func GetStatisticsOfDeleteByPeriod(p model.Period) (model.MapCount, error) {
 
 	mc := make(model.MapCount)
 	mc.FromCountByDate(cbds)
-	utils.MapCountFillZero(&mc, p.StartTime, p.EndTime)
+	mc.MapCountFillZero(p.StartTime, p.EndTime)
 
 	return mc, nil
 }

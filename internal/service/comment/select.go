@@ -13,7 +13,7 @@ type CommentPage struct {
 	model.Page
 }
 
-func Select(condition dao.CommentWhere, userId uint64, admin ...bool) (CommentPage, error) {
+func Select(condition model.CommentWhere, userId uint64, admin ...bool) (CommentPage, error) {
 	if !condition.Page.Exist() {
 		condition.Page.Set(1)
 	}

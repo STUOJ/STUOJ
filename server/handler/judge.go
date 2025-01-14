@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"STUOJ/internal/dao"
 	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
 	"STUOJ/internal/service/judge"
@@ -9,7 +8,6 @@ import (
 	"STUOJ/utils"
 	"log"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -17,7 +15,8 @@ import (
 // 获取语言列表
 func JudgeLanguageList(c *gin.Context) {
 	role, _ := utils.GetUserInfo(c)
-	con := parseLanguageWhere(c)
+	con := model.LanguageWhere{}
+	con.Parse(c)
 	languages, err := language.Select(con, role)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespOk(err.Error(), nil))
@@ -98,17 +97,4 @@ func JudgeTestRun(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, model.RespOk("OK", j))
-}
-
-func parseLanguageWhere(c *gin.Context) dao.LanguageWhere {
-	condition := dao.LanguageWhere{}
-	if c.Query("status") != "" {
-		status, err := strconv.Atoi(c.Query("status"))
-		if err != nil {
-			log.Println(err)
-		} else {
-			condition.Status.Set(uint64(status))
-		}
-	}
-	return condition
 }

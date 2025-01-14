@@ -59,7 +59,7 @@ func SelectById(id uint64, admin ...bool) (model.ProblemData, error) {
 	return pd, nil
 }
 
-func Select(condition dao.ProblemWhere, userId uint64, role entity.Role) (ProblemPage, error) {
+func Select(condition model.ProblemWhere, userId uint64, role entity.Role) (ProblemPage, error) {
 	if !condition.Status.Exist() {
 		condition.Status.Set(entity.ProblemStatusPublic)
 	} else {

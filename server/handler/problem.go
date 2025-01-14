@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"STUOJ/internal/dao"
 	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
 	"STUOJ/internal/service/history"
@@ -13,7 +12,6 @@ import (
 	"net/http"
 	"os"
 	"strconv"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -42,7 +40,8 @@ func ProblemInfo(c *gin.Context) {
 func ProblemList(c *gin.Context) {
 	role, userId := utils.GetUserInfo(c)
 
-	condition := parseProblemWhere(c)
+	condition := model.ProblemWhere{}
+	condition.Parse(c)
 
 	pds, err := problem.Select(condition, userId, role)
 	if err != nil {
@@ -54,69 +53,6 @@ func ProblemList(c *gin.Context) {
 }
 
 // 解析题目查询条件
-func parseProblemWhere(c *gin.Context) dao.ProblemWhere {
-	condition := dao.ProblemWhere{}
-
-	if c.Query("title") != "" {
-		condition.Title.Set(c.Query("title"))
-	}
-	if c.Query("difficulty") != "" {
-		difficulty, err := strconv.Atoi(c.Query("difficulty"))
-		if err != nil {
-			log.Println(err)
-		} else {
-			condition.Difficulty.Set(entity.Difficulty(difficulty))
-		}
-	}
-	if c.Query("tag") != "" {
-		tagsQuery := c.Query("tag")           // 获取URL参数 "ids"
-		tags := strings.Split(tagsQuery, ",") // 将字符串分割成字符串切片
-
-		// 假设我们需要将字符串切片转换为int切片
-		var tagsInt []uint64
-		for _, tagStr := range tags {
-			id, err := strconv.Atoi(tagStr)
-			if err != nil {
-				continue
-			}
-			tagsInt = append(tagsInt, uint64(id))
-		}
-		condition.Tag.Set(tagsInt)
-	}
-	if c.Query("status") != "" {
-		status, err := strconv.Atoi(c.Query("status"))
-		if err != nil {
-			log.Println(err)
-		} else {
-			condition.Status.Set(entity.ProblemStatus(status))
-		}
-	}
-	if c.Query("user") != "" {
-		user, err := strconv.Atoi(c.Query("user"))
-		if err != nil {
-			log.Println(err)
-		} else {
-			condition.UserId.Set(uint64(user))
-		}
-	}
-	if c.Query("page") != "" {
-		page, err := strconv.Atoi(c.Query("page"))
-		if err != nil {
-			log.Println(err)
-		} else {
-			condition.Page.Set(uint64(page))
-		}
-	}
-	if c.Query("size") != "" {
-		size, err := strconv.Atoi(c.Query("size"))
-		if err != nil {
-			log.Println(err)
-		} else {
-			condition.Size.Set(uint64(size))
-		}
-	}
-	return condition
-}
 
 // 添加题目
 type ReqProblemAdd struct {

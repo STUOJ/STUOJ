@@ -41,7 +41,7 @@ func SelectByEmail(email string) (entity.User, error) {
 }
 
 // 查询所有用户
-func Select(condition dao.UserWhere) (UserPage, error) {
+func Select(condition model.UserWhere) (UserPage, error) {
 	if !condition.Page.Exist() {
 		condition.Page.Set(1)
 	}

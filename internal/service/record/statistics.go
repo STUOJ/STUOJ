@@ -4,13 +4,12 @@ import (
 	"STUOJ/internal/dao"
 	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
-	"STUOJ/utils"
 	"errors"
 	"log"
 )
 
 // 提交记录统计
-func GetStatistics(condition dao.SubmissionWhere) (model.RecordStatistics, error) {
+func GetStatistics(condition model.SubmissionWhere) (model.RecordStatistics, error) {
 	var err error
 	var stats model.RecordStatistics
 
@@ -100,7 +99,7 @@ func GetStatisticsOfSubmitByPeriod(p model.Period) (model.MapCount, error) {
 
 	mc := make(model.MapCount)
 	mc.FromCountByDate(cbds)
-	utils.MapCountFillZero(&mc, p.StartTime, p.EndTime)
+	mc.MapCountFillZero(p.StartTime, p.EndTime)
 
 	return mc, nil
 }

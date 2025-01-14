@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"STUOJ/internal/dao"
 	"STUOJ/internal/model"
 	"STUOJ/internal/service/blog"
 	"STUOJ/internal/service/comment"
@@ -10,7 +9,6 @@ import (
 	"STUOJ/internal/service/record"
 	"STUOJ/internal/service/tag"
 	"STUOJ/internal/service/user"
-	"STUOJ/utils"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -42,7 +40,8 @@ func StatisticsUserOfRole(c *gin.Context) {
 
 // 获取用户注册统计信息
 func StatisticsUserOfRegister(c *gin.Context) {
-	p, err := utils.GetPeriod(c)
+	p := model.Period{}
+	err := p.GetPeriod(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.RespError(err.Error(), nil))
 		return
@@ -72,7 +71,8 @@ func StatisticsProblem(c *gin.Context) {
 
 // 获取插入题目统计信息
 func StatisticsProblemOfInsert(c *gin.Context) {
-	p, err := utils.GetPeriod(c)
+	p := model.Period{}
+	err := p.GetPeriod(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.RespError(err.Error(), nil))
 		return
@@ -90,7 +90,8 @@ func StatisticsProblemOfInsert(c *gin.Context) {
 
 // 获取更新题目统计信息
 func StatisticsProblemOfUpdate(c *gin.Context) {
-	p, err := utils.GetPeriod(c)
+	p := model.Period{}
+	err := p.GetPeriod(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.RespError(err.Error(), nil))
 		return
@@ -108,7 +109,8 @@ func StatisticsProblemOfUpdate(c *gin.Context) {
 
 // 获取删除题目统计信息
 func StatisticsProblemOfDelete(c *gin.Context) {
-	p, err := utils.GetPeriod(c)
+	p := model.Period{}
+	err := p.GetPeriod(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.RespError(err.Error(), nil))
 		return
@@ -151,7 +153,7 @@ func StatisticsJudge(c *gin.Context) {
 func StatisticsRecord(c *gin.Context) {
 
 	// 获取提交记录统计信息
-	stats, err := record.GetStatistics(dao.SubmissionWhere{})
+	stats, err := record.GetStatistics(model.SubmissionWhere{})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
@@ -198,7 +200,8 @@ func StatisticsJudgementOfStatus(c *gin.Context) {
 
 // 获取提交记录提交信息
 func StatisticsRecordOfSubmit(c *gin.Context) {
-	p, err := utils.GetPeriod(c)
+	p := model.Period{}
+	err := p.GetPeriod(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.RespError(err.Error(), nil))
 		return
@@ -217,7 +220,7 @@ func StatisticsRecordOfSubmit(c *gin.Context) {
 // 获取博客统计信息
 func StatisticsBlog(c *gin.Context) {
 	// 获取博客统计信息
-	stats, err := blog.GetStatistics(dao.BlogWhere{})
+	stats, err := blog.GetStatistics(model.BlogWhere{})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
@@ -228,7 +231,8 @@ func StatisticsBlog(c *gin.Context) {
 
 // 获取博客提交统计信息
 func StatisticsBlogOfSubmit(c *gin.Context) {
-	p, err := utils.GetPeriod(c)
+	p := model.Period{}
+	err := p.GetPeriod(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.RespError(err.Error(), nil))
 		return
@@ -246,7 +250,8 @@ func StatisticsBlogOfSubmit(c *gin.Context) {
 
 // 获取评论提交统计信息
 func StatisticsCommentOfSubmit(c *gin.Context) {
-	p, err := utils.GetPeriod(c)
+	p := model.Period{}
+	err := p.GetPeriod(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.RespError(err.Error(), nil))
 		return

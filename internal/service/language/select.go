@@ -3,12 +3,13 @@ package language
 import (
 	"STUOJ/internal/dao"
 	"STUOJ/internal/entity"
+	"STUOJ/internal/model"
 	"errors"
 	"log"
 )
 
 // 查询所有语言
-func Select(condition dao.LanguageWhere, role entity.Role) ([]entity.Language, error) {
+func Select(condition model.LanguageWhere, role entity.Role) ([]entity.Language, error) {
 	var languages []entity.Language
 
 	languages, err := dao.SelectLanguage(condition)

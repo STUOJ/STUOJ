@@ -3,7 +3,6 @@ package comment
 import (
 	"STUOJ/internal/dao"
 	"STUOJ/internal/model"
-	"STUOJ/utils"
 	"errors"
 	"log"
 )
@@ -27,7 +26,7 @@ func GetStatisticsOfSubmitByPeriod(p model.Period) (model.MapCount, error) {
 
 	mc := make(model.MapCount)
 	mc.FromCountByDate(cbds)
-	utils.MapCountFillZero(&mc, p.StartTime, p.EndTime)
+	mc.MapCountFillZero(p.StartTime, p.EndTime)
 
 	return mc, nil
 }

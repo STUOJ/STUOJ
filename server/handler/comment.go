@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"STUOJ/internal/dao"
 	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
 	"STUOJ/internal/service/comment"
@@ -52,7 +51,8 @@ func CommentAdd(c *gin.Context) {
 // 获取评论列表
 func CommentList(c *gin.Context) {
 	role, userId := utils.GetUserInfo(c)
-	condition := parseCommentWhere(c)
+	condition := model.CommentWhere{}
+	condition.Parse(c)
 	commonts, err := comment.Select(condition, userId, role >= entity.RoleAdmin)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespOk(err.Error(), nil))
@@ -82,60 +82,6 @@ func CommentRemove(c *gin.Context) {
 
 	// 返回结果
 	c.JSON(http.StatusOK, model.RespOk("删除成功", nil))
-}
-
-// 解析评论查询条件
-func parseCommentWhere(c *gin.Context) dao.CommentWhere {
-	condition := dao.CommentWhere{}
-
-	if c.Query("user") != "" {
-		user, err := strconv.Atoi(c.Query("user"))
-		if err != nil {
-			log.Println(err)
-		} else {
-			condition.UserId.Set(uint64(user))
-		}
-	}
-	if c.Query("blog") != "" {
-		blog, err := strconv.Atoi(c.Query("blog"))
-		if err != nil {
-			log.Println(err)
-		} else {
-			condition.BlogId.Set(uint64(blog))
-		}
-	}
-	if c.Query("status") != "" {
-		status, err := strconv.Atoi(c.Query("status"))
-		if err != nil {
-			log.Println(err)
-		} else {
-			condition.Status.Set(entity.CommentStatus(status))
-		}
-	}
-	timePreiod, err := utils.GetPeriod(c)
-	if err != nil {
-		log.Println(err)
-	} else {
-		condition.StartTime.Set(timePreiod.StartTime)
-		condition.EndTime.Set(timePreiod.EndTime)
-	}
-	if c.Query("page") != "" {
-		page, err := strconv.Atoi(c.Query("page"))
-		if err != nil {
-			log.Println(err)
-		} else {
-			condition.Page.Set(uint64(page))
-		}
-	}
-	if c.Query("size") != "" {
-		size, err := strconv.Atoi(c.Query("size"))
-		if err != nil {
-			log.Println(err)
-		} else {
-			condition.Size.Set(uint64(size))
-		}
-	}
-	return condition
 }
 
 // 修改评论

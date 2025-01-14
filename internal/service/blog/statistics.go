@@ -3,13 +3,12 @@ package blog
 import (
 	"STUOJ/internal/dao"
 	"STUOJ/internal/model"
-	"STUOJ/utils"
 	"errors"
 	"log"
 )
 
 // 统计博客数量
-func GetStatistics(conditon dao.BlogWhere) (model.BlogStatistics, error) {
+func GetStatistics(conditon model.BlogWhere) (model.BlogStatistics, error) {
 	var err error
 	var stats model.BlogStatistics
 
@@ -49,7 +48,7 @@ func GetStatisticsOfSubmitByPeriod(p model.Period) (model.MapCount, error) {
 
 	mc := make(model.MapCount)
 	mc.FromCountByDate(cbds)
-	utils.MapCountFillZero(&mc, p.StartTime, p.EndTime)
+	mc.MapCountFillZero(p.StartTime, p.EndTime)
 
 	return mc, nil
 }
