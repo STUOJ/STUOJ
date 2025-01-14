@@ -28,7 +28,7 @@ func Select(condition model.CommentWhere, userId uint64, admin ...bool) (Comment
 	if len(admin) == 0 || !admin[0] {
 		var publicComment []entity.Comment
 		for _, comment := range comments {
-			if comment.Status >= entity.CommentStatusPublic || comment.UserId == userId {
+			if comment.Status >= entity.CommentPublic || comment.UserId == userId {
 				publicComment = append(publicComment, comment)
 			}
 		}

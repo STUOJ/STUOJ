@@ -6,15 +6,15 @@ import "time"
 type CommentStatus uint8
 
 const (
-	CommentStatusBanned CommentStatus = 1
-	CommentStatusPublic CommentStatus = 2
+	CommentBanned CommentStatus = 1
+	CommentPublic CommentStatus = 2
 )
 
 func (s CommentStatus) String() string {
 	switch s {
-	case CommentStatusBanned:
+	case CommentBanned:
 		return "屏蔽"
-	case CommentStatusPublic:
+	case CommentPublic:
 		return "公开"
 	default:
 		return "未知"

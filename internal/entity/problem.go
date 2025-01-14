@@ -42,24 +42,24 @@ func (d Difficulty) String() string {
 type ProblemStatus uint64
 
 const (
-	ProblemStatusInvalid   ProblemStatus = 1
-	ProblemStatusEditing   ProblemStatus = 2
-	ProblemStatusDebugging ProblemStatus = 3
-	ProblemStatusHidden    ProblemStatus = 4
-	ProblemStatusPublic    ProblemStatus = 5
+	ProblemInvalid   ProblemStatus = 1
+	ProblemEditing   ProblemStatus = 2
+	ProblemDebugging ProblemStatus = 3
+	ProblemHidden    ProblemStatus = 4
+	ProblemPublic    ProblemStatus = 5
 )
 
 func (s ProblemStatus) String() string {
 	switch s {
-	case ProblemStatusInvalid:
+	case ProblemInvalid:
 		return "作废"
-	case ProblemStatusEditing:
+	case ProblemEditing:
 		return "出题"
-	case ProblemStatusDebugging:
+	case ProblemDebugging:
 		return "调试"
-	case ProblemStatusHidden:
+	case ProblemHidden:
 		return "隐藏"
-	case ProblemStatusPublic:
+	case ProblemPublic:
 		return "公开"
 	default:
 		return "未知"

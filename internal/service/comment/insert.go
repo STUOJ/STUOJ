@@ -15,7 +15,7 @@ func Insert(c entity.Comment) (uint64, error) {
 	updateTime := time.Now()
 	c.UpdateTime = updateTime
 	c.CreateTime = updateTime
-	c.Status = entity.CommentStatusPublic
+	c.Status = entity.CommentPublic
 
 	// 插入评论
 	c.Id, err = dao.InsertComment(c)

@@ -43,7 +43,7 @@ func SelectById(id uint64, admin ...bool) (model.ProblemData, error) {
 			return model.ProblemData{}, errors.New("获取题解数据失败")
 		}
 	} else {
-		if p.Status != entity.ProblemStatusPublic {
+		if p.Status != entity.ProblemPublic {
 			return model.ProblemData{}, errors.New("题目未公开")
 		}
 	}
@@ -61,11 +61,11 @@ func SelectById(id uint64, admin ...bool) (model.ProblemData, error) {
 
 func Select(condition model.ProblemWhere, userId uint64, role entity.Role) (ProblemPage, error) {
 	if !condition.Status.Exist() {
-		condition.Status.Set(entity.ProblemStatusPublic)
+		condition.Status.Set(entity.ProblemPublic)
 	} else {
-		if condition.Status.Value() < entity.ProblemStatusPublic {
+		if condition.Status.Value() < entity.ProblemPublic {
 			if role <= entity.RoleUser {
-				condition.Status.Set(entity.ProblemStatusPublic)
+				condition.Status.Set(entity.ProblemPublic)
 			} else if role == entity.RoleEditor {
 				condition.UserId.Set(userId)
 			}
