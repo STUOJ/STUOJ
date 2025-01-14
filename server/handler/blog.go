@@ -22,7 +22,7 @@ func BlogInfo(c *gin.Context) {
 	}
 
 	bid := uint64(id)
-	b, err := blog.SelectById(bid, userId, role >= entity.RoleAdmin)
+	b, err := blog.SelectById(bid, userId, role)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
