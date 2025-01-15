@@ -10,9 +10,11 @@ import (
 )
 
 type UserWhere struct {
-	Role Field[entity.Role]
-	Page Field[uint64]
-	Size Field[uint64]
+	Role    Field[entity.Role]
+	Page    Field[uint64]
+	Size    Field[uint64]
+	OrderBy Field[string]
+	Order   Field[string]
 }
 
 func (con *UserWhere) Parse(c *gin.Context) {
@@ -40,6 +42,14 @@ func (con *UserWhere) Parse(c *gin.Context) {
 			con.Size.Set(uint64(size))
 		}
 	}
+	if c.Query("order") != "" {
+		order := c.Query("order")
+		if c.Query("order_by") != "" {
+			orderBy := c.Query("order_by")
+			con.OrderBy.Set(orderBy)
+			con.Order.Set(order)
+		}
+	}
 }
 
 func (con *UserWhere) GenerateWhereWithNoPage() func(*gorm.DB) *gorm.DB {
@@ -48,7 +58,18 @@ func (con *UserWhere) GenerateWhereWithNoPage() func(*gorm.DB) *gorm.DB {
 		if con.Role.Exist() {
 			whereClause["role"] = con.Role.Value()
 		}
-		return db.Where(whereClause)
+		where := db.Where(whereClause)
+		if con.OrderBy.Exist() {
+			orderBy := con.OrderBy.Value()
+			order := con.Order.Value()
+			if order == "desc" {
+				order = "DESC"
+			} else {
+				order = "ASC"
+			}
+			where = where.Order(orderBy + " " + order)
+		}
+		return where
 	}
 }
 

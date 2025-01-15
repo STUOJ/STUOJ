@@ -21,6 +21,8 @@ type BlogWhere struct {
 	EndTime   Field[time.Time]
 	Page      Field[uint64]
 	Size      Field[uint64]
+	OrderBy   Field[string]
+	Order     Field[string]
 }
 
 func (con *BlogWhere) Parse(c *gin.Context) {
@@ -87,6 +89,14 @@ func (con *BlogWhere) Parse(c *gin.Context) {
 			con.Size.Set(uint64(size))
 		}
 	}
+	if c.Query("order") != "" {
+		order := c.Query("order")
+		if c.Query("order_by") != "" {
+			orderBy := c.Query("order_by")
+			con.OrderBy.Set(orderBy)
+			con.Order.Set(order)
+		}
+	}
 }
 
 func (con *BlogWhere) GenerateWhereWithNoPage() func(*gorm.DB) *gorm.DB {
@@ -114,6 +124,16 @@ func (con *BlogWhere) GenerateWhereWithNoPage() func(*gorm.DB) *gorm.DB {
 		}
 		if con.EndTime.Exist() {
 			where = where.Where("tbl_blog.create_time <= ?", con.EndTime.Value())
+		}
+		if con.OrderBy.Exist() {
+			orderBy := con.OrderBy.Value()
+			order := con.Order.Value()
+			if order == "desc" {
+				order = "DESC"
+			} else {
+				order = "ASC"
+			}
+			where = where.Order(orderBy + " " + order)
 		}
 		return where
 	}
