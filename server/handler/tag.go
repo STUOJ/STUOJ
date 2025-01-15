@@ -14,14 +14,16 @@ import (
 
 // 获取标签列表
 func TagList(c *gin.Context) {
-	tags, err := tag.SelectAll()
+
+	condition := model.TagWhere{}
+	condition.Parse(c)
+	users, err := tag.Select(condition)
 	if err != nil {
-		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
 	}
 
-	c.JSON(http.StatusOK, model.RespOk("OK", tags))
+	c.JSON(http.StatusOK, model.RespOk("OK", users))
 }
 
 // 添加标签

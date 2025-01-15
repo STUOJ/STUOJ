@@ -4,6 +4,7 @@ import (
 	"STUOJ/internal/dao"
 	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
+	"STUOJ/utils"
 	"errors"
 	"log"
 )
@@ -78,4 +79,32 @@ func hidePassword(users []entity.User) {
 	for i := range users {
 		users[i].Password = ""
 	}
+}
+
+// 根据邮箱验证密码
+func VerifyByEmail(u entity.User) (string, error) {
+	password := u.Password
+
+	// 查询用户
+	u, err := dao.SelectUserByEmail(u.Email.String())
+	if err != nil {
+		log.Println(err)
+		return "", errors.New("用户不存在")
+	}
+
+	// 验证密码
+	err = u.VerifyByPassword(password)
+	if err != nil {
+		log.Println(err)
+		return "", errors.New("用户名或密码错误")
+	}
+
+	// 生成token
+	token, err := utils.GenerateToken(u.Id)
+	if err != nil {
+		log.Println(err)
+		return "", errors.New("生成token失败")
+	}
+
+	return token, nil
 }

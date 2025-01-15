@@ -14,7 +14,7 @@ func GetStatistics() (model.TagStatistics, error) {
 	var cbts []model.CountByTag
 
 	// 统计标签数量
-	stats.TagCount, err = dao.CountTags()
+	stats.TagCount, err = dao.CountTags(model.TagWhere{})
 	if err != nil {
 		log.Println(err)
 		return model.TagStatistics{}, errors.New("统计标签数量失败")
