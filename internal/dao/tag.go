@@ -3,6 +3,7 @@ package dao
 import (
 	"STUOJ/internal/db"
 	"STUOJ/internal/entity"
+	"STUOJ/internal/model"
 )
 
 // 插入标签
@@ -37,6 +38,21 @@ func SelectAllTags() ([]entity.Tag, error) {
 	return tags, nil
 }
 
+// 查询标签
+func SelectTags(condition model.TagWhere) ([]entity.Tag, error) {
+	var tags []entity.Tag
+	where := condition.GenerateWhere()
+
+	tx := db.Db.Model(&entity.Tag{})
+	tx = where(tx)
+	tx = tx.Find(&tags)
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
+
+	return tags, nil
+}
+
 // 根据ID更新标签
 func UpdateTagById(t entity.Tag) error {
 	tx := db.Db.Model(&t).Where("id = ?", t.Id).Updates(t)
@@ -58,10 +74,12 @@ func DeleteTagById(id uint64) error {
 }
 
 // 统计标签数量
-func CountTags() (uint64, error) {
+func CountTags(condition model.TagWhere) (uint64, error) {
 	var count int64
-
-	tx := db.Db.Model(&entity.Tag{}).Count(&count)
+	where := condition.GenerateWhereWithNoPage()
+	tx := db.Db.Model(&entity.Tag{})
+	tx = where(tx)
+	tx = tx.Count(&count)
 	if tx.Error != nil {
 		return 0, tx.Error
 	}

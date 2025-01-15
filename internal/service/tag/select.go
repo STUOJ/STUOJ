@@ -3,9 +3,15 @@ package tag
 import (
 	"STUOJ/internal/dao"
 	"STUOJ/internal/entity"
+	"STUOJ/internal/model"
 	"errors"
 	"log"
 )
+
+type TagPage struct {
+	Tags []entity.Tag `json:"tags"`
+	model.Page
+}
 
 // 根据ID查询标签
 func SelectById(id uint64) (entity.Tag, error) {
@@ -15,17 +21,6 @@ func SelectById(id uint64) (entity.Tag, error) {
 	}
 
 	return t, nil
-}
-
-// 查询所有标签
-func SelectAll() ([]entity.Tag, error) {
-	tags, err := dao.SelectAllTags()
-	if err != nil {
-		log.Println(err)
-		return nil, errors.New("获取标签信息失败")
-	}
-
-	return tags, nil
 }
 
 // 根据题目ID查询标签
@@ -51,4 +46,35 @@ func CountProblemTag(pid uint64, tid uint64) (int64, error) {
 	}
 
 	return count, nil
+}
+
+// 查询所有用户
+func Select(condition model.TagWhere) (TagPage, error) {
+	if !condition.Page.Exist() {
+		condition.Page.Set(1)
+	}
+	if !condition.Size.Exist() {
+		condition.Size.Set(10)
+	}
+	users, err := dao.SelectTags(condition)
+	if err != nil {
+		log.Println(err)
+		return TagPage{}, errors.New("查询用户失败")
+	}
+
+	count, err := dao.CountTags(condition)
+	if err != nil {
+		log.Println(err)
+		return TagPage{}, errors.New("查询统计失败")
+	}
+	uPage := TagPage{
+		Tags: users,
+		Page: model.Page{
+			Total: count,
+			Page:  condition.Page.Value(),
+			Size:  condition.Size.Value(),
+		},
+	}
+
+	return uPage, nil
 }
