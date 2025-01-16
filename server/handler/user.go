@@ -192,7 +192,7 @@ func UserChangePassword(c *gin.Context) {
 		return
 	}
 
-	if role <= entity.RoleUser {
+	if role < entity.RoleAdmin {
 		if err := utils.VerifyVerificationCode(req.Email.String(), req.VerifyCode); !err {
 			c.JSON(http.StatusUnauthorized, model.RespError("验证码验证失败", nil))
 			return
