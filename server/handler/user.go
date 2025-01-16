@@ -245,14 +245,14 @@ func ModifyUserAvatar(c *gin.Context) {
 	defer os.Remove(dst)
 
 	// 更新头像
-	err = user.UpdateAvatarById(uid, dst, id_, role)
+	url, err := user.UpdateAvatarById(uid, dst, id_, role)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.RespError(err.Error(), nil))
 		return
 	}
 
 	// 返回结果
-	c.JSON(http.StatusOK, model.RespOk("更新成功", nil))
+	c.JSON(http.StatusOK, model.RespOk("更新成功", url))
 }
 
 // 获取用户列表
