@@ -133,12 +133,16 @@ func UpdateRoleById(u entity.User, role entity.Role) error {
 }
 
 // 更新用户头像
-func UpdateAvatarById(uid uint64, dst string) error {
+func UpdateAvatarById(uid uint64, dst string, userId uint64, role entity.Role) error {
 	// 读取用户
 	u, err := SelectById(uid)
 	if err != nil {
 		log.Println(err)
 		return errors.New("用户不存在")
+	}
+
+	if u.Id != userId && role < entity.RoleAdmin {
+		return errors.New("权限不足")
 	}
 
 	// 上传头像

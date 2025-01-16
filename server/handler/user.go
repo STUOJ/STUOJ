@@ -245,13 +245,8 @@ func ModifyUserAvatar(c *gin.Context) {
 	}
 	defer os.Remove(dst)
 
-	if id_ != uid && role <= entity.RoleUser {
-		c.JSON(http.StatusUnauthorized, model.RespError("权限不足", nil))
-		return
-	}
-
 	// 更新头像
-	err = user.UpdateAvatarById(uid, dst)
+	err = user.UpdateAvatarById(uid, dst, id_, role)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.RespError(err.Error(), nil))
 		return
