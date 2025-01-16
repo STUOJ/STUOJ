@@ -8,6 +8,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -189,7 +191,7 @@ func UserChangePassword(c *gin.Context) {
 		return
 	}
 
-	if role <= entity.RoleUser {
+	if role < entity.RoleAdmin {
 		if err := utils.VerifyVerificationCode(req.Email.String(), req.VerifyCode); !err {
 			c.JSON(http.StatusUnauthorized, model.RespError("验证码验证失败", nil))
 			return
@@ -230,21 +232,20 @@ func ModifyUserAvatar(c *gin.Context) {
 		return
 	}
 
+	ext := filepath.Ext(file.Filename)
+
 	// 保存文件
-	dst := fmt.Sprintf("tmp/%s", utils.GetRandKey())
+	dst := fmt.Sprintf("tmp/%s%s", utils.GetRandKey(), ext)
+	log.Println(dst)
 	if err := c.SaveUploadedFile(file, dst); err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("文件上传失败", nil))
+		c.JSON(http.StatusBadRequest, model.RespError("文件解析失败", nil))
 		return
 	}
-
-	if id_ != uid && role <= entity.RoleUser {
-		c.JSON(http.StatusUnauthorized, model.RespError("权限不足", nil))
-		return
-	}
+	defer os.Remove(dst)
 
 	// 更新头像
-	err = user.UpdateAvatarById(uid, dst)
+	err = user.UpdateAvatarById(uid, dst, id_, role)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.RespError(err.Error(), nil))
 		return
