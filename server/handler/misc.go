@@ -33,9 +33,9 @@ func UploadImage(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, model.RespError("文件上传失败", nil))
 		return
 	}
+	defer os.Remove(dst)
 
 	image, err := yuki.UploadImage(dst, uint8(role))
-	_ = os.Remove(dst)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.RespError("上传失败", nil))
 		return

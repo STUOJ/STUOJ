@@ -8,7 +8,6 @@ import (
 	"errors"
 	"html"
 	"log"
-	"os"
 	"strings"
 	"time"
 )
@@ -144,7 +143,6 @@ func UpdateAvatarById(uid uint64, dst string) error {
 
 	// 上传头像
 	image, err := yuki.UploadImage(dst, model.RoleAvatar)
-	_ = os.Remove(dst)
 	if err != nil {
 		log.Println(err)
 		return errors.New("上传失败")
