@@ -146,7 +146,7 @@ func UpdateAvatarById(uid uint64, dst string, userId uint64, role entity.Role) e
 	}
 
 	// 上传头像
-	image, err := yuki.UploadImage(dst, model.RoleAvatar)
+	image, err := yuki.UploadImage(dst, model.YukiAvatarAlbum)
 	if err != nil {
 		log.Println(err)
 		return errors.New("上传失败")
@@ -156,7 +156,6 @@ func UpdateAvatarById(uid uint64, dst string, userId uint64, role entity.Role) e
 	err = yuki.DeleteOldAvatar(u.Avatar)
 	if err != nil {
 		log.Println(err)
-		return errors.New("删除旧头像失败")
 	}
 
 	updateTime := time.Now()

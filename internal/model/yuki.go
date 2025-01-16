@@ -1,12 +1,6 @@
 package model
 
 const (
-	RoleProblem uint8 = 1
-	RoleAvatar  uint8 = 2
-	RoleBlog    uint8 = 3
-)
-
-const (
 	JPEG uint64 = 1
 	PNG  uint64 = 2
 	GIF  uint64 = 3
