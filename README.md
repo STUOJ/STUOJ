@@ -1,5 +1,7 @@
 # STU Online Judge System
 
+![image](https://github.com/user-attachments/assets/c8c3ff89-8a7c-4258-9184-5020fdf4ca72)
+
 ## 项目简介
 
 STUOJ 是汕头大学疾风算法协会的 ACM-ICPC 算法程序在线评测系统，基于 Go 语言和 Gin 框架开发。
