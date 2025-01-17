@@ -5,6 +5,8 @@ import (
 	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
 	"fmt"
+	"strconv"
+	"strings"
 	"time"
 
 	"gorm.io/gorm"
@@ -14,6 +16,11 @@ type BriefProblem struct {
 	ProblemTitle      string               `gorm:"column:problem_title"`
 	ProblemStatus     entity.ProblemStatus `gorm:"column:problem_status"`
 	ProblemDifficulty entity.Difficulty    `gorm:"column:problem_difficulty"`
+}
+
+type auxiliaryProblem struct {
+	entity.Problem
+	ProblemHistoryUserId string `gorm:"column:problem_history_user_id"`
 }
 
 // 插入题目
@@ -35,6 +42,35 @@ func SelectProblemById(id uint64) (entity.Problem, error) {
 	}
 
 	return p, nil
+}
+
+func SelectProblemByIdWithUser(id uint64) (entity.Problem, []uint64, error) {
+	var p auxiliaryProblem
+
+	subQuery := db.Db.Model(&entity.History{}).
+		Select("GROUP_CONCAT(DISTINCT user_id)").
+		Where("problem_id = ?", id)
+
+	tx := db.Db.Model(&entity.Problem{}).
+		Where("id = ?", id).
+		Select("tbl_problem.*, (?) as problem_history_user_id", subQuery).
+		Scan(&p)
+
+	if tx.Error != nil {
+		return entity.Problem{}, nil, tx.Error
+	}
+
+	// 将逗号分隔的字符串转换为 []uint64
+	historyUserIds := make([]uint64, 0)
+	if p.ProblemHistoryUserId != "" {
+		for _, idStr := range strings.Split(p.ProblemHistoryUserId, ",") {
+			if id, err := strconv.ParseUint(strings.TrimSpace(idStr), 10, 64); err == nil {
+				historyUserIds = append(historyUserIds, id)
+			}
+		}
+	}
+
+	return p.Problem, historyUserIds, nil
 }
 
 func SelectProblem(condition model.ProblemWhere) ([]entity.Problem, error) {

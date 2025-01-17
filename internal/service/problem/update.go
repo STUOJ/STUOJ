@@ -9,12 +9,22 @@ import (
 )
 
 // 根据ID更新题目
-func UpdateById(p entity.Problem, uid uint64) error {
+func UpdateById(p entity.Problem, uid uint64, role entity.Role) error {
 	// 读取题目
-	p0, err := dao.SelectProblemById(p.Id)
+	p0, userIds, err := dao.SelectProblemByIdWithUser(p.Id)
 	if err != nil {
 		log.Println(err)
 		return errors.New("题目不存在")
+	}
+
+	if role < entity.RoleAdmin {
+		userIdsMap := make(map[uint64]struct{})
+		for _, uid := range userIds {
+			userIdsMap[uid] = struct{}{}
+		}
+		if _, exists := userIdsMap[uid]; !exists {
+			return errors.New("没有该题权限")
+		}
 	}
 
 	updateTime := time.Now()
