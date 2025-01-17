@@ -176,7 +176,7 @@ func ProblemRemove(c *gin.Context) {
 	}
 
 	pid := uint64(id)
-	err = problem.DeleteByProblemId(pid, uid)
+	err = problem.DeleteByProblemId(pid, uid, role)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
