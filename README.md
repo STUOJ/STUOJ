@@ -8,6 +8,8 @@ STUOJ 是汕头大学疾风算法协会的 ACM-ICPC 算法程序在线评测系�
 
 STUOJ 也是一款基于 AI 大模型的 ACM-ICPC 算法题目自动出题 OJ 系统，可以自动生成算法题目、测试用例和题解代码。
 
+![image](https://github.com/user-attachments/assets/c8c3ff89-8a7c-4258-9184-5020fdf4ca72)
+
 ## API 文档
 
 - Apifox：[https://stuoj-api.apifox.cn](https://stuoj-api.apifox.cn)
