@@ -40,10 +40,6 @@ func Register(u entity.User) (uint64, error) {
 		return 0, err
 	}
 
-	// 默认值
-	u.Avatar = "http://example.com/avatar.png"
-	u.Signature = "这个大佬很懒，什么也没有留下"
-
 	updateTime := time.Now()
 	u.CreateTime = updateTime
 	u.UpdateTime = updateTime
