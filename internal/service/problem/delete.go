@@ -9,26 +9,22 @@ import (
 )
 
 // 根据ID删除题目
-func DeleteByProblemId(pid uint64, uid uint64) error {
-	// 查询题目是否存在
-	_, err := dao.SelectProblemById(pid)
+func DeleteByProblemId(pid uint64, uid uint64, role entity.Role) error {
+	// 读取题目
+	_, uids, err := dao.SelectProblemByIdWithUser(pid)
 	if err != nil {
 		log.Println(err)
 		return errors.New("题目不存在")
 	}
 
-	// 删除题目的所有标签
-	err = dao.DeleteProblemTagsByProblemId(pid)
-	if err != nil {
-		log.Println(err)
-		return errors.New("删除题目标签失败")
-	}
-
-	// 删除题目的所有评测点
-	err = dao.DeleteTestcasesByProblemId(pid)
-	if err != nil {
-		log.Println(err)
-		return errors.New("删除评测点失败")
+	if role < entity.RoleAdmin {
+		userIdsMap := make(map[uint64]struct{})
+		for _, uid := range uids {
+			userIdsMap[uid] = struct{}{}
+		}
+		if _, exists := userIdsMap[uid]; !exists {
+			return errors.New("没有该题权限")
+		}
 	}
 
 	// 添加题目历史记录
