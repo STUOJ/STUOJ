@@ -21,6 +21,7 @@ type BriefProblem struct {
 type auxiliaryProblem struct {
 	entity.Problem
 	ProblemHistoryUserId string `gorm:"column:problem_history_user_id"`
+	ProblemTagIds        string `gorm:"column:problem_tag_id"`
 }
 
 // 插入题目
@@ -34,30 +35,23 @@ func InsertProblem(p entity.Problem) (uint64, error) {
 }
 
 func SelectProblemById(id uint64) (entity.Problem, error) {
-	var p entity.Problem
-
-	tx := db.Db.Where(&entity.Problem{Id: id}).First(&p)
-	if tx.Error != nil {
-		return entity.Problem{}, tx.Error
-	}
-
-	return p, nil
-}
-
-func SelectProblemByIdWithUser(id uint64) (entity.Problem, []uint64, error) {
 	var p auxiliaryProblem
 
-	subQuery := db.Db.Model(&entity.History{}).
+	subQueryUser := db.Db.Model(&entity.History{}).
 		Select("GROUP_CONCAT(DISTINCT user_id)").
+		Where("problem_id = ?", id)
+
+	subQueryTag := db.Db.Model(&entity.ProblemTag{}).
+		Select("GROUP_CONCAT(DISTINCT tag_id)").
 		Where("problem_id = ?", id)
 
 	tx := db.Db.Model(&entity.Problem{}).
 		Where("id = ?", id).
-		Select("tbl_problem.*, (?) as problem_history_user_id", subQuery).
+		Select("tbl_problem.*, (?) as problem_history_user_id, (?)  as problem_tag_id", subQueryUser, subQueryTag).
 		Scan(&p)
 
 	if tx.Error != nil {
-		return entity.Problem{}, nil, tx.Error
+		return entity.Problem{}, tx.Error
 	}
 
 	// 将逗号分隔的字符串转换为 []uint64
@@ -69,8 +63,19 @@ func SelectProblemByIdWithUser(id uint64) (entity.Problem, []uint64, error) {
 			}
 		}
 	}
+	p.Problem.UserIds = historyUserIds
 
-	return p.Problem, historyUserIds, nil
+	tagIds := make([]uint64, 0)
+	if p.ProblemTagIds != "" {
+		for _, idStr := range strings.Split(p.ProblemTagIds, ",") {
+			if id, err := strconv.ParseUint(strings.TrimSpace(idStr), 10, 64); err == nil {
+				tagIds = append(tagIds, id)
+			}
+		}
+	}
+	p.Problem.TagIds = tagIds
+
+	return p.Problem, nil
 }
 
 func SelectProblem(condition model.ProblemWhere) ([]entity.Problem, error) {

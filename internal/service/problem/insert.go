@@ -59,7 +59,7 @@ func InsertTag(pid uint64, tid uint64, uid uint64, role entity.Role) error {
 	}
 
 	// 读取题目
-	_, uids, err := dao.SelectProblemByIdWithUser(pid)
+	p0, err := dao.SelectProblemById(pid)
 	if err != nil {
 		log.Println(err)
 		return errors.New("题目不存在")
@@ -67,7 +67,7 @@ func InsertTag(pid uint64, tid uint64, uid uint64, role entity.Role) error {
 
 	if role < entity.RoleAdmin {
 		userIdsMap := make(map[uint64]struct{})
-		for _, uid := range uids {
+		for _, uid := range p0.UserIds {
 			userIdsMap[uid] = struct{}{}
 		}
 		if _, exists := userIdsMap[uid]; !exists {

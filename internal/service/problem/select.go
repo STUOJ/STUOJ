@@ -15,15 +15,10 @@ type ProblemPage struct {
 // 根据ID查询题目数据
 func SelectById(id uint64, userId uint64, role entity.Role) (model.ProblemData, error) {
 	// 获取题目信息
-	p, userIds, err := dao.SelectProblemByIdWithUser(id)
+	p, err := dao.SelectProblemById(id)
+
 	if err != nil {
 		return model.ProblemData{}, errors.New("获取题目信息失败")
-	}
-
-	// 获取题目标签
-	tags, err := dao.SelectTagsByProblemId(id)
-	if err != nil {
-		return model.ProblemData{}, errors.New("获取题目标签失败")
 	}
 
 	var testcases []entity.Testcase
@@ -31,7 +26,7 @@ func SelectById(id uint64, userId uint64, role entity.Role) (model.ProblemData, 
 
 	if p.Status != entity.ProblemPublic && role < entity.RoleAdmin {
 		userIdsMap := make(map[uint64]struct{})
-		for _, uid := range userIds {
+		for _, uid := range p.UserIds {
 			userIdsMap[uid] = struct{}{}
 		}
 		if _, exists := userIdsMap[userId]; !exists {
@@ -39,10 +34,14 @@ func SelectById(id uint64, userId uint64, role entity.Role) (model.ProblemData, 
 		}
 	}
 
+	if role >= entity.RoleEditor {
+		testcases, err = dao.SelectTestcasesByProblemId(id)
+		solutions, err = dao.SelectSolutionsByProblemId(id)
+	}
+
 	// 封装题目数据
 	pd := model.ProblemData{
 		Problem:   p,
-		Tags:      tags,
 		Testcases: testcases,
 		Solutions: solutions,
 	}
