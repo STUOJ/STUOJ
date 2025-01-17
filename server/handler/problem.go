@@ -167,8 +167,7 @@ func ProblemModify(c *gin.Context) {
 
 // 删除题目
 func ProblemRemove(c *gin.Context) {
-	_, id_ := utils.GetUserInfo(c)
-	uid := uint64(id_)
+	role, uid := utils.GetUserInfo(c)
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
@@ -177,7 +176,7 @@ func ProblemRemove(c *gin.Context) {
 	}
 
 	pid := uint64(id)
-	err = problem.DeleteByProblemId(pid, uid)
+	err = problem.DeleteByProblemId(pid, uid, role)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
