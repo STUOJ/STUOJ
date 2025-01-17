@@ -41,5 +41,7 @@ func InitDatabase() error {
 		return err
 	}
 
+	autoMigrate()
+
 	return nil
 }
