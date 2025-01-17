@@ -21,12 +21,6 @@ func SelectById(id uint64, userId uint64, role entity.Role) (model.ProblemData, 
 		return model.ProblemData{}, errors.New("获取题目信息失败")
 	}
 
-	// 获取题目标签
-	tags, err := dao.SelectTagsByProblemId(id)
-	if err != nil {
-		return model.ProblemData{}, errors.New("获取题目标签失败")
-	}
-
 	var testcases []entity.Testcase
 	var solutions []entity.Solution
 
@@ -48,7 +42,6 @@ func SelectById(id uint64, userId uint64, role entity.Role) (model.ProblemData, 
 	// 封装题目数据
 	pd := model.ProblemData{
 		Problem:   p,
-		Tags:      tags,
 		Testcases: testcases,
 		Solutions: solutions,
 	}
