@@ -79,16 +79,42 @@ func SelectProblemById(id uint64) (entity.Problem, error) {
 }
 
 func SelectProblem(condition model.ProblemWhere) ([]entity.Problem, error) {
-	var problems []entity.Problem
+	var problems []auxiliaryProblem
+
+	subQueryTag := db.Db.Model(&entity.ProblemTag{}).
+		Select("GROUP_CONCAT(DISTINCT tag_id)").
+		Where("problem_id = tbl_problem.id")
+
 	where := condition.GenerateWhere()
-	tx := db.Db.Model(&entity.Problem{})
-	tx = where(tx)
-	tx = tx.Find(&problems)
+	tx := db.Db.Model(&entity.Problem{}).
+		Where(where(db.Db)).
+		Select("tbl_problem.*, (?) as problem_tag_id", subQueryTag).
+		Scan(&problems)
 
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
-	return problems, nil
+
+	// 处理每个问题的标签
+	for i := range problems {
+		tagIds := make([]uint64, 0)
+		if problems[i].ProblemTagIds != "" {
+			for _, idStr := range strings.Split(problems[i].ProblemTagIds, ",") {
+				if id, err := strconv.ParseUint(strings.TrimSpace(idStr), 10, 64); err == nil {
+					tagIds = append(tagIds, id)
+				}
+			}
+		}
+		problems[i].Problem.TagIds = tagIds
+	}
+
+	// 将辅助结构体转换为实体结构体
+	result := make([]entity.Problem, len(problems))
+	for i := range problems {
+		result[i] = problems[i].Problem
+	}
+
+	return result, nil
 }
 
 // 根据ID更新题目
