@@ -13,9 +13,9 @@ type ProblemPage struct {
 }
 
 // 根据ID查询题目数据
-func SelectById(id uint64, admin ...bool) (model.ProblemData, error) {
+func SelectById(id uint64, userId uint64, role entity.Role) (model.ProblemData, error) {
 	// 获取题目信息
-	p, err := dao.SelectProblemById(id)
+	p, userIds, err := dao.SelectProblemByIdWithUser(id)
 	if err != nil {
 		return model.ProblemData{}, errors.New("获取题目信息失败")
 	}
@@ -29,22 +29,13 @@ func SelectById(id uint64, admin ...bool) (model.ProblemData, error) {
 	var testcases []entity.Testcase
 	var solutions []entity.Solution
 
-	if len(admin) > 0 && admin[0] {
-
-		// 获取评测点数据
-		testcases, err = dao.SelectTestcasesByProblemId(id)
-		if err != nil {
-			return model.ProblemData{}, errors.New("获取评测点数据失败")
+	if p.Status != entity.ProblemPublic && role < entity.RoleAdmin {
+		userIdsMap := make(map[uint64]struct{})
+		for _, uid := range userIds {
+			userIdsMap[uid] = struct{}{}
 		}
-
-		// 获取题解数据
-		solutions, err = dao.SelectSolutionsByProblemId(id)
-		if err != nil {
-			return model.ProblemData{}, errors.New("获取题解数据失败")
-		}
-	} else {
-		if p.Status != entity.ProblemPublic {
-			return model.ProblemData{}, errors.New("题目未公开")
+		if _, exists := userIdsMap[userId]; !exists {
+			return model.ProblemData{}, errors.New("没有该题权限")
 		}
 	}
 

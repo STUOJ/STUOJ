@@ -5,6 +5,7 @@ import (
 	"STUOJ/internal/model"
 	"STUOJ/internal/service/problem"
 	"STUOJ/internal/service/tag"
+	"STUOJ/utils"
 	"log"
 	"net/http"
 	"strconv"
@@ -113,6 +114,7 @@ type ReqProblemAddTag struct {
 }
 
 func ProblemAddTag(c *gin.Context) {
+	role, uid := utils.GetUserInfo(c)
 	var req ReqProblemAddTag
 
 	// 参数绑定
@@ -124,7 +126,7 @@ func ProblemAddTag(c *gin.Context) {
 	}
 
 	// 添加标签
-	err = problem.InsertTag(req.ProblemId, req.TagId)
+	err = problem.InsertTag(req.ProblemId, req.TagId, uid, role)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
@@ -142,6 +144,7 @@ type ReqProblemRemoveTag struct {
 
 // 删除题目的某个标签
 func ProblemRemoveTag(c *gin.Context) {
+	role, uid := utils.GetUserInfo(c)
 	var req ReqProblemRemoveTag
 
 	// 参数绑定
@@ -153,7 +156,7 @@ func ProblemRemoveTag(c *gin.Context) {
 	}
 
 	// 删除标签
-	err = problem.DeleteTag(req.ProblemId, req.TagId)
+	err = problem.DeleteTag(req.ProblemId, req.TagId, uid, role)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return

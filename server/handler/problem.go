@@ -18,7 +18,7 @@ import (
 
 // 获取题目信息
 func ProblemInfo(c *gin.Context) {
-	role, _ := utils.GetUserInfo(c)
+	role, uid := utils.GetUserInfo(c)
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
@@ -27,7 +27,7 @@ func ProblemInfo(c *gin.Context) {
 	}
 
 	pid := uint64(id)
-	pd, err := problem.SelectById(pid, role >= entity.RoleAdmin)
+	pd, err := problem.SelectById(pid, uid, role)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
@@ -127,8 +127,7 @@ type ReqProblemModify struct {
 
 // 修改题目
 func ProblemModify(c *gin.Context) {
-	_, id_ := utils.GetUserInfo(c)
-	uid := uint64(id_)
+	role, uid := utils.GetUserInfo(c)
 	var req ReqProblemModify
 
 	// 参数绑定
@@ -156,7 +155,7 @@ func ProblemModify(c *gin.Context) {
 		Status:       req.Status,
 	}
 
-	err = problem.UpdateById(p, uid)
+	err = problem.UpdateById(p, uid, role)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return

@@ -51,7 +51,7 @@ func Insert(p entity.Problem, uid uint64) (uint64, error) {
 }
 
 // 给题目添加标签
-func InsertTag(pid uint64, tid uint64) error {
+func InsertTag(pid uint64, tid uint64, uid uint64, role entity.Role) error {
 	// 初始化题目标签
 	pt := entity.ProblemTag{
 		ProblemId: pid,
@@ -59,10 +59,20 @@ func InsertTag(pid uint64, tid uint64) error {
 	}
 
 	// 读取题目
-	_, err := dao.SelectProblemById(pid)
+	_, uids, err := dao.SelectProblemByIdWithUser(pid)
 	if err != nil {
 		log.Println(err)
 		return errors.New("题目不存在")
+	}
+
+	if role < entity.RoleAdmin {
+		userIdsMap := make(map[uint64]struct{})
+		for _, uid := range uids {
+			userIdsMap[uid] = struct{}{}
+		}
+		if _, exists := userIdsMap[uid]; !exists {
+			return errors.New("没有该题权限")
+		}
 	}
 
 	// 读取标签
