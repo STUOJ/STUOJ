@@ -86,8 +86,9 @@ func SelectProblem(condition model.ProblemWhere) ([]entity.Problem, error) {
 		Where("problem_id = tbl_problem.id")
 
 	where := condition.GenerateWhere()
-	tx := db.Db.Model(&entity.Problem{}).
-		Where(where(db.Db)).
+	tx := db.Db.Model(&entity.Problem{})
+	tx = where(tx)
+	tx = tx.
 		Select("tbl_problem.*, (?) as problem_tag_id", subQueryTag).
 		Scan(&problems)
 
