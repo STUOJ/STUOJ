@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
 	"STUOJ/internal/service/record"
 	"STUOJ/utils"
@@ -23,7 +22,7 @@ func RecordInfo(c *gin.Context) {
 	}
 
 	sid := uint64(id)
-	r, err := record.SelectBySubmissionId(id_, sid, role <= entity.RoleUser)
+	r, err := record.SelectBySubmissionId(id_, sid, role)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
@@ -39,7 +38,7 @@ func RecordList(c *gin.Context) {
 	condition := model.SubmissionWhere{}
 	condition.Parse(c)
 
-	records, err := record.Select(condition, id_, role <= entity.RoleUser)
+	records, err := record.Select(condition, id_, role)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
