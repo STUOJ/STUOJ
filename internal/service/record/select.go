@@ -14,7 +14,7 @@ type SubmissionPage struct {
 }
 
 // 查询所有提交记录（不返回源代码）
-func Select(condition model.SubmissionWhere, userId uint64, hideCode ...bool) (SubmissionPage, error) {
+func Select(condition model.SubmissionWhere, userId uint64, role entity.Role) (SubmissionPage, error) {
 	if !condition.Page.Exist() {
 		condition.Page.Set(1)
 	}
@@ -27,7 +27,7 @@ func Select(condition model.SubmissionWhere, userId uint64, hideCode ...bool) (S
 		log.Println(err)
 		return SubmissionPage{}, errors.New("获取提交信息失败")
 	}
-	if len(hideCode) == 0 || hideCode[0] { // 隐藏源代码
+	if role < entity.RoleAdmin { // 隐藏源代码
 		hideSubmissionSourceCode(userId, submissions)
 	}
 	total, err := dao.CountSubmissions(condition)
@@ -47,7 +47,7 @@ func Select(condition model.SubmissionWhere, userId uint64, hideCode ...bool) (S
 }
 
 // 根据提交ID查询提交记录
-func SelectBySubmissionId(userId uint64, sid uint64, hideCode ...bool) (model.Record, error) {
+func SelectBySubmissionId(userId uint64, sid uint64, role entity.Role) (model.Record, error) {
 	// 获取提交信息
 	s, err := dao.SelectSubmissionById(sid)
 	if err != nil {
@@ -62,7 +62,7 @@ func SelectBySubmissionId(userId uint64, sid uint64, hideCode ...bool) (model.Re
 		return model.Record{}, errors.New("获取评测结果失败")
 	}
 
-	if (len(hideCode) == 0 || hideCode[0]) && userId != s.UserId { // 隐藏源代码
+	if role < entity.RoleAdmin && userId != s.UserId { // 隐藏源代码
 		s.SourceCode = ""
 	}
 
