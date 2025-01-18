@@ -36,6 +36,7 @@ func Update(b entity.Blog, userId uint64, role entity.Role) error {
 	b0.Content = b.Content
 	b0.UpdateTime = updateTime
 	b0.Status = b.Status
+	b0.ProblemId = b.ProblemId
 
 	// 更新博客
 	err = dao.UpdateBlogById(b0)
