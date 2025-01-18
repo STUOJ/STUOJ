@@ -80,7 +80,7 @@ func BlogUpload(c *gin.Context) {
 	}
 
 	// 返回结果
-	c.JSON(http.StatusOK, model.RespOk("保存成功，需要提交审核，返回博客ID", b.Id))
+	c.JSON(http.StatusOK, model.RespOk("发布成功，返回博客ID", b.Id))
 }
 
 // 编辑博客
@@ -120,7 +120,7 @@ func BlogEdit(c *gin.Context) {
 	}
 
 	// 返回结果
-	c.JSON(http.StatusOK, model.RespOk("修改成功，需要提交审核", nil))
+	c.JSON(http.StatusOK, model.RespOk("修改成功", nil))
 }
 
 // 删除博客
