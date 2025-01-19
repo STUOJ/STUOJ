@@ -16,7 +16,7 @@ type BlogWhere struct {
 	UserId    FieldList[uint64]
 	ProblemId FieldList[uint64]
 	Title     Field[string]
-	Status    Field[entity.BlogStatus]
+	Status    FieldList[entity.BlogStatus]
 	StartTime Field[time.Time]
 	EndTime   Field[time.Time]
 	Page      Field[uint64]
@@ -26,19 +26,23 @@ type BlogWhere struct {
 }
 
 func (con *BlogWhere) Parse(c *gin.Context) {
-	if c.Query("title") != "" {
-		con.Title.Set(c.Query("title"))
+	if titleQuery := c.Query("title"); titleQuery != "" {
+		con.Title.Set(titleQuery)
 	}
-	if c.Query("status") != "" {
-		status, err := strconv.Atoi(c.Query("status"))
-		if err != nil {
-			log.Println(err)
-		} else {
-			con.Status.Set(entity.BlogStatus(status))
+	if statusQuery := c.Query("status"); statusQuery != "" {
+		statuses := strings.Split(statusQuery, ",")
+		var statusesInt []entity.BlogStatus
+		for _, status := range statuses {
+			statusInt, err := strconv.Atoi(status)
+			if err != nil {
+				log.Println(err)
+			} else {
+				statusesInt = append(statusesInt, entity.BlogStatus(statusInt))
+			}
 		}
+		con.Status.Set(statusesInt)
 	}
-	if c.Query("problem") != "" {
-		problemQuery := c.Query("problem")
+	if problemQuery := c.Query("problem"); problemQuery != "" {
 		problems := strings.Split(problemQuery, ",")
 		var problemsInt []uint64
 		for _, problem := range problems {
@@ -51,8 +55,7 @@ func (con *BlogWhere) Parse(c *gin.Context) {
 		}
 		con.ProblemId.Set(problemsInt)
 	}
-	if c.Query("user") != "" {
-		userQuery := c.Query("user")
+	if userQuery := c.Query("user"); userQuery != "" {
 		users := strings.Split(userQuery, ",")
 		var usersInt []uint64
 		for _, user := range users {
@@ -67,32 +70,28 @@ func (con *BlogWhere) Parse(c *gin.Context) {
 	}
 	timePreiod := &Period{}
 	err := timePreiod.GetPeriod(c)
-	if err != nil {
-		log.Println(err)
-	} else {
+	if err == nil {
 		con.StartTime.Set(timePreiod.StartTime)
 		con.EndTime.Set(timePreiod.EndTime)
 	}
-	if c.Query("page") != "" {
-		page, err := strconv.Atoi(c.Query("page"))
+	if pageQuery := c.Query("page"); pageQuery != "" {
+		page, err := strconv.Atoi(pageQuery)
 		if err != nil {
 			log.Println(err)
 		} else {
 			con.Page.Set(uint64(page))
 		}
 	}
-	if c.Query("size") != "" {
-		size, err := strconv.Atoi(c.Query("size"))
+	if sizeQuery := c.Query("size"); sizeQuery != "" {
+		size, err := strconv.Atoi(sizeQuery)
 		if err != nil {
 			log.Println(err)
 		} else {
 			con.Size.Set(uint64(size))
 		}
 	}
-	if c.Query("order") != "" {
-		order := c.Query("order")
-		if c.Query("order_by") != "" {
-			orderBy := c.Query("order_by")
+	if order := c.Query("order"); order != "" {
+		if orderBy := c.Query("order_by"); orderBy != "" {
 			con.OrderBy.Set(orderBy)
 			con.Order.Set(order)
 		}
@@ -105,11 +104,11 @@ func (con *BlogWhere) GenerateWhereWithNoPage() func(*gorm.DB) *gorm.DB {
 		if con.Id.Exist() {
 			whereClause["tbl_blog.id"] = con.Id.Value()
 		}
-		if con.Status.Exist() {
-			whereClause["tbl_blog.status"] = con.Status.Value()
-		}
 		where := db.Where(whereClause)
 
+		if con.Status.Exist() {
+			where.Where("tbl_blog.status in ?", con.Status.Value())
+		}
 		if con.UserId.Exist() {
 			where.Where("tbl_blog.user_id in ?", con.UserId.Value())
 		}
