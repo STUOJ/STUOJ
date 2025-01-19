@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-// 根据ID更新题目
+// UpdateById 根据ID更新题目
 func UpdateById(p entity.Problem, uid uint64, role entity.Role) error {
 	// 读取题目
 	p0, err := dao.SelectProblemById(p.Id)
@@ -24,6 +24,18 @@ func UpdateById(p entity.Problem, uid uint64, role entity.Role) error {
 		}
 		if _, exists := userIdsMap[uid]; !exists {
 			return errors.New("没有该题权限")
+		}
+	}
+
+	// 公开前检查评测点
+	if p.Status == entity.ProblemPublic {
+		ts, err := dao.SelectTestcasesByProblemId(p.Id)
+		if err != nil {
+			log.Println(err)
+			return errors.New("获取评测点失败")
+		}
+		if len(ts) < 1 {
+			return errors.New("公开题目前请添加评测点")
 		}
 	}
 

@@ -8,9 +8,14 @@ import (
 	"time"
 )
 
-// 插入题目
+// Insert 插入题目
 func Insert(p entity.Problem, uid uint64) (uint64, error) {
 	var err error
+
+	// 创建题目不能直接公开
+	if p.Status == entity.ProblemPublic {
+		return 0, errors.New("创建题目不能直接公开")
+	}
 
 	updateTime := time.Now()
 	p.UpdateTime = updateTime
