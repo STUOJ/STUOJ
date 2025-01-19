@@ -10,6 +10,7 @@ import (
 	"log"
 	"math"
 	"strconv"
+	"sync"
 	"time"
 )
 
@@ -51,7 +52,7 @@ func AsyncSubmit(s entity.Submission) (uint64, error) {
 	}
 
 	// 异步提交
-	go asyncSubmit(s, p, ts)
+	asyncSubmit(s, p, ts)
 
 	return s.Id, nil
 }
@@ -59,42 +60,42 @@ func AsyncSubmit(s entity.Submission) (uint64, error) {
 // 异步提交
 func asyncSubmit(s entity.Submission, p entity.Problem, ts []entity.Testcase) {
 	s.Status = entity.JudgeAC
-	chJudgement := make(chan entity.Judgement)
+	chJudgement := make(chan entity.Judgement, len(ts))
+	var mu sync.Mutex
+	var acCount uint64 = 0
+	var wg sync.WaitGroup
+	var errors []error
 
-	lang, _ := language.SelectById(s.LanguageId)
+	lang, err := language.SelectById(s.LanguageId)
+	if err != nil {
+		log.Println("Failed to select language:", err)
+		return
+	}
 	s1 := s
 	s1.LanguageId = uint64(lang.MapId)
 
-	// 提交评测点
+	wg.Add(len(ts))
 	for _, t := range ts {
-		// 异步评测
-		go asyncJudge(s1, p, t, chJudgement)
+		go func(t entity.Testcase) {
+			defer wg.Done()
+			j, err := asyncJudge(s1, p, t)
+			if err != nil {
+				mu.Lock()
+				errors = append(errors, err)
+				j.Status = entity.JudgeIE
+				mu.Unlock()
+			}
+			chJudgement <- j
+		}(t)
 	}
-
-	var acCount uint64 = 0
-	for _, _ = range ts {
-		// 接收评测点结果
-		j := <-chJudgement
-		//log.Println(j)
-
-		// 更新提交更新时间
-		err := dao.UpdateSubmissionUpdateTimeById(j.SubmissionId)
-		if err != nil {
-			log.Println(err)
-			return
-		}
-
-		// 更新评测点结果
-		err = dao.UpdateJudgementById(j)
-		if err != nil {
-			log.Println(err)
-			return
-		}
-
-		// 更新提交数据
+	wg.Wait()
+	close(chJudgement)
+	var judgements []entity.Judgement
+	for j := range chJudgement {
+		judgements = append(judgements, j)
+		mu.Lock()
 		s.Time = math.Max(s.Time, j.Time)
 		s.Memory = max(s.Memory, j.Memory)
-		// 如果评测点结果不是AC，更新提交状态
 		if j.Status != entity.JudgeAC {
 			if s.Status != entity.JudgeWA {
 				s.Status = max(s.Status, j.Status)
@@ -102,26 +103,32 @@ func asyncSubmit(s entity.Submission, p entity.Problem, ts []entity.Testcase) {
 		} else {
 			acCount++
 		}
+		mu.Unlock()
 	}
 
-	// 计算分数
+	if len(errors) > 0 {
+		for _, err := range errors {
+			log.Println(err)
+		}
+		s.Status = entity.JudgeIE
+	}
+
 	if acCount > 0 {
 		s.Score = uint8(100 * acCount / uint64(len(ts)))
 	} else if (s.Status == entity.JudgeAC) || (s.Status == entity.JudgePD) || (s.Status == entity.JudgeIQ) {
 		s.Status = entity.JudgeWA
 	}
 
-	// 更新提交信息
 	s.UpdateTime = time.Now()
-	err := dao.UpdateSubmissionById(s)
+
+	err = dao.UpdateSubmissionByIdAndInsertJudgements(s, judgements)
 	if err != nil {
 		log.Println(err)
 		return
 	}
 }
 
-// 异步评测
-func asyncJudge(s entity.Submission, p entity.Problem, t entity.Testcase, ch chan entity.Judgement) {
+func asyncJudge(s entity.Submission, p entity.Problem, t entity.Testcase) (entity.Judgement, error) {
 	var err error
 
 	// 初始化评测点结果对象
@@ -129,21 +136,6 @@ func asyncJudge(s entity.Submission, p entity.Problem, t entity.Testcase, ch cha
 		SubmissionId: s.Id,
 		TestcaseId:   t.Id,
 		Status:       entity.JudgePD,
-	}
-
-	// 更新提交更新时间
-	err = dao.UpdateSubmissionUpdateTimeById(j.SubmissionId)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-
-	// 插入评测点结果
-	j.Id, err = dao.InsertJudgement(j)
-	if err != nil {
-		log.Println(err)
-		ch <- j
-		return
 	}
 
 	// 初始化评测点评测对象
@@ -162,8 +154,7 @@ func asyncJudge(s entity.Submission, p entity.Problem, t entity.Testcase, ch cha
 	if err != nil {
 		log.Println(err)
 		j.Status = entity.JudgeIE
-		ch <- j
-		return
+		return j, err
 	}
 	//log.Println(result)
 
@@ -174,8 +165,7 @@ func asyncJudge(s entity.Submission, p entity.Problem, t entity.Testcase, ch cha
 		if err != nil {
 			log.Println(err)
 			j.Status = entity.JudgeIE
-			ch <- j
-			return
+			return j, err
 		}
 	}
 
@@ -189,6 +179,5 @@ func asyncJudge(s entity.Submission, p entity.Problem, t entity.Testcase, ch cha
 	j.Status = entity.JudgeStatus(result.Status.Id)
 	//log.Println(j)
 
-	// 发送评测点结果到通道
-	ch <- j
+	return j, nil
 }
