@@ -31,7 +31,7 @@ func WaitSubmit(s entity.Submission) (uint64, error) {
 
 	// 获取评测点
 	ts, err := dao.SelectTestcasesByProblemId(s.ProblemId)
-	if err != nil {
+	if err != nil || len(ts) < 1 {
 		log.Println(err)
 		return 0, errors.New("获取评测点数据失败")
 	}
@@ -100,6 +100,8 @@ func WaitSubmit(s entity.Submission) (uint64, error) {
 	// 计算分数
 	if acCount > 0 {
 		s.Score = uint8(100 * acCount / uint64(len(ts)))
+	} else if (s.Status == entity.JudgeAC) || (s.Status == entity.JudgePD) || (s.Status == entity.JudgeIQ) {
+		s.Status = entity.JudgeWA
 	}
 
 	// 更新提交信息
