@@ -1,9 +1,6 @@
 package model
 
 import (
-	"log"
-	"strconv"
-	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -16,7 +13,7 @@ type SubmissionWhere struct {
 	LanguageId Field[uint64]
 	StartTime  Field[time.Time]
 	EndTime    Field[time.Time]
-	Status     Field[uint64]
+	Status     FieldList[uint64]
 	Page       Field[uint64]
 	Size       Field[uint64]
 	OrderBy    Field[string]
@@ -24,82 +21,20 @@ type SubmissionWhere struct {
 }
 
 func (con *SubmissionWhere) Parse(c *gin.Context) {
-	if c.Query("problem") != "" {
-		problemQuery := c.Query("problem")
-		problems := strings.Split(problemQuery, ",")
-		var problemsInt []uint64
-		for _, problem := range problems {
-			problemInt, err := strconv.Atoi(problem)
-			if err != nil {
-				log.Println(err)
-			} else {
-				problemsInt = append(problemsInt, uint64(problemInt))
-			}
-		}
-		con.ProblemId.Set(problemsInt)
-	}
-	if c.Query("user") != "" {
-		userQuery := c.Query("user")
-		users := strings.Split(userQuery, ",")
-		var usersInt []uint64
-		for _, user := range users {
-			userInt, err := strconv.Atoi(user)
-			if err != nil {
-				log.Println(err)
-			} else {
-				usersInt = append(usersInt, uint64(userInt))
-			}
-		}
-		con.UserId.Set(usersInt)
-	}
-	if c.Query("language") != "" {
-		language, err := strconv.Atoi(c.Query("language"))
-		if err != nil {
-			log.Println(err)
-		} else {
-			con.LanguageId.Set(uint64(language))
-		}
-	}
+	con.ProblemId.Parse(c, "problem")
+	con.UserId.Parse(c, "user")
+	con.LanguageId.Parse(c, "language")
 	timePreiod := &Period{}
 	err := timePreiod.GetPeriod(c)
-	if err != nil {
-		log.Println(err)
-	} else {
+	if err == nil {
 		con.StartTime.Set(timePreiod.StartTime)
 		con.EndTime.Set(timePreiod.EndTime)
 	}
-	if c.Query("status") != "" {
-		status, err := strconv.Atoi(c.Query("status"))
-		if err != nil {
-			log.Println(err)
-		} else {
-			con.Status.Set(uint64(status))
-		}
-	}
-	if c.Query("page") != "" {
-		page, err := strconv.Atoi(c.Query("page"))
-		if err != nil {
-			log.Println(err)
-		} else {
-			con.Page.Set(uint64(page))
-		}
-	}
-	if c.Query("size") != "" {
-		size, err := strconv.Atoi(c.Query("size"))
-		if err != nil {
-			log.Println(err)
-		} else {
-			con.Size.Set(uint64(size))
-		}
-	}
-	if c.Query("order") != "" {
-		order := c.Query("order")
-		if c.Query("order_by") != "" {
-			orderBy := c.Query("order_by")
-			con.OrderBy.Set(orderBy)
-			con.Order.Set(order)
-		}
-	}
+	con.Status.Parse(c, "status")
+	con.Page.Parse(c, "page")
+	con.Size.Parse(c, "size")
+	con.OrderBy.Parse(c, "order_by")
+	con.Order.Parse(c, "order")
 }
 
 func (con *SubmissionWhere) GenerateWhereWithNoPage() func(*gorm.DB) *gorm.DB {

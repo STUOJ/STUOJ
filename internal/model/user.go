@@ -1,16 +1,13 @@
 package model
 
 import (
-	"STUOJ/internal/entity"
-	"log"
-	"strconv"
-
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
 type UserWhere struct {
-	Role    Field[entity.Role]
+	Role    FieldList[uint64]
+	Name    Field[string]
 	Page    Field[uint64]
 	Size    Field[uint64]
 	OrderBy Field[string]
@@ -18,47 +15,25 @@ type UserWhere struct {
 }
 
 func (con *UserWhere) Parse(c *gin.Context) {
-	if c.Query("role") != "" {
-		role, err := strconv.Atoi(c.Query("role"))
-		if err != nil {
-			log.Println(err)
-		} else {
-			con.Role.Set(entity.Role(role))
-		}
-	}
-	if c.Query("page") != "" {
-		page, err := strconv.Atoi(c.Query("page"))
-		if err != nil {
-			log.Println(err)
-		} else {
-			con.Page.Set(uint64(page))
-		}
-	}
-	if c.Query("size") != "" {
-		size, err := strconv.Atoi(c.Query("size"))
-		if err != nil {
-			log.Println(err)
-		} else {
-			con.Size.Set(uint64(size))
-		}
-	}
-	if c.Query("order") != "" {
-		order := c.Query("order")
-		if c.Query("order_by") != "" {
-			orderBy := c.Query("order_by")
-			con.OrderBy.Set(orderBy)
-			con.Order.Set(order)
-		}
-	}
+	con.Role.Parse(c, "role")
+	con.Name.Parse(c, "name")
+	con.Page.Parse(c, "page")
+	con.Size.Parse(c, "size")
+	con.OrderBy.Parse(c, "order_by")
+	con.Order.Parse(c, "order")
 }
 
 func (con *UserWhere) GenerateWhereWithNoPage() func(*gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		whereClause := map[string]interface{}{}
-		if con.Role.Exist() {
-			whereClause["role"] = con.Role.Value()
-		}
+
 		where := db.Where(whereClause)
+		if con.Role.Exist() {
+			where.Where("tbl_user.role in ?", con.Role.Value())
+		}
+		if con.Name.Exist() {
+			where = where.Where("tbl_user.name LIKE ?", "%"+con.Name.Value()+"%")
+		}
 		if con.OrderBy.Exist() {
 			orderBy := con.OrderBy.Value()
 			order := con.Order.Value()

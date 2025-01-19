@@ -1,7 +1,10 @@
 package model
 
 import (
+	"STUOJ/utils"
 	"fmt"
+	"log"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -35,6 +38,25 @@ func (f *Field[T]) Set(value interface{}) error {
 	return fmt.Errorf("cannot set value of type %T to field of type %T", value, f.value)
 }
 
+func (f *Field[T]) Parse(c *gin.Context, name string) error {
+	query := c.Query(name)
+	if query == "" {
+		return nil
+	}
+
+	var tmp T
+	var ptr interface{} = tmp
+
+	if err := utils.ConvertStringToType[T](query, &ptr); err != nil {
+		return fmt.Errorf("failed to parse value for field %s: %w", name, err)
+	}
+
+	f.Set(ptr)
+
+	f.exist = true
+	return nil
+}
+
 type FieldList[T any] struct {
 	exist bool
 	value []T
@@ -57,8 +79,35 @@ func (f *FieldList[T]) Set(value interface{}) error {
 	return fmt.Errorf("cannot set value of type %T to field of type %T", value, f.value)
 }
 
+func (f *FieldList[T]) Parse(c *gin.Context, name string) error {
+	query := c.Query(name)
+	if query == "" {
+		return nil
+	}
+	splQuerys := strings.Split(query, ",")
+
+	var tmp []T
+
+	for _, splQuery := range splQuerys {
+		var tmpT T
+		var ptr interface{} = tmpT
+		if err := utils.ConvertStringToType[T](splQuery, &ptr); err != nil {
+			return fmt.Errorf("failed to parse value for field %s: %w", name, err)
+		}
+		log.Println(ptr)
+		if v, ok := ptr.(T); ok {
+			tmp = append(tmp, v)
+		} else {
+			return fmt.Errorf("type assertion failed: expected %T, got %T", tmpT, ptr)
+		}
+	}
+	f.Set(tmp)
+	f.exist = true
+	return nil
+}
+
 type ConditonWhere interface {
-	Parse(c *gin.Context)
-	GenerateWhere() func(*gorm.DB) *gorm.DB
-	GenerateWhereWithNoPage() func(*gorm.DB) *gorm.DB
+	Parse(c gin.Context)
+	GenerateWhere() func(gorm.DB) gorm.DB
+	GenerateWhereWithNoPage() func(gorm.DB) gorm.DB
 }

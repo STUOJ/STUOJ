@@ -1,9 +1,6 @@
 package model
 
 import (
-	"STUOJ/internal/entity"
-	"log"
-	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -13,7 +10,7 @@ import (
 type CommentWhere struct {
 	UserId    Field[uint64]
 	BlogId    Field[uint64]
-	Status    Field[entity.CommentStatus]
+	Status    FieldList[uint64]
 	StartTime Field[time.Time]
 	EndTime   Field[time.Time]
 	Page      Field[uint64]
@@ -23,63 +20,19 @@ type CommentWhere struct {
 }
 
 func (con *CommentWhere) Parse(c *gin.Context) {
-
-	if c.Query("user") != "" {
-		user, err := strconv.Atoi(c.Query("user"))
-		if err != nil {
-			log.Println(err)
-		} else {
-			con.UserId.Set(uint64(user))
-		}
-	}
-	if c.Query("blog") != "" {
-		blog, err := strconv.Atoi(c.Query("blog"))
-		if err != nil {
-			log.Println(err)
-		} else {
-			con.BlogId.Set(uint64(blog))
-		}
-	}
-	if c.Query("status") != "" {
-		status, err := strconv.Atoi(c.Query("status"))
-		if err != nil {
-			log.Println(err)
-		} else {
-			con.Status.Set(entity.CommentStatus(status))
-		}
-	}
+	con.UserId.Parse(c, "user")
+	con.BlogId.Parse(c, "blog")
+	con.Status.Parse(c, "status")
 	timePreiod := &Period{}
 	err := timePreiod.GetPeriod(c)
-	if err != nil {
-		log.Println(err)
-	} else {
+	if err == nil {
 		con.StartTime.Set(timePreiod.StartTime)
 		con.EndTime.Set(timePreiod.EndTime)
 	}
-	if c.Query("page") != "" {
-		page, err := strconv.Atoi(c.Query("page"))
-		if err != nil {
-			log.Println(err)
-		} else {
-			con.Page.Set(uint64(page))
-		}
-	}
-	if c.Query("size") != "" {
-		size, err := strconv.Atoi(c.Query("size"))
-		if err != nil {
-			log.Println(err)
-		} else {
-			con.Size.Set(uint64(size))
-		}
-	}
-	if c.Query("order") != "" {
-		order := c.Query("order")
-		if c.Query("order_by") != "" {
-			orderBy := c.Query("order_by")
-			con.OrderBy.Set(orderBy)
-			con.Order.Set(order)
-		}
-	}
+	con.Page.Parse(c, "page")
+	con.Size.Parse(c, "size")
+	con.OrderBy.Parse(c, "order_by")
+	con.Order.Parse(c, "order")
 }
 
 func (con *CommentWhere) GenerateWhereWithNoPage() func(*gorm.DB) *gorm.DB {
@@ -92,10 +45,10 @@ func (con *CommentWhere) GenerateWhereWithNoPage() func(*gorm.DB) *gorm.DB {
 		if con.BlogId.Exist() {
 			whereClause["tbl_comment.blog_id"] = con.BlogId.Value()
 		}
-		if con.Status.Exist() {
-			whereClause["tbl_comment.status"] = con.Status.Value()
-		}
 		where := db.Where(whereClause)
+		if con.Status.Exist() {
+			where.Where("tbl_comment.status in ?", con.Status.Value())
+		}
 		if con.StartTime.Exist() {
 			where.Where("tbl_comment.create_time >= ?", con.StartTime.Value())
 		}

@@ -3,7 +3,11 @@ package utils
 import (
 	"STUOJ/internal/entity"
 	"encoding/json"
+	"fmt"
+	"math"
 	"os"
+	"reflect"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -51,4 +55,99 @@ func GetUserInfo(c *gin.Context) (entity.Role, uint64) {
 	}
 
 	return role.(entity.Role), id.(uint64)
+}
+
+func ConvertStringToType[T any](str string, result *interface{}) error {
+	var tmp T
+	switch any(tmp).(type) {
+	case int:
+		parsed, err := strconv.Atoi(str)
+		if err != nil {
+			return fmt.Errorf("failed to parse value for field: %w", err)
+		}
+		*result = parsed
+	case int8:
+		parsed, err := strconv.ParseInt(str, 10, 8)
+		if err != nil || parsed < math.MinInt8 || parsed > math.MaxInt8 {
+			return fmt.Errorf("failed to parse value for field: %w", err)
+		}
+		*result = parsed
+	case entity.BlogStatus:
+		parsed, err := strconv.ParseUint(str, 10, 8)
+		if err != nil || parsed > math.MaxUint8 {
+			return fmt.Errorf("failed to parse value for field: %w", err)
+		}
+		*result = parsed
+	case int16:
+		parsed, err := strconv.ParseInt(str, 10, 16)
+		if err != nil || parsed < math.MinInt16 || parsed > math.MaxInt16 {
+			return fmt.Errorf("failed to parse value for field: %w", err)
+		}
+		*result = parsed
+	case int32:
+		parsed, err := strconv.ParseInt(str, 10, 32)
+		if err != nil || parsed < math.MinInt32 || parsed > math.MaxInt32 {
+			return fmt.Errorf("failed to parse value for field: %w", err)
+		}
+		*result = parsed
+	case int64:
+		parsed, err := strconv.ParseInt(str, 10, 64)
+		if err != nil {
+			return fmt.Errorf("failed to parse value for field: %w", err)
+		}
+		*result = parsed
+	case uint:
+		parsed, err := strconv.ParseUint(str, 10, 0)
+		if err != nil || parsed > math.MaxUint {
+			return fmt.Errorf("failed to parse value for field: %w", err)
+		}
+		*result = parsed
+	case uint8:
+		parsed, err := strconv.ParseUint(str, 10, 8)
+		if err != nil || parsed > math.MaxUint8 {
+			return fmt.Errorf("failed to parse value for field: %w", err)
+		}
+		*result = parsed
+	case uint16:
+		parsed, err := strconv.ParseUint(str, 10, 16)
+		if err != nil || parsed > math.MaxUint16 {
+			return fmt.Errorf("failed to parse value for field: %w", err)
+		}
+		*result = parsed
+	case uint32:
+		parsed, err := strconv.ParseUint(str, 10, 32)
+		if err != nil || parsed > math.MaxUint32 {
+			return fmt.Errorf("failed to parse value for field: %w", err)
+		}
+		*result = parsed
+	case uint64:
+		parsed, err := strconv.ParseUint(str, 10, 64)
+		if err != nil {
+			return fmt.Errorf("failed to parse value for field: %w", err)
+		}
+		*result = parsed
+	case float32:
+		parsed, err := strconv.ParseFloat(str, 32)
+		if err != nil {
+			return fmt.Errorf("failed to parse value for field: %w", err)
+		}
+		*result = parsed
+	case float64:
+		parsed, err := strconv.ParseFloat(str, 64)
+		if err != nil {
+			return fmt.Errorf("failed to parse value for field: %w", err)
+		}
+		*result = parsed
+	case bool:
+		parsed, err := strconv.ParseBool(str)
+		if err != nil {
+			return fmt.Errorf("failed to parse value for field: %w", err)
+		}
+		*result = parsed
+	case string:
+		*result = str // 直接赋值字符串
+	default:
+		return fmt.Errorf("unsupported type: %v", reflect.TypeOf(tmp))
+	}
+	return nil
 }

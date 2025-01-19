@@ -1,10 +1,6 @@
 package model
 
 import (
-	"STUOJ/internal/entity"
-	"log"
-	"strconv"
-	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -16,7 +12,7 @@ type BlogWhere struct {
 	UserId    FieldList[uint64]
 	ProblemId FieldList[uint64]
 	Title     Field[string]
-	Status    FieldList[entity.BlogStatus]
+	Status    FieldList[uint64]
 	StartTime Field[time.Time]
 	EndTime   Field[time.Time]
 	Page      Field[uint64]
@@ -26,76 +22,20 @@ type BlogWhere struct {
 }
 
 func (con *BlogWhere) Parse(c *gin.Context) {
-	if titleQuery := c.Query("title"); titleQuery != "" {
-		con.Title.Set(titleQuery)
-	}
-	if statusQuery := c.Query("status"); statusQuery != "" {
-		statuses := strings.Split(statusQuery, ",")
-		var statusesInt []entity.BlogStatus
-		for _, status := range statuses {
-			statusInt, err := strconv.Atoi(status)
-			if err != nil {
-				log.Println(err)
-			} else {
-				statusesInt = append(statusesInt, entity.BlogStatus(statusInt))
-			}
-		}
-		con.Status.Set(statusesInt)
-	}
-	if problemQuery := c.Query("problem"); problemQuery != "" {
-		problems := strings.Split(problemQuery, ",")
-		var problemsInt []uint64
-		for _, problem := range problems {
-			problemInt, err := strconv.Atoi(problem)
-			if err != nil {
-				log.Println(err)
-			} else {
-				problemsInt = append(problemsInt, uint64(problemInt))
-			}
-		}
-		con.ProblemId.Set(problemsInt)
-	}
-	if userQuery := c.Query("user"); userQuery != "" {
-		users := strings.Split(userQuery, ",")
-		var usersInt []uint64
-		for _, user := range users {
-			userInt, err := strconv.Atoi(user)
-			if err != nil {
-				log.Println(err)
-			} else {
-				usersInt = append(usersInt, uint64(userInt))
-			}
-		}
-		con.UserId.Set(usersInt)
-	}
+	con.Title.Parse(c, "title")
+	con.Status.Parse(c, "status")
+	con.ProblemId.Parse(c, "problem")
+	con.UserId.Parse(c, "user")
 	timePreiod := &Period{}
 	err := timePreiod.GetPeriod(c)
 	if err == nil {
 		con.StartTime.Set(timePreiod.StartTime)
 		con.EndTime.Set(timePreiod.EndTime)
 	}
-	if pageQuery := c.Query("page"); pageQuery != "" {
-		page, err := strconv.Atoi(pageQuery)
-		if err != nil {
-			log.Println(err)
-		} else {
-			con.Page.Set(uint64(page))
-		}
-	}
-	if sizeQuery := c.Query("size"); sizeQuery != "" {
-		size, err := strconv.Atoi(sizeQuery)
-		if err != nil {
-			log.Println(err)
-		} else {
-			con.Size.Set(uint64(size))
-		}
-	}
-	if order := c.Query("order"); order != "" {
-		if orderBy := c.Query("order_by"); orderBy != "" {
-			con.OrderBy.Set(orderBy)
-			con.Order.Set(order)
-		}
-	}
+	con.Page.Parse(c, "page")
+	con.Size.Parse(c, "size")
+	con.OrderBy.Parse(c, "order_by")
+	con.Order.Parse(c, "order")
 }
 
 func (con *BlogWhere) GenerateWhereWithNoPage() func(*gorm.DB) *gorm.DB {

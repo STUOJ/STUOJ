@@ -53,11 +53,13 @@ func Select(condition model.ProblemWhere, userId uint64, role entity.Role) (Prob
 	if !condition.Status.Exist() {
 		condition.Status.Set(entity.ProblemPublic)
 	} else {
-		if condition.Status.Value() < entity.ProblemPublic {
-			if role <= entity.RoleUser {
-				condition.Status.Set(entity.ProblemPublic)
-			} else if role == entity.RoleEditor {
-				condition.UserId.Set(userId)
+		for _, v := range condition.Status.Value() {
+			if entity.ProblemStatus(v) < entity.ProblemPublic {
+				if role <= entity.RoleUser {
+					condition.Status.Set(entity.ProblemPublic)
+				} else if role == entity.RoleEditor {
+					condition.UserId.Set(userId)
+				}
 			}
 		}
 	}
