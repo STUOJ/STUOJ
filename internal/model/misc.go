@@ -3,7 +3,6 @@ package model
 import (
 	"STUOJ/utils"
 	"fmt"
-	"log"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -94,7 +93,6 @@ func (f *FieldList[T]) Parse(c *gin.Context, name string) error {
 		if err := utils.ConvertStringToType[T](splQuery, &ptr); err != nil {
 			return fmt.Errorf("failed to parse value for field %s: %w", name, err)
 		}
-		log.Println(ptr)
 		if v, ok := ptr.(T); ok {
 			tmp = append(tmp, v)
 		} else {
