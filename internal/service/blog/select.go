@@ -30,9 +30,11 @@ func Select(condition model.BlogWhere, userId uint64, role entity.Role) (BlogPag
 	if !condition.Status.Exist() {
 		condition.Status.Set(entity.BlogPublic)
 	} else {
-		if condition.Status.Value() < entity.BlogPublic {
-			if role < entity.RoleAdmin {
-				condition.UserId.Set(userId)
+		for _, v := range condition.Status.Value() {
+			if entity.BlogStatus(v) < entity.BlogPublic {
+				if role < entity.RoleAdmin {
+					condition.Status.Set(entity.BlogPublic)
+				}
 			}
 		}
 	}

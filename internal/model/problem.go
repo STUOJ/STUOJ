@@ -2,9 +2,7 @@ package model
 
 import (
 	"STUOJ/internal/entity"
-	"log"
-	"strconv"
-	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -20,82 +18,33 @@ type ProblemData struct {
 type ProblemWhere struct {
 	Id         Field[uint64]
 	Title      Field[string]
-	Difficulty Field[entity.Difficulty]
-	Status     Field[entity.ProblemStatus]
+	Difficulty FieldList[uint64]
+	Status     FieldList[uint64]
 	Tag        FieldList[uint64]
 	UserId     Field[uint64]
 	Page       Field[uint64]
 	Size       Field[uint64]
 	OrderBy    Field[string]
 	Order      Field[string]
+	StartTime  Field[time.Time]
+	EndTime    Field[time.Time]
 }
 
 func (con *ProblemWhere) Parse(c *gin.Context) {
-	if c.Query("title") != "" {
-		con.Title.Set(c.Query("title"))
-	}
-	if c.Query("difficulty") != "" {
-		difficulty, err := strconv.Atoi(c.Query("difficulty"))
-		if err != nil {
-			log.Println(err)
-		} else {
-			con.Difficulty.Set(entity.Difficulty(difficulty))
-		}
-	}
-	if c.Query("tag") != "" {
-		tagsQuery := c.Query("tag")           // 获取URL参数 "ids"
-		tags := strings.Split(tagsQuery, ",") // 将字符串分割成字符串切片
-
-		// 假设我们需要将字符串切片转换为int切片
-		var tagsInt []uint64
-		for _, tagStr := range tags {
-			id, err := strconv.Atoi(tagStr)
-			if err != nil {
-				continue
-			}
-			tagsInt = append(tagsInt, uint64(id))
-		}
-		con.Tag.Set(tagsInt)
-	}
-	if c.Query("status") != "" {
-		status, err := strconv.Atoi(c.Query("status"))
-		if err != nil {
-			log.Println(err)
-		} else {
-			con.Status.Set(entity.ProblemStatus(status))
-		}
-	}
-	if c.Query("user") != "" {
-		user, err := strconv.Atoi(c.Query("user"))
-		if err != nil {
-			log.Println(err)
-		} else {
-			con.UserId.Set(uint64(user))
-		}
-	}
-	if c.Query("page") != "" {
-		page, err := strconv.Atoi(c.Query("page"))
-		if err != nil {
-			log.Println(err)
-		} else {
-			con.Page.Set(uint64(page))
-		}
-	}
-	if c.Query("size") != "" {
-		size, err := strconv.Atoi(c.Query("size"))
-		if err != nil {
-			log.Println(err)
-		} else {
-			con.Size.Set(uint64(size))
-		}
-	}
-	if c.Query("order") != "" {
-		order := c.Query("order")
-		if c.Query("order_by") != "" {
-			orderBy := c.Query("order_by")
-			con.OrderBy.Set(orderBy)
-			con.Order.Set(order)
-		}
+	con.Title.Parse(c, "title")
+	con.Difficulty.Parse(c, "difficulty")
+	con.Tag.Parse(c, "tag")
+	con.Status.Parse(c, "status")
+	con.UserId.Parse(c, "user")
+	con.Page.Parse(c, "page")
+	con.Size.Parse(c, "size")
+	con.OrderBy.Parse(c, "order_by")
+	con.Order.Parse(c, "order")
+	timePreiod := &Period{}
+	err := timePreiod.GetPeriod(c)
+	if err == nil {
+		con.StartTime.Set(timePreiod.StartTime)
+		con.EndTime.Set(timePreiod.EndTime)
 	}
 }
 
@@ -106,14 +55,13 @@ func (con *ProblemWhere) GenerateWhereWithNoPage() func(*gorm.DB) *gorm.DB {
 		if con.Id.Exist() {
 			whereClause["tbl_problem.id"] = con.Id.Value()
 		}
+		where := db.Where(whereClause)
 		if con.Status.Exist() {
-			whereClause["tbl_problem.status"] = con.Status.Value()
+			where.Where("tbl_problem.status in ?", con.Status.Value())
 		}
 		if con.Difficulty.Exist() {
-			whereClause["tbl_problem.difficulty"] = con.Difficulty.Value()
+			where.Where("tbl_problem.difficulty in ?", con.Difficulty.Value())
 		}
-
-		where := db.Where(whereClause)
 		if con.Tag.Exist() {
 			where = where.Where("id IN (SELECT problem_id FROM tbl_problem_tag WHERE tag_id In(?) GROUP BY problem_id HAVING COUNT(DISTINCT tag_id) =?)", con.Tag.Value(), len(con.Tag.Value()))
 		}
@@ -122,6 +70,12 @@ func (con *ProblemWhere) GenerateWhereWithNoPage() func(*gorm.DB) *gorm.DB {
 		}
 		if con.UserId.Exist() {
 			where = where.Where("tbl_problem.id IN (SELECT problem_id FROM tbl_history WHERE user_id = ?)", con.UserId.Value())
+		}
+		if con.StartTime.Exist() {
+			where = where.Where("tbl_problem.create_time >= ?", con.StartTime.Value())
+		}
+		if con.EndTime.Exist() {
+			where = where.Where("tbl_problem.create_time <= ?", con.EndTime.Value())
 		}
 		if con.OrderBy.Exist() {
 			orderBy := con.OrderBy.Value()
