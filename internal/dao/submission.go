@@ -100,6 +100,21 @@ func UpdateSubmissionById(s entity.Submission) error {
 	return nil
 }
 
+func UpdateSubmissionByIdAndInsertJudgements(s entity.Submission, j []entity.Judgement) error {
+	tx := db.Db.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Model(&s).Updates(s).Error; err != nil {
+			return err
+		}
+		for _, j := range j {
+			if err := tx.Create(&j).Error; err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+	return tx
+}
+
 // 根据ID更新提交记录的更新时间
 func UpdateSubmissionUpdateTimeById(id uint64) error {
 	tx := db.Db.Model(&entity.Submission{}).Where("id = ?", id).Update("update_time", time.Now())
