@@ -13,27 +13,30 @@ type CommentPage struct {
 	model.Page
 }
 
-func Select(condition model.CommentWhere, userId uint64, admin ...bool) (CommentPage, error) {
+func Select(condition model.CommentWhere, userId uint64, role entity.Role) (CommentPage, error) {
 	if !condition.Page.Exist() {
 		condition.Page.Set(1)
 	}
 	if !condition.Size.Exist() {
 		condition.Size.Set(10)
 	}
+	if !condition.Status.Exist() {
+		condition.Status.Set([]uint64{uint64(entity.CommentPublic)})
+	} else {
+		for _, v := range condition.Status.Value() {
+			if entity.CommentStatus(v) < entity.CommentPublic {
+				if role < entity.RoleAdmin {
+					condition.UserId.Set(userId)
+				}
+			}
+		}
+	}
 	comments, err := dao.SelectComments(condition)
 	if err != nil {
 		log.Println(err)
 		return CommentPage{}, errors.New("获取评论失败")
 	}
-	if len(admin) == 0 || !admin[0] {
-		var publicComment []entity.Comment
-		for _, comment := range comments {
-			if comment.Status >= entity.CommentPublic || comment.UserId == userId {
-				publicComment = append(publicComment, comment)
-			}
-		}
-		comments = publicComment
-	}
+
 	count, err := dao.CountComments(condition)
 	if err != nil {
 		log.Println(err)

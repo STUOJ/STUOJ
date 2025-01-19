@@ -53,7 +53,7 @@ func CommentList(c *gin.Context) {
 	role, userId := utils.GetUserInfo(c)
 	condition := model.CommentWhere{}
 	condition.Parse(c)
-	commonts, err := comment.Select(condition, userId, role >= entity.RoleAdmin)
+	commonts, err := comment.Select(condition, userId, role)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespOk(err.Error(), nil))
 		return
@@ -74,7 +74,7 @@ func CommentRemove(c *gin.Context) {
 
 	// 删除评论
 	cid := uint64(id)
-	err = comment.DeleteByIdCheckUserId(cid, uid, role >= entity.RoleAdmin)
+	err = comment.DeleteByIdCheckUserId(cid, uid, role)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespOk(err.Error(), nil))
 		return
