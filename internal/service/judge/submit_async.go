@@ -87,8 +87,8 @@ func asyncSubmit(s entity.Submission, p entity.Problem, ts []entity.Testcase) {
 			if err != nil {
 				mu.Lock()
 				errors = append(errors, err)
+				j.Status = entity.JudgeIE
 				mu.Unlock()
-				return
 			}
 			chJudgement <- j
 		}(t)
