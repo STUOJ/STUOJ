@@ -51,7 +51,7 @@ func SelectById(id uint64, userId uint64, role entity.Role) (model.ProblemData, 
 
 func Select(condition model.ProblemWhere, userId uint64, role entity.Role) (ProblemPage, error) {
 	if !condition.Status.Exist() {
-		condition.Status.Set(entity.ProblemPublic)
+		condition.Status.Set([]uint64{uint64(entity.ProblemPublic)})
 	} else {
 		for _, v := range condition.Status.Value() {
 			if entity.ProblemStatus(v) < entity.ProblemPublic {

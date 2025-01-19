@@ -28,7 +28,7 @@ func SelectById(id uint64, userId uint64, role entity.Role) (entity.Blog, error)
 
 func Select(condition model.BlogWhere, userId uint64, role entity.Role) (BlogPage, error) {
 	if !condition.Status.Exist() {
-		condition.Status.Set(entity.BlogPublic)
+		condition.Status.Set([]uint64{uint64(entity.BlogPublic)})
 	} else {
 		for _, v := range condition.Status.Value() {
 			if entity.BlogStatus(v) < entity.BlogPublic {
