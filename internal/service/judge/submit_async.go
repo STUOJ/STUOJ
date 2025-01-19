@@ -59,11 +59,6 @@ func AsyncSubmit(s entity.Submission) (uint64, error) {
 
 // 异步提交
 func asyncSubmit(s entity.Submission, p entity.Problem, ts []entity.Testcase) {
-	if len(ts) == 0 {
-		log.Println("No testcases provided")
-		return
-	}
-
 	s.Status = entity.JudgeAC
 	chJudgement := make(chan entity.Judgement, len(ts))
 	var mu sync.Mutex
