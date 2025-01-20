@@ -29,8 +29,8 @@ type Collection struct {
 	Title       string           `gorm:"not null;default:'';unique;comment:标题" json:"title"`
 	Description string           `gorm:"not null;type:longtext;comment:简介" json:"description"`
 	Status      CollectionStatus `gorm:"not null;default:1;comment:状态" json:"status"`
-	CreateTime  time.Time        `gorm:"not null;default:CURRENT_TIMESTAMP;comment:创建时间" json:"create_time"`
-	UpdateTime  time.Time        `gorm:"not null;default:CURRENT_TIMESTAMP;comment:更新时间" json:"update_time"`
+	CreateTime  time.Time        `gorm:"type:timestamp;not null;default:CURRENT_TIMESTAMP;comment:创建时间" json:"create_time"`
+	UpdateTime  time.Time        `gorm:"type:timestamp;not null;default:CURRENT_TIMESTAMP;comment:更新时间" json:"update_time"`
 	User        User             `gorm:"foreignKey:UserId;references:Id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"user"`
 	UserIds     []uint64         `gorm:"-" json:"user_ids"`
 	ProblemIds  []uint64         `gorm:"-" json:"problem_ids"`
