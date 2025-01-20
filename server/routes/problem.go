@@ -75,7 +75,7 @@ func InitSolutionRoute(ginServer *gin.Engine) {
 func InitCollectionRoute(ginServer *gin.Engine) {
 	collectionPublicRoute := ginServer.Group("/collection")
 	{
-		collectionPublicRoute.GET("/", handler.TagList)
+		collectionPublicRoute.GET("/", handler.CollectionList)
 	}
 
 	collectionUserRoute := ginServer.Group("/tag")
@@ -83,8 +83,8 @@ func InitCollectionRoute(ginServer *gin.Engine) {
 		// 使用中间件
 		collectionUserRoute.Use(middlewares.TokenAuthUser())
 
-		collectionUserRoute.POST("/", handler.TagAdd)
-		collectionUserRoute.PUT("/", handler.TagModify)
-		collectionUserRoute.DELETE("/:id", handler.TagRemove)
+		collectionUserRoute.POST("/", handler.CollectionAdd)
+		collectionUserRoute.PUT("/", handler.CollectionModify)
+		collectionUserRoute.DELETE("/:id", handler.CollectionRemove)
 	}
 }
