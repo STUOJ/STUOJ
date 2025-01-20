@@ -4,7 +4,6 @@ import (
 	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
 	"STUOJ/internal/service/collection"
-	"STUOJ/internal/service/problem"
 	"STUOJ/utils"
 	"log"
 	"net/http"
@@ -24,7 +23,7 @@ func CollectionInfo(c *gin.Context) {
 	}
 
 	cid := uint64(id)
-	coll, err := problem.SelectById(cid, uid, role)
+	coll, err := collection.SelectById(cid, uid, role)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
