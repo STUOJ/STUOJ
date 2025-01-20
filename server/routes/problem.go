@@ -22,6 +22,7 @@ func InitProblemRoute(ginServer *gin.Engine) {
 		problemEditorRoute.POST("/", handler.ProblemAdd)
 		problemEditorRoute.PUT("/", handler.ProblemModify)
 		problemEditorRoute.DELETE("/:id", handler.ProblemRemove)
+
 		problemEditorRoute.POST("/tag", handler.ProblemAddTag)
 		problemEditorRoute.DELETE("/tag", handler.ProblemRemoveTag)
 		problemEditorRoute.GET("/history/:id", handler.HistoryListOfProblem)
@@ -78,7 +79,7 @@ func InitCollectionRoute(ginServer *gin.Engine) {
 		collectionPublicRoute.GET("/", handler.CollectionList)
 	}
 
-	collectionUserRoute := ginServer.Group("/tag")
+	collectionUserRoute := ginServer.Group("/collection")
 	{
 		// 使用中间件
 		collectionUserRoute.Use(middlewares.TokenAuthUser())
@@ -86,5 +87,8 @@ func InitCollectionRoute(ginServer *gin.Engine) {
 		collectionUserRoute.POST("/", handler.CollectionAdd)
 		collectionUserRoute.PUT("/", handler.CollectionModify)
 		collectionUserRoute.DELETE("/:id", handler.CollectionRemove)
+
+		collectionUserRoute.POST("/problem", handler.CollectionAddProblem)
+		collectionUserRoute.DELETE("/problem", handler.CollectionRemoveProblem)
 	}
 }
