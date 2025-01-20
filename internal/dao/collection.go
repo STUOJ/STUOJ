@@ -36,8 +36,7 @@ func SelectCollectionById(id uint64) (entity.Collection, error) {
 
 	tx := db.Db.Model(&entity.Collection{})
 	tx = collectionJoins(tx)
-	tx = tx.Where("id = ?", id).
-		Scan(&c)
+	tx = tx.Where("tbl_collection.id = ?", id).Scan(&c)
 
 	if tx.Error != nil {
 		return entity.Collection{}, tx.Error
