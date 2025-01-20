@@ -8,7 +8,7 @@ import (
 )
 
 // 根据ID更新题解
-func UpdateById(s entity.Solution) error {
+func Update(s entity.Solution) error {
 	// 查询题解
 	s0, err := dao.SelectSolutionById(s.Id)
 	if err != nil {

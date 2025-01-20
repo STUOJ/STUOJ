@@ -76,7 +76,7 @@ func TagModify(c *gin.Context) {
 		return
 	}
 
-	err = tag.UpdateById(req.Id, req.Name)
+	err = tag.Update(req.Id, req.Name)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
@@ -97,7 +97,7 @@ func TagRemove(c *gin.Context) {
 
 	// 删除标签
 	tid := uint64(id)
-	err = tag.DeleteById(tid)
+	err = tag.Delete(tid)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return

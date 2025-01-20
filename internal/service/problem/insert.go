@@ -88,15 +88,6 @@ func InsertTag(pid uint64, tid uint64, uid uint64, role entity.Role) error {
 		return errors.New("标签不存在")
 	}
 
-	// 检查题目标签关系是否存在
-	count, err := dao.CountProblemTag(pt)
-	if err != nil || count > 0 {
-		if err != nil {
-			log.Println(err)
-		}
-		return errors.New("该题目已存在该标签")
-	}
-
 	// 更新题目更新时间
 	err = dao.UpdateProblemUpdateTimeById(pid)
 	if err != nil {

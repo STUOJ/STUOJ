@@ -10,7 +10,7 @@ import (
 )
 
 // 根据ID删除题目
-func DeleteByProblemId(pid uint64, uid uint64, role entity.Role) error {
+func Delete(pid uint64, uid uint64, role entity.Role) error {
 	// 读取题目
 	p0, err := dao.SelectProblemById(pid, model.ProblemWhere{})
 	if err != nil {
