@@ -15,6 +15,7 @@ func InitUserRoute(ginServer *gin.Engine) {
 		userPublicRoute.POST("/register", handler.UserRegister)
 		userPublicRoute.PUT("/password", handler.UserChangePassword)
 	}
+
 	userUserRoute := ginServer.Group("/user")
 	{
 		// 使用中间件
@@ -24,6 +25,7 @@ func InitUserRoute(ginServer *gin.Engine) {
 		userUserRoute.PUT("/modify/:id", handler.UserModify)
 		userUserRoute.POST("/avatar/:id", handler.ModifyUserAvatar)
 	}
+
 	userAdminRoute := ginServer.Group("/user")
 	{
 		// 使用中间件

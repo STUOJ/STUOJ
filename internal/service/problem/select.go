@@ -69,7 +69,7 @@ func Select(condition model.ProblemWhere, userId uint64, role entity.Role) (Prob
 	if !condition.Size.Exist() {
 		condition.Size.Set(10)
 	}
-	problems, err := dao.SelectProblem(condition)
+	problems, err := dao.SelectProblems(condition)
 	if err != nil {
 		return ProblemPage{}, errors.New("获取题目信息失败")
 	}

@@ -4,10 +4,10 @@ import (
 	"STUOJ/internal/db"
 	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
+	"gorm.io/gorm"
 	"strconv"
 	"strings"
-
-	"gorm.io/gorm"
+	"time"
 )
 
 type auxiliaryCollection struct {
@@ -179,4 +179,14 @@ func collectionJoins(tx *gorm.DB) *gorm.DB {
 	tx = tx.Select(query, subQueryUser, subQueryProblem)
 	tx = briefUserJoins(tx, "tbl_collection")
 	return tx
+}
+
+// 根据ID更新题单更新时间
+func UpdateCollectionUpdateTimeById(id uint64) error {
+	tx := db.Db.Model(&entity.Collection{}).Where("id = ?", id).Update("update_time", time.Now())
+	if tx.Error != nil {
+		return tx.Error
+	}
+
+	return nil
 }

@@ -7,7 +7,7 @@ import (
 )
 
 // 根据ID删除标签
-func DeleteById(id uint64) error {
+func Delete(id uint64) error {
 	// 查询标签
 	_, err := dao.SelectTagById(id)
 	if err != nil {
@@ -19,7 +19,7 @@ func DeleteById(id uint64) error {
 	err = dao.DeleteTagById(id)
 	if err != nil {
 		log.Println(err)
-		return errors.New("删除失败")
+		return errors.New("删除标签失败")
 	}
 
 	return nil
