@@ -7,7 +7,7 @@ import (
 )
 
 // 根据ID删除用户
-func DeleteById(id uint64) error {
+func Delete(id uint64) error {
 	// 查询用户
 	_, err := dao.SelectUserById(id)
 	if err != nil {

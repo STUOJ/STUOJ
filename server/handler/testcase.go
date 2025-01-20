@@ -100,7 +100,7 @@ func TestcaseModify(c *gin.Context) {
 	}
 
 	// 更新评测点数据
-	err = testcase.UpdateById(t)
+	err = testcase.Update(t)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
@@ -121,7 +121,7 @@ func TestcaseRemove(c *gin.Context) {
 
 	// 删除评测点
 	tid := uint64(id)
-	err = testcase.DeleteById(tid)
+	err = testcase.Delete(tid)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return

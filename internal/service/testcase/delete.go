@@ -7,7 +7,7 @@ import (
 )
 
 // 根据ID删除评测点数据
-func DeleteById(id uint64) error {
+func Delete(id uint64) error {
 	// 查询评测点
 	_, err := dao.SelectTestcaseById(id)
 	if err != nil {

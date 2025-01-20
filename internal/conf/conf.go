@@ -6,7 +6,7 @@ import (
 )
 
 type Config struct {
-	Datebase  DatabaseConf `yaml:"database" json:"database"`
+	Database  DatabaseConf `yaml:"database" json:"database"`
 	Judge     JudgeConf    `yaml:"judge" json:"judge"`
 	YukiImage YukiConf     `yaml:"yuki-image" json:"yuki_image"`
 	NekoAcm   NekoConf     `yaml:"neko-acm" json:"neko_acm"`
@@ -44,7 +44,7 @@ func InitConfig() error {
 }
 
 func (c *Config) Default() {
-	c.Datebase.Default()
+	c.Database.Default()
 	c.Judge.Default()
 	c.YukiImage.Default()
 	c.NekoAcm.Default()

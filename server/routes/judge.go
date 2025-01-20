@@ -21,3 +21,19 @@ func InitJudgeRoute(ginServer *gin.Engine) {
 		judgeUserRoute.POST("/testrun", handler.JudgeTestRun)
 	}
 }
+
+func InitRecordRoute(ginServer *gin.Engine) {
+	recordPublicRoute := ginServer.Group("/record")
+	{
+		recordPublicRoute.GET("/", handler.RecordList)
+		recordPublicRoute.GET("/:id", handler.RecordInfo)
+	}
+
+	recordAdminRoute := ginServer.Group("/record")
+	{
+		// 使用中间件
+		recordAdminRoute.Use(middlewares.TokenAuthAdmin())
+
+		recordAdminRoute.DELETE("/:id", handler.RecordRemove)
+	}
+}

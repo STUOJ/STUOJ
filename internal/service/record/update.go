@@ -9,7 +9,7 @@ import (
 )
 
 // 更新提交记录
-func UpdateSubmissionById(s entity.Submission) error {
+func UpdateSubmission(s entity.Submission) error {
 	updateTime := time.Now()
 	s.UpdateTime = updateTime
 
@@ -22,7 +22,7 @@ func UpdateSubmissionById(s entity.Submission) error {
 }
 
 // 更新评测结果
-func UpdateJudgementById(j entity.Judgement) error {
+func UpdateJudgement(j entity.Judgement) error {
 	err := dao.UpdateJudgementById(j)
 	if err != nil {
 		return err

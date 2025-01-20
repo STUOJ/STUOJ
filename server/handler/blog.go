@@ -73,7 +73,7 @@ func BlogUpload(c *gin.Context) {
 	}
 
 	// 插入博客
-	b.Id, err = blog.BlogUpload(b, role)
+	b.Id, err = blog.Upload(b, role)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return

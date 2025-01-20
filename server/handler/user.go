@@ -162,7 +162,7 @@ func UserModify(c *gin.Context) {
 		Email:     req.Email,
 		Signature: req.Signature,
 	}
-	err = user.UpdateByIdExceptPassword(u)
+	err = user.UpdateExceptPassword(u)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
@@ -204,7 +204,7 @@ func UserChangePassword(c *gin.Context) {
 	}
 
 	// 修改密码
-	err = user.UpdatePasswordById(u.Id, req.Password)
+	err = user.UpdatePassword(u.Id, req.Password)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
@@ -245,7 +245,7 @@ func ModifyUserAvatar(c *gin.Context) {
 	defer os.Remove(dst)
 
 	// 更新头像
-	url, err := user.UpdateAvatarById(uid, dst, id_, role)
+	url, err := user.UpdateAvatar(uid, dst, id_, role)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.RespError(err.Error(), nil))
 		return
@@ -297,7 +297,7 @@ func UserAdd(c *gin.Context) {
 		Avatar:    req.Avatar,
 		Signature: req.Signature,
 	}
-	u.Id, err = user.InsertUser(u)
+	u.Id, err = user.Insert(u)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
@@ -317,7 +317,7 @@ func UserRemove(c *gin.Context) {
 	}
 
 	uid := uint64(id)
-	err = user.DeleteById(uid)
+	err = user.Delete(uid)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
@@ -351,7 +351,7 @@ func UserModifyRole(c *gin.Context) {
 	}
 
 	// 修改用户
-	err = user.UpdateRoleById(u, role)
+	err = user.UpdateRole(u, role)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))

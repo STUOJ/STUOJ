@@ -8,8 +8,8 @@ import (
 	"time"
 )
 
-// UpdateById 根据ID更新题目
-func UpdateById(p entity.Problem, uid uint64, role entity.Role) error {
+// Update 根据ID更新题目
+func Update(p entity.Problem, uid uint64, role entity.Role) error {
 	// 读取题目
 	p0, err := dao.SelectProblemById(p.Id)
 	if err != nil {
