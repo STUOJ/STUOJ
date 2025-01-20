@@ -71,7 +71,7 @@ func SelectCollectionById(id uint64) (entity.Collection, error) {
 	return c.Collection, nil
 }
 
-func SelectauxiliaryCollections(condition model.CollectionWhere) ([]entity.Collection, error) {
+func SelectCollections(condition model.CollectionWhere) ([]entity.Collection, error) {
 	var auxiliaryCollections []auxiliaryCollection
 	var collections []entity.Collection
 	where := condition.GenerateWhere()
