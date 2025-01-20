@@ -53,7 +53,8 @@ func (con *CollectionWhere) GenerateWhereWithNoPage() func(*gorm.DB) *gorm.DB {
 			where.Where("tbl_collection.user_id in ?", con.UserId.Value())
 		}
 		if con.ProblemId.Exist() {
-			where.Where("tbl_collection.problem_id in ?", con.ProblemId.Value())
+			where = where.Joins("JOIN tbl_collection_problem ON tbl_collection.id = tbl_collection_problem.collection_id").
+				Where("tbl_collection_problem.problem_id IN ?", con.ProblemId.Value())
 		}
 		if con.Title.Exist() {
 			where = where.Where("tbl_collection.title LIKE ?", "%"+con.Title.Value()+"%")

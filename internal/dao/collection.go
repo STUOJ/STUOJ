@@ -4,10 +4,11 @@ import (
 	"STUOJ/internal/db"
 	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
-	"gorm.io/gorm"
 	"strconv"
 	"strings"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 type auxiliaryCollection struct {
@@ -166,17 +167,14 @@ func DeleteCollectionProblem(cp entity.CollectionProblem) error {
 }
 
 func collectionJoins(tx *gorm.DB) *gorm.DB {
-	subQueryUser := db.Db.Model(&entity.CollectionUser{}).
-		Select("GROUP_CONCAT(DISTINCT user_id)").
-		Where("collection_id = tbl_collection.id")
-
-	subQueryProblem := db.Db.Model(&entity.CollectionProblem{}).
-		Select("GROUP_CONCAT(DISTINCT problem_id)").
-		Where("collection_id = tbl_collection.id")
 	query := []string{"tbl_collection.*"}
 	query = append(query, briefUserSelect()...)
-	query = append(query, "tbl_collection.*, (?) as collection_user_id, (?) as collection_problem_id")
-	tx = tx.Select(query, subQueryUser, subQueryProblem)
+	query = append(query,
+		"(SELECT GROUP_CONCAT(DISTINCT user_id) FROM tbl_collection_user WHERE collection_id = tbl_collection.id) AS collection_user_id",
+		"(SELECT GROUP_CONCAT(DISTINCT problem_id) FROM tbl_collection_problem WHERE collection_id = tbl_collection.id) AS collection_problem_id",
+	)
+
+	tx = tx.Select(strings.Join(query, ", "))
 	tx = briefUserJoins(tx, "tbl_collection")
 	return tx
 }
