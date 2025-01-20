@@ -127,6 +127,20 @@ func DeleteCollectionById(id uint64) error {
 	})
 }
 
+func CountCollections(condition model.CollectionWhere) (uint64, error) {
+	var count int64
+	where := condition.GenerateWhereWithNoPage()
+
+	tx := db.Db.Model(&entity.Collection{})
+	tx = where(tx)
+	tx = tx.Count(&count)
+	if tx.Error != nil {
+		return 0, tx.Error
+	}
+
+	return uint64(count), nil
+}
+
 func collectionJoins(tx *gorm.DB) *gorm.DB {
 	subQueryUser := db.Db.Model(&entity.CollectionUser{}).
 		Select("GROUP_CONCAT(DISTINCT user_id)").
