@@ -70,8 +70,7 @@ type ReqProblemAdd struct {
 }
 
 func ProblemAdd(c *gin.Context) {
-	_, id_ := utils.GetUserInfo(c)
-	uid := uint64(id_)
+	_, uid := utils.GetUserInfo(c)
 	var req ReqProblemAdd
 
 	// 参数绑定

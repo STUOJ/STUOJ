@@ -11,7 +11,7 @@ import (
 func GetStatistics() (model.CollectionStatistics, error) {
 	var err error
 	var stats model.CollectionStatistics
-	var cbts []model.CountByCollection
+	var cbps []model.CountByCollection
 
 	// 统计题单数量
 	stats.CollectionCount, err = dao.CountCollections(model.CollectionWhere{})
@@ -21,12 +21,12 @@ func GetStatistics() (model.CollectionStatistics, error) {
 	}
 
 	// 统计题目数量
-	cbts, err = dao.CountProblemsGroupByCollection()
+	cbps, err = dao.CountProblemsGroupByCollection()
 	if err != nil {
 		log.Println(err)
 		return model.CollectionStatistics{}, errors.New("统计题目数量失败")
 	}
-	stats.ProblemCountByCollection = mapCountFromCountByCollection(cbts)
+	stats.ProblemCountByCollection = mapCountFromCountByCollection(cbps)
 
 	return stats, nil
 }
@@ -35,7 +35,7 @@ func mapCountFromCountByCollection(cbts []model.CountByCollection) model.MapCoun
 	m := make(model.MapCount)
 	for _, v := range cbts {
 		var collection entity.Collection
-		collection, err := dao.SelectCollectionById(v.CollectionId)
+		collection, err := dao.SelectBlogById(v.CollectionId)
 		if err != nil {
 			log.Println(err)
 			collection = entity.Collection{

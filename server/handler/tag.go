@@ -61,8 +61,8 @@ func TagAdd(c *gin.Context) {
 
 // 修改标签数据
 type ReqTagModify struct {
-	Id   uint64 `json:"id,omitempty" binding:"required"`
-	Name string `json:"name,omitempty" binding:"required"`
+	Id   uint64 `json:"id" binding:"required"`
+	Name string `json:"name" binding:"required"`
 }
 
 func TagModify(c *gin.Context) {
@@ -109,8 +109,8 @@ func TagRemove(c *gin.Context) {
 
 // 添加标签到题目
 type ReqProblemAddTag struct {
-	ProblemId uint64 `json:"problem_id,omitempty" binding:"required"`
-	TagId     uint64 `json:"tag_id,omitempty" binding:"required"`
+	ProblemId uint64 `json:"problem_id" binding:"required"`
+	TagId     uint64 `json:"tag_id" binding:"required"`
 }
 
 func ProblemAddTag(c *gin.Context) {

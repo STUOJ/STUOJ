@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -29,11 +30,15 @@ func CollectionList(c *gin.Context) {
 
 // 添加题单
 type ReqCollectionAdd struct {
-	Name string `json:"name,omitempty" binding:"required"`
+	Title       string                  `json:"title" binding:"required"`
+	Description string                  `json:"description" binding:"required"`
+	Status      entity.CollectionStatus `json:"status" binding:"required"`
 }
 
 func CollectionAdd(c *gin.Context) {
 	var req ReqCollectionAdd
+
+	_, uid := utils.GetUserInfo(c)
 
 	// 参数绑定
 	err := c.ShouldBindBodyWithJSON(&req)
@@ -44,25 +49,30 @@ func CollectionAdd(c *gin.Context) {
 	}
 
 	// 初始化题单
-	t := entity.Collection{
-		Name: req.Name,
+	coll := entity.Collection{
+		UserId:      uid,
+		Title:       req.Title,
+		Description: req.Description,
+		Status:      req.Status,
 	}
 
 	// 插入题单
-	t.Id, err = collection.Insert(t)
+	coll.Id, err = collection.Insert(coll)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
 	}
 
 	// 返回结果
-	c.JSON(http.StatusOK, model.RespOk("添加成功，返回题单ID", t.Id))
+	c.JSON(http.StatusOK, model.RespOk("添加成功，返回题单ID", coll.Id))
 }
 
 // 修改题单数据
 type ReqCollectionModify struct {
-	Id   uint64 `json:"id,omitempty" binding:"required"`
-	Name string `json:"name,omitempty" binding:"required"`
+	Id          uint64                  `json:"id" binding:"required"`
+	Title       string                  `json:"title" binding:"required"`
+	Description string                  `json:"description" binding:"required"`
+	Status      entity.CollectionStatus `json:"status" binding:"required"`
 }
 
 func CollectionModify(c *gin.Context) {
@@ -76,7 +86,15 @@ func CollectionModify(c *gin.Context) {
 		return
 	}
 
-	err = collection.UpdateById(req.Id, req.Name)
+	// 初始化题单
+	coll := entity.Collection{
+		Id:          req.Id,
+		Title:       req.Title,
+		Description: req.Description,
+		Status:      req.Status,
+	}
+
+	err = collection.UpdateById(coll)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
