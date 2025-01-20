@@ -35,37 +35,33 @@ func InsertProblem(cid uint64, pid uint64, uid uint64, role entity.Role) error {
 	}
 
 	// 读取题目
-	p0, err := dao.SelectProblemById(pid)
+	_, err := dao.SelectProblemById(pid)
 	if err != nil {
 		log.Println(err)
 		return errors.New("题目不存在")
 	}
 
-	if role < entity.RoleAdmin {
-		userIdsMap := make(map[uint64]struct{})
-		for _, uid := range p0.UserIds {
-			userIdsMap[uid] = struct{}{}
-		}
-		if _, exists := userIdsMap[uid]; !exists {
-			return errors.New("没有该题权限")
-		}
-	}
-
 	// 读取题单
-	_, err = dao.SelectCollectionById(cid)
+	c0, err := dao.SelectCollectionById(cid)
 	if err != nil {
 		log.Println(err)
 		return errors.New("题单不存在")
 	}
 
-	// 更新题目更新时间
+	if role < entity.RoleAdmin {
+		if c0.UserId != uid {
+			return errors.New("没有权限，只能操作自己的题单")
+		}
+	}
+
+	// 更新题单更新时间
 	err = dao.UpdateCollectionUpdateTimeById(pid)
 	if err != nil {
 		log.Println(err)
 		return errors.New("更新题单更新时间失败")
 	}
 
-	// 插入题目标签
+	// 插入题单题目
 	err = dao.InsertCollectionProblem(cp)
 	if err != nil {
 		log.Println(err)

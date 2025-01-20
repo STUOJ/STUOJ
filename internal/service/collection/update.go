@@ -19,7 +19,7 @@ func Update(coll entity.Collection, uid uint64, role entity.Role) error {
 
 	if role < entity.RoleAdmin {
 		if c0.UserId != uid {
-			return errors.New("没有权限，只能编辑自己的题单")
+			return errors.New("没有权限，只能操作自己的题单")
 		}
 	}
 
