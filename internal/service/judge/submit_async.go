@@ -178,6 +178,7 @@ func asyncJudge(s entity.Submission, p entity.Problem, t entity.Testcase) (entit
 	result, err := judge0.Submit(judgeSubmission)
 	if err != nil {
 		log.Println(err)
+		j.Stderr = err.Error()
 		j.Status = entity.JudgeIE
 		return j, err
 	}
@@ -189,6 +190,7 @@ func asyncJudge(s entity.Submission, p entity.Problem, t entity.Testcase) (entit
 		time, err = strconv.ParseFloat(result.Time, 64)
 		if err != nil {
 			log.Println(err)
+			j.Stderr = err.Error()
 			j.Status = entity.JudgeIE
 			return j, err
 		}
