@@ -77,6 +77,7 @@ func InitCollectionRoute(ginServer *gin.Engine) {
 	collectionPublicRoute := ginServer.Group("/collection")
 	{
 		collectionPublicRoute.GET("/", handler.CollectionList)
+		collectionPublicRoute.GET("/:id", handler.CollectionInfo)
 	}
 
 	collectionUserRoute := ginServer.Group("/collection")

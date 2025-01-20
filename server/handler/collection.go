@@ -4,6 +4,7 @@ import (
 	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
 	"STUOJ/internal/service/collection"
+	"STUOJ/internal/service/problem"
 	"STUOJ/utils"
 	"log"
 	"net/http"
@@ -12,12 +13,34 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// 获取题单数据
+func CollectionInfo(c *gin.Context) {
+	role, uid := utils.GetUserInfo(c)
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		return
+	}
+
+	cid := uint64(id)
+	coll, err := problem.SelectById(cid, uid, role)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		return
+	}
+
+	c.JSON(http.StatusOK, model.RespOk("OK", coll))
+}
+
 // 获取题单列表
 func CollectionList(c *gin.Context) {
+	role, uid := utils.GetUserInfo(c)
 
 	condition := model.CollectionWhere{}
 	condition.Parse(c)
-	users, err := collection.Select(condition)
+
+	users, err := collection.Select(condition, uid, role)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
