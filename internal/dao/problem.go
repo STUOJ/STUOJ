@@ -78,7 +78,7 @@ func SelectProblemById(id uint64) (entity.Problem, error) {
 	return p.Problem, nil
 }
 
-func SelectProblem(condition model.ProblemWhere) ([]entity.Problem, error) {
+func SelectProblems(condition model.ProblemWhere) ([]entity.Problem, error) {
 	var problems []auxiliaryProblem
 
 	subQueryTag := db.Db.Model(&entity.ProblemTag{}).
