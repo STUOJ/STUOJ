@@ -25,7 +25,7 @@ func (s CollectionStatus) String() string {
 
 type Collection struct {
 	Id          uint64           `gorm:"primaryKey;autoIncrement;comment:题单ID" json:"id"`
-	UserId      uint64           `gorm:"not null;default:0;comment:用户ID" json:"user_id"`
+	UserId      uint64           `gorm:"not null;default:0;comment:用户ID" json:"-"`
 	Title       string           `gorm:"type:text;not null;comment:标题" json:"title"`
 	Description string           `gorm:"type:longtext;not null;comment:简介" json:"description"`
 	Status      CollectionStatus `gorm:"not null;default:1;comment:状态" json:"status"`
