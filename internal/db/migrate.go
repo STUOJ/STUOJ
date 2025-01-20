@@ -16,6 +16,9 @@ func autoMigrate() error {
 		&entity.Solution{},
 		&entity.Submission{},
 		&entity.Tag{},
+		&entity.Collection{},
+		&entity.CollectionUser{},
+		&entity.CollectionProblem{},
 	)
 	if err != nil {
 		return err
