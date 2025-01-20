@@ -1,13 +1,6 @@
 package collection
 
-import (
-	"STUOJ/internal/dao"
-	"STUOJ/internal/entity"
-	"STUOJ/internal/model"
-	"errors"
-	"log"
-)
-
+/*
 func GetStatistics() (model.CollectionStatistics, error) {
 	var err error
 	var stats model.CollectionStatistics
@@ -48,3 +41,4 @@ func mapCountFromCountByCollection(cbts []model.CountByCollection) model.MapCoun
 
 	return m
 }
+*/

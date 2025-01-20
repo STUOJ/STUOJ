@@ -7,7 +7,7 @@ import (
 )
 
 // 根据提交ID删除提交记录
-func DeleteBySubmissionId(sid uint64) error {
+func DeleteSubmission(sid uint64) error {
 	// 获取提交信息
 	_, err := dao.SelectSubmissionById(sid)
 	if err != nil {

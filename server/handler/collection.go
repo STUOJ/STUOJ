@@ -4,12 +4,10 @@ import (
 	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
 	"STUOJ/internal/service/collection"
-	"STUOJ/internal/service/problem"
 	"STUOJ/utils"
 	"log"
 	"net/http"
 	"strconv"
-	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -78,6 +76,8 @@ type ReqCollectionModify struct {
 func CollectionModify(c *gin.Context) {
 	var req ReqCollectionModify
 
+	role, uid := utils.GetUserInfo(c)
+
 	// 参数绑定
 	err := c.ShouldBindBodyWithJSON(&req)
 	if err != nil {
@@ -94,7 +94,7 @@ func CollectionModify(c *gin.Context) {
 		Status:      req.Status,
 	}
 
-	err = collection.UpdateById(coll)
+	err = collection.Update(coll, uid, role)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
@@ -106,6 +106,7 @@ func CollectionModify(c *gin.Context) {
 
 // 删除题单
 func CollectionRemove(c *gin.Context) {
+	role, uid := utils.GetUserInfo(c)
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
@@ -113,27 +114,25 @@ func CollectionRemove(c *gin.Context) {
 		return
 	}
 
-	// 删除题单
-	tid := uint64(id)
-	err = collection.DeleteById(tid)
+	pid := uint64(id)
+	err = collection.Delete(pid, uid, role)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
 	}
 
-	// 返回结果
 	c.JSON(http.StatusOK, model.RespOk("删除成功", nil))
 }
 
-// 添加题单到题目
-type ReqProblemAddCollection struct {
-	ProblemId    uint64 `json:"problem_id,omitempty" binding:"required"`
-	CollectionId uint64 `json:"collection_id,omitempty" binding:"required"`
+// 添加题目到题单
+type ReqCollectionAddProblem struct {
+	CollectionId uint64 `json:"collection_id" binding:"required"`
+	ProblemId    uint64 `json:"problem_id" binding:"required"`
 }
 
-func ProblemAddCollection(c *gin.Context) {
+func CollectionAddProblem(c *gin.Context) {
 	role, uid := utils.GetUserInfo(c)
-	var req ReqProblemAddCollection
+	var req ReqCollectionAddProblem
 
 	// 参数绑定
 	err := c.ShouldBindBodyWithJSON(&req)
@@ -144,7 +143,7 @@ func ProblemAddCollection(c *gin.Context) {
 	}
 
 	// 添加题单
-	err = problem.InsertCollection(req.ProblemId, req.CollectionId, uid, role)
+	err = collection.InsertProblem(req.CollectionId, req.ProblemId, uid, role)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
@@ -154,16 +153,15 @@ func ProblemAddCollection(c *gin.Context) {
 	c.JSON(http.StatusOK, model.RespOk("添加成功", nil))
 }
 
-// 删除题目的某个题单
-type ReqProblemRemoveCollection struct {
-	ProblemId    uint64 `json:"problem_id,omitempty" binding:"required"`
-	CollectionId uint64 `json:"collection_id,omitempty" binding:"required"`
+// 删除题单的某个题目
+type ReqCollectionRemoveProblem struct {
+	CollectionId uint64 `json:"collection_id" binding:"required"`
+	ProblemId    uint64 `json:"problem_id" binding:"required"`
 }
 
-// 删除题目的某个题单
-func ProblemRemoveCollection(c *gin.Context) {
+func CollectionRemoveProblem(c *gin.Context) {
 	role, uid := utils.GetUserInfo(c)
-	var req ReqProblemRemoveCollection
+	var req ReqCollectionRemoveProblem
 
 	// 参数绑定
 	err := c.ShouldBindBodyWithJSON(&req)
@@ -174,7 +172,7 @@ func ProblemRemoveCollection(c *gin.Context) {
 	}
 
 	// 删除题单
-	err = problem.DeleteCollection(req.ProblemId, req.CollectionId, uid, role)
+	err = collection.DeleteProblem(req.CollectionId, req.ProblemId, uid, role)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return

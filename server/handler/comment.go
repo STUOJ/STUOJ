@@ -74,7 +74,7 @@ func CommentRemove(c *gin.Context) {
 
 	// 删除评论
 	cid := uint64(id)
-	err = comment.DeleteByIdCheckUserId(cid, uid, role)
+	err = comment.Delete(cid, uid, role)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespOk(err.Error(), nil))
 		return
@@ -113,7 +113,7 @@ func CommentModify(c *gin.Context) {
 	}
 
 	// 修改评论
-	err = comment.UpdateById(cmt)
+	err = comment.Update(cmt)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespOk(err.Error(), nil))
 		return

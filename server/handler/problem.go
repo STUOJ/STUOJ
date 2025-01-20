@@ -154,7 +154,7 @@ func ProblemModify(c *gin.Context) {
 		Status:       req.Status,
 	}
 
-	err = problem.UpdateById(p, uid, role)
+	err = problem.Update(p, uid, role)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
@@ -175,7 +175,7 @@ func ProblemRemove(c *gin.Context) {
 	}
 
 	pid := uint64(id)
-	err = problem.DeleteByProblemId(pid, uid, role)
+	err = problem.Delete(pid, uid, role)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
@@ -225,7 +225,7 @@ func HistoryListOfProblem(c *gin.Context) {
 	}
 
 	pid := uint64(id)
-	histories, err := history.SelectHistoriesByProblemId(pid)
+	histories, err := history.SelectByProblemId(pid)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
