@@ -171,7 +171,7 @@ func CollectionRemoveProblem(c *gin.Context) {
 		return
 	}
 
-	// 删除题单
+	// 删除题目
 	err = collection.DeleteProblem(req.CollectionId, req.ProblemId, uid, role)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
