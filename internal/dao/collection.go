@@ -141,6 +141,30 @@ func CountCollections(condition model.CollectionWhere) (uint64, error) {
 	return uint64(count), nil
 }
 
+func InsertCollectionUser(cu entity.CollectionUser) error {
+	return db.Db.Transaction(func(tx *gorm.DB) error {
+		return tx.Model(&entity.CollectionUser{}).Create(&cu).Error
+	})
+}
+
+func DeleteCollectionUser(cu entity.CollectionUser) error {
+	return db.Db.Transaction(func(tx *gorm.DB) error {
+		return tx.Model(&entity.CollectionUser{}).Delete(&cu).Error
+	})
+}
+
+func InsertCollectionProblem(cp entity.CollectionProblem) error {
+	return db.Db.Transaction(func(tx *gorm.DB) error {
+		return tx.Model(&entity.CollectionProblem{}).Create(&cp).Error
+	})
+}
+
+func DeleteCollectionProblem(cp entity.CollectionProblem) error {
+	return db.Db.Transaction(func(tx *gorm.DB) error {
+		return tx.Model(&entity.CollectionProblem{}).Delete(&cp).Error
+	})
+}
+
 func collectionJoins(tx *gorm.DB) *gorm.DB {
 	subQueryUser := db.Db.Model(&entity.CollectionUser{}).
 		Select("GROUP_CONCAT(DISTINCT user_id)").
