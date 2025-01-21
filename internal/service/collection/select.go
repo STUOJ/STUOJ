@@ -23,23 +23,27 @@ func SelectById(id uint64, userId uint64, role entity.Role) (entity.Collection, 
 	}
 
 	if c.Status != entity.CollectionPublic && role < entity.RoleAdmin {
-		return entity.Collection{}, errors.New("没有该题单权限")
+		for _, uid := range c.UserIds {
+			if uid == userId {
+				return c, nil
+			}
+		}
+	} else {
+		return c, nil
 	}
 
-	return c, nil
+	return entity.Collection{}, errors.New("没有权限查看该题单")
 }
 
-// 查询所有题单
+// 查询题单
 func Select(condition model.CollectionWhere, uid uint64, role entity.Role) (CollectionPage, error) {
 	if !condition.Status.Exist() {
 		condition.Status.Set([]uint64{uint64(entity.CollectionPublic)})
 	} else {
 		for _, v := range condition.Status.Value() {
 			if entity.CollectionStatus(v) < entity.CollectionPublic {
-				if role <= entity.RoleUser {
-					condition.Status.Set(entity.CollectionPublic)
-				} else if role == entity.RoleEditor {
-					condition.UserId.Set(uid)
+				if role < entity.RoleAdmin {
+					condition.UserId.Set([]uint64{uid})
 				}
 			}
 		}
