@@ -176,7 +176,7 @@ func problemJoins(tx *gorm.DB) *gorm.DB {
 	query := []string{"tbl_problem.*"}
 	query = append(query,
 		"(SELECT GROUP_CONCAT(DISTINCT tag_id) FROM tbl_problem_tag WHERE problem_id = tbl_problem.id) AS problem_tag_id",
-		"(SELECT GROUP_CONCAT(DISTINCT user_id) FROM tbl_history WHERE problem_id = tbl_problem.id) AS problem_user_id",
+		"(SELECT GROUP_CONCAT(DISTINCT user_id) FROM (SELECT tbl_collection_user.user_id FROM tbl_collection_user INNER JOIN tbl_collection_problem ON tbl_collection_user.collection_id = tbl_collection_problem.collection_id WHERE tbl_collection_problem.problem_id = tbl_problem.id UNION SELECT tbl_history.user_id FROM tbl_history WHERE tbl_history.problem_id = tbl_problem.id ) AS user_ids) AS problem_user_id",
 	)
 	tx = tx.Select(strings.Join(query, ", "))
 	return tx
