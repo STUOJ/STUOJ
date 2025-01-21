@@ -76,3 +76,39 @@ func DeleteProblem(cid uint64, pid uint64, uid uint64, role entity.Role) error {
 
 	return nil
 }
+
+func DeleteUser(cid uint64, delUid uint64, uid uint64, role entity.Role) error {
+	cu := entity.CollectionUser{
+		CollectionId: cid,
+		UserId:       delUid,
+	}
+	_, err := dao.SelectUserById(delUid)
+	if err != nil {
+		log.Println(err)
+		return errors.New("用户不存在")
+	}
+	c0, err := dao.SelectCollectionById(cid)
+	if err != nil {
+		log.Println(err)
+		return errors.New("题单不存在")
+	}
+	if role < entity.RoleAdmin {
+		if c0.UserId != uid {
+			return errors.New("没有权限，只能操作自己的题单")
+		}
+	}
+	if c0.UserId == delUid {
+		return errors.New("题单创建者不能删除")
+	}
+	for _, i := range c0.UserIds {
+		if i == delUid {
+			err = dao.DeleteCollectionUser(cu)
+			if err != nil {
+				log.Println(err)
+				return errors.New("删除用户失败")
+			}
+			return nil
+		}
+	}
+	return errors.New("用户不在题单中")
+}
