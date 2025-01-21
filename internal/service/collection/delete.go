@@ -16,10 +16,8 @@ func Delete(id uint64, uid uint64, role entity.Role) error {
 		return errors.New("题单不存在")
 	}
 
-	if role < entity.RoleAdmin {
-		if c0.UserId != uid {
-			return errors.New("没有权限，只能删除自己的题单")
-		}
+	if role < entity.RoleAdmin && c0.UserId != uid {
+		return errors.New("没有权限，只能删除自己的题单")
 	}
 
 	// 删除题单
@@ -55,15 +53,11 @@ func DeleteProblem(cid uint64, pid uint64, uid uint64, role entity.Role) error {
 	}
 
 	flag := false
-	if role < entity.RoleAdmin {
-		if c0.UserId != uid {
-			for _, userId := range c0.UserIds {
-				if userId == uid {
-					flag = true
-				}
+	if role < entity.RoleAdmin && c0.UserId != uid {
+		for _, userId := range c0.UserIds {
+			if userId == uid {
+				flag = true
 			}
-		} else {
-			flag = true
 		}
 	} else {
 		flag = true

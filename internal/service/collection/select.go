@@ -22,7 +22,7 @@ func SelectById(id uint64, userId uint64, role entity.Role) (entity.Collection, 
 		return entity.Collection{}, errors.New("获取题单失败")
 	}
 
-	if c.Status != entity.CollectionPublic && role < entity.RoleAdmin {
+	if c.Status != entity.CollectionPublic && role < entity.RoleAdmin && c.UserId != userId {
 		for _, uid := range c.UserIds {
 			if uid == userId {
 				return c, nil

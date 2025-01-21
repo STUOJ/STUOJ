@@ -20,8 +20,8 @@ type BriefProblem struct {
 
 type auxiliaryProblem struct {
 	entity.Problem
-	ProblemHistoryUserId string `gorm:"column:problem_history_user_id"`
-	ProblemTagIds        string `gorm:"column:problem_tag_id"`
+	ProblemUserId string `gorm:"column:problem_user_id"`
+	ProblemTagIds string `gorm:"column:problem_tag_id"`
 }
 
 // 插入题目
@@ -37,17 +37,9 @@ func InsertProblem(p entity.Problem) (uint64, error) {
 func SelectProblemById(id uint64) (entity.Problem, error) {
 	var p auxiliaryProblem
 
-	subQueryUser := db.Db.Model(&entity.History{}).
-		Select("GROUP_CONCAT(DISTINCT user_id)").
-		Where("problem_id = ?", id)
-
-	subQueryTag := db.Db.Model(&entity.ProblemTag{}).
-		Select("GROUP_CONCAT(DISTINCT tag_id)").
-		Where("problem_id = ?", id)
-
-	tx := db.Db.Model(&entity.Problem{}).
-		Where("id = ?", id).
-		Select("tbl_problem.*, (?) as problem_history_user_id, (?)  as problem_tag_id", subQueryUser, subQueryTag).
+	tx := db.Db.Model(&entity.Problem{})
+	tx = problemJoins(tx)
+	tx = tx.Where(&entity.Problem{Id: id}).
 		Scan(&p)
 
 	if tx.Error != nil {
@@ -55,15 +47,15 @@ func SelectProblemById(id uint64) (entity.Problem, error) {
 	}
 
 	// 将逗号分隔的字符串转换为 []uint64
-	historyUserIds := make([]uint64, 0)
-	if p.ProblemHistoryUserId != "" {
-		for _, idStr := range strings.Split(p.ProblemHistoryUserId, ",") {
+	userIds := make([]uint64, 0)
+	if p.ProblemUserId != "" {
+		for _, idStr := range strings.Split(p.ProblemUserId, ",") {
 			if id, err := strconv.ParseUint(strings.TrimSpace(idStr), 10, 64); err == nil {
-				historyUserIds = append(historyUserIds, id)
+				userIds = append(userIds, id)
 			}
 		}
 	}
-	p.Problem.UserIds = historyUserIds
+	p.Problem.UserIds = userIds
 
 	tagIds := make([]uint64, 0)
 	if p.ProblemTagIds != "" {
@@ -81,16 +73,11 @@ func SelectProblemById(id uint64) (entity.Problem, error) {
 func SelectProblems(condition model.ProblemWhere) ([]entity.Problem, error) {
 	var problems []auxiliaryProblem
 
-	subQueryTag := db.Db.Model(&entity.ProblemTag{}).
-		Select("GROUP_CONCAT(DISTINCT tag_id)").
-		Where("problem_id = tbl_problem.id")
-
 	where := condition.GenerateWhere()
 	tx := db.Db.Model(&entity.Problem{})
 	tx = where(tx)
-	tx = tx.
-		Select("tbl_problem.*, (?) as problem_tag_id", subQueryTag).
-		Scan(&problems)
+	tx = problemJoins(tx)
+	tx = tx.Scan(&problems)
 
 	if tx.Error != nil {
 		return nil, tx.Error
@@ -107,6 +94,15 @@ func SelectProblems(condition model.ProblemWhere) ([]entity.Problem, error) {
 			}
 		}
 		problems[i].Problem.TagIds = tagIds
+		userIds := make([]uint64, 0)
+		if problems[i].ProblemUserId != "" {
+			for _, idStr := range strings.Split(problems[i].ProblemUserId, ",") {
+				if id, err := strconv.ParseUint(strings.TrimSpace(idStr), 10, 64); err == nil {
+					userIds = append(userIds, id)
+				}
+			}
+		}
+		problems[i].Problem.UserIds = userIds
 	}
 
 	// 将辅助结构体转换为实体结构体
@@ -174,6 +170,16 @@ func CountProblemsBetweenCreateTime(startTime time.Time, endTime time.Time) ([]m
 	}
 
 	return countByDate, nil
+}
+
+func problemJoins(tx *gorm.DB) *gorm.DB {
+	query := []string{"tbl_problem.*"}
+	query = append(query,
+		"(SELECT GROUP_CONCAT(DISTINCT tag_id) FROM tbl_problem_tag WHERE problem_id = tbl_problem.id) AS problem_tag_id",
+		"(SELECT GROUP_CONCAT(DISTINCT user_id) FROM tbl_history WHERE problem_id = tbl_problem.id) AS problem_user_id",
+	)
+	tx = tx.Select(strings.Join(query, ", "))
+	return tx
 }
 
 func briefProblemSelect() []string {

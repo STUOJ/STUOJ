@@ -49,15 +49,11 @@ func InsertProblem(cid uint64, pid uint64, uid uint64, role entity.Role) error {
 	}
 
 	flag := false
-	if role < entity.RoleAdmin {
-		if c0.UserId != uid {
-			for _, userId := range c0.UserIds {
-				if userId == uid {
-					flag = true
-				}
+	if role < entity.RoleAdmin && c0.UserId != uid {
+		for _, userId := range c0.UserIds {
+			if userId == uid {
+				flag = true
 			}
-		} else {
-			flag = true
 		}
 	} else {
 		flag = true
