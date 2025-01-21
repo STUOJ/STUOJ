@@ -23,16 +23,14 @@ func SelectById(id uint64, userId uint64, role entity.Role) (entity.Collection, 
 	}
 
 	if c.Status != entity.CollectionPublic && role < entity.RoleAdmin {
-		userIdsMap := make(map[uint64]struct{})
 		for _, uid := range c.UserIds {
-			userIdsMap[uid] = struct{}{}
-		}
-		if _, exists := userIdsMap[userId]; !exists {
-			return entity.Collection{}, errors.New("没有该题权限")
+			if uid == userId {
+				return c, nil
+			}
 		}
 	}
 
-	return c, nil
+	return entity.Collection{}, errors.New("没有权限查看该题单")
 }
 
 // 查询题单
