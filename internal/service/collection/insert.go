@@ -48,10 +48,22 @@ func InsertProblem(cid uint64, pid uint64, uid uint64, role entity.Role) error {
 		return errors.New("题单不存在")
 	}
 
+	flag := false
 	if role < entity.RoleAdmin {
 		if c0.UserId != uid {
-			return errors.New("没有权限，只能操作自己的题单")
+			for _, userId := range c0.UserIds {
+				if userId == uid {
+					flag = true
+				}
+			}
+		} else {
+			flag = true
 		}
+	} else {
+		flag = true
+	}
+	if !flag {
+		return errors.New("没有权限")
 	}
 
 	// 更新题单更新时间
