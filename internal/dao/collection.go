@@ -50,7 +50,6 @@ func SelectCollectionById(id uint64) (entity.Collection, error) {
 			}
 		}
 	}
-	userIds = append(userIds, c.UserId)
 	c.Collection.UserIds = userIds
 
 	problemIds := make([]uint64, 0)
