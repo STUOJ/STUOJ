@@ -70,3 +70,41 @@ func InsertProblem(cid uint64, pid uint64, uid uint64, role entity.Role) error {
 
 	return nil
 }
+
+func InsertUser(cid uint64, addUid uint64, uid uint64, role entity.Role) error {
+	cu := entity.CollectionUser{
+		CollectionId: cid,
+		UserId:       addUid,
+	}
+
+	_, err := dao.SelectUserById(addUid)
+	if err != nil {
+		log.Println(err)
+		return errors.New("用户不存在")
+	}
+
+	c0, err := dao.SelectCollectionById(cid)
+	if err != nil {
+		log.Println(err)
+		return errors.New("题单不存在")
+	}
+	if role < entity.RoleAdmin {
+		if c0.UserId != uid {
+			return errors.New("没有权限，只能操作自己的题单")
+		}
+	}
+	if c0.UserId == addUid {
+		return errors.New("不能添加自己为题单成员")
+	}
+	for _, i := range c0.UserIds {
+		if i == addUid {
+			return errors.New("用户已存在题单中")
+		}
+	}
+	err = dao.InsertCollectionUser(cu)
+	if err != nil {
+		log.Println(err)
+		return errors.New("添加用户失败")
+	}
+	return nil
+}
