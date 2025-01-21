@@ -28,6 +28,8 @@ func SelectById(id uint64, userId uint64, role entity.Role) (entity.Collection, 
 				return c, nil
 			}
 		}
+	} else {
+		return c, nil
 	}
 
 	return entity.Collection{}, errors.New("没有权限查看该题单")
