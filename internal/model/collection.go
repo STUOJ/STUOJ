@@ -54,7 +54,7 @@ func (con *CollectionWhere) GenerateWhereWithNoPage() func(*gorm.DB) *gorm.DB {
 		}
 		if con.ProblemId.Exist() {
 			where = where.Joins("JOIN tbl_collection_problem ON tbl_collection.id = tbl_collection_problem.collection_id").
-				Where("tbl_collection_problem.problem_id IN ?", con.ProblemId.Value())
+				Where("tbl_collection_problem.problem_id IN(?) GROUP BY collection_id HAVING COUNT(DISTINCT problem_id) =?", con.ProblemId.Value(), len(con.ProblemId.Value()))
 		}
 		if con.Title.Exist() {
 			where = where.Where("tbl_collection.title LIKE ?", "%"+con.Title.Value()+"%")
