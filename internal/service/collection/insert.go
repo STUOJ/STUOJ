@@ -6,6 +6,8 @@ import (
 	"errors"
 	"log"
 	"time"
+
+	iproblem "STUOJ/internal/service/problem"
 )
 
 // 插入题单
@@ -35,12 +37,10 @@ func InsertProblem(cid uint64, pid uint64, uid uint64, role entity.Role) error {
 	}
 
 	// 读取题目
-	_, err := dao.SelectProblemById(pid)
+	_, err := iproblem.SelectById(pid, uid, role)
 	if err != nil {
-		log.Println(err)
-		return errors.New("题目不存在")
+		return err
 	}
-
 	// 读取题单
 	c0, err := dao.SelectCollectionById(cid)
 	if err != nil {
