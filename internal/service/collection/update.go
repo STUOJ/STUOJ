@@ -17,10 +17,9 @@ func Update(coll entity.Collection, uid uint64, role entity.Role) error {
 		return errors.New("题单不存在")
 	}
 
-	if role < entity.RoleAdmin {
-		if c0.UserId != uid {
-			return errors.New("没有权限，只能操作自己的题单")
-		}
+	if role < entity.RoleAdmin && c0.UserId != uid {
+		return errors.New("没有权限，只能操作自己的题单")
+
 	}
 
 	// 更新题单
