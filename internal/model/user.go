@@ -6,6 +6,7 @@ import (
 )
 
 type UserWhere struct {
+	Id      FieldList[uint64]
 	Role    FieldList[uint64]
 	Name    Field[string]
 	Page    Field[uint64]
@@ -15,6 +16,7 @@ type UserWhere struct {
 }
 
 func (con *UserWhere) Parse(c *gin.Context) {
+	con.Id.Parse(c, "id")
 	con.Role.Parse(c, "role")
 	con.Name.Parse(c, "name")
 	con.Page.Parse(c, "page")
@@ -28,6 +30,9 @@ func (con *UserWhere) GenerateWhereWithNoPage() func(*gorm.DB) *gorm.DB {
 		whereClause := map[string]interface{}{}
 
 		where := db.Where(whereClause)
+		if con.Id.Exist() {
+			where.Where("tbl_user.id in ?", con.Id.Value())
+		}
 		if con.Role.Exist() {
 			where.Where("tbl_user.role in ?", con.Role.Value())
 		}
