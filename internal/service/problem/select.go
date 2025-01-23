@@ -24,19 +24,15 @@ func SelectById(id uint64, userId uint64, role entity.Role) (model.ProblemData, 
 	var testcases []entity.Testcase
 	var solutions []entity.Solution
 
-	if p.Status != entity.ProblemPublic && role < entity.RoleAdmin {
-		userIdsMap := make(map[uint64]struct{})
-		for _, uid := range p.UserIds {
-			userIdsMap[uid] = struct{}{}
-		}
-		if _, exists := userIdsMap[userId]; !exists {
-			return model.ProblemData{}, errors.New("没有该题权限")
+	if p.Status != entity.ProblemPublic {
+		if !problemOP(&p, userId, role) {
+			return model.ProblemData{}, errors.New("获取失败，没有该题权限")
 		}
 	}
 
-	if role >= entity.RoleEditor {
-		testcases, err = dao.SelectTestcasesByProblemId(id)
-		solutions, err = dao.SelectSolutionsByProblemId(id)
+	if problemOP(&p, userId, role) {
+		testcases, _ = dao.SelectTestcasesByProblemId(id)
+		solutions, _ = dao.SelectSolutionsByProblemId(id)
 	}
 
 	// 封装题目数据
@@ -119,4 +115,25 @@ func wrapProblemDatas(problems []entity.Problem) []model.ProblemData {
 	}
 
 	return pds
+}
+
+// 判断用户是否有该题权限
+func problemOP(p *entity.Problem, userId uint64, role entity.Role) bool {
+	if role >= entity.RoleAdmin {
+		return true
+	}
+	if role < entity.RoleEditor {
+		return false
+	}
+	for _, i := range p.UserIds {
+		if i == userId {
+			return true
+		}
+	}
+	for _, i := range p.CollectionUserIds {
+		if i == userId {
+			return true
+		}
+	}
+	return false
 }

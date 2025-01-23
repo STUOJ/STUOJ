@@ -20,8 +20,10 @@ type BriefProblem struct {
 
 type auxiliaryProblem struct {
 	entity.Problem
-	ProblemUserId string `gorm:"column:problem_user_id"`
-	ProblemTagIds string `gorm:"column:problem_tag_id"`
+	ProblemUserId            string `gorm:"column:problem_user_id"`
+	ProblemTagIds            string `gorm:"column:problem_tag_id"`
+	ProblemCollectionIds     string `gorm:"column:problem_collection_id"`
+	ProblemCollectionUserIds string `gorm:"column:problem_collection_user_id"`
 }
 
 // 插入题目
@@ -47,25 +49,41 @@ func SelectProblemById(id uint64) (entity.Problem, error) {
 	}
 
 	// 将逗号分隔的字符串转换为 []uint64
-	userIds := make([]uint64, 0)
+	p.Problem.UserIds = make([]uint64, 0)
 	if p.ProblemUserId != "" {
 		for _, idStr := range strings.Split(p.ProblemUserId, ",") {
 			if id, err := strconv.ParseUint(strings.TrimSpace(idStr), 10, 64); err == nil {
-				userIds = append(userIds, id)
+				p.Problem.UserIds = append(p.Problem.UserIds, id)
 			}
 		}
 	}
-	p.Problem.UserIds = userIds
 
-	tagIds := make([]uint64, 0)
+	p.Problem.TagIds = make([]uint64, 0)
 	if p.ProblemTagIds != "" {
 		for _, idStr := range strings.Split(p.ProblemTagIds, ",") {
 			if id, err := strconv.ParseUint(strings.TrimSpace(idStr), 10, 64); err == nil {
-				tagIds = append(tagIds, id)
+				p.Problem.TagIds = append(p.Problem.TagIds, id)
 			}
 		}
 	}
-	p.Problem.TagIds = tagIds
+
+	p.Problem.CollectionIds = make([]uint64, 0)
+	if p.ProblemCollectionIds != "" {
+		for _, idStr := range strings.Split(p.ProblemCollectionIds, ",") {
+			if id, err := strconv.ParseUint(strings.TrimSpace(idStr), 10, 64); err == nil {
+				p.Problem.CollectionIds = append(p.Problem.CollectionIds, id)
+			}
+		}
+	}
+
+	p.Problem.CollectionUserIds = make([]uint64, 0)
+	if p.ProblemCollectionUserIds != "" {
+		for _, idStr := range strings.Split(p.ProblemCollectionUserIds, ",") {
+			if id, err := strconv.ParseUint(strings.TrimSpace(idStr), 10, 64); err == nil {
+				p.Problem.CollectionUserIds = append(p.Problem.CollectionUserIds, id)
+			}
+		}
+	}
 
 	return p.Problem, nil
 }
@@ -175,8 +193,10 @@ func CountProblemsBetweenCreateTime(startTime time.Time, endTime time.Time) ([]m
 func problemJoins(tx *gorm.DB) *gorm.DB {
 	query := []string{"tbl_problem.*"}
 	query = append(query,
-		"(SELECT GROUP_CONCAT(DISTINCT tag_id) FROM tbl_problem_tag WHERE problem_id = tbl_problem.id) AS problem_tag_id",
-		"(SELECT GROUP_CONCAT(DISTINCT user_id) FROM (SELECT tbl_collection_user.user_id FROM tbl_collection_user INNER JOIN tbl_collection_problem ON tbl_collection_user.collection_id = tbl_collection_problem.collection_id WHERE tbl_collection_problem.problem_id = tbl_problem.id UNION SELECT tbl_history.user_id FROM tbl_history WHERE tbl_history.problem_id = tbl_problem.id ) AS user_ids) AS problem_user_id",
+		"(SELECT GROUP_CONCAT(DISTINCT tbl_problem_tag.tag_id) FROM tbl_problem_tag WHERE problem_id = tbl_problem.id) AS problem_tag_id",
+		"(SELECT GROUP_CONCAT(DISTINCT tbl_history.user_id) FROM tbl_history WHERE problem_id = tbl_problem.id) AS problem_user_id",
+		"(SELECT GROUP_CONCAT(DISTINCT tbl_collection_problem.collection_id) FROM tbl_collection_problem WHERE problem_id = tbl_problem.id) AS problem_collection_id",
+		"(SELECT GROUP_CONCAT(DISTINCT tbl_collection_user.user_id) FROM tbl_collection_problem JOIN tbl_collection_user ON tbl_collection_problem.collection_id = tbl_collection_user.collection_id WHERE tbl_collection_problem.problem_id = tbl_problem.id AND EXISTS (SELECT 1 FROM tbl_collection WHERE tbl_collection.id = tbl_collection_user.collection_id AND tbl_collection.user_id IN (SELECT DISTINCT user_id FROM tbl_history WHERE problem_id = tbl_problem.id))) AS problem_collection_user_id",
 	)
 	tx = tx.Select(strings.Join(query, ", "))
 	return tx
