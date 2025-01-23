@@ -16,18 +16,20 @@ type ProblemData struct {
 }
 
 type ProblemWhere struct {
-	Id         Field[uint64]
-	Title      Field[string]
-	Difficulty FieldList[uint64]
-	Status     FieldList[uint64]
-	Tag        FieldList[uint64]
-	UserId     Field[uint64]
-	Page       Field[uint64]
-	Size       Field[uint64]
-	OrderBy    Field[string]
-	Order      Field[string]
-	StartTime  Field[time.Time]
-	EndTime    Field[time.Time]
+	Id          Field[uint64]
+	Title       Field[string]
+	Difficulty  FieldList[uint64]
+	Status      FieldList[uint64]
+	Tag         FieldList[uint64]
+	UserId      Field[uint64]
+	ACUserSize  Field[uint64]
+	ScoreUserId Field[uint64]
+	Page        Field[uint64]
+	Size        Field[uint64]
+	OrderBy     Field[string]
+	Order       Field[string]
+	StartTime   Field[time.Time]
+	EndTime     Field[time.Time]
 }
 
 func (con *ProblemWhere) Parse(c *gin.Context) {
@@ -35,6 +37,8 @@ func (con *ProblemWhere) Parse(c *gin.Context) {
 	con.Difficulty.Parse(c, "difficulty")
 	con.Tag.Parse(c, "tag")
 	con.Status.Parse(c, "status")
+	con.ACUserSize.Parse(c, "ac_user_size")
+	con.ScoreUserId.Parse(c, "score_user_id")
 	con.UserId.Parse(c, "user")
 	con.Page.Parse(c, "page")
 	con.Size.Parse(c, "size")

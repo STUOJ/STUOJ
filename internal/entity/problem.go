@@ -86,6 +86,8 @@ type Problem struct {
 	TagIds        []uint64      `gorm:"-" json:"tag_ids"`
 	UserIds       []uint64      `gorm:"-" json:"user_ids"`
 	CollectionIds []uint64      `gorm:"-" json:"collection_ids"`
+	UserScore     uint64        `gorm:"-" json:"user_score"`
+	ACUserIds     []uint64      `gorm:"-" json:"ac_user_ids"`
 }
 
 func (Problem) TableName() string {
