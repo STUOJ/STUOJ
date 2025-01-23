@@ -2,6 +2,8 @@ package model
 
 import (
 	"STUOJ/internal/entity"
+	"fmt"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -22,7 +24,6 @@ type ProblemWhere struct {
 	Status      FieldList[uint64]
 	Tag         FieldList[uint64]
 	UserId      Field[uint64]
-	ACUserSize  Field[uint64]
 	ScoreUserId Field[uint64]
 	Page        Field[uint64]
 	Size        Field[uint64]
@@ -37,7 +38,6 @@ func (con *ProblemWhere) Parse(c *gin.Context) {
 	con.Difficulty.Parse(c, "difficulty")
 	con.Tag.Parse(c, "tag")
 	con.Status.Parse(c, "status")
-	con.ACUserSize.Parse(c, "ac_user_size")
 	con.ScoreUserId.Parse(c, "score_user_id")
 	con.UserId.Parse(c, "user")
 	con.Page.Parse(c, "page")
@@ -91,13 +91,28 @@ func (con *ProblemWhere) GenerateWhereWithNoPage() func(*gorm.DB) *gorm.DB {
 			}
 			where = where.Order(orderBy + " " + order)
 		}
-		return where
+		query := []string{"tbl_problem.*"}
+		query = append(query,
+			"(SELECT GROUP_CONCAT(DISTINCT tbl_problem_tag.tag_id) FROM tbl_problem_tag WHERE problem_id = tbl_problem.id) AS problem_tag_id",
+			"(SELECT GROUP_CONCAT(DISTINCT tbl_history.user_id) FROM tbl_history WHERE problem_id = tbl_problem.id) AS problem_user_id",
+		)
+		if con.ScoreUserId.Exist() {
+			query = append(query, fmt.Sprintf(
+				"(SELECT MAX(tbl_submission.score) FROM tbl_submission WHERE tbl_submission.problem_id = tbl_problem.id AND tbl_submission.user_id = %d) AS problem_user_score", con.ScoreUserId.Value()),
+				fmt.Sprintf("EXISTS (SELECT 1 FROM tbl_submission WHERE tbl_submission.problem_id = tbl_problem.id AND tbl_submission.user_id = %d) AS has_user_submission", con.ScoreUserId.Value()),
+			)
+		}
+		queryStr := strings.Join(query, ", ")
+		return where.Select(queryStr)
 	}
 }
 
 func (con *ProblemWhere) GenerateWhere() func(*gorm.DB) *gorm.DB {
 	where := con.GenerateWhereWithNoPage()
 	return func(db *gorm.DB) *gorm.DB {
-		return where(db).Offset(int((con.Page.Value() - 1) * con.Size.Value())).Limit(int(con.Size.Value()))
+		if con.Page.Exist() && con.Size.Exist() {
+			return where(db).Offset(int((con.Page.Value() - 1) * con.Size.Value())).Limit(int(con.Size.Value()))
+		}
+		return where(db).Offset(0).Limit(1)
 	}
 }

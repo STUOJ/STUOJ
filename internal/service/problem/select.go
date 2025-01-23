@@ -15,7 +15,9 @@ type ProblemPage struct {
 // 根据ID查询题目数据
 func SelectById(id uint64, userId uint64, role entity.Role) (model.ProblemData, error) {
 	// 获取题目信息
-	p, err := dao.SelectProblemById(id)
+	scoreUserId := model.Field[uint64]{}
+	scoreUserId.Set(userId)
+	p, err := dao.SelectProblemById(id, model.ProblemWhere{ScoreUserId: scoreUserId})
 
 	if err != nil {
 		return model.ProblemData{}, errors.New("获取题目信息失败")
@@ -50,6 +52,9 @@ func SelectById(id uint64, userId uint64, role entity.Role) (model.ProblemData, 
 }
 
 func Select(condition model.ProblemWhere, userId uint64, role entity.Role) (ProblemPage, error) {
+	scoreUserId := model.Field[uint64]{}
+	scoreUserId.Set(userId)
+	condition.ScoreUserId.Set(scoreUserId.Value())
 	if !condition.Status.Exist() {
 		condition.Status.Set([]uint64{uint64(entity.ProblemPublic)})
 	} else {
@@ -69,7 +74,7 @@ func Select(condition model.ProblemWhere, userId uint64, role entity.Role) (Prob
 	if !condition.Size.Exist() {
 		condition.Size.Set(10)
 	}
-	problems, err := dao.SelectProblem(condition)
+	problems, err := dao.SelectProblems(condition)
 	if err != nil {
 		return ProblemPage{}, errors.New("获取题目信息失败")
 	}
