@@ -14,7 +14,7 @@ import (
 // 初始化数据库
 func InitDatabase() error {
 	var err error
-	config := conf.Conf.Datebase
+	config := conf.Conf.Database
 
 	gormConfig := &gorm.Config{
 		Logger: logger.New(

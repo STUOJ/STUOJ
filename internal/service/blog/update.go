@@ -42,7 +42,7 @@ func Update(b entity.Blog, userId uint64, role entity.Role) error {
 	err = dao.UpdateBlogById(b0)
 	if err != nil {
 		log.Println(err)
-		return errors.New("更新博客失败")
+		return errors.New("修改博客失败")
 	}
 
 	return nil

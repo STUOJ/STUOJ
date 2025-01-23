@@ -7,7 +7,7 @@ import (
 )
 
 // 根据ID删除题解
-func DeleteById(id uint64) error {
+func Delete(id uint64) error {
 	// 查询题解
 	_, err := dao.SelectSolutionById(id)
 	if err != nil {

@@ -8,7 +8,7 @@ import (
 )
 
 // 根据题目ID查询历史记录
-func SelectHistoriesByProblemId(pid uint64) ([]entity.History, error) {
+func SelectByProblemId(pid uint64) ([]entity.History, error) {
 	histories, err := dao.SelectHistoriesByProblemId(pid)
 	if err != nil {
 		log.Println(err)

@@ -68,24 +68,25 @@ func (s ProblemStatus) String() string {
 
 // Problem 题目
 type Problem struct {
-	Id            uint64        `gorm:"primaryKey;autoIncrement;comment:题目ID" json:"id"`
-	Title         string        `gorm:"type:text;not null;comment:标题" json:"title"`
-	Source        string        `gorm:"type:text;not null;comment:题目来源" json:"source,omitempty"`
-	Difficulty    Difficulty    `gorm:"not null;default:0;comment:难度" json:"difficulty"`
-	TimeLimit     float64       `gorm:"not null;default:1;comment:时间限制（s）" json:"time_limit,omitempty"`
-	MemoryLimit   uint64        `gorm:"not null;default:131072;comment:内存限制（kb）" json:"memory_limit,omitempty"`
-	Description   string        `gorm:"type:longtext;not null;comment:题面" json:"description,omitempty"`
-	Input         string        `gorm:"type:longtext;not null;comment:输入说明" json:"input,omitempty"`
-	Output        string        `gorm:"type:longtext;not null;comment:输出说明" json:"output,omitempty"`
-	SampleInput   string        `gorm:"type:longtext;not null;comment:输入样例" json:"sample_input,omitempty"`
-	SampleOutput  string        `gorm:"type:longtext;not null;comment:输出样例" json:"sample_output,omitempty"`
-	Hint          string        `gorm:"type:longtext;not null;comment:提示" json:"hint,omitempty"`
-	Status        ProblemStatus `gorm:"not null;default:1;comment:状态" json:"status"`
-	CreateTime    time.Time     `gorm:"type:timestamp;not null;default:CURRENT_TIMESTAMP;comment:创建时间" json:"create_time"`
-	UpdateTime    time.Time     `gorm:"type:timestamp;not null;default:CURRENT_TIMESTAMP;comment:更新时间" json:"update_time"`
-	TagIds        []uint64      `gorm:"-" json:"tag_ids"`
-	UserIds       []uint64      `gorm:"-" json:"user_ids"`
-	CollectionIds []uint64      `gorm:"-" json:"collection_ids"`
+	Id                uint64        `gorm:"primaryKey;autoIncrement;comment:题目ID" json:"id"`
+	Title             string        `gorm:"type:text;not null;comment:标题" json:"title"`
+	Source            string        `gorm:"type:text;not null;comment:题目来源" json:"source,omitempty"`
+	Difficulty        Difficulty    `gorm:"not null;default:0;comment:难度" json:"difficulty"`
+	TimeLimit         float64       `gorm:"not null;default:1;comment:时间限制（s）" json:"time_limit,omitempty"`
+	MemoryLimit       uint64        `gorm:"not null;default:131072;comment:内存限制（kb）" json:"memory_limit,omitempty"`
+	Description       string        `gorm:"type:longtext;not null;comment:题面" json:"description,omitempty"`
+	Input             string        `gorm:"type:longtext;not null;comment:输入说明" json:"input,omitempty"`
+	Output            string        `gorm:"type:longtext;not null;comment:输出说明" json:"output,omitempty"`
+	SampleInput       string        `gorm:"type:longtext;not null;comment:输入样例" json:"sample_input,omitempty"`
+	SampleOutput      string        `gorm:"type:longtext;not null;comment:输出样例" json:"sample_output,omitempty"`
+	Hint              string        `gorm:"type:longtext;not null;comment:提示" json:"hint,omitempty"`
+	Status            ProblemStatus `gorm:"not null;default:1;comment:状态" json:"status"`
+	CreateTime        time.Time     `gorm:"type:timestamp;not null;default:CURRENT_TIMESTAMP;comment:创建时间" json:"create_time"`
+	UpdateTime        time.Time     `gorm:"type:timestamp;not null;default:CURRENT_TIMESTAMP;comment:更新时间" json:"update_time"`
+	TagIds            []uint64      `gorm:"-" json:"tag_ids"`
+	UserIds           []uint64      `gorm:"-" json:"user_ids"`
+	CollectionIds     []uint64      `gorm:"-" json:"collection_ids"`
+	CollectionUserIds []uint64      `gorm:"-" json:"collection_user_ids"`
 }
 
 func (Problem) TableName() string {

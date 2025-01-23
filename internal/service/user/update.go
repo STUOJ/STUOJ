@@ -13,7 +13,7 @@ import (
 )
 
 // 根据ID更新用户
-func UpdateById(u entity.User) error {
+func Update(u entity.User) error {
 	// 预处理
 	u.Username = html.EscapeString(strings.TrimSpace(u.Username))
 	err := u.HashPassword()
@@ -46,7 +46,7 @@ func UpdateById(u entity.User) error {
 }
 
 // 根据ID更新用户（除了密码）
-func UpdateByIdExceptPassword(u entity.User) error {
+func UpdateExceptPassword(u entity.User) error {
 	// 预处理
 	u.Username = html.EscapeString(strings.TrimSpace(u.Username))
 
@@ -76,7 +76,7 @@ func UpdateByIdExceptPassword(u entity.User) error {
 }
 
 // 根据ID更新用户密码
-func UpdatePasswordById(uid uint64, pw string) error {
+func UpdatePassword(uid uint64, pw string) error {
 	// 读取用户
 	u, err := dao.SelectUserById(uid)
 	if err != nil {
@@ -106,7 +106,7 @@ func UpdatePasswordById(uid uint64, pw string) error {
 }
 
 // 根据ID更新用户角色
-func UpdateRoleById(u entity.User, role entity.Role) error {
+func UpdateRole(u entity.User, role entity.Role) error {
 	// 读取用户
 	u0, err := SelectById(u.Id)
 	if err != nil {
@@ -133,7 +133,7 @@ func UpdateRoleById(u entity.User, role entity.Role) error {
 }
 
 // 更新用户头像
-func UpdateAvatarById(uid uint64, dst string, userId uint64, role entity.Role) (string, error) {
+func UpdateAvatar(uid uint64, dst string, userId uint64, role entity.Role) (string, error) {
 	// 读取用户
 	u, err := SelectById(uid)
 	if err != nil {

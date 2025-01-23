@@ -26,7 +26,7 @@ func Insert(b entity.Blog) (uint64, error) {
 	return b.Id, nil
 }
 
-func BlogUpload(b entity.Blog, role entity.Role) (uint64, error) {
+func Upload(b entity.Blog, role entity.Role) (uint64, error) {
 	var err error
 
 	if b.Status == entity.BlogBanned || (b.Status == entity.BlogNotice && role < entity.RoleAdmin) {
