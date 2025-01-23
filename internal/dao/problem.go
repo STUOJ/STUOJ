@@ -11,10 +11,12 @@ import (
 
 type auxiliaryProblem struct {
 	entity.Problem
-	ProblemUserId     string `gorm:"column:problem_user_id"`
-	ProblemTagIds     string `gorm:"column:problem_tag_id"`
-	ProblemUserScore  uint64 `gorm:"column:problem_user_score"`
-	HasUserSubmission bool   `gorm:"column:has_user_submission"`
+	ProblemUserId            string `gorm:"column:problem_user_id"`
+	ProblemTagIds            string `gorm:"column:problem_tag_id"`
+	ProblemCollectionIds     string `gorm:"column:problem_collection_id"`
+	ProblemCollectionUserIds string `gorm:"column:problem_collection_user_id"`
+	ProblemUserScore         uint64 `gorm:"column:problem_user_score"`
+	HasUserSubmission        bool   `gorm:"column:has_user_submission"`
 }
 
 // 插入题目

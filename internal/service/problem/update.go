@@ -18,14 +18,8 @@ func Update(p entity.Problem, uid uint64, role entity.Role) error {
 		return errors.New("题目不存在")
 	}
 
-	if role < entity.RoleAdmin {
-		userIdsMap := make(map[uint64]struct{})
-		for _, uid := range p0.UserIds {
-			userIdsMap[uid] = struct{}{}
-		}
-		if _, exists := userIdsMap[uid]; !exists {
-			return errors.New("没有该题权限")
-		}
+	if !problemOP(&p0, uid, role) {
+		return errors.New("没有该题权限")
 	}
 
 	// 公开前检查评测点
