@@ -1,7 +1,6 @@
 package model
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -16,7 +15,6 @@ type SubmissionWhere struct {
 	EndTime        Field[time.Time]
 	Status         FieldList[uint64]
 	ExcludeHistory Field[bool]
-	Distinct       Field[string]
 	Page           Field[uint64]
 	Size           Field[uint64]
 	OrderBy        Field[string]
@@ -35,7 +33,6 @@ func (con *SubmissionWhere) Parse(c *gin.Context) {
 	}
 	con.Status.Parse(c, "status")
 	con.ExcludeHistory.Parse(c, "exclude_history")
-	con.Distinct.Parse(c, "distinct")
 	con.Page.Parse(c, "page")
 	con.Size.Parse(c, "size")
 	con.OrderBy.Parse(c, "order_by")
@@ -85,10 +82,6 @@ func (con *SubmissionWhere) GenerateWhereWithNoPage() func(*gorm.DB) *gorm.DB {
 		if con.ExcludeHistory.Exist() && con.ExcludeHistory.Value() {
 			where = where.Joins("LEFT JOIN tbl_history ON tbl_submission.problem_id = tbl_history.problem_id AND tbl_history.user_id = tbl_submission.user_id")
 			where = where.Where("tbl_history.user_id IS NULL")
-		}
-
-		if con.Distinct.Exist() {
-			where = where.Where(fmt.Sprintf("tbl_submission.id IN (SELECT s2.id FROM tbl_submission s2 GROUP BY s2.%s)", con.Distinct.Value()))
 		}
 
 		return where.Select(query)
