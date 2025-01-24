@@ -3,13 +3,12 @@ package dao
 import (
 	"STUOJ/internal/db"
 	"STUOJ/internal/entity"
-
-	"gorm.io/gorm"
+	"STUOJ/internal/model"
 )
 
 type auxiliarySolution struct {
 	entity.Solution
-	BriefProblem
+	model.BriefProblem
 }
 
 // 插入题解
@@ -27,8 +26,10 @@ func SelectSolutionById(id uint64) (entity.Solution, error) {
 	var auxiliarySolution auxiliarySolution
 	var s entity.Solution
 
+	condition := model.SolutionWhere{}
+
 	tx := db.Db.Where(&entity.Solution{Id: id})
-	tx = solutionUnionJoins(tx)
+	tx = condition.GenerateWhere()(tx)
 	tx = tx.First(&auxiliarySolution)
 	if tx.Error != nil {
 		return entity.Solution{}, tx.Error
@@ -49,8 +50,10 @@ func SelectAllSolutions() ([]entity.Solution, error) {
 	var auxiliarySolutions []auxiliarySolution
 	var solutions []entity.Solution
 
+	condition := model.SolutionWhere{}
+
 	tx := db.Db.Model(&entity.Solution{})
-	tx = solutionUnionJoins(tx)
+	tx = condition.GenerateWhere()(tx)
 	tx = tx.Find(&auxiliarySolutions)
 	if tx.Error != nil {
 		return nil, tx.Error
@@ -110,12 +113,4 @@ func CountSolutions() (int64, error) {
 	}
 
 	return count, nil
-}
-
-func solutionUnionJoins(tx *gorm.DB) *gorm.DB {
-	query := []string{"tbl_solution.*"}
-	query = append(query, briefProblemSelect()...)
-	tx = tx.Select(query)
-	tx = briefProblemJoins(tx, "tbl_solution")
-	return tx
 }

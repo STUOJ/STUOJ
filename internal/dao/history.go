@@ -5,13 +5,11 @@ import (
 	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
 	"time"
-
-	"gorm.io/gorm"
 )
 
 type auxiliaryHistory struct {
 	entity.History
-	BriefUser
+	model.BriefUser
 }
 
 // 插入题目历史记录
@@ -29,8 +27,10 @@ func SelectHistoriesByProblemId(pid uint64) ([]entity.History, error) {
 	var auxiliaryHistorys []auxiliaryHistory
 	var phs []entity.History
 
+	condition := model.HistoryWhere{}
+
 	tx := db.Db.Model(&entity.History{}).Where("tbl_history.problem_id = ?", pid)
-	tx = historyUnionJoins(tx)
+	tx = condition.GenerateWhere()(tx)
 	tx = tx.Find(&auxiliaryHistorys)
 	if tx.Error != nil {
 		return nil, tx.Error
@@ -59,12 +59,4 @@ func CountHistoriesBetweenCreateTimeByOperation(startTime time.Time, endTime tim
 	}
 
 	return countByDate, nil
-}
-
-func historyUnionJoins(tx *gorm.DB) *gorm.DB {
-	query := []string{"tbl_history.*"}
-	query = append(query, briefUserSelect()...)
-	tx = tx.Select(query)
-	tx = briefUserJoins(tx, "tbl_history")
-	return tx
 }

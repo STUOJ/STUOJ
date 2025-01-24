@@ -4,19 +4,10 @@ import (
 	"STUOJ/internal/db"
 	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
-	"fmt"
 	"strconv"
 	"strings"
 	"time"
-
-	"gorm.io/gorm"
 )
-
-type BriefProblem struct {
-	ProblemTitle      string               `gorm:"column:problem_title"`
-	ProblemStatus     entity.ProblemStatus `gorm:"column:problem_status"`
-	ProblemDifficulty entity.Difficulty    `gorm:"column:problem_difficulty"`
-}
 
 type auxiliaryProblem struct {
 	entity.Problem
@@ -173,17 +164,4 @@ func CountProblemsBetweenCreateTime(startTime time.Time, endTime time.Time) ([]m
 	}
 
 	return countByDate, nil
-}
-
-func briefProblemSelect() []string {
-	return []string{
-		"tbl_problem.title as problem_title",
-		"tbl_problem.status as problem_status",
-		"tbl_problem.difficulty as problem_difficulty",
-	}
-}
-
-func briefProblemJoins(db *gorm.DB, tbl string) *gorm.DB {
-	db = db.Joins(fmt.Sprintf("LEFT JOIN tbl_problem ON %s.problem_id = tbl_problem.id", tbl))
-	return db
 }

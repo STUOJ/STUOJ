@@ -11,8 +11,8 @@ import (
 
 type auxiliarySubmission struct {
 	entity.Submission
-	BriefUser
-	BriefProblem
+	model.BriefUser
+	model.BriefProblem
 }
 
 // 插入提交记录
@@ -36,7 +36,6 @@ func SelectSubmissions(condition model.SubmissionWhere) ([]entity.Submission, er
 	where := condition.GenerateWhere()
 	tx := db.Db.Model(&entity.Submission{})
 	tx = where(tx)
-	tx = submissionUnionJoins(tx)
 	tx = tx.Find(&auxiliarySubmissions)
 	if tx.Error != nil {
 		return nil, tx.Error
@@ -67,8 +66,12 @@ func SelectSubmissionById(id uint64) (entity.Submission, error) {
 	var auxiliarySubmission auxiliarySubmission
 	var s entity.Submission
 
+	condition := model.SubmissionWhere{}
+
+	where := condition.GenerateWhere()
+
 	tx := db.Db.Where(&entity.Submission{Id: id})
-	tx = submissionUnionJoins(tx)
+	tx = where(tx)
 	tx = tx.First(&auxiliarySubmission)
 	if tx.Error != nil {
 		return entity.Submission{}, tx.Error
@@ -183,14 +186,4 @@ func CountSubmissionsBetweenCreateTime(startTime time.Time, endTime time.Time) (
 	}
 
 	return countByDate, nil
-}
-
-func submissionUnionJoins(tx *gorm.DB) *gorm.DB {
-	query := []string{"tbl_submission.*"}
-	query = append(query, briefUserSelect()...)
-	query = append(query, briefProblemSelect()...)
-	tx = tx.Select(query)
-	tx = briefProblemJoins(tx, "tbl_submission")
-	tx = briefUserJoins(tx, "tbl_submission")
-	return tx
 }
