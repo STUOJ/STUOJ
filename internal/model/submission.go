@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -84,6 +85,10 @@ func (con *SubmissionWhere) GenerateWhereWithNoPage() func(*gorm.DB) *gorm.DB {
 		if con.ExcludeHistory.Exist() && con.ExcludeHistory.Value() {
 			where = where.Joins("LEFT JOIN tbl_history ON tbl_submission.problem_id = tbl_history.problem_id AND tbl_history.user_id = tbl_submission.user_id")
 			where = where.Where("tbl_history.user_id IS NULL")
+		}
+
+		if con.Distinct.Exist() {
+			where = where.Where(fmt.Sprintf("tbl_submission.id IN (SELECT s2.id FROM tbl_submission s2 GROUP BY s2.%s)", con.Distinct.Value()))
 		}
 
 		return where.Select(query)
