@@ -33,6 +33,8 @@ func (con *SubmissionWhere) Parse(c *gin.Context) {
 		con.EndTime.Set(timePreiod.EndTime)
 	}
 	con.Status.Parse(c, "status")
+	con.ExcludeHistory.Parse(c, "exclude_history")
+	con.Distinct.Parse(c, "distinct")
 	con.Page.Parse(c, "page")
 	con.Size.Parse(c, "size")
 	con.OrderBy.Parse(c, "order_by")
@@ -78,6 +80,11 @@ func (con *SubmissionWhere) GenerateWhereWithNoPage() func(*gorm.DB) *gorm.DB {
 		query = append(query, briefProblemSelect()...)
 		where = briefProblemJoins(where, "tbl_submission")
 		where = briefUserJoins(where, "tbl_submission")
+
+		if con.ExcludeHistory.Exist() && con.ExcludeHistory.Value() {
+			where = where.Joins("LEFT JOIN tbl_history ON tbl_submission.problem_id = tbl_history.problem_id AND tbl_history.user_id = tbl_submission.user_id")
+			where = where.Where("tbl_history.user_id IS NULL")
+		}
 
 		return where.Select(query)
 	}
