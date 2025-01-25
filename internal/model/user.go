@@ -52,7 +52,15 @@ func (con *UserWhere) GenerateWhereWithNoPage() func(*gorm.DB) *gorm.DB {
 			}
 			where = where.Order(orderBy + " " + order)
 		}
-		return where
+		query := []string{"tbl_user.*"}
+		query = append(query,
+			"(SELECT COUNT(DISTINCT(problem_id)) FROM tbl_submission WHERE tbl_submission.user_id = tbl_user.id AND tbl_submission.status = 3) AS ac_count")
+		query = append(query,
+			"(SELECT COUNT(*) FROM tbl_submission WHERE tbl_submission.user_id = tbl_user.id) AS submit_count")
+		query = append(query,
+			"(SELECT COUNT(*) FROM tbl_blog WHERE tbl_blog.user_id = tbl_user.id AND tbl_blog.status >= 3) AS blog_count")
+
+		return where.Select(query)
 	}
 }
 
