@@ -75,6 +75,10 @@ func SelectBySubmissionId(userId uint64, sid uint64, role entity.Role) (model.Re
 	return r, nil
 }
 
+func SelectACUsers(pid uint64, size uint64) ([]entity.User, error) {
+	return dao.SelectACUsers(pid, size)
+}
+
 // 隐藏源代码
 func hideSubmissionSourceCode(userId uint64, submissions []entity.Submission) {
 	for i := range submissions {

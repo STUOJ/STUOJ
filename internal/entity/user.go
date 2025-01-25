@@ -53,15 +53,18 @@ func (e Email) String() string {
 
 // User 用户
 type User struct {
-	Id         uint64    `gorm:"primaryKey;autoIncrement;comment:用户ID" json:"id"`
-	Username   string    `gorm:"type:varchar(255);not null;comment:用户名;unique" json:"username"`
-	Password   string    `gorm:"type:varchar(255);not null;default:123456;comment:密码" json:"password,omitempty"`
-	Role       Role      `gorm:"not null;default:1;comment:角色" json:"role"`
-	Email      Email     `gorm:"type:varchar(255);not null;comment:邮箱;unique" json:"email,omitempty"`
-	Avatar     string    `gorm:"type:text;not null;comment:头像URL" json:"avatar"`
-	Signature  string    `gorm:"type:text;not null;comment:个性签名" json:"signature,omitempty"`
-	CreateTime time.Time `gorm:"type:timestamp;not null;default:CURRENT_TIMESTAMP;comment:创建时间" json:"create_time"`
-	UpdateTime time.Time `gorm:"type:timestamp;not null;default:CURRENT_TIMESTAMP;comment:更新时间" json:"update_time"`
+	Id          uint64    `gorm:"primaryKey;autoIncrement;comment:用户ID" json:"id"`
+	Username    string    `gorm:"type:varchar(255);not null;comment:用户名;unique" json:"username"`
+	Password    string    `gorm:"type:varchar(255);not null;default:123456;comment:密码" json:"password,omitempty"`
+	Role        Role      `gorm:"not null;default:1;comment:角色" json:"role"`
+	Email       Email     `gorm:"type:varchar(255);not null;comment:邮箱;unique" json:"email,omitempty"`
+	Avatar      string    `gorm:"type:text;not null;comment:头像URL" json:"avatar"`
+	Signature   string    `gorm:"type:text;not null;comment:个性签名" json:"signature,omitempty"`
+	CreateTime  time.Time `gorm:"type:timestamp;not null;default:CURRENT_TIMESTAMP;comment:创建时间" json:"create_time"`
+	UpdateTime  time.Time `gorm:"type:timestamp;not null;default:CURRENT_TIMESTAMP;comment:更新时间" json:"update_time"`
+	ACCount     uint64    `gorm:"-" json:"ac_count"`
+	SubmitCount uint64    `gorm:"-" json:"submit_count"`
+	BlogCount   uint64    `gorm:"-" json:"blog_count"`
 }
 
 func (User) TableName() string {

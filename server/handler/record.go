@@ -47,6 +47,29 @@ func RecordList(c *gin.Context) {
 	c.JSON(http.StatusOK, model.RespOk("OK", records))
 }
 
+func SelectACUsers(c *gin.Context) {
+	pidQuery := c.Query("problem")
+	pid, err := strconv.Atoi(pidQuery)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		return
+	}
+	sizeQuery := c.Query("size")
+	size, err := strconv.Atoi(sizeQuery)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		return
+	}
+	users, err := record.SelectACUsers(uint64(pid), uint64(size))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		return
+	}
+	c.JSON(http.StatusOK, model.RespOk("OK", users))
+}
+
 // 删除提交记录（提交信息+评测结果）
 func RecordRemove(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))

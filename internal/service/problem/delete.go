@@ -3,6 +3,7 @@ package problem
 import (
 	"STUOJ/internal/dao"
 	"STUOJ/internal/entity"
+	"STUOJ/internal/model"
 	"errors"
 	"log"
 	"time"
@@ -11,7 +12,7 @@ import (
 // 根据ID删除题目
 func DeleteByProblemId(pid uint64, uid uint64, role entity.Role) error {
 	// 读取题目
-	p0, err := dao.SelectProblemById(pid)
+	p0, err := dao.SelectProblemById(pid, model.ProblemWhere{})
 	if err != nil {
 		log.Println(err)
 		return errors.New("题目不存在")
@@ -60,7 +61,7 @@ func DeleteTag(pid uint64, tid uint64, uid uint64, role entity.Role) error {
 	}
 
 	// 读取题目
-	p0, err := dao.SelectProblemById(pid)
+	p0, err := dao.SelectProblemById(pid, model.ProblemWhere{})
 	if err != nil {
 		log.Println(err)
 		return errors.New("题目不存在")

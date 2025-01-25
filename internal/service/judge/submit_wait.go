@@ -23,7 +23,7 @@ func WaitSubmit(s entity.Submission) (uint64, error) {
 	s.Length = uint32(len(s.SourceCode))
 
 	// 获取题目信息
-	p, err := dao.SelectProblemById(s.ProblemId)
+	p, err := dao.SelectProblemById(s.ProblemId, model.ProblemWhere{})
 	if err != nil {
 		log.Println(err)
 		return 0, errors.New("获取题目信息失败")

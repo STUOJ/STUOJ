@@ -1,6 +1,8 @@
 package model
 
 import (
+	"STUOJ/internal/entity"
+	"fmt"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -74,13 +76,37 @@ func (con *BlogWhere) GenerateWhereWithNoPage() func(*gorm.DB) *gorm.DB {
 			}
 			where = where.Order(orderBy + " " + order)
 		}
-		return where
+		query := []string{"tbl_blog.*"}
+		query = append(query, briefUserSelect()...)
+		query = append(query, briefProblemSelect()...)
+		where = briefProblemJoins(where, "tbl_blog")
+		where = briefUserJoins(where, "tbl_blog")
+		return where.Select(query)
 	}
 }
 
 func (con *BlogWhere) GenerateWhere() func(*gorm.DB) *gorm.DB {
 	where := con.GenerateWhereWithNoPage()
 	return func(db *gorm.DB) *gorm.DB {
-		return where(db).Offset(int((con.Page.Value() - 1) * con.Size.Value())).Limit(int(con.Size.Value()))
+		if con.Page.Exist() && con.Size.Exist() {
+			return where(db).Offset(int((con.Page.Value() - 1) * con.Size.Value())).Limit(int(con.Size.Value()))
+		}
+		return where(db).Offset(0).Limit(1)
 	}
+}
+
+type BriefBlog struct {
+	BlogTitle  string            `gorm:"column:blog_title"`
+	BlogStatus entity.BlogStatus `gorm:"column:blog_status"`
+}
+
+func briefBlogSelect() []string {
+	return []string{
+		"tbl_blog.title as blog_title",
+		"tbl_blog.status as blog_status",
+	}
+}
+
+func briefBlogJoins(db *gorm.DB, tbl string) *gorm.DB {
+	return db.Joins(fmt.Sprintf("LEFT JOIN tbl_blog ON %s.blog_id = tbl_blog.id", tbl))
 }

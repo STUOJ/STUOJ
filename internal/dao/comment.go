@@ -5,14 +5,12 @@ import (
 	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
 	"time"
-
-	"gorm.io/gorm"
 )
 
 type auxiliaryComment struct {
 	entity.Comment
-	BriefUser
-	BriefBlog
+	model.BriefUser
+	model.BriefBlog
 }
 
 // 根据ID查询评论
@@ -20,8 +18,10 @@ func SelectCommentById(id uint64) (entity.Comment, error) {
 	var auxiliaryComment auxiliaryComment
 	var c entity.Comment
 
+	condition := model.CommentWhere{}
+
 	tx := db.Db.Where(&entity.Comment{Id: id})
-	tx = commentUnionJoins(tx)
+	tx = condition.GenerateWhere()(tx)
 	tx = tx.First(&auxiliaryComment)
 	if tx.Error != nil {
 		return entity.Comment{}, tx.Error
@@ -49,7 +49,6 @@ func SelectComments(condition model.CommentWhere) ([]entity.Comment, error) {
 	where := condition.GenerateWhere()
 	tx := db.Db.Model(&entity.Comment{})
 	tx = where(tx)
-	tx = commentUnionJoins(tx)
 	tx = tx.Find(&auxiliaryComments)
 	if tx.Error != nil {
 		return nil, tx.Error
@@ -128,14 +127,4 @@ func CountCommentsBetweenCreateTime(startTime time.Time, endTime time.Time) ([]m
 	}
 
 	return counts, nil
-}
-
-func commentUnionJoins(tx *gorm.DB) *gorm.DB {
-	query := []string{"tbl_comment.*"}
-	query = append(query, briefUserSelect()...)
-	query = append(query, briefBlogSelect()...)
-	tx = tx.Select(query)
-	tx = briefUserJoins(tx, "tbl_comment")
-	tx = briefBlogJoins(tx, "tbl_comment")
-	return tx
 }
