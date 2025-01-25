@@ -15,6 +15,7 @@ type SubmissionWhere struct {
 	EndTime        Field[time.Time]
 	Status         FieldList[uint64]
 	ExcludeHistory Field[bool]
+	Distinct       Field[string]
 	Page           Field[uint64]
 	Size           Field[uint64]
 	OrderBy        Field[string]
@@ -31,6 +32,7 @@ func (con *SubmissionWhere) Parse(c *gin.Context) {
 		con.StartTime.Set(timePreiod.StartTime)
 		con.EndTime.Set(timePreiod.EndTime)
 	}
+	con.Distinct.Parse(c, "distinct")
 	con.Status.Parse(c, "status")
 	con.ExcludeHistory.Parse(c, "exclude_history")
 	con.Page.Parse(c, "page")

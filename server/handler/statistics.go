@@ -149,66 +149,11 @@ func StatisticsJudge(c *gin.Context) {
 	c.JSON(http.StatusOK, model.RespOk("OK", statistics))
 }
 
-// 获取提交记录提交信息
+// 获取提交记录统计信息
 func StatisticsRecord(c *gin.Context) {
-
-	// 获取提交记录统计信息
-	stats, err := record.GetStatistics(model.SubmissionWhere{})
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
-		return
-	}
-
-	c.JSON(http.StatusOK, model.RespOk("OK", stats))
-}
-
-// 获取提交语言统计信息
-func StatisticsRecordOfLanguage(c *gin.Context) {
-	// 获取提交记录统计信息
-	stats, err := record.GetStatisticsOfSubmissionLanguage()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
-		return
-	}
-
-	c.JSON(http.StatusOK, model.RespOk("OK", stats))
-}
-
-// 获取提交状态统计信息
-func StatisticsSubmissionOfStatus(c *gin.Context) {
-	// 获取提交记录统计信息
-	stats, err := record.GetStatisticsOfSubmissionStatus()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
-		return
-	}
-
-	c.JSON(http.StatusOK, model.RespOk("OK", stats))
-}
-
-// 获取评测状态统计信息
-func StatisticsJudgementOfStatus(c *gin.Context) {
-	// 获取提交记录统计信息
-	stats, err := record.GetStatisticsOfJudgementStatus()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
-		return
-	}
-
-	c.JSON(http.StatusOK, model.RespOk("OK", stats))
-}
-
-// 获取提交记录提交信息
-func StatisticsRecordOfSubmit(c *gin.Context) {
-	p := model.Period{}
-	err := p.GetPeriod(c)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, model.RespError(err.Error(), nil))
-		return
-	}
-
-	// 获取提交记录统计信息
-	stats, err := record.GetStatisticsOfSubmitByPeriod(p)
+	condition := model.SubmissionWhere{}
+	condition.Parse(c)
+	stats, err := record.GetStatistics(condition)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return

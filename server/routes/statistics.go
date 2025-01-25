@@ -2,6 +2,7 @@ package routes
 
 import (
 	"STUOJ/server/handler"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -21,10 +22,6 @@ func InitStatisticsRoute(ginServer *gin.Engine) {
 		statisticsPublicRoute.GET("/judge", handler.StatisticsJudge)
 
 		statisticsPublicRoute.GET("/record", handler.StatisticsRecord)
-		statisticsPublicRoute.GET("/record/submit", handler.StatisticsRecordOfSubmit)
-		statisticsPublicRoute.GET("/record/language", handler.StatisticsRecordOfLanguage)
-		statisticsPublicRoute.GET("/submission/status", handler.StatisticsSubmissionOfStatus)
-		statisticsPublicRoute.GET("/judgement/status", handler.StatisticsJudgementOfStatus)
 
 		statisticsPublicRoute.GET("/blog", handler.StatisticsBlog)
 		statisticsPublicRoute.GET("/blog/submit", handler.StatisticsBlogOfSubmit)
