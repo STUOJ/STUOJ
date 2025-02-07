@@ -59,6 +59,22 @@ func SelectProblemById(id uint64, condition model.ProblemWhere) (entity.Problem,
 		}
 	}
 
+	if condition.Testcases.Exist() && condition.Testcases.Value() {
+		p.Problem.Testcases = make([]entity.Testcase, 0)
+		tx := db.Db.Model(&entity.Testcase{}).Where("problem_id = ?", id).Find(&p.Problem.Testcases)
+		if tx.Error != nil {
+			return entity.Problem{}, tx.Error
+		}
+	}
+
+	if condition.Solutions.Exist() && condition.Solutions.Value() {
+		p.Problem.Solutions = make([]entity.Solution, 0)
+		tx := db.Db.Model(&entity.Solution{}).Where("problem_id = ?", id).Find(&p.Problem.Solutions)
+		if tx.Error != nil {
+			return entity.Problem{}, tx.Error
+		}
+	}
+
 	p.Problem.UserScore = p.ProblemUserScore
 	p.Problem.HasUserSubmission = p.HasUserSubmission
 
