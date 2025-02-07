@@ -24,7 +24,6 @@ func InitProblemRoute(ginServer *gin.Engine) {
 		problemEditorRoute.DELETE("/:id", handler.ProblemRemove)
 		problemEditorRoute.POST("/tag", handler.ProblemAddTag)
 		problemEditorRoute.DELETE("/tag", handler.ProblemRemoveTag)
-		problemEditorRoute.POST("/fps", handler.ProblemParseFromFps)
 		problemEditorRoute.GET("/history/:id", handler.HistoryListOfProblem)
 	}
 }
