@@ -126,7 +126,10 @@ func SelectProblems(condition model.ProblemWhere) ([]entity.Problem, error) {
 
 // 根据ID更新题目
 func UpdateProblemById(p entity.Problem) error {
-	tx := db.Db.Model(&p).Where("id = ?", p.Id).Updates(p)
+	// 明确指定要更新的字段，包含需要处理空值的字段
+	tx := db.Db.Model(&p).
+		Select("title", "source", "difficulty", "time_limit", "memory_limit", "description", "input", "output", "sample_input", "sample_output", "hint", "status", "update_time").
+		Updates(p)
 	if tx.Error != nil {
 		return tx.Error
 	}
