@@ -10,13 +10,6 @@ import (
 	"gorm.io/gorm"
 )
 
-// 题目数据（题目+标签+评测点数据+题解）
-type ProblemData struct {
-	Problem   entity.Problem    `json:"problem,omitempty"`
-	Testcases []entity.Testcase `json:"testcases,omitempty"`
-	Solutions []entity.Solution `json:"solutions,omitempty"`
-}
-
 type ProblemWhere struct {
 	Id          Field[uint64]
 	Title       Field[string]
@@ -31,6 +24,8 @@ type ProblemWhere struct {
 	Order       Field[string]
 	StartTime   Field[time.Time]
 	EndTime     Field[time.Time]
+	Testcases   Field[bool]
+	Solutions   Field[bool]
 }
 
 func (con *ProblemWhere) Parse(c *gin.Context) {
@@ -50,6 +45,8 @@ func (con *ProblemWhere) Parse(c *gin.Context) {
 		con.StartTime.Set(timePreiod.StartTime)
 		con.EndTime.Set(timePreiod.EndTime)
 	}
+	con.Testcases.Parse(c, "testcases")
+	con.Solutions.Parse(c, "solutions")
 }
 
 func (con *ProblemWhere) GenerateWhereWithNoPage() func(*gorm.DB) *gorm.DB {

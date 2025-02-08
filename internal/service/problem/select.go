@@ -13,18 +13,13 @@ type ProblemPage struct {
 }
 
 // 根据ID查询题目数据
-func SelectById(id uint64, userId uint64, role entity.Role) (model.ProblemData, error) {
-	// 获取题目信息
-	scoreUserId := model.Field[uint64]{}
-	scoreUserId.Set(userId)
-	p, err := dao.SelectProblemById(id, model.ProblemWhere{ScoreUserId: scoreUserId})
+func SelectById(id uint64, userId uint64, role entity.Role, where model.ProblemWhere) (entity.Problem, error) {
+	where.ScoreUserId.Set(userId)
+	p, err := dao.SelectProblemById(id, where)
 
 	if err != nil {
-		return model.ProblemData{}, errors.New("获取题目信息失败")
+		return entity.Problem{}, errors.New("获取题目信息失败")
 	}
-
-	var testcases []entity.Testcase
-	var solutions []entity.Solution
 
 	if p.Status != entity.ProblemPublic && role < entity.RoleAdmin {
 		userIdsMap := make(map[uint64]struct{})
@@ -32,29 +27,15 @@ func SelectById(id uint64, userId uint64, role entity.Role) (model.ProblemData, 
 			userIdsMap[uid] = struct{}{}
 		}
 		if _, exists := userIdsMap[userId]; !exists {
-			return model.ProblemData{}, errors.New("没有该题权限")
+			return entity.Problem{}, errors.New("没有该题权限")
 		}
 	}
 
-	if role >= entity.RoleEditor {
-		testcases, err = dao.SelectTestcasesByProblemId(id)
-		solutions, err = dao.SelectSolutionsByProblemId(id)
-	}
-
-	// 封装题目数据
-	pd := model.ProblemData{
-		Problem:   p,
-		Testcases: testcases,
-		Solutions: solutions,
-	}
-
-	return pd, nil
+	return p, nil
 }
 
 func Select(condition model.ProblemWhere, userId uint64, role entity.Role) (ProblemPage, error) {
-	scoreUserId := model.Field[uint64]{}
-	scoreUserId.Set(userId)
-	condition.ScoreUserId.Set(scoreUserId.Value())
+	condition.ScoreUserId.Set(userId)
 	if !condition.Status.Exist() {
 		condition.Status.Set([]uint64{uint64(entity.ProblemPublic)})
 	} else {
@@ -107,21 +88,4 @@ func hideProblemContent(problems []entity.Problem) {
 		problems[i].SampleOutput = ""
 		problems[i].Hint = ""
 	}
-}
-
-// 封装题目数据
-func wrapProblemDatas(problems []entity.Problem) []model.ProblemData {
-	var pds []model.ProblemData
-
-	hideProblemContent(problems)
-
-	for _, p := range problems {
-		pd := model.ProblemData{
-			Problem: p,
-		}
-
-		pds = append(pds, pd)
-	}
-
-	return pds
 }
