@@ -92,6 +92,8 @@ func (con *ProblemWhere) GenerateWhereWithNoPage() func(*gorm.DB) *gorm.DB {
 		query = append(query,
 			"(SELECT GROUP_CONCAT(DISTINCT tbl_problem_tag.tag_id) FROM tbl_problem_tag WHERE problem_id = tbl_problem.id) AS problem_tag_id",
 			"(SELECT GROUP_CONCAT(DISTINCT tbl_history.user_id) FROM tbl_history WHERE problem_id = tbl_problem.id) AS problem_user_id",
+			"(SELECT GROUP_CONCAT(DISTINCT tbl_collection_problem.collection_id) FROM tbl_collection_problem WHERE problem_id = tbl_problem.id) AS problem_collection_id",
+			"(SELECT GROUP_CONCAT(DISTINCT tbl_collection_user.user_id) FROM tbl_collection_problem JOIN tbl_collection_user ON tbl_collection_problem.collection_id = tbl_collection_user.collection_id WHERE tbl_collection_problem.problem_id = tbl_problem.id AND EXISTS (SELECT 1 FROM tbl_collection WHERE tbl_collection.id = tbl_collection_user.collection_id AND tbl_collection.user_id IN (SELECT DISTINCT user_id FROM tbl_history WHERE problem_id = tbl_problem.id))) AS problem_collection_user_id",
 		)
 		if con.ScoreUserId.Exist() {
 			query = append(query, fmt.Sprintf(

@@ -4,6 +4,7 @@ import (
 	"STUOJ/internal/dao"
 	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
+	"STUOJ/internal/service/solution"
 	"errors"
 )
 
@@ -13,39 +14,35 @@ type ProblemPage struct {
 }
 
 // 根据ID查询题目数据
-func SelectById(id uint64, userId uint64, role entity.Role) (model.ProblemData, error) {
-	// 获取题目信息
-	p, err := dao.SelectProblemById(id)
+func SelectById(id uint64, userId uint64, role entity.Role, where model.ProblemWhere) (entity.Problem, error) {
+	where.ScoreUserId.Set(userId)
+	p, err := dao.SelectProblemById(id, where)
 
 	if err != nil {
-		return model.ProblemData{}, errors.New("获取题目信息失败")
+		return entity.Problem{}, errors.New("获取题目信息失败")
 	}
 
-	var testcases []entity.Testcase
-	var solutions []entity.Solution
+	op := problemOP(p, userId, role)
 
-	if p.Status != entity.ProblemPublic {
-		if !problemOP(&p, userId, role) {
-			return model.ProblemData{}, errors.New("获取失败，没有该题权限")
-		}
+	if p.Status < entity.ProblemPublic && !op {
+		return entity.Problem{}, errors.New("无权限")
 	}
 
-	if problemOP(&p, userId, role) {
-		testcases, _ = dao.SelectTestcasesByProblemId(id)
-		solutions, _ = dao.SelectSolutionsByProblemId(id)
+	if where.Solutions.Exist() && where.Solutions.Value() && op {
+		solutions, _ := solution.SelectByProblemId(id)
+		p.Solutions = solutions
 	}
 
-	// 封装题目数据
-	pd := model.ProblemData{
-		Problem:   p,
-		Testcases: testcases,
-		Solutions: solutions,
+	if where.Testcases.Exist() && where.Testcases.Value() && op {
+		testcases, _ := dao.SelectTestcasesByProblemId(id)
+		p.Testcases = testcases
 	}
 
-	return pd, nil
+	return p, nil
 }
 
 func Select(condition model.ProblemWhere, userId uint64, role entity.Role) (ProblemPage, error) {
+	condition.ScoreUserId.Set(userId)
 	if !condition.Status.Exist() {
 		condition.Status.Set([]uint64{uint64(entity.ProblemPublic)})
 	} else {
@@ -100,25 +97,8 @@ func hideProblemContent(problems []entity.Problem) {
 	}
 }
 
-// 封装题目数据
-func wrapProblemDatas(problems []entity.Problem) []model.ProblemData {
-	var pds []model.ProblemData
-
-	hideProblemContent(problems)
-
-	for _, p := range problems {
-		pd := model.ProblemData{
-			Problem: p,
-		}
-
-		pds = append(pds, pd)
-	}
-
-	return pds
-}
-
 // 判断用户是否有该题权限
-func problemOP(p *entity.Problem, userId uint64, role entity.Role) bool {
+func problemOP(p entity.Problem, userId uint64, role entity.Role) bool {
 	if role >= entity.RoleAdmin {
 		return true
 	}

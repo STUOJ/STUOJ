@@ -4,19 +4,10 @@ import (
 	"STUOJ/internal/db"
 	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
-	"fmt"
 	"strconv"
 	"strings"
 	"time"
-
-	"gorm.io/gorm"
 )
-
-type BriefProblem struct {
-	ProblemTitle      string               `gorm:"column:problem_title"`
-	ProblemStatus     entity.ProblemStatus `gorm:"column:problem_status"`
-	ProblemDifficulty entity.Difficulty    `gorm:"column:problem_difficulty"`
-}
 
 type auxiliaryProblem struct {
 	entity.Problem
@@ -38,11 +29,12 @@ func InsertProblem(p entity.Problem) (uint64, error) {
 	return p.Id, nil
 }
 
-func SelectProblemById(id uint64) (entity.Problem, error) {
+func SelectProblemById(id uint64, condition model.ProblemWhere) (entity.Problem, error) {
 	var p auxiliaryProblem
 
+	where := condition.GenerateWhere()
 	tx := db.Db.Model(&entity.Problem{})
-	tx = problemJoins(tx)
+	tx = where(tx)
 	tx = tx.Where(&entity.Problem{Id: id}).
 		Scan(&p)
 
@@ -87,6 +79,9 @@ func SelectProblemById(id uint64) (entity.Problem, error) {
 		}
 	}
 
+	p.Problem.UserScore = p.ProblemUserScore
+	p.Problem.HasUserSubmission = p.HasUserSubmission
+
 	return p.Problem, nil
 }
 
@@ -96,7 +91,6 @@ func SelectProblems(condition model.ProblemWhere) ([]entity.Problem, error) {
 	where := condition.GenerateWhere()
 	tx := db.Db.Model(&entity.Problem{})
 	tx = where(tx)
-	tx = problemJoins(tx)
 	tx = tx.Scan(&problems)
 
 	if tx.Error != nil {
@@ -105,24 +99,41 @@ func SelectProblems(condition model.ProblemWhere) ([]entity.Problem, error) {
 
 	// 处理每个问题的标签
 	for i := range problems {
-		tagIds := make([]uint64, 0)
+		problems[i].Problem.TagIds = make([]uint64, 0)
 		if problems[i].ProblemTagIds != "" {
 			for _, idStr := range strings.Split(problems[i].ProblemTagIds, ",") {
 				if id, err := strconv.ParseUint(strings.TrimSpace(idStr), 10, 64); err == nil {
-					tagIds = append(tagIds, id)
+					problems[i].Problem.TagIds = append(problems[i].Problem.TagIds, id)
 				}
 			}
 		}
-		problems[i].Problem.TagIds = tagIds
-		userIds := make([]uint64, 0)
+		problems[i].Problem.UserIds = make([]uint64, 0)
 		if problems[i].ProblemUserId != "" {
 			for _, idStr := range strings.Split(problems[i].ProblemUserId, ",") {
 				if id, err := strconv.ParseUint(strings.TrimSpace(idStr), 10, 64); err == nil {
-					userIds = append(userIds, id)
+					problems[i].Problem.UserIds = append(problems[i].Problem.UserIds, id)
 				}
 			}
 		}
-		problems[i].Problem.UserIds = userIds
+		problems[i].Problem.UserScore = problems[i].ProblemUserScore
+		problems[i].Problem.HasUserSubmission = problems[i].HasUserSubmission
+		problems[i].CollectionIds = make([]uint64, 0)
+		if problems[i].ProblemCollectionIds != "" {
+			for _, idStr := range strings.Split(problems[i].ProblemCollectionIds, ",") {
+				if id, err := strconv.ParseUint(strings.TrimSpace(idStr), 10, 64); err == nil {
+					problems[i].Problem.CollectionIds = append(problems[i].Problem.CollectionIds, id)
+				}
+			}
+		}
+
+		problems[i].CollectionUserIds = make([]uint64, 0)
+		if problems[i].ProblemCollectionUserIds != "" {
+			for _, idStr := range strings.Split(problems[i].ProblemCollectionUserIds, ",") {
+				if id, err := strconv.ParseUint(strings.TrimSpace(idStr), 10, 64); err == nil {
+					problems[i].Problem.CollectionUserIds = append(problems[i].Problem.CollectionUserIds, id)
+				}
+			}
+		}
 	}
 
 	// 将辅助结构体转换为实体结构体
@@ -136,7 +147,10 @@ func SelectProblems(condition model.ProblemWhere) ([]entity.Problem, error) {
 
 // 根据ID更新题目
 func UpdateProblemById(p entity.Problem) error {
-	tx := db.Db.Model(&p).Where("id = ?", p.Id).Updates(p)
+	// 明确指定要更新的字段，包含需要处理空值的字段
+	tx := db.Db.Model(&p).
+		Select("title", "source", "difficulty", "time_limit", "memory_limit", "description", "input", "output", "sample_input", "sample_output", "hint", "status", "update_time").
+		Updates(p)
 	if tx.Error != nil {
 		return tx.Error
 	}
@@ -190,29 +204,4 @@ func CountProblemsBetweenCreateTime(startTime time.Time, endTime time.Time) ([]m
 	}
 
 	return countByDate, nil
-}
-
-func problemJoins(tx *gorm.DB) *gorm.DB {
-	query := []string{"tbl_problem.*"}
-	query = append(query,
-		"(SELECT GROUP_CONCAT(DISTINCT tbl_problem_tag.tag_id) FROM tbl_problem_tag WHERE problem_id = tbl_problem.id) AS problem_tag_id",
-		"(SELECT GROUP_CONCAT(DISTINCT tbl_history.user_id) FROM tbl_history WHERE problem_id = tbl_problem.id) AS problem_user_id",
-		"(SELECT GROUP_CONCAT(DISTINCT tbl_collection_problem.collection_id) FROM tbl_collection_problem WHERE problem_id = tbl_problem.id) AS problem_collection_id",
-		"(SELECT GROUP_CONCAT(DISTINCT tbl_collection_user.user_id) FROM tbl_collection_problem JOIN tbl_collection_user ON tbl_collection_problem.collection_id = tbl_collection_user.collection_id WHERE tbl_collection_problem.problem_id = tbl_problem.id AND EXISTS (SELECT 1 FROM tbl_collection WHERE tbl_collection.id = tbl_collection_user.collection_id AND tbl_collection.user_id IN (SELECT DISTINCT user_id FROM tbl_history WHERE problem_id = tbl_problem.id))) AS problem_collection_user_id",
-	)
-	tx = tx.Select(strings.Join(query, ", "))
-	return tx
-}
-
-func briefProblemSelect() []string {
-	return []string{
-		"tbl_problem.title as problem_title",
-		"tbl_problem.status as problem_status",
-		"tbl_problem.difficulty as problem_difficulty",
-	}
-}
-
-func briefProblemJoins(db *gorm.DB, tbl string) *gorm.DB {
-	db = db.Joins(fmt.Sprintf("LEFT JOIN tbl_problem ON %s.problem_id = tbl_problem.id", tbl))
-	return db
 }

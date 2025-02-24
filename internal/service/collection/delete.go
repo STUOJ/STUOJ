@@ -3,6 +3,7 @@ package collection
 import (
 	"STUOJ/internal/dao"
 	"STUOJ/internal/entity"
+	"STUOJ/internal/model"
 	"errors"
 	"log"
 )
@@ -39,7 +40,7 @@ func DeleteProblem(cid uint64, pid uint64, uid uint64, role entity.Role) error {
 	}
 
 	// 读取题目
-	_, err := dao.SelectProblemById(pid)
+	_, err := dao.SelectProblemById(pid, model.ProblemWhere{})
 	if err != nil {
 		log.Println(err)
 		return errors.New("题目不存在")

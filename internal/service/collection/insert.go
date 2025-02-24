@@ -3,6 +3,7 @@ package collection
 import (
 	"STUOJ/internal/dao"
 	"STUOJ/internal/entity"
+	"STUOJ/internal/model"
 	"errors"
 	"log"
 	"time"
@@ -37,7 +38,7 @@ func InsertProblem(cid uint64, pid uint64, uid uint64, role entity.Role) error {
 	}
 
 	// 读取题目
-	_, err := iproblem.SelectById(pid, uid, role)
+	_, err := iproblem.SelectById(pid, uid, role, model.ProblemWhere{})
 	if err != nil {
 		return err
 	}
