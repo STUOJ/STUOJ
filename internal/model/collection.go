@@ -76,7 +76,14 @@ func (con *CollectionWhere) GenerateWhereWithNoPage() func(*gorm.DB) *gorm.DB {
 			}
 			where = where.Order(orderBy + " " + order)
 		}
-		return where
+		query := []string{"tbl_collection.*"}
+		query = append(query, briefUserSelect()...)
+		query = append(query, "(SELECT GROUP_CONCAT(DISTINCT user_id) FROM tbl_collection_user WHERE collection_id = tbl_collection.id) AS collection_user_id",
+			"(SELECT GROUP_CONCAT(DISTINCT problem_id) FROM tbl_collection_problem WHERE collection_id = tbl_collection.id) AS collection_problem_id",
+		)
+		where = briefUserJoins(where, "tbl_collection")
+
+		return where.Select(query)
 	}
 }
 

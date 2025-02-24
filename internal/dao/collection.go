@@ -13,7 +13,7 @@ import (
 
 type auxiliaryCollection struct {
 	entity.Collection
-	BriefUser
+	model.BriefUser
 	CollectionUserIds    string `gorm:"column:collection_user_id"`
 	CollectionProblemIds string `gorm:"column:collection_problem_id"`
 }
@@ -35,7 +35,6 @@ func SelectCollectionById(id uint64) (entity.Collection, error) {
 	var c auxiliaryCollection
 
 	tx := db.Db.Model(&entity.Collection{})
-	tx = collectionJoins(tx)
 	tx = tx.Where(&entity.Collection{Id: id}).
 		Scan(&c)
 
@@ -77,7 +76,6 @@ func SelectCollections(condition model.CollectionWhere) ([]entity.Collection, er
 	where := condition.GenerateWhere()
 	tx := db.Db.Model(&entity.Collection{})
 	tx = where(tx)
-	tx = collectionJoins(tx)
 	tx = tx.Scan(&auxiliaryCollections)
 	if tx.Error != nil {
 		return nil, tx.Error
@@ -163,19 +161,6 @@ func DeleteCollectionProblem(cp entity.CollectionProblem) error {
 	return db.Db.Transaction(func(tx *gorm.DB) error {
 		return tx.Model(&entity.CollectionProblem{}).Delete(&cp).Error
 	})
-}
-
-func collectionJoins(tx *gorm.DB) *gorm.DB {
-	query := []string{"tbl_collection.*"}
-	query = append(query, briefUserSelect()...)
-	query = append(query,
-		"(SELECT GROUP_CONCAT(DISTINCT user_id) FROM tbl_collection_user WHERE collection_id = tbl_collection.id) AS collection_user_id",
-		"(SELECT GROUP_CONCAT(DISTINCT problem_id) FROM tbl_collection_problem WHERE collection_id = tbl_collection.id) AS collection_problem_id",
-	)
-
-	tx = tx.Select(strings.Join(query, ", "))
-	tx = briefUserJoins(tx, "tbl_collection")
-	return tx
 }
 
 // 根据ID更新题单更新时间
