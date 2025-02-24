@@ -4,16 +4,14 @@ import (
 	"STUOJ/internal/db"
 	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
-	"fmt"
 	"time"
-
-	"gorm.io/gorm"
 )
 
-type BriefUser struct {
-	Username string      `gorm:"column:user_username"`
-	Role     entity.Role `gorm:"column:user_role"`
-	Avatar   string      `gorm:"column:user_avatar"`
+type auxiliaryUser struct {
+	entity.User
+	ACCount     uint64 `gorm:"column:ac_count"`
+	SubmitCount uint64 `gorm:"column:submit_count"`
+	BlogCount   uint64 `gorm:"column:blog_count"`
 }
 
 // 插入用户
@@ -27,14 +25,21 @@ func InsertUser(u entity.User) (uint64, error) {
 
 // 根据ID查询用户
 func SelectUserById(id uint64) (entity.User, error) {
-	var user entity.User
+	var user auxiliaryUser
 
-	tx := db.Db.Where(&entity.User{Id: id}).First(&user)
+	conditin := model.UserWhere{}
+
+	tx := db.Db.Where(&entity.User{Id: id})
+	tx = conditin.GenerateWhere()(tx)
+	tx = tx.First(&user)
 	if tx.Error != nil {
 		return entity.User{}, tx.Error
 	}
+	user.User.ACCount = user.ACCount
+	user.User.SubmitCount = user.SubmitCount
+	user.User.BlogCount = user.BlogCount
 
-	return user, nil
+	return user.User, nil
 }
 
 // 根据邮箱查询用户
@@ -51,14 +56,22 @@ func SelectUserByEmail(e string) (entity.User, error) {
 
 // 查询用户
 func SelectUsers(condition model.UserWhere) ([]entity.User, error) {
-	var users []entity.User
+	var auxiliaryUsers []auxiliaryUser
 	where := condition.GenerateWhere()
 
 	tx := db.Db.Model(&entity.User{})
 	tx = where(tx)
-	tx = tx.Find(&users)
+	tx = tx.Find(&auxiliaryUsers)
 	if tx.Error != nil {
 		return nil, tx.Error
+	}
+
+	users := make([]entity.User, len(auxiliaryUsers))
+	for i := range auxiliaryUsers {
+		auxiliaryUsers[i].User.ACCount = auxiliaryUsers[i].ACCount
+		auxiliaryUsers[i].User.SubmitCount = auxiliaryUsers[i].SubmitCount
+		auxiliaryUsers[i].User.BlogCount = auxiliaryUsers[i].BlogCount
+		users[i] = auxiliaryUsers[i].User
 	}
 
 	return users, nil
@@ -120,17 +133,4 @@ func CountUsersBetweenCreateTime(startTime time.Time, endTime time.Time) ([]mode
 	}
 
 	return counts, nil
-}
-
-func briefUserSelect() []string {
-	return []string{
-		"tbl_user.username as user_username",
-		"tbl_user.role as user_role",
-		"tbl_user.avatar as user_avatar",
-	}
-}
-
-func briefUserJoins(db *gorm.DB, tbl string) *gorm.DB {
-	db = db.Joins(fmt.Sprintf("LEFT JOIN tbl_user ON %s.user_id = tbl_user.id", tbl))
-	return db
 }

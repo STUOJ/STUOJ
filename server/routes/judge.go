@@ -27,6 +27,7 @@ func InitRecordRoute(ginServer *gin.Engine) {
 	{
 		recordPublicRoute.GET("/", handler.RecordList)
 		recordPublicRoute.GET("/:id", handler.RecordInfo)
+		recordPublicRoute.GET("/ac/user", handler.SelectACUsers)
 	}
 
 	recordAdminRoute := ginServer.Group("/record")

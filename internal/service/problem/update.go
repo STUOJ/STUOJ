@@ -3,6 +3,7 @@ package problem
 import (
 	"STUOJ/internal/dao"
 	"STUOJ/internal/entity"
+	"STUOJ/internal/model"
 	"errors"
 	"log"
 	"time"
@@ -11,7 +12,7 @@ import (
 // Update 根据ID更新题目
 func Update(p entity.Problem, uid uint64, role entity.Role) error {
 	// 读取题目
-	p0, err := dao.SelectProblemById(p.Id)
+	p0, err := dao.SelectProblemById(p.Id, model.ProblemWhere{})
 	if err != nil {
 		log.Println(err)
 		return errors.New("题目不存在")

@@ -8,16 +8,18 @@ import (
 )
 
 type SubmissionWhere struct {
-	ProblemId  FieldList[uint64]
-	UserId     FieldList[uint64]
-	LanguageId Field[uint64]
-	StartTime  Field[time.Time]
-	EndTime    Field[time.Time]
-	Status     FieldList[uint64]
-	Page       Field[uint64]
-	Size       Field[uint64]
-	OrderBy    Field[string]
-	Order      Field[string]
+	ProblemId      FieldList[uint64]
+	UserId         FieldList[uint64]
+	LanguageId     Field[uint64]
+	StartTime      Field[time.Time]
+	EndTime        Field[time.Time]
+	Status         FieldList[uint64]
+	ExcludeHistory Field[bool]
+	Distinct       Field[string]
+	Page           Field[uint64]
+	Size           Field[uint64]
+	OrderBy        Field[string]
+	Order          Field[string]
 }
 
 func (con *SubmissionWhere) Parse(c *gin.Context) {
@@ -30,7 +32,9 @@ func (con *SubmissionWhere) Parse(c *gin.Context) {
 		con.StartTime.Set(timePreiod.StartTime)
 		con.EndTime.Set(timePreiod.EndTime)
 	}
+	con.Distinct.Parse(c, "distinct")
 	con.Status.Parse(c, "status")
+	con.ExcludeHistory.Parse(c, "exclude_history")
 	con.Page.Parse(c, "page")
 	con.Size.Parse(c, "size")
 	con.OrderBy.Parse(c, "order_by")
@@ -70,13 +74,28 @@ func (con *SubmissionWhere) GenerateWhereWithNoPage() func(*gorm.DB) *gorm.DB {
 			}
 			where = where.Order(orderBy + " " + order)
 		}
-		return where
+
+		query := []string{"tbl_submission.*"}
+		query = append(query, briefUserSelect()...)
+		query = append(query, briefProblemSelect()...)
+		where = briefProblemJoins(where, "tbl_submission")
+		where = briefUserJoins(where, "tbl_submission")
+
+		if con.ExcludeHistory.Exist() && con.ExcludeHistory.Value() {
+			where = where.Joins("LEFT JOIN tbl_history ON tbl_submission.problem_id = tbl_history.problem_id AND tbl_history.user_id = tbl_submission.user_id")
+			where = where.Where("tbl_history.user_id IS NULL")
+		}
+
+		return where.Select(query)
 	}
 }
 
 func (con *SubmissionWhere) GenerateWhere() func(*gorm.DB) *gorm.DB {
 	where := con.GenerateWhereWithNoPage()
 	return func(db *gorm.DB) *gorm.DB {
-		return where(db).Offset(int((con.Page.Value() - 1) * con.Size.Value())).Limit(int(con.Size.Value()))
+		if con.Page.Exist() && con.Size.Exist() {
+			return where(db).Offset(int((con.Page.Value() - 1) * con.Size.Value())).Limit(int(con.Size.Value()))
+		}
+		return where(db).Offset(0).Limit(1)
 	}
 }

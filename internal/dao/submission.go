@@ -11,8 +11,8 @@ import (
 
 type auxiliarySubmission struct {
 	entity.Submission
-	BriefUser
-	BriefProblem
+	model.BriefUser
+	model.BriefProblem
 }
 
 // 插入提交记录
@@ -36,7 +36,6 @@ func SelectSubmissions(condition model.SubmissionWhere) ([]entity.Submission, er
 	where := condition.GenerateWhere()
 	tx := db.Db.Model(&entity.Submission{})
 	tx = where(tx)
-	tx = submissionUnionJoins(tx)
 	tx = tx.Find(&auxiliarySubmissions)
 	if tx.Error != nil {
 		return nil, tx.Error
@@ -67,8 +66,12 @@ func SelectSubmissionById(id uint64) (entity.Submission, error) {
 	var auxiliarySubmission auxiliarySubmission
 	var s entity.Submission
 
+	condition := model.SubmissionWhere{}
+
+	where := condition.GenerateWhere()
+
 	tx := db.Db.Where(&entity.Submission{Id: id})
-	tx = submissionUnionJoins(tx)
+	tx = where(tx)
 	tx = tx.First(&auxiliarySubmission)
 	if tx.Error != nil {
 		return entity.Submission{}, tx.Error
@@ -88,6 +91,26 @@ func SelectSubmissionById(id uint64) (entity.Submission, error) {
 	}
 
 	return s, nil
+}
+
+func SelectACUsers(pid uint64, size uint64) ([]entity.User, error) {
+	var auxiliarySubmissions []auxiliarySubmission
+	var users []entity.User
+	tx := db.Db.Raw("SELECT * FROM (SELECT tbl_submission.*,tbl_user.username AS user_username,tbl_user.role AS user_role,tbl_user.avatar AS user_avatar,tbl_problem.title AS problem_title,tbl_problem.STATUS AS problem_status,tbl_problem.difficulty AS problem_difficulty,ROW_NUMBER() OVER (PARTITION BY tbl_submission.user_id ORDER BY tbl_submission.create_time ASC) AS rn FROM `tbl_submission` LEFT JOIN tbl_problem ON tbl_submission.problem_id=tbl_problem.id LEFT JOIN tbl_user ON tbl_submission.user_id=tbl_user.id WHERE `tbl_submission`.`status`=3 AND tbl_submission.problem_id = ? AND NOT EXISTS (SELECT 1 FROM tbl_history WHERE tbl_history.user_id=tbl_submission.user_id AND tbl_history.problem_id=tbl_submission.problem_id)) AS ranked_submissions WHERE rn=1 ORDER BY create_time ASC LIMIT ?;", pid, size)
+	tx = tx.Scan(&auxiliarySubmissions)
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
+	for _, auxiliarySubmission := range auxiliarySubmissions {
+		user := entity.User{
+			Id:       auxiliarySubmission.UserId,
+			Username: auxiliarySubmission.Username,
+			Role:     auxiliarySubmission.Role,
+			Avatar:   auxiliarySubmission.Avatar,
+		}
+		users = append(users, user)
+	}
+	return users, nil
 }
 
 // 更新提交记录
@@ -141,56 +164,13 @@ func CountSubmissions(condition model.SubmissionWhere) (uint64, error) {
 	where := condition.GenerateWhereWithNoPage()
 	tx := db.Db.Model(&entity.Submission{})
 	tx = where(tx)
+	if condition.Distinct.Exist() {
+		tx = tx.Distinct(condition.Distinct.Value())
+	}
 	tx = tx.Count(&count)
 	if tx.Error != nil {
 		return 0, tx.Error
 	}
 
 	return uint64(count), nil
-}
-
-// 按评测状态统计提交信息数量
-func CountSubmissionsGroupByStatus() ([]model.CountByJudgeStatus, error) {
-	var counts []model.CountByJudgeStatus
-
-	tx := db.Db.Model(&entity.Submission{}).Select("status, count(*) as count").Group("status").Scan(&counts)
-	if tx.Error != nil {
-		return nil, tx.Error
-	}
-
-	return counts, nil
-}
-
-// 按语言ID统计提交信息数量
-func CountSubmissionsGroupByLanguageId() ([]model.CountByLanguage, error) {
-	var counts []model.CountByLanguage
-
-	tx := db.Db.Model(&entity.Submission{}).Select("language_id, count(*) as count").Group("language_id").Scan(&counts)
-	if tx.Error != nil {
-		return nil, tx.Error
-	}
-
-	return counts, nil
-}
-
-// 根据创建时间统计用户数量
-func CountSubmissionsBetweenCreateTime(startTime time.Time, endTime time.Time) ([]model.CountByDate, error) {
-	var countByDate []model.CountByDate
-
-	tx := db.Db.Model(&entity.Submission{}).Where("create_time between ? and ?", startTime, endTime).Select("date(create_time) as date, count(*) as count").Group("date").Scan(&countByDate)
-	if tx.Error != nil {
-		return nil, tx.Error
-	}
-
-	return countByDate, nil
-}
-
-func submissionUnionJoins(tx *gorm.DB) *gorm.DB {
-	query := []string{"tbl_submission.*"}
-	query = append(query, briefUserSelect()...)
-	query = append(query, briefProblemSelect()...)
-	tx = tx.Select(query)
-	tx = briefProblemJoins(tx, "tbl_submission")
-	tx = briefUserJoins(tx, "tbl_submission")
-	return tx
 }

@@ -65,13 +65,21 @@ func (con *CommentWhere) GenerateWhereWithNoPage() func(*gorm.DB) *gorm.DB {
 			}
 			where = where.Order(orderBy + " " + order)
 		}
-		return where
+		query := []string{"tbl_comment.*"}
+		query = append(query, briefUserSelect()...)
+		query = append(query, briefBlogSelect()...)
+		where = briefUserJoins(where, "tbl_comment")
+		where = briefBlogJoins(where, "tbl_comment")
+		return where.Select(query)
 	}
 }
 
 func (con *CommentWhere) GenerateWhere() func(*gorm.DB) *gorm.DB {
 	where := con.GenerateWhereWithNoPage()
 	return func(db *gorm.DB) *gorm.DB {
-		return where(db).Offset(int((con.Page.Value() - 1) * con.Size.Value())).Limit(int(con.Size.Value()))
+		if con.Page.Exist() && con.Size.Exist() {
+			return where(db).Offset(int((con.Page.Value() - 1) * con.Size.Value())).Limit(int(con.Size.Value()))
+		}
+		return where(db).Offset(0).Limit(1)
 	}
 }

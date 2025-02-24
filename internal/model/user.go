@@ -1,11 +1,15 @@
 package model
 
 import (
+	"STUOJ/internal/entity"
+	"fmt"
+
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
 type UserWhere struct {
+	Id      FieldList[uint64]
 	Role    FieldList[uint64]
 	Name    Field[string]
 	Page    Field[uint64]
@@ -15,6 +19,7 @@ type UserWhere struct {
 }
 
 func (con *UserWhere) Parse(c *gin.Context) {
+	con.Id.Parse(c, "id")
 	con.Role.Parse(c, "role")
 	con.Name.Parse(c, "name")
 	con.Page.Parse(c, "page")
@@ -28,6 +33,9 @@ func (con *UserWhere) GenerateWhereWithNoPage() func(*gorm.DB) *gorm.DB {
 		whereClause := map[string]interface{}{}
 
 		where := db.Where(whereClause)
+		if con.Id.Exist() {
+			where.Where("tbl_user.id in ?", con.Id.Value())
+		}
 		if con.Role.Exist() {
 			where.Where("tbl_user.role in ?", con.Role.Value())
 		}
@@ -44,13 +52,43 @@ func (con *UserWhere) GenerateWhereWithNoPage() func(*gorm.DB) *gorm.DB {
 			}
 			where = where.Order(orderBy + " " + order)
 		}
-		return where
+		query := []string{"tbl_user.*"}
+		query = append(query,
+			"(SELECT COUNT(DISTINCT(problem_id)) FROM tbl_submission WHERE tbl_submission.user_id = tbl_user.id AND tbl_submission.status = 3) AS ac_count")
+		query = append(query,
+			"(SELECT COUNT(*) FROM tbl_submission WHERE tbl_submission.user_id = tbl_user.id) AS submit_count")
+		query = append(query,
+			"(SELECT COUNT(*) FROM tbl_blog WHERE tbl_blog.user_id = tbl_user.id AND tbl_blog.status >= 3) AS blog_count")
+
+		return where.Select(query)
 	}
 }
 
 func (con *UserWhere) GenerateWhere() func(*gorm.DB) *gorm.DB {
 	where := con.GenerateWhereWithNoPage()
 	return func(db *gorm.DB) *gorm.DB {
-		return where(db).Offset(int((con.Page.Value() - 1) * con.Size.Value())).Limit(int(con.Size.Value()))
+		if con.Page.Exist() && con.Size.Exist() {
+			return where(db).Offset(int((con.Page.Value() - 1) * con.Size.Value())).Limit(int(con.Size.Value()))
+		}
+		return where(db).Offset(0).Limit(1)
 	}
+}
+
+type BriefUser struct {
+	Username string      `gorm:"column:user_username"`
+	Role     entity.Role `gorm:"column:user_role"`
+	Avatar   string      `gorm:"column:user_avatar"`
+}
+
+func briefUserSelect() []string {
+	return []string{
+		"tbl_user.username as user_username",
+		"tbl_user.role as user_role",
+		"tbl_user.avatar as user_avatar",
+	}
+}
+
+func briefUserJoins(db *gorm.DB, tbl string) *gorm.DB {
+	db = db.Joins(fmt.Sprintf("LEFT JOIN tbl_user ON %s.user_id = tbl_user.id", tbl))
+	return db
 }

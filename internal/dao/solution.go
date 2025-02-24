@@ -3,14 +3,8 @@ package dao
 import (
 	"STUOJ/internal/db"
 	"STUOJ/internal/entity"
-
-	"gorm.io/gorm"
+	"STUOJ/internal/model"
 )
-
-type auxiliarySolution struct {
-	entity.Solution
-	BriefProblem
-}
 
 // 插入题解
 func InsertSolution(s entity.Solution) (uint64, error) {
@@ -24,21 +18,15 @@ func InsertSolution(s entity.Solution) (uint64, error) {
 
 // 根据ID查询题解
 func SelectSolutionById(id uint64) (entity.Solution, error) {
-	var auxiliarySolution auxiliarySolution
 	var s entity.Solution
 
+	condition := model.SolutionWhere{}
+
 	tx := db.Db.Where(&entity.Solution{Id: id})
-	tx = solutionUnionJoins(tx)
-	tx = tx.First(&auxiliarySolution)
+	tx = condition.GenerateWhere()(tx)
+	tx = tx.First(&s)
 	if tx.Error != nil {
 		return entity.Solution{}, tx.Error
-	}
-	s = auxiliarySolution.Solution
-	s.Problem = entity.Problem{
-		Id:         auxiliarySolution.ProblemId,
-		Title:      auxiliarySolution.ProblemTitle,
-		Status:     auxiliarySolution.ProblemStatus,
-		Difficulty: auxiliarySolution.ProblemDifficulty,
 	}
 
 	return s, nil
@@ -46,24 +34,15 @@ func SelectSolutionById(id uint64) (entity.Solution, error) {
 
 // 查询所有题解
 func SelectAllSolutions() ([]entity.Solution, error) {
-	var auxiliarySolutions []auxiliarySolution
 	var solutions []entity.Solution
 
+	condition := model.SolutionWhere{}
+
 	tx := db.Db.Model(&entity.Solution{})
-	tx = solutionUnionJoins(tx)
-	tx = tx.Find(&auxiliarySolutions)
+	tx = condition.GenerateWhere()(tx)
+	tx = tx.Find(&solutions)
 	if tx.Error != nil {
 		return nil, tx.Error
-	}
-	for _, auxiliarySolution := range auxiliarySolutions {
-		s := auxiliarySolution.Solution
-		s.Problem = entity.Problem{
-			Id:         auxiliarySolution.ProblemId,
-			Title:      auxiliarySolution.ProblemTitle,
-			Status:     auxiliarySolution.ProblemStatus,
-			Difficulty: auxiliarySolution.ProblemDifficulty,
-		}
-		solutions = append(solutions, s)
 	}
 
 	return solutions, nil
@@ -110,12 +89,4 @@ func CountSolutions() (int64, error) {
 	}
 
 	return count, nil
-}
-
-func solutionUnionJoins(tx *gorm.DB) *gorm.DB {
-	query := []string{"tbl_solution.*"}
-	query = append(query, briefProblemSelect()...)
-	tx = tx.Select(query)
-	tx = briefProblemJoins(tx, "tbl_solution")
-	return tx
 }

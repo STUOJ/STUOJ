@@ -22,12 +22,8 @@ func InitProblemRoute(ginServer *gin.Engine) {
 		problemEditorRoute.POST("/", handler.ProblemAdd)
 		problemEditorRoute.PUT("/", handler.ProblemModify)
 		problemEditorRoute.DELETE("/:id", handler.ProblemRemove)
-
 		problemEditorRoute.POST("/tag", handler.ProblemAddTag)
 		problemEditorRoute.DELETE("/tag", handler.ProblemRemoveTag)
-
-		problemEditorRoute.POST("/fps", handler.ProblemParseFromFps)
-
 		problemEditorRoute.GET("/history/:id", handler.HistoryListOfProblem)
 	}
 }
@@ -42,7 +38,6 @@ func InitTagRoute(ginServer *gin.Engine) {
 	{
 		// 使用中间件
 		tagEditorRoute.Use(middlewares.TokenAuthEditor())
-
 		tagEditorRoute.POST("/", handler.TagAdd)
 		tagEditorRoute.PUT("/", handler.TagModify)
 		tagEditorRoute.DELETE("/:id", handler.TagRemove)

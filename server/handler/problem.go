@@ -6,11 +6,8 @@ import (
 	"STUOJ/internal/service/history"
 	"STUOJ/internal/service/problem"
 	"STUOJ/utils"
-	"STUOJ/utils/fps"
-	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -27,13 +24,15 @@ func ProblemInfo(c *gin.Context) {
 	}
 
 	pid := uint64(id)
-	pd, err := problem.SelectById(pid, uid, role)
+	where := model.ProblemWhere{}
+	where.Parse(c)
+	p, err := problem.SelectById(pid, uid, role, where)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
 	}
 
-	c.JSON(http.StatusOK, model.RespOk("OK", pd))
+	c.JSON(http.StatusOK, model.RespOk("OK", p))
 }
 
 // 获取题目列表
@@ -43,13 +42,13 @@ func ProblemList(c *gin.Context) {
 	condition := model.ProblemWhere{}
 	condition.Parse(c)
 
-	pds, err := problem.Select(condition, userId, role)
+	ps, err := problem.Select(condition, userId, role)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
 	}
 
-	c.JSON(http.StatusOK, model.RespOk("OK", pds))
+	c.JSON(http.StatusOK, model.RespOk("OK", ps))
 }
 
 // 解析题目查询条件
@@ -182,37 +181,6 @@ func ProblemRemove(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, model.RespOk("删除成功", nil))
-}
-
-// 从文件解析题目
-func ProblemParseFromFps(c *gin.Context) {
-	// 获取文件
-	file, err := c.FormFile("file")
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("文件上传失败", nil))
-		return
-	}
-
-	// 保存文件
-	dst := fmt.Sprintf("tmp/%s", utils.GetRandKey())
-	if err := c.SaveUploadedFile(file, dst); err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("文件上传失败", nil))
-		return
-	}
-	defer os.Remove(dst)
-
-	// 解析文件
-	f, err := fps.Read(dst)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("文件解析失败", nil))
-		return
-	}
-	p := fps.Parse(f)
-
-	c.JSON(http.StatusOK, model.RespOk("文件解析成功", p))
 }
 
 // 获取题目历史记录
