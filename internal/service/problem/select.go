@@ -13,13 +13,16 @@ type ProblemPage struct {
 }
 
 // 根据ID查询题目数据
-func SelectById(id uint64, userId uint64, role entity.Role, where model.ProblemWhere) (entity.Problem, error) {
-	where.ScoreUserId.Set(userId)
-	p, err := dao.SelectProblemById(id, where)
+func SelectById(id uint64, userId uint64, role entity.Role) (model.ProblemData, error) {
+	// 获取题目信息
+	p, err := dao.SelectProblemById(id)
 
 	if err != nil {
-		return entity.Problem{}, errors.New("获取题目信息失败")
+		return model.ProblemData{}, errors.New("获取题目信息失败")
 	}
+
+	var testcases []entity.Testcase
+	var solutions []entity.Solution
 
 	if p.Status != entity.ProblemPublic {
 		if !problemOP(&p, userId, role) {
@@ -39,11 +42,10 @@ func SelectById(id uint64, userId uint64, role entity.Role, where model.ProblemW
 		Solutions: solutions,
 	}
 
-	return p, nil
+	return pd, nil
 }
 
 func Select(condition model.ProblemWhere, userId uint64, role entity.Role) (ProblemPage, error) {
-	condition.ScoreUserId.Set(userId)
 	if !condition.Status.Exist() {
 		condition.Status.Set([]uint64{uint64(entity.ProblemPublic)})
 	} else {
