@@ -10,7 +10,7 @@ import (
 )
 
 // 根据ID删除题目
-func DeleteByProblemId(pid uint64, uid uint64, role entity.Role) error {
+func Delete(pid uint64, uid uint64, role entity.Role) error {
 	// 读取题目
 	p0, err := dao.SelectProblemById(pid, model.ProblemWhere{})
 	if err != nil {
@@ -84,13 +84,11 @@ func DeleteTag(pid uint64, tid uint64, uid uint64, role entity.Role) error {
 		return errors.New("标签不存在")
 	}
 
-	// 检查题目标签关系是否存在
-	count, err := dao.CountProblemTag(pt)
-	if err != nil || count < 1 {
-		if err != nil {
-			log.Println(err)
-		}
-		return errors.New("该题目不存在该标签")
+	// 删除题目标签
+	err = dao.DeleteProblemTag(pt)
+	if err != nil {
+		log.Println(err)
+		return errors.New("删除失败")
 	}
 
 	// 更新题目更新时间
@@ -98,13 +96,6 @@ func DeleteTag(pid uint64, tid uint64, uid uint64, role entity.Role) error {
 	if err != nil {
 		log.Println(err)
 		return errors.New("更新题目更新时间失败")
-	}
-
-	// 删除题目标签
-	err = dao.DeleteProblemTag(pt)
-	if err != nil {
-		log.Println(err)
-		return errors.New("删除失败")
 	}
 
 	return nil

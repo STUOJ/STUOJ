@@ -8,26 +8,7 @@ import (
 )
 
 // 根据ID删除评论
-func DeleteById(id uint64) error {
-	// 查询评论
-	_, err := dao.SelectCommentById(id)
-	if err != nil {
-		log.Println(err)
-		return errors.New("评论不存在")
-	}
-
-	// 删除评论
-	err = dao.DeleteCommentById(id)
-	if err != nil {
-		log.Println(err)
-		return errors.New("删除评论失败")
-	}
-
-	return nil
-}
-
-// 根据ID删除评论（检查用户ID）
-func DeleteByIdCheckUserId(id uint64, uid uint64, role entity.Role) error {
+func Delete(id uint64, uid uint64, role entity.Role) error {
 	// 查询评论
 	c0, err := dao.SelectCommentById(id)
 	if err != nil {

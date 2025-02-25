@@ -7,7 +7,7 @@ import (
 
 func createSqlDb() error {
 	var err error
-	config := conf.Conf.Datebase
+	config := conf.Conf.Database
 
 	SqlDb, err = Db.DB()
 	if err != nil {

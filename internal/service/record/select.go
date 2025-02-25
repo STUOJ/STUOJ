@@ -87,19 +87,3 @@ func hideSubmissionSourceCode(userId uint64, submissions []entity.Submission) {
 		}
 	}
 }
-
-// 封装提交记录
-// func wrapRecords(submissions []entity.Submission) []model.Record {
-// 	var records []model.Record
-
-// 	hideSubmissionSourceCode(submissions)
-
-// 	for _, s := range submissions {
-// 		r := model.Record{
-// 			Submission: s,
-// 		}
-// 		records = append(records, r)
-// 	}
-
-// 	return records
-// }

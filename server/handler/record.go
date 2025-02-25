@@ -80,7 +80,7 @@ func RecordRemove(c *gin.Context) {
 	}
 
 	sid := uint64(id)
-	err = record.DeleteBySubmissionId(sid)
+	err = record.DeleteSubmission(sid)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return

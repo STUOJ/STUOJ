@@ -7,7 +7,7 @@ import (
 )
 
 // 根据ID更新标签
-func UpdateById(id uint64, n string) error {
+func Update(id uint64, n string) error {
 	// 查询标签
 	t, err := dao.SelectTagById(id)
 	if err != nil {

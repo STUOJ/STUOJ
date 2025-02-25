@@ -24,6 +24,7 @@ type ProblemWhere struct {
 	Order       Field[string]
 	StartTime   Field[time.Time]
 	EndTime     Field[time.Time]
+	Detail      Field[bool]
 	Testcases   Field[bool]
 	Solutions   Field[bool]
 }
@@ -45,6 +46,7 @@ func (con *ProblemWhere) Parse(c *gin.Context) {
 		con.StartTime.Set(timePreiod.StartTime)
 		con.EndTime.Set(timePreiod.EndTime)
 	}
+	con.Detail.Parse(c, "detail")
 	con.Testcases.Parse(c, "testcases")
 	con.Solutions.Parse(c, "solutions")
 }
@@ -88,10 +90,17 @@ func (con *ProblemWhere) GenerateWhereWithNoPage() func(*gorm.DB) *gorm.DB {
 			}
 			where = where.Order(orderBy + " " + order)
 		}
-		query := []string{"tbl_problem.*"}
+		query := []string{"tbl_problem.id", "tbl_problem.title", "tbl_problem.source", "tbl_problem.difficulty", "tbl_problem.time_limit", "tbl_problem.memory_limit", "tbl_problem.status", "tbl_problem.create_time", "tbl_problem.update_time"}
+		if con.Detail.Exist() && con.Detail.Value() {
+			query = append(query,
+				"tbl_problem.description", "tbl_problem.input", "tbl_problem.output", "tbl_problem.sample_input", "tbl_problem.sample_output", "tbl_problem.hint",
+			)
+		}
 		query = append(query,
 			"(SELECT GROUP_CONCAT(DISTINCT tbl_problem_tag.tag_id) FROM tbl_problem_tag WHERE problem_id = tbl_problem.id) AS problem_tag_id",
 			"(SELECT GROUP_CONCAT(DISTINCT tbl_history.user_id) FROM tbl_history WHERE problem_id = tbl_problem.id) AS problem_user_id",
+			"(SELECT GROUP_CONCAT(DISTINCT tbl_collection_problem.collection_id) FROM tbl_collection_problem WHERE problem_id = tbl_problem.id) AS problem_collection_id",
+			"(SELECT GROUP_CONCAT(DISTINCT tbl_collection_user.user_id) FROM tbl_collection_problem JOIN tbl_collection_user ON tbl_collection_problem.collection_id = tbl_collection_user.collection_id WHERE tbl_collection_problem.problem_id = tbl_problem.id AND EXISTS (SELECT 1 FROM tbl_collection WHERE tbl_collection.id = tbl_collection_user.collection_id AND tbl_collection.user_id IN (SELECT DISTINCT user_id FROM tbl_history WHERE problem_id = tbl_problem.id))) AS problem_collection_user_id",
 		)
 		if con.ScoreUserId.Exist() {
 			query = append(query, fmt.Sprintf(

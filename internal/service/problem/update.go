@@ -9,8 +9,8 @@ import (
 	"time"
 )
 
-// UpdateById 根据ID更新题目
-func UpdateById(p entity.Problem, uid uint64, role entity.Role) error {
+// Update 根据ID更新题目
+func Update(p entity.Problem, uid uint64, role entity.Role) error {
 	// 读取题目
 	p0, err := dao.SelectProblemById(p.Id, model.ProblemWhere{})
 	if err != nil {
@@ -18,14 +18,8 @@ func UpdateById(p entity.Problem, uid uint64, role entity.Role) error {
 		return errors.New("题目不存在")
 	}
 
-	if role < entity.RoleAdmin {
-		userIdsMap := make(map[uint64]struct{})
-		for _, uid := range p0.UserIds {
-			userIdsMap[uid] = struct{}{}
-		}
-		if _, exists := userIdsMap[uid]; !exists {
-			return errors.New("没有该题权限")
-		}
+	if !problemOP(p0, uid, role) {
+		return errors.New("无权限")
 	}
 
 	// 公开前检查评测点

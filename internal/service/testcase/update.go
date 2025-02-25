@@ -8,7 +8,7 @@ import (
 )
 
 // 根据ID更新评测点数据
-func UpdateById(t entity.Testcase) error {
+func Update(t entity.Testcase) error {
 	// 查询评测点
 	t0, err := dao.SelectTestcaseById(t.Id)
 	if err != nil {

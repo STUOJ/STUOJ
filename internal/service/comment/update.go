@@ -9,7 +9,7 @@ import (
 )
 
 // 根据ID更新评论
-func UpdateById(c entity.Comment) error {
+func Update(c entity.Comment) error {
 	// 查询评论
 	c0, err := dao.SelectCommentById(c.Id)
 	if err != nil {

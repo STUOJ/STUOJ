@@ -11,7 +11,7 @@ import (
 )
 
 // 插入用户
-func InsertUser(u entity.User) (uint64, error) {
+func Insert(u entity.User) (uint64, error) {
 	// 预处理
 	u.Username = html.EscapeString(strings.TrimSpace(u.Username))
 	err := u.HashPassword()

@@ -89,6 +89,8 @@ type Problem struct {
 	HasUserSubmission bool          `gorm:"-" json:"has_user_submission"`
 	Testcases         []Testcase    `gorm:"-" json:"testcases"`
 	Solutions         []Solution    `gorm:"-" json:"solutions"`
+	CollectionIds     []uint64      `gorm:"-" json:"collection_ids"`
+	CollectionUserIds []uint64      `gorm:"-" json:"collection_user_ids"`
 }
 
 func (Problem) TableName() string {

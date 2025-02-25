@@ -4,6 +4,7 @@ import (
 	"STUOJ/internal/dao"
 	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
+	"STUOJ/internal/service/solution"
 	"errors"
 )
 
@@ -21,14 +22,20 @@ func SelectById(id uint64, userId uint64, role entity.Role, where model.ProblemW
 		return entity.Problem{}, errors.New("获取题目信息失败")
 	}
 
-	if p.Status != entity.ProblemPublic && role < entity.RoleAdmin {
-		userIdsMap := make(map[uint64]struct{})
-		for _, uid := range p.UserIds {
-			userIdsMap[uid] = struct{}{}
-		}
-		if _, exists := userIdsMap[userId]; !exists {
-			return entity.Problem{}, errors.New("没有该题权限")
-		}
+	op := problemOP(p, userId, role)
+
+	if p.Status < entity.ProblemPublic && !op {
+		return entity.Problem{}, errors.New("无权限")
+	}
+
+	if where.Solutions.Exist() && where.Solutions.Value() && op {
+		solutions, _ := solution.SelectByProblemId(id)
+		p.Solutions = solutions
+	}
+
+	if where.Testcases.Exist() && where.Testcases.Value() && op {
+		testcases, _ := dao.SelectTestcasesByProblemId(id)
+		p.Testcases = testcases
 	}
 
 	return p, nil
@@ -60,8 +67,6 @@ func Select(condition model.ProblemWhere, userId uint64, role entity.Role) (Prob
 		return ProblemPage{}, errors.New("获取题目信息失败")
 	}
 
-	hideProblemContent(problems)
-
 	count, err := dao.CountProblems(condition)
 	if err != nil {
 		return ProblemPage{}, errors.New("获取题目总数失败")
@@ -79,13 +84,23 @@ func Select(condition model.ProblemWhere, userId uint64, role entity.Role) (Prob
 	return pPage, nil
 }
 
-func hideProblemContent(problems []entity.Problem) {
-	for i := range problems {
-		problems[i].Description = ""
-		problems[i].Input = ""
-		problems[i].Output = ""
-		problems[i].SampleInput = ""
-		problems[i].SampleOutput = ""
-		problems[i].Hint = ""
+// 判断用户是否有该题权限
+func problemOP(p entity.Problem, userId uint64, role entity.Role) bool {
+	if role >= entity.RoleAdmin {
+		return true
 	}
+	if role < entity.RoleEditor {
+		return false
+	}
+	for _, i := range p.UserIds {
+		if i == userId {
+			return true
+		}
+	}
+	for _, i := range p.CollectionUserIds {
+		if i == userId {
+			return true
+		}
+	}
+	return false
 }

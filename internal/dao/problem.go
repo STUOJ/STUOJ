@@ -11,10 +11,12 @@ import (
 
 type auxiliaryProblem struct {
 	entity.Problem
-	ProblemUserId     string `gorm:"column:problem_user_id"`
-	ProblemTagIds     string `gorm:"column:problem_tag_id"`
-	ProblemUserScore  uint64 `gorm:"column:problem_user_score"`
-	HasUserSubmission bool   `gorm:"column:has_user_submission"`
+	ProblemUserId            string `gorm:"column:problem_user_id"`
+	ProblemTagIds            string `gorm:"column:problem_tag_id"`
+	ProblemCollectionIds     string `gorm:"column:problem_collection_id"`
+	ProblemCollectionUserIds string `gorm:"column:problem_collection_user_id"`
+	ProblemUserScore         uint64 `gorm:"column:problem_user_score"`
+	HasUserSubmission        bool   `gorm:"column:has_user_submission"`
 }
 
 // 插入题目
@@ -59,19 +61,21 @@ func SelectProblemById(id uint64, condition model.ProblemWhere) (entity.Problem,
 		}
 	}
 
-	if condition.Testcases.Exist() && condition.Testcases.Value() {
-		p.Problem.Testcases = make([]entity.Testcase, 0)
-		tx := db.Db.Model(&entity.Testcase{}).Where("problem_id = ?", id).Find(&p.Problem.Testcases)
-		if tx.Error != nil {
-			return entity.Problem{}, tx.Error
+	p.Problem.CollectionIds = make([]uint64, 0)
+	if p.ProblemCollectionIds != "" {
+		for _, idStr := range strings.Split(p.ProblemCollectionIds, ",") {
+			if id, err := strconv.ParseUint(strings.TrimSpace(idStr), 10, 64); err == nil {
+				p.Problem.CollectionIds = append(p.Problem.CollectionIds, id)
+			}
 		}
 	}
 
-	if condition.Solutions.Exist() && condition.Solutions.Value() {
-		p.Problem.Solutions = make([]entity.Solution, 0)
-		tx := db.Db.Model(&entity.Solution{}).Where("problem_id = ?", id).Find(&p.Problem.Solutions)
-		if tx.Error != nil {
-			return entity.Problem{}, tx.Error
+	p.Problem.CollectionUserIds = make([]uint64, 0)
+	if p.ProblemCollectionUserIds != "" {
+		for _, idStr := range strings.Split(p.ProblemCollectionUserIds, ",") {
+			if id, err := strconv.ParseUint(strings.TrimSpace(idStr), 10, 64); err == nil {
+				p.Problem.CollectionUserIds = append(p.Problem.CollectionUserIds, id)
+			}
 		}
 	}
 
@@ -113,6 +117,23 @@ func SelectProblems(condition model.ProblemWhere) ([]entity.Problem, error) {
 		}
 		problems[i].Problem.UserScore = problems[i].ProblemUserScore
 		problems[i].Problem.HasUserSubmission = problems[i].HasUserSubmission
+		problems[i].CollectionIds = make([]uint64, 0)
+		if problems[i].ProblemCollectionIds != "" {
+			for _, idStr := range strings.Split(problems[i].ProblemCollectionIds, ",") {
+				if id, err := strconv.ParseUint(strings.TrimSpace(idStr), 10, 64); err == nil {
+					problems[i].Problem.CollectionIds = append(problems[i].Problem.CollectionIds, id)
+				}
+			}
+		}
+
+		problems[i].CollectionUserIds = make([]uint64, 0)
+		if problems[i].ProblemCollectionUserIds != "" {
+			for _, idStr := range strings.Split(problems[i].ProblemCollectionUserIds, ",") {
+				if id, err := strconv.ParseUint(strings.TrimSpace(idStr), 10, 64); err == nil {
+					problems[i].Problem.CollectionUserIds = append(problems[i].Problem.CollectionUserIds, id)
+				}
+			}
+		}
 	}
 
 	// 将辅助结构体转换为实体结构体
