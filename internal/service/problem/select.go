@@ -67,8 +67,6 @@ func Select(condition model.ProblemWhere, userId uint64, role entity.Role) (Prob
 		return ProblemPage{}, errors.New("获取题目信息失败")
 	}
 
-	hideProblemContent(problems)
-
 	count, err := dao.CountProblems(condition)
 	if err != nil {
 		return ProblemPage{}, errors.New("获取题目总数失败")
@@ -84,17 +82,6 @@ func Select(condition model.ProblemWhere, userId uint64, role entity.Role) (Prob
 	}
 
 	return pPage, nil
-}
-
-func hideProblemContent(problems []entity.Problem) {
-	for i := range problems {
-		problems[i].Description = ""
-		problems[i].Input = ""
-		problems[i].Output = ""
-		problems[i].SampleInput = ""
-		problems[i].SampleOutput = ""
-		problems[i].Hint = ""
-	}
 }
 
 // 判断用户是否有该题权限
