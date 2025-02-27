@@ -1,6 +1,7 @@
-package utils
+package test
 
 import (
+	"STUOJ/utils"
 	"encoding/base64"
 	"testing"
 )
@@ -22,13 +23,13 @@ func TestAESEncryptDecrypt(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			// 加密测试
-			encrypted, err := AESEncrypt(tc.plaintext, tc.token)
+			encrypted, err := utils.AESEncrypt(tc.plaintext, tc.token)
 			if err != nil {
 				t.Fatalf("AESEncrypt failed: %v", err)
 			}
 
 			// 解密测试（使用正确token）
-			decrypted, err := AESDecrypt(encrypted, tc.token)
+			decrypted, err := utils.AESDecrypt(encrypted, tc.token)
 			if err != nil {
 				t.Fatalf("AESDecrypt failed: %v", err)
 			}
@@ -40,7 +41,7 @@ func TestAESEncryptDecrypt(t *testing.T) {
 			}
 
 			// 错误token测试
-			_, err = AESDecrypt(encrypted, "wrong-token")
+			_, err = utils.AESDecrypt(encrypted, "wrong-token")
 			if err == nil {
 				t.Error("Expected error with wrong token")
 			}
@@ -50,14 +51,14 @@ func TestAESEncryptDecrypt(t *testing.T) {
 
 func TestAESDecrypt_InvalidInput(t *testing.T) {
 	// 无效base64测试
-	_, err := AESDecrypt("invalid-base64", "token")
+	_, err := utils.AESDecrypt("invalid-base64", "token")
 	if err == nil {
 		t.Error("Expected error for invalid base64")
 	}
 
 	// 短密文测试（小于IV长度）
 	shortCipher := base64.StdEncoding.EncodeToString([]byte("short"))
-	_, err = AESDecrypt(shortCipher, "token")
+	_, err = utils.AESDecrypt(shortCipher, "token")
 	if err == nil {
 		t.Error("Expected error for short ciphertext")
 	}
