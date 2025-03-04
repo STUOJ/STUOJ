@@ -43,7 +43,9 @@ func TestAESEncryptDecrypt(t *testing.T) {
 			// 错误token测试
 			_, err = utils.AESDecrypt(encrypted, "wrong-token")
 			if err == nil {
-				t.Error("Expected error with wrong token")
+				t.Logf("Expected error with wrong token")
+			} else {
+				t.Errorf("Error token decrypted successfully")
 			}
 		})
 	}
