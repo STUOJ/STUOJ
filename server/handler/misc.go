@@ -27,7 +27,7 @@ func UploadImage(c *gin.Context) {
 	}
 
 	// 保存文件
-	dst := fmt.Sprintf("tmp/%s", utils.GetRandKey())
+	dst := fmt.Sprintf("tmp/%s", utils.GetRandKey(6))
 	if err := c.SaveUploadedFile(file, dst); err != nil {
 		log.Println(err)
 		c.JSON(http.StatusBadRequest, model.RespError("文件上传失败", nil))

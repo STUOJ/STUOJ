@@ -235,7 +235,7 @@ func ModifyUserAvatar(c *gin.Context) {
 	ext := filepath.Ext(file.Filename)
 
 	// 保存文件
-	dst := fmt.Sprintf("tmp/%s%s", utils.GetRandKey(), ext)
+	dst := fmt.Sprintf("tmp/%s%s", utils.GetRandKey(6), ext)
 	log.Println(dst)
 	if err := c.SaveUploadedFile(file, dst); err != nil {
 		log.Println(err)
