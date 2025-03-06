@@ -1,4 +1,4 @@
-package test
+package utils_test
 
 import (
 	"STUOJ/utils"
