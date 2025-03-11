@@ -91,5 +91,8 @@ func InitCollectionRoute(ginServer *gin.Engine) {
 
 		collectionUserRoute.POST("/problem", handler.CollectionAddProblem)
 		collectionUserRoute.DELETE("/problem", handler.CollectionRemoveProblem)
+
+		collectionUserRoute.POST("/user", handler.CollectionAddUser)
+		collectionUserRoute.DELETE("/user", handler.CollectionRemoveUser)
 	}
 }
