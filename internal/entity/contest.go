@@ -68,7 +68,6 @@ type Contest struct {
 	UpdateTime   time.Time     `gorm:"type:timestamp;not null;default:CURRENT_TIMESTAMP;comment:更新时间" json:"update_time"`
 	User         User          `gorm:"foreignKey:UserId;references:Id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"user"`
 	Collection   Collection    `gorm:"foreignKey:CollectionId;references:Id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"collection"`
-	UserIds      []uint64      `gorm:"-" json:"user_ids"`
 	TeamIds      []uint64      `gorm:"-" json:"team_ids"`
 }
 
