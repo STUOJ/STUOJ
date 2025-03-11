@@ -39,7 +39,6 @@ type Team struct {
 	User        User       `gorm:"foreignKey:UserId;references:Id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"user"`
 	Contest     Contest    `gorm:"foreignKey:ContestId;references:Id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"contest"`
 	UserIds     []uint64   `gorm:"-" json:"user_ids"`
-	ContestIds  []uint64   `gorm:"-" json:"contest_ids"`
 }
 
 func (Team) TableName() string {
