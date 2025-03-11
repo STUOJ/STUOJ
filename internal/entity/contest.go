@@ -69,7 +69,7 @@ type Contest struct {
 	User         User          `gorm:"foreignKey:UserId;references:Id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"user"`
 	Collection   Collection    `gorm:"foreignKey:CollectionId;references:Id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"collection"`
 	UserIds      []uint64      `gorm:"-" json:"user_ids"`
-	Collections  []uint64      `gorm:"-" json:"collection_ids"`
+	TeamIds      []uint64      `gorm:"-" json:"team_ids"`
 }
 
 func (Contest) TableName() string {
