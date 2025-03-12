@@ -3,6 +3,7 @@ package entity
 import "time"
 
 // BlogStatus 状态：1 屏蔽, 2 草稿, 3 公开, 4 公告
+//go:generate go run ../../utils/gen/enum_valid.go BlogStatus entity
 type BlogStatus uint8
 
 const (

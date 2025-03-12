@@ -5,6 +5,8 @@ import (
 )
 
 // CollectionStatus 题单状态: 1 私有, 2 公开
+//
+//go:generate go run ../../utils/gen/enum_valid.go CollectionStatus entity
 type CollectionStatus uint8
 
 const (
