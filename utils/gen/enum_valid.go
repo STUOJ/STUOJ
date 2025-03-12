@@ -1,5 +1,8 @@
 //go:build ignore
 
+// 为输入的枚举类型和包名，生成一个Go代码文件，该文件中包含一个枚举类型的映射，以及一个用于验证枚举类型的函数。
+// 使用 go generate ./... 命令进行生成
+
 package main
 
 import (
