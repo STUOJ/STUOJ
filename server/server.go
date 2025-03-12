@@ -2,6 +2,8 @@ package server
 
 import (
 	"STUOJ/internal/conf"
+	"STUOJ/server/validator"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,6 +16,8 @@ func InitServer() error {
 
 	// 创建gin实例
 	ginServer = gin.Default()
+
+	validator.SetupValidator()
 
 	// 初始化路由
 	err := InitRoute()
