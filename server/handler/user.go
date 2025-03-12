@@ -19,7 +19,7 @@ import (
 type ReqUserRegister struct {
 	Username   string       `json:"username" binding:"required,min=3,max=16"`
 	Password   string       `json:"password" binding:"required,min=6,max=16"`
-	Email      entity.Email `json:"email" binding:"required,max=50"`
+	Email      entity.Email `json:"email" binding:"required,email"`
 	VerifyCode string       `json:"verify_code" binding:"required,max=10"`
 }
 
@@ -64,7 +64,7 @@ func UserRegister(c *gin.Context) {
 // 用户登录
 type ReqUserLogin struct {
 	Password string       `json:"password" binding:"required,min=6,max=16"`
-	Email    entity.Email `json:"email" binding:"required,max=50"`
+	Email    entity.Email `json:"email" binding:"required,email"`
 }
 
 func UserLogin(c *gin.Context) {
@@ -126,7 +126,7 @@ func UserCurrentId(c *gin.Context) {
 // 修改用户信息
 type ReqUserModify struct {
 	Username  string       `json:"username" binding:"required,min=3,max=16"`
-	Email     entity.Email `json:"email" binding:"required,max=50"`
+	Email     entity.Email `json:"email" binding:"required,email"`
 	Signature string       `json:"signature" binding:"required,max=50"`
 }
 
@@ -174,7 +174,7 @@ func UserModify(c *gin.Context) {
 
 // 修改用户密码
 type ReqUserChangePassword struct {
-	Email      entity.Email `json:"email" binding:"required,min=3,max=16"`
+	Email      entity.Email `json:"email" binding:"required,email"`
 	Password   string       `json:"password" binding:"required,min=6,max=16"`
 	VerifyCode string       `json:"verify_code" binding:"required,max=10"`
 }
@@ -273,7 +273,7 @@ func UserList(c *gin.Context) {
 type ReqUserAdd struct {
 	Username  string       `json:"username" binding:"required,min=3,max=16"`
 	Password  string       `json:"password" binding:"required,min=6,max=20"`
-	Email     entity.Email `json:"email" binding:"required,max=50"`
+	Email     entity.Email `json:"email" binding:"required,email"`
 	Avatar    string       `json:"avatar" binding:"required"`
 	Signature string       `json:"signature" binding:"required,max=50"`
 }
@@ -329,7 +329,7 @@ func UserRemove(c *gin.Context) {
 // 设置用户角色
 type ReqUserModifyRole struct {
 	Id   uint64      `json:"id" binding:"required"`
-	Role entity.Role `json:"role" binding:"required"`
+	Role entity.Role `json:"role" binding:"required,statusRange"`
 }
 
 func UserModifyRole(c *gin.Context) {
@@ -340,7 +340,7 @@ func UserModifyRole(c *gin.Context) {
 	err := c.ShouldBindBodyWithJSON(&req)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		c.JSON(http.StatusBadRequest, model.RespError("参数错误", err.Error()))
 		return
 	}
 

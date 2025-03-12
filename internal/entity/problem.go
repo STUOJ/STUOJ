@@ -5,6 +5,8 @@ import (
 )
 
 // Difficulty 难度：0 未知，1 入门，2 简单，3 中等，4 较难，5 困难，6 超难
+//
+//go:generate go run ../../utils/gen/enum_valid.go Difficulty entity
 type Difficulty uint8
 
 const (

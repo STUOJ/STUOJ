@@ -9,13 +9,21 @@ import (
 )
 
 // 插入博客
-func Insert(b entity.Blog) (uint64, error) {
+func Insert(b entity.Blog, role entity.Role) (uint64, error) {
 	var err error
 
 	updateTime := time.Now()
 	b.UpdateTime = updateTime
 	b.CreateTime = updateTime
 
+	if role < entity.RoleAdmin {
+		if b.Status == entity.BlogBanned {
+			return 0, errors.New("无法发布封禁博客")
+		}
+		if b.Status == entity.BlogNotice {
+			return 0, errors.New("只有管理员才能发布公告")
+		}
+	}
 	// 插入博客
 	b.Id, err = dao.InsertBlog(b)
 	if err != nil {

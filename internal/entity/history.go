@@ -5,6 +5,8 @@ import (
 )
 
 // Operation 操作：0 未知，1 添加，2 修改，3 删除
+//
+//go:generate go run ../../utils/gen/enum_valid.go Operation entity
 type Operation uint8
 
 const (

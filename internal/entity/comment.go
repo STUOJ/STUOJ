@@ -3,6 +3,7 @@ package entity
 import "time"
 
 // CommentStatus 状态：1 屏蔽, 2 公开
+//go:generate go run ../../utils/gen/enum_valid.go CommentStatus entity
 type CommentStatus uint8
 
 const (
