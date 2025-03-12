@@ -1,6 +1,7 @@
 package entity
 
 // LanguageStatus 语言状态：1 弃用，2 禁用，3 启用
+//go:generate go run ../../utils/gen/enum_valid.go LanguageStatus entity
 type LanguageStatus uint8
 
 const (

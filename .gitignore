@@ -35,5 +35,6 @@ dist/
 
 tmp/
 
+*_generated.go
 
 

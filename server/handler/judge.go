@@ -4,27 +4,12 @@ import (
 	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
 	"STUOJ/internal/service/judge"
-	"STUOJ/internal/service/language"
 	"STUOJ/utils"
 	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
-
-// 获取语言列表
-func JudgeLanguageList(c *gin.Context) {
-	role, _ := utils.GetUserInfo(c)
-	con := model.LanguageWhere{}
-	con.Parse(c)
-	languages, err := language.Select(con, role)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.RespOk(err.Error(), nil))
-		return
-	}
-
-	c.JSON(http.StatusOK, model.RespOk("OK", languages))
-}
 
 // 提交评测
 type ReqJudgeSubmit struct {

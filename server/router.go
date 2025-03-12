@@ -30,6 +30,7 @@ func InitRoute() error {
 	routes.InitTestcaseRoute(ginServer)
 	routes.InitCollectionRoute(ginServer)
 	routes.InitJudgeRoute(ginServer)
+	routes.InitLanguageRoute(ginServer)
 	routes.InitRecordRoute(ginServer)
 	routes.InitBlogRoute(ginServer)
 	routes.InitCommentRoute(ginServer)

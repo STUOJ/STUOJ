@@ -8,11 +8,6 @@ import (
 )
 
 func InitJudgeRoute(ginServer *gin.Engine) {
-	judgePublicRoute := ginServer.Group("/judge")
-	{
-		judgePublicRoute.GET("/language", handler.JudgeLanguageList)
-	}
-
 	judgeUserRoute := ginServer.Group("/judge")
 	{
 		// 使用中间件
