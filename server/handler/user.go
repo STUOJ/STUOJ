@@ -329,7 +329,7 @@ func UserRemove(c *gin.Context) {
 // 设置用户角色
 type ReqUserModifyRole struct {
 	Id   uint64      `json:"id" binding:"required"`
-	Role entity.Role `json:"role" binding:"required"`
+	Role entity.Role `json:"role" binding:"required,statusRange"`
 }
 
 func UserModifyRole(c *gin.Context) {
@@ -340,7 +340,7 @@ func UserModifyRole(c *gin.Context) {
 	err := c.ShouldBindBodyWithJSON(&req)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		c.JSON(http.StatusBadRequest, model.RespError("参数错误", err.Error()))
 		return
 	}
 

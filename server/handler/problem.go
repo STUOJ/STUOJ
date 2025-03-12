@@ -77,7 +77,7 @@ func ProblemAdd(c *gin.Context) {
 	err := c.ShouldBindBodyWithJSON(&req)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		c.JSON(http.StatusBadRequest, model.RespError("参数错误", err.Error()))
 		return
 	}
 
@@ -111,7 +111,7 @@ type ReqProblemModify struct {
 	Id           uint64               `json:"id" binding:"required"`
 	Title        string               `json:"title" binding:"required"`
 	Source       string               `json:"source"`
-	Difficulty   entity.Difficulty    `json:"difficulty" binding:"required"`
+	Difficulty   entity.Difficulty    `json:"difficulty" binding:"required,statusRange"`
 	TimeLimit    float64              `json:"time_limit" binding:"required"`
 	MemoryLimit  uint64               `json:"memory_limit" binding:"required"`
 	Description  string               `json:"description" binding:"required"`
@@ -120,7 +120,7 @@ type ReqProblemModify struct {
 	SampleInput  string               `json:"sample_input" binding:"required"`
 	SampleOutput string               `json:"sample_output" binding:"required"`
 	Hint         string               `json:"hint"`
-	Status       entity.ProblemStatus `json:"status" binding:"required"`
+	Status       entity.ProblemStatus `json:"status" binding:"required,statusRange"`
 }
 
 // 修改题目
@@ -132,7 +132,7 @@ func ProblemModify(c *gin.Context) {
 	err := c.ShouldBindBodyWithJSON(&req)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		c.JSON(http.StatusBadRequest, model.RespError("参数错误", err.Error()))
 		return
 	}
 

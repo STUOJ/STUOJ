@@ -8,7 +8,6 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/binding"
 )
 
 // 获取语言列表
@@ -36,7 +35,7 @@ type ReqLanguageUpdate struct {
 func UpdateLanguage(c *gin.Context) {
 	role, _ := utils.GetUserInfo(c)
 	var req ReqLanguageUpdate
-	if err := c.ShouldBindBodyWith(&req, binding.JSON); err != nil {
+	if err := c.ShouldBindBodyWithJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, model.RespError("参数错误", err.Error()))
 		return
 	}

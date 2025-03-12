@@ -52,7 +52,7 @@ func CollectionList(c *gin.Context) {
 type ReqCollectionAdd struct {
 	Title       string                  `json:"title" binding:"required"`
 	Description string                  `json:"description" binding:"required"`
-	Status      entity.CollectionStatus `json:"status" binding:"required"`
+	Status      entity.CollectionStatus `json:"status" binding:"required,statusRange"`
 }
 
 func CollectionAdd(c *gin.Context) {
@@ -64,7 +64,7 @@ func CollectionAdd(c *gin.Context) {
 	err := c.ShouldBindBodyWithJSON(&req)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		c.JSON(http.StatusBadRequest, model.RespError("参数错误", err.Error()))
 		return
 	}
 
@@ -92,7 +92,7 @@ type ReqCollectionModify struct {
 	Id          uint64                  `json:"id" binding:"required"`
 	Title       string                  `json:"title" binding:"required"`
 	Description string                  `json:"description" binding:"required"`
-	Status      entity.CollectionStatus `json:"status" binding:"required"`
+	Status      entity.CollectionStatus `json:"status" binding:"required,statusRange"`
 }
 
 func CollectionModify(c *gin.Context) {
@@ -104,7 +104,7 @@ func CollectionModify(c *gin.Context) {
 	err := c.ShouldBindBodyWithJSON(&req)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		c.JSON(http.StatusBadRequest, model.RespError("参数错误", err.Error()))
 		return
 	}
 
