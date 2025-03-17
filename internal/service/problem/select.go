@@ -6,6 +6,7 @@ import (
 	"STUOJ/internal/model"
 	"STUOJ/internal/service/solution"
 	"errors"
+	"slices"
 )
 
 type ProblemPage struct {
@@ -62,6 +63,7 @@ func Select(condition model.ProblemWhere, userId uint64, role entity.Role) (Prob
 	if !condition.Size.Exist() {
 		condition.Size.Set(10)
 	}
+
 	problems, err := dao.SelectProblems(condition)
 	if err != nil {
 		return ProblemPage{}, errors.New("获取题目信息失败")
@@ -92,15 +94,8 @@ func problemOP(p entity.Problem, userId uint64, role entity.Role) bool {
 	if role < entity.RoleEditor {
 		return false
 	}
-	for _, i := range p.UserIds {
-		if i == userId {
-			return true
-		}
+	if slices.Contains(p.UserIds, userId) {
+		return true
 	}
-	for _, i := range p.CollectionUserIds {
-		if i == userId {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(p.CollectionUserIds, userId)
 }

@@ -6,6 +6,7 @@ import (
 	"STUOJ/internal/model"
 	"errors"
 	"log"
+	"slices"
 	"time"
 
 	iproblem "STUOJ/internal/service/problem"
@@ -51,10 +52,8 @@ func InsertProblem(cid uint64, pid uint64, uid uint64, role entity.Role) error {
 
 	flag := false
 	if role < entity.RoleAdmin && c0.UserId != uid {
-		for _, userId := range c0.UserIds {
-			if userId == uid {
-				flag = true
-			}
+		if slices.Contains(c0.UserIds, uid) {
+			flag = true
 		}
 	} else {
 		flag = true

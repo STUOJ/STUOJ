@@ -6,6 +6,7 @@ import (
 	"STUOJ/internal/model"
 	"errors"
 	"log"
+	"slices"
 )
 
 type CollectionPage struct {
@@ -21,18 +22,19 @@ func SelectById(id uint64, userId uint64, role entity.Role) (entity.Collection, 
 	if err != nil {
 		return entity.Collection{}, errors.New("获取题单失败")
 	}
-
+	flag := false
 	if c.Status != entity.CollectionPublic && role < entity.RoleAdmin && c.UserId != userId {
-		for _, uid := range c.UserIds {
-			if uid == userId {
-				return c, nil
-			}
+		if slices.Contains(c.UserIds, userId) {
+			flag = true
 		}
 	} else {
-		return c, nil
+		flag = true
+	}
+	if !flag {
+		return entity.Collection{}, errors.New("没有权限查看该题单")
 	}
 
-	return entity.Collection{}, errors.New("没有权限查看该题单")
+	return c, nil
 }
 
 // 查询题单
