@@ -34,9 +34,14 @@ func InsertCollection(c entity.Collection) (uint64, error) {
 func SelectCollectionById(id uint64) (entity.Collection, error) {
 	var c auxiliaryCollection
 
+	condition := model.CollectionWhere{}
+	condition.Id.Set(id)
+
 	tx := db.Db.Model(&entity.Collection{})
-	tx = tx.Where(&entity.Collection{Id: id}).
-		Scan(&c)
+	where := condition.GenerateWhere()
+	tx = tx.Where(&entity.Collection{Id: id})
+	tx = where(tx)
+	tx = tx.Scan(&c)
 
 	if tx.Error != nil {
 		return entity.Collection{}, tx.Error

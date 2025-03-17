@@ -90,6 +90,9 @@ func (con *CollectionWhere) GenerateWhereWithNoPage() func(*gorm.DB) *gorm.DB {
 func (con *CollectionWhere) GenerateWhere() func(*gorm.DB) *gorm.DB {
 	where := con.GenerateWhereWithNoPage()
 	return func(db *gorm.DB) *gorm.DB {
-		return where(db).Offset(int((con.Page.Value() - 1) * con.Size.Value())).Limit(int(con.Size.Value()))
+		if con.Page.Exist() && con.Size.Exist() {
+			return where(db).Offset(int((con.Page.Value() - 1) * con.Size.Value())).Limit(int(con.Size.Value()))
+		}
+		return where(db).Offset(0).Limit(1)
 	}
 }
