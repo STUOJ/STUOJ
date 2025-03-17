@@ -11,7 +11,7 @@ import (
 )
 
 type ProblemWhere struct {
-	Id          Field[uint64]
+	Id          FieldList[uint64] // 只提供在service层供其他模块使用，不提供直接从用户层解析，避免垮权限查询
 	Title       Field[string]
 	Difficulty  FieldList[uint64]
 	Status      FieldList[uint64]
@@ -55,10 +55,10 @@ func (con *ProblemWhere) GenerateWhereWithNoPage() func(*gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		whereClause := map[string]interface{}{}
 
-		if con.Id.Exist() {
-			whereClause["tbl_problem.id"] = con.Id.Value()
-		}
 		where := db.Where(whereClause)
+		if con.Id.Exist() {
+			where.Where("tbl_problem.id in ?", con.Id.Value())
+		}
 		if con.Status.Exist() {
 			where.Where("tbl_problem.status in ?", con.Status.Value())
 		}
@@ -90,6 +90,7 @@ func (con *ProblemWhere) GenerateWhereWithNoPage() func(*gorm.DB) *gorm.DB {
 			}
 			where = where.Order(orderBy + " " + order)
 		}
+
 		query := []string{"tbl_problem.id", "tbl_problem.title", "tbl_problem.source", "tbl_problem.difficulty", "tbl_problem.time_limit", "tbl_problem.memory_limit", "tbl_problem.status", "tbl_problem.create_time", "tbl_problem.update_time"}
 		if con.Detail.Exist() && con.Detail.Value() {
 			query = append(query,
