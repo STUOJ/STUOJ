@@ -2,8 +2,8 @@ package utils_test
 
 import (
 	"STUOJ/utils"
-	"math/rand/v2"
 	"encoding/base64"
+	"math/rand/v2"
 	"testing"
 )
 
@@ -16,6 +16,9 @@ func TestRandKey(t *testing.T) {
 		} else {
 			t.Logf("%s", str)
 		}
+	}
+}
+
 func TestAESEncryptDecrypt(t *testing.T) {
 	// 测试用例表
 	testCases := []struct {
