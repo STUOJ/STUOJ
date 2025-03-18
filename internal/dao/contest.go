@@ -25,36 +25,50 @@ func InsertContest(c entity.Contest) (uint64, error) {
 	return c.Id, nil
 }
 
+// 根据ID查询比赛
 func SelectContestById(id uint64) (entity.Contest, error) {
-	var c auxiliaryContest
-
+	var auxiliaryContest auxiliaryContest
+	var ct entity.Contest
+	condition := model.ContestWhere{}
 	tx := db.Db.Model(&entity.Contest{})
-	tx = tx.Where(&entity.Contest{Id: id}).
-		Scan(&c)
-
+	tx = tx.Where(&entity.Contest{Id: id})
+	tx = condition.GenerateWhere()(tx)
+	tx = tx.Find(&auxiliaryContest)
 	if tx.Error != nil {
 		return entity.Contest{}, tx.Error
 	}
-
-	c.Contest.User = entity.User{
-		Id:       c.UserId,
-		Username: c.Username,
-		Role:     c.Role,
-		Avatar:   c.Avatar,
+	ct = auxiliaryContest.Contest
+	ct.User = entity.User{
+		Id:       auxiliaryContest.UserId,
+		Username: auxiliaryContest.Username,
+		Role:     auxiliaryContest.Role,
+		Avatar:   auxiliaryContest.Avatar,
 	}
 
-	return c.Contest, nil
+	return ct, nil
 }
 
 func SelectContests(condition model.ContestWhere) ([]entity.Contest, error) {
 	var auxiliaryContests []auxiliaryContest
 	var contests []entity.Contest
+
 	where := condition.GenerateWhere()
+
 	tx := db.Db.Model(&entity.Contest{})
 	tx = where(tx)
-	tx = tx.Scan(&auxiliaryContests)
+	tx = tx.Find(&auxiliaryContests)
 	if tx.Error != nil {
 		return nil, tx.Error
+	}
+	for _, auxiliaryContest := range auxiliaryContests {
+		contest := auxiliaryContest.Contest
+		contest.User = entity.User{
+			Id:       auxiliaryContest.UserId,
+			Username: auxiliaryContest.Username,
+			Role:     auxiliaryContest.Role,
+			Avatar:   auxiliaryContest.Avatar,
+		}
+		contests = append(contests, contest)
 	}
 
 	return contests, nil
