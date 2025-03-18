@@ -8,6 +8,7 @@ import (
 	"os"
 	"reflect"
 	"strconv"
+	"strings"
 
 	"math/rand/v2"
 
@@ -54,6 +55,14 @@ func GetUserInfo(c *gin.Context) (entity.Role, uint64) {
 	}
 
 	return role.(entity.Role), id.(uint64)
+}
+
+func Uint64SliceToString(ids []uint64) string {
+	strs := make([]string, len(ids))
+	for i, id := range ids {
+		strs[i] = strconv.FormatUint(id, 10)
+	}
+	return strings.Join(strs, ",")
 }
 
 func ConvertStringToType[T any](str string, result *interface{}) error {

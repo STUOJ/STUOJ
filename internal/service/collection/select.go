@@ -4,8 +4,11 @@ import (
 	"STUOJ/internal/dao"
 	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
+	"STUOJ/utils"
 	"errors"
+	"fmt"
 	"log"
+	"slices"
 )
 
 type CollectionPage struct {
@@ -21,18 +24,30 @@ func SelectById(id uint64, userId uint64, role entity.Role) (entity.Collection, 
 	if err != nil {
 		return entity.Collection{}, errors.New("获取题单失败")
 	}
-
+	flag := false
 	if c.Status != entity.CollectionPublic && role < entity.RoleAdmin && c.UserId != userId {
-		for _, uid := range c.UserIds {
-			if uid == userId {
-				return c, nil
-			}
+		if slices.Contains(c.UserIds, userId) {
+			flag = true
 		}
 	} else {
-		return c, nil
+		flag = true
+	}
+	if !flag {
+		return entity.Collection{}, errors.New("没有权限查看该题单")
 	}
 
-	return entity.Collection{}, errors.New("没有权限查看该题单")
+	pCondition := model.ProblemWhere{}
+	pCondition.Id.Set(c.ProblemIds)
+	pCondition.Page.Set(uint64(1))
+	pCondition.Size.Set(uint64(100))
+	pCondition.ScoreUserId.Set(userId)
+	pCondition.OrderBy.Set(fmt.Sprintf("FIELD(tbl_problem.id,%s)", utils.Uint64SliceToString(c.ProblemIds)))
+	c.Problem, err = dao.SelectProblems(pCondition)
+	if err != nil {
+		return c, errors.New("获取题目信息失败")
+	}
+
+	return c, nil
 }
 
 // 查询题单

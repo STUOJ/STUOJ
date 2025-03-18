@@ -150,6 +150,7 @@ func CollectionRemove(c *gin.Context) {
 type ReqCollectionAddProblem struct {
 	CollectionId uint64 `json:"collection_id" binding:"required"`
 	ProblemId    uint64 `json:"problem_id" binding:"required"`
+	Serial       uint16 `json:"serial" binding:"required"`
 }
 
 func CollectionAddProblem(c *gin.Context) {
@@ -173,6 +174,33 @@ func CollectionAddProblem(c *gin.Context) {
 
 	// 返回结果
 	c.JSON(http.StatusOK, model.RespOk("添加成功", nil))
+}
+
+type ReqCollectionModifyProblem struct {
+	CollectionId uint64 `json:"collection_id" binding:"required"`
+	ProblemId    uint64 `json:"problem_id" binding:"required"`
+	Serial       uint16 `json:"serial" binding:"required"`
+}
+
+func CollectionModifyProblem(c *gin.Context) {
+	role, uid := utils.GetUserInfo(c)
+	var req ReqCollectionModifyProblem
+
+	// 参数绑定
+	err := c.ShouldBindBodyWithJSON(&req)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		return
+	}
+
+	cp := entity.CollectionProblem{CollectionId: req.CollectionId, ProblemId: req.ProblemId, Serial: req.Serial}
+
+	err = collection.UpdateProblem(cp, uid, role)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		return
+	}
 }
 
 // 删除题单的某个题目

@@ -34,9 +34,14 @@ func InsertCollection(c entity.Collection) (uint64, error) {
 func SelectCollectionById(id uint64) (entity.Collection, error) {
 	var c auxiliaryCollection
 
+	condition := model.CollectionWhere{}
+	condition.Id.Set(id)
+
 	tx := db.Db.Model(&entity.Collection{})
-	tx = tx.Where(&entity.Collection{Id: id}).
-		Scan(&c)
+	where := condition.GenerateWhere()
+	tx = tx.Where(&entity.Collection{Id: id})
+	tx = where(tx)
+	tx = tx.Scan(&c)
 
 	if tx.Error != nil {
 		return entity.Collection{}, tx.Error
@@ -154,6 +159,12 @@ func DeleteCollectionUser(cu entity.CollectionUser) error {
 func InsertCollectionProblem(cp entity.CollectionProblem) error {
 	return db.Db.Transaction(func(tx *gorm.DB) error {
 		return tx.Model(&entity.CollectionProblem{}).Create(&cp).Error
+	})
+}
+
+func UpdateCollectionProblem(cp entity.CollectionProblem) error {
+	return db.Db.Transaction(func(tx *gorm.DB) error {
+		return tx.Model(&entity.CollectionProblem{}).Where(&entity.CollectionProblem{CollectionId: cp.CollectionId, ProblemId: cp.ProblemId}).Updates(&cp).Error
 	})
 }
 
