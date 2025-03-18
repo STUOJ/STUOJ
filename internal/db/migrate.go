@@ -19,6 +19,10 @@ func autoMigrate() error {
 		&entity.Collection{},
 		&entity.CollectionUser{},
 		&entity.CollectionProblem{},
+		&entity.Contest{},
+		&entity.Team{},
+		&entity.TeamUser{},
+		&entity.TeamSubmission{},
 	)
 	if err != nil {
 		return err
