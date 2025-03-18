@@ -32,7 +32,11 @@ func SelectById(id uint64, userId uint64, role entity.Role) (entity.Contest, err
 // 查询比赛
 func Select(condition model.ContestWhere, uid uint64, role entity.Role) (ContestPage, error) {
 	if !condition.Status.Exist() {
-		condition.Status.Set([]uint64{uint64(entity.ContestReady)})
+		condition.Status.Set([]uint64{
+			uint64(entity.ContestReady),
+			uint64(entity.ContestProcessing),
+			uint64(entity.ContestEnded),
+		})
 	} else {
 		for _, v := range condition.Status.Value() {
 			if entity.ContestStatus(v) < entity.ContestReady {
