@@ -1,6 +1,8 @@
 package model
 
 import (
+	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 	"time"
 )
 
@@ -19,18 +21,18 @@ type ContestWhere struct {
 	Order        Field[string]
 }
 
-/*
 func (con *ContestWhere) Parse(c *gin.Context) {
 	con.Id.Parse(c, "id")
-	con.Title.Parse(c, "title")
 	con.UserId.Parse(c, "user")
-	con.ProblemId.Parse(c, "problem")
+	con.CollectionId.Parse(c, "collection_id")
 	con.Status.Parse(c, "status")
-	timePreiod := &Period{}
-	err := timePreiod.GetPeriod(c)
+	con.Format.Parse(c, "format")
+	con.TeamSize.Parse(c, "team_size")
+	period := &Period{}
+	err := period.GetPeriod(c)
 	if err == nil {
-		con.StartTime.Set(timePreiod.StartTime)
-		con.EndTime.Set(timePreiod.EndTime)
+		con.StartTime.Set(period.StartTime)
+		con.EndTime.Set(period.EndTime)
 	}
 	con.Page.Parse(c, "page")
 	con.Size.Parse(c, "size")
@@ -38,6 +40,7 @@ func (con *ContestWhere) Parse(c *gin.Context) {
 	con.Order.Parse(c, "order")
 }
 
+// TODO 补全比赛查询条件
 func (con *ContestWhere) GenerateWhereWithNoPage() func(*gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		whereClause := map[string]interface{}{}
@@ -51,13 +54,6 @@ func (con *ContestWhere) GenerateWhereWithNoPage() func(*gorm.DB) *gorm.DB {
 		if con.UserId.Exist() {
 			where.Joins("JOIN tbl_contest_user ON tbl_contest.id = tbl_contest_user.contest_id").
 				Where("tbl_contest.user_id = ? OR tbl_contest_user.user_id = ?", con.UserId.Value(), con.UserId.Value())
-		}
-		if con.ProblemId.Exist() {
-			where = where.Joins("JOIN tbl_contest_problem ON tbl_contest.id = tbl_contest_problem.contest_id").
-				Where("tbl_contest_problem.problem_id IN(?) GROUP BY contest_id HAVING COUNT(DISTINCT problem_id) =?", con.ProblemId.Value(), len(con.ProblemId.Value()))
-		}
-		if con.Title.Exist() {
-			where = where.Where("tbl_contest.title LIKE ?", "%"+con.Title.Value()+"%")
 		}
 		if con.StartTime.Exist() {
 			where = where.Where("tbl_contest.create_time >= ?", con.StartTime.Value())
@@ -92,4 +88,3 @@ func (con *ContestWhere) GenerateWhere() func(*gorm.DB) *gorm.DB {
 		return where(db).Offset(int((con.Page.Value() - 1) * con.Size.Value())).Limit(int(con.Size.Value()))
 	}
 }
-*/
