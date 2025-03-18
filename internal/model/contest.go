@@ -38,7 +38,6 @@ func (con *ContestWhere) Parse(c *gin.Context) {
 	con.Order.Parse(c, "order")
 }
 
-// TODO 补全比赛查询条件
 func (con *ContestWhere) GenerateWhereWithNoPage() func(*gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		whereClause := map[string]interface{}{}
@@ -50,8 +49,7 @@ func (con *ContestWhere) GenerateWhereWithNoPage() func(*gorm.DB) *gorm.DB {
 			where.Where("tbl_contest.status in ?", con.Status.Value())
 		}
 		if con.UserId.Exist() {
-			where.Joins("JOIN tbl_contest_user ON tbl_contest.id = tbl_contest_user.contest_id").
-				Where("tbl_contest.user_id = ? OR tbl_contest_user.user_id = ?", con.UserId.Value(), con.UserId.Value())
+			where.Where("tbl_contest.user in ?", con.UserId.Value())
 		}
 		if con.Format.Exist() {
 			where.Where("tbl_contest.format in ?", con.Format.Value())
@@ -77,9 +75,6 @@ func (con *ContestWhere) GenerateWhereWithNoPage() func(*gorm.DB) *gorm.DB {
 		}
 		query := []string{"tbl_contest.*"}
 		query = append(query, briefUserSelect()...)
-		query = append(query, "(SELECT GROUP_CONCAT(DISTINCT user_id) FROM tbl_contest_user WHERE contest_id = tbl_contest.id) AS contest_user_id",
-			"(SELECT GROUP_CONCAT(DISTINCT problem_id) FROM tbl_contest_problem WHERE contest_id = tbl_contest.id) AS contest_problem_id",
-		)
 		where = briefUserJoins(where, "tbl_contest")
 
 		return where.Select(query)
