@@ -4,13 +4,13 @@ import (
 	"time"
 )
 
-// ContestStatus 比赛状态: 1 作废, 2 编辑, 3 待定, 4 进行, 5 结束
+// ContestStatus 比赛状态: 1 作废, 2 编辑, 3 准备, 4 进行, 5 结束
 type ContestStatus uint8
 
 const (
 	ContestInvalid    ContestStatus = 1
 	ContestEditing    ContestStatus = 2
-	ContestPending    ContestStatus = 3
+	ContestReady      ContestStatus = 3
 	ContestProcessing ContestStatus = 4
 	ContestEnded      ContestStatus = 5
 )
@@ -21,8 +21,8 @@ func (s ContestStatus) String() string {
 		return "作废"
 	case ContestEditing:
 		return "编辑"
-	case ContestPending:
-		return "待定"
+	case ContestReady:
+		return "准备"
 	case ContestProcessing:
 		return "进行"
 	case ContestEnded:
