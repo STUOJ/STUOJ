@@ -29,6 +29,7 @@ func InitRoute() error {
 	routes.InitSolutionRoute(ginServer)
 	routes.InitTestcaseRoute(ginServer)
 	routes.InitCollectionRoute(ginServer)
+	routes.InitContestRoute(ginServer)
 	routes.InitJudgeRoute(ginServer)
 	routes.InitRecordRoute(ginServer)
 	routes.InitBlogRoute(ginServer)
