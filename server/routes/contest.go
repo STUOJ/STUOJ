@@ -9,8 +9,8 @@ import (
 func InitContestRoute(ginServer *gin.Engine) {
 	contestPublicRoute := ginServer.Group("/contest")
 	{
-		contestPublicRoute.GET("/", handler.ContestList)
 		contestPublicRoute.GET("/:id", handler.ContestInfo)
+		contestPublicRoute.GET("/", handler.ContestList)
 	}
 
 	contestAdminRoute := ginServer.Group("/contest")
