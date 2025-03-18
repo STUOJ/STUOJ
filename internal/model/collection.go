@@ -55,7 +55,7 @@ func (con *CollectionWhere) GenerateWhereWithNoPage() func(*gorm.DB) *gorm.DB {
 		}
 		if con.ProblemId.Exist() {
 			where = where.Joins("JOIN tbl_collection_problem ON tbl_collection.id = tbl_collection_problem.collection_id").
-				Where("tbl_collection_problem.problem_id IN(?) GROUP BY collection_id HAVING COUNT(DISTINCT problem_id) =?", con.ProblemId.Value(), len(con.ProblemId.Value()))
+				Where("tbl_collection_problem.problem_id IN(?) GROUP BY collection_id HAVING COUNT(DISTINCT problem_id) =? ", con.ProblemId.Value(), len(con.ProblemId.Value()))
 		}
 		if con.Title.Exist() {
 			where = where.Where("tbl_collection.title LIKE ?", "%"+con.Title.Value()+"%")
@@ -79,7 +79,7 @@ func (con *CollectionWhere) GenerateWhereWithNoPage() func(*gorm.DB) *gorm.DB {
 		query := []string{"tbl_collection.*"}
 		query = append(query, briefUserSelect()...)
 		query = append(query, "(SELECT GROUP_CONCAT(DISTINCT user_id) FROM tbl_collection_user WHERE collection_id = tbl_collection.id) AS collection_user_id",
-			"(SELECT GROUP_CONCAT(DISTINCT problem_id) FROM tbl_collection_problem WHERE collection_id = tbl_collection.id) AS collection_problem_id",
+			"(SELECT GROUP_CONCAT(DISTINCT problem_id ORDER BY serial ASC) FROM tbl_collection_problem WHERE collection_id = tbl_collection.id) AS collection_problem_id",
 		)
 		where = briefUserJoins(where, "tbl_collection")
 
