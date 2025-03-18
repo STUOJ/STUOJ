@@ -9,19 +9,19 @@ import (
 )
 
 // 插入比赛
-func Insert(c entity.Contest) (uint64, error) {
+func Insert(ct entity.Contest) (uint64, error) {
 	var err error
 
 	updateTime := time.Now()
-	c.UpdateTime = updateTime
-	c.CreateTime = updateTime
+	ct.UpdateTime = updateTime
+	ct.CreateTime = updateTime
 
 	// 插入比赛
-	c.Id, err = dao.InsertContest(c)
+	ct.Id, err = dao.InsertContest(ct)
 	if err != nil {
 		log.Println(err)
 		return 0, errors.New("插入失败")
 	}
 
-	return c.Id, nil
+	return ct.Id, nil
 }
