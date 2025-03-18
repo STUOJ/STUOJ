@@ -10,7 +10,7 @@ type ContestStatus uint8
 const (
 	ContestInvalid    ContestStatus = 1
 	ContestEditing    ContestStatus = 2
-	ContestPending    ContestStatus = 3
+	ContestReady      ContestStatus = 3
 	ContestProcessing ContestStatus = 4
 	ContestEnded      ContestStatus = 5
 )
