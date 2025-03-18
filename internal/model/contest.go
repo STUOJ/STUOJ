@@ -1,30 +1,28 @@
 package model
 
 import (
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
-	"time"
 )
 
 type ContestWhere struct {
-	Id           Field[uint64]
-	UserId       Field[uint64]
-	CollectionId Field[uint64]
-	Status       FieldList[uint64]
-	Format       FieldList[uint64]
-	TeamSize     Field[uint8]
-	StartTime    Field[time.Time]
-	EndTime      Field[time.Time]
-	Page         Field[uint64]
-	Size         Field[uint64]
-	OrderBy      Field[string]
-	Order        Field[string]
+	Id        Field[uint64]
+	UserId    Field[uint64]
+	Status    FieldList[uint64]
+	Format    FieldList[uint64]
+	TeamSize  FieldList[uint8]
+	StartTime Field[time.Time]
+	EndTime   Field[time.Time]
+	Page      Field[uint64]
+	Size      Field[uint64]
+	OrderBy   Field[string]
+	Order     Field[string]
 }
 
 func (con *ContestWhere) Parse(c *gin.Context) {
-	con.Id.Parse(c, "id")
 	con.UserId.Parse(c, "user")
-	con.CollectionId.Parse(c, "collection_id")
 	con.Status.Parse(c, "status")
 	con.Format.Parse(c, "format")
 	con.TeamSize.Parse(c, "team_size")
@@ -54,6 +52,12 @@ func (con *ContestWhere) GenerateWhereWithNoPage() func(*gorm.DB) *gorm.DB {
 		if con.UserId.Exist() {
 			where.Joins("JOIN tbl_contest_user ON tbl_contest.id = tbl_contest_user.contest_id").
 				Where("tbl_contest.user_id = ? OR tbl_contest_user.user_id = ?", con.UserId.Value(), con.UserId.Value())
+		}
+		if con.Format.Exist() {
+			where.Where("tbl_contest.format in ?", con.Format.Value())
+		}
+		if con.TeamSize.Exist() {
+			where.Where("tbl_contest.team_size in ?", con.TeamSize.Value())
 		}
 		if con.StartTime.Exist() {
 			where = where.Where("tbl_contest.create_time >= ?", con.StartTime.Value())
