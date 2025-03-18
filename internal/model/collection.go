@@ -11,7 +11,6 @@ type CollectionWhere struct {
 	Id        Field[uint64]
 	Title     Field[string]
 	UserId    Field[uint64]
-	ProblemId FieldList[uint64]
 	Status    FieldList[uint64]
 	StartTime Field[time.Time]
 	EndTime   Field[time.Time]
@@ -25,7 +24,6 @@ func (con *CollectionWhere) Parse(c *gin.Context) {
 	con.Id.Parse(c, "id")
 	con.Title.Parse(c, "title")
 	con.UserId.Parse(c, "user")
-	con.ProblemId.Parse(c, "problem")
 	con.Status.Parse(c, "status")
 	timePreiod := &Period{}
 	err := timePreiod.GetPeriod(c)
@@ -52,10 +50,6 @@ func (con *CollectionWhere) GenerateWhereWithNoPage() func(*gorm.DB) *gorm.DB {
 		if con.UserId.Exist() {
 			where.Joins("JOIN tbl_collection_user ON tbl_collection.id = tbl_collection_user.collection_id").
 				Where("tbl_collection.user_id = ? OR tbl_collection_user.user_id = ?", con.UserId.Value(), con.UserId.Value())
-		}
-		if con.ProblemId.Exist() {
-			where = where.Joins("JOIN tbl_collection_problem ON tbl_collection.id = tbl_collection_problem.collection_id").
-				Where("tbl_collection_problem.problem_id IN(?) GROUP BY collection_id HAVING COUNT(DISTINCT problem_id) =? ", con.ProblemId.Value(), len(con.ProblemId.Value()))
 		}
 		if con.Title.Exist() {
 			where = where.Where("tbl_collection.title LIKE ?", "%"+con.Title.Value()+"%")
