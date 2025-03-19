@@ -10,6 +10,7 @@ import (
 type auxiliaryContest struct {
 	entity.Contest
 	model.BriefUser
+	model.BriefCollection
 }
 
 func InsertContest(c entity.Contest) (uint64, error) {

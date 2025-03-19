@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -89,4 +90,21 @@ func (con *CollectionWhere) GenerateWhere() func(*gorm.DB) *gorm.DB {
 		}
 		return where(db).Offset(0).Limit(1)
 	}
+}
+
+type BriefCollection struct {
+	Title       string `gorm:"column:collection_title"`
+	Description string `gorm:"column:collection_description"`
+}
+
+func briefCollectionSelect() []string {
+	return []string{
+		"tbl_collection.title as collection_title",
+		"tbl_collection.description as collection_description",
+	}
+}
+
+func briefCollectionJoins(db *gorm.DB, tbl string) *gorm.DB {
+	db = db.Joins(fmt.Sprintf("LEFT JOIN tbl_collection ON %s.collection_id = tbl_collection.id", tbl))
+	return db
 }
