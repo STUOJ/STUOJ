@@ -24,6 +24,7 @@ func Update(ct entity.Contest, uid uint64, role entity.Role) error {
 
 	// 更新比赛
 	updateTime := time.Now()
+	c0.CollectionId = ct.CollectionId
 	c0.Status = ct.Status
 	c0.Format = ct.Format
 	c0.TeamSize = ct.TeamSize

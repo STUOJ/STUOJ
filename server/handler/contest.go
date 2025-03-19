@@ -141,7 +141,7 @@ func ContestModify(c *gin.Context) {
 	}
 
 	// 初始化题单
-	coll := entity.Contest{
+	ct := entity.Contest{
 		Id:           req.Id,
 		UserId:       uid,
 		CollectionId: req.CollectionId,
@@ -152,7 +152,7 @@ func ContestModify(c *gin.Context) {
 		EndTime:      endTime,
 	}
 
-	err = contest.Update(coll, uid, role)
+	err = contest.Update(ct, uid, role)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
