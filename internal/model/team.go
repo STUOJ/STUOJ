@@ -44,6 +44,9 @@ func (con *TeamWhere) GenerateWhereWithNoPage() func(*gorm.DB) *gorm.DB {
 			where.Joins("JOIN tbl_team_user ON tbl_team.id = tbl_team_user.team_id").
 				Where("tbl_team.user_id = ? OR tbl_team_user.user_id = ?", con.UserId.Value(), con.UserId.Value())
 		}
+		if con.ContestId.Exist() {
+			where.Where("tbl_team.contest_id in ?", con.ContestId.Value())
+		}
 		if con.Name.Exist() {
 			where = where.Where("tbl_team.name LIKE ?", "%"+con.Name.Value()+"%")
 		}
