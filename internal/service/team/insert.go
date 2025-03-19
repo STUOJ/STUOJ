@@ -9,26 +9,26 @@ import (
 )
 
 // 插入团队
-func Insert(c entity.Team) (uint64, error) {
+func Insert(tm entity.Team) (uint64, error) {
 	var err error
 
 	updateTime := time.Now()
-	c.UpdateTime = updateTime
-	c.CreateTime = updateTime
+	tm.UpdateTime = updateTime
+	tm.CreateTime = updateTime
 
 	// 插入团队
-	c.Id, err = dao.InsertTeam(c)
+	tm.Id, err = dao.InsertTeam(tm)
 	if err != nil {
 		log.Println(err)
 		return 0, errors.New("插入失败")
 	}
 
-	return c.Id, nil
+	return tm.Id, nil
 }
 
-func InsertUser(tid uint64, addUid uint64, uid uint64, role entity.Role) error {
-	cu := entity.TeamUser{
-		TeamId: tid,
+func InsertUser(tmid uint64, addUid uint64, uid uint64, role entity.Role) error {
+	tu := entity.TeamUser{
+		TeamId: tmid,
 		UserId: addUid,
 	}
 
@@ -38,7 +38,7 @@ func InsertUser(tid uint64, addUid uint64, uid uint64, role entity.Role) error {
 		return errors.New("用户不存在")
 	}
 
-	t0, err := dao.SelectTeamById(tid)
+	t0, err := dao.SelectTeamById(tmid)
 	if err != nil {
 		log.Println(err)
 		return errors.New("团队不存在")
@@ -56,7 +56,7 @@ func InsertUser(tid uint64, addUid uint64, uid uint64, role entity.Role) error {
 			return errors.New("用户已存在团队中")
 		}
 	}
-	err = dao.InsertTeamUser(cu)
+	err = dao.InsertTeamUser(tu)
 	if err != nil {
 		log.Println(err)
 		return errors.New("添加用户失败")

@@ -30,9 +30,9 @@ func Delete(id uint64, uid uint64, role entity.Role) error {
 	return nil
 }
 
-func DeleteUser(tid uint64, delUid uint64, uid uint64, role entity.Role) error {
-	cu := entity.TeamUser{
-		TeamId: tid,
+func DeleteUser(tmid uint64, delUid uint64, uid uint64, role entity.Role) error {
+	tu := entity.TeamUser{
+		TeamId: tmid,
 		UserId: delUid,
 	}
 	_, err := dao.SelectUserById(delUid)
@@ -40,7 +40,7 @@ func DeleteUser(tid uint64, delUid uint64, uid uint64, role entity.Role) error {
 		log.Println(err)
 		return errors.New("用户不存在")
 	}
-	t0, err := dao.SelectTeamById(tid)
+	t0, err := dao.SelectTeamById(tmid)
 	if err != nil {
 		log.Println(err)
 		return errors.New("团队不存在")
@@ -55,7 +55,7 @@ func DeleteUser(tid uint64, delUid uint64, uid uint64, role entity.Role) error {
 	}
 	for _, i := range t0.UserIds {
 		if i == delUid {
-			err = dao.DeleteTeamUser(cu)
+			err = dao.DeleteTeamUser(tu)
 			if err != nil {
 				log.Println(err)
 				return errors.New("删除用户失败")
