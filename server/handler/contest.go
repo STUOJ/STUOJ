@@ -54,8 +54,8 @@ type ReqContestAdd struct {
 	CollectionId uint64               `json:"collection_id" binding:"required"`
 	Format       entity.ContestFormat `json:"format" binding:"required"`
 	TeamSize     uint8                `json:"team_size" binding:"required"`
-	StartTime    time.Time            `json:"start_time" binding:"required"`
-	EndTime      time.Time            `json:"end_time" binding:"required"`
+	StartTime    string               `json:"start_time" binding:"required"`
+	EndTime      string               `json:"end_time" binding:"required"`
 }
 
 func ContestAdd(c *gin.Context) {
@@ -71,14 +71,26 @@ func ContestAdd(c *gin.Context) {
 		return
 	}
 
+	// 时间格式转换
+	startTime, err := time.Parse("2006-01-02 15:04:05", req.StartTime)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, model.RespError("时间格式错误", nil))
+		return
+	}
+	endTime, err := time.Parse("2006-01-02 15:04:05", req.EndTime)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, model.RespError("时间格式错误", nil))
+		return
+	}
+
 	// 初始化比赛
 	ct := entity.Contest{
 		UserId:       uid,
 		CollectionId: req.CollectionId,
 		Format:       req.Format,
 		TeamSize:     req.TeamSize,
-		StartTime:    req.StartTime,
-		EndTime:      req.EndTime,
+		StartTime:    startTime,
+		EndTime:      endTime,
 	}
 
 	// 插入题单
@@ -99,8 +111,8 @@ type ReqContestModify struct {
 	Status       entity.ContestStatus `json:"status" binding:"required"`
 	Format       entity.ContestFormat `json:"format" binding:"required"`
 	TeamSize     uint8                `json:"team_size" binding:"required"`
-	StartTime    time.Time            `json:"start_time" binding:"required"`
-	EndTime      time.Time            `json:"end_time" binding:"required"`
+	StartTime    string               `json:"start_time" binding:"required"`
+	EndTime      string               `json:"end_time" binding:"required"`
 }
 
 func ContestModify(c *gin.Context) {
@@ -116,6 +128,18 @@ func ContestModify(c *gin.Context) {
 		return
 	}
 
+	// 时间格式转换
+	startTime, err := time.Parse("2006-01-02 15:04:05", req.StartTime)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, model.RespError("时间格式错误", nil))
+		return
+	}
+	endTime, err := time.Parse("2006-01-02 15:04:05", req.EndTime)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, model.RespError("时间格式错误", nil))
+		return
+	}
+
 	// 初始化题单
 	coll := entity.Contest{
 		Id:           req.Id,
@@ -124,8 +148,8 @@ func ContestModify(c *gin.Context) {
 		Status:       req.Status,
 		Format:       req.Format,
 		TeamSize:     req.TeamSize,
-		StartTime:    req.StartTime,
-		EndTime:      req.EndTime,
+		StartTime:    startTime,
+		EndTime:      endTime,
 	}
 
 	err = contest.Update(coll, uid, role)
