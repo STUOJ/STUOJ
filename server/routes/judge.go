@@ -34,3 +34,18 @@ func InitRecordRoute(ginServer *gin.Engine) {
 		recordAdminRoute.DELETE("/:id", handler.RecordRemove)
 	}
 }
+
+func InitLanguageRoute(ginServer *gin.Engine) {
+	languagePublicRouter := ginServer.Group("/language")
+	{
+		languagePublicRouter.GET("/list", handler.LanguageList)
+	}
+
+	languageAdminRouter := ginServer.Group("/language")
+	{
+		// 使用中间件
+		languageAdminRouter.Use(middlewares.TokenAuthAdmin())
+
+		languageAdminRouter.PUT("/update", handler.UpdateLanguage)
+	}
+}

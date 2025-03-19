@@ -20,24 +20,42 @@ func InitRoute() error {
 		c.JSON(http.StatusNotFound, model.RespError("404 Not Found", nil))
 	})
 
+	// 使用中间件
 	ginServer.Use(middlewares.TokenGetInfo())
 
 	// 初始化路由
+
+	// routes/user.go
 	routes.InitUserRoute(ginServer)
+
+	// routes/problem.go
 	routes.InitProblemRoute(ginServer)
 	routes.InitTagRoute(ginServer)
 	routes.InitSolutionRoute(ginServer)
 	routes.InitTestcaseRoute(ginServer)
 	routes.InitCollectionRoute(ginServer)
-	routes.InitContestRoute(ginServer)
+
+	// routes/judge.go
 	routes.InitJudgeRoute(ginServer)
-	routes.InitLanguageRoute(ginServer)
 	routes.InitRecordRoute(ginServer)
+	routes.InitLanguageRoute(ginServer)
+
+	// routes/contest.go
+	routes.InitContestRoute(ginServer)
+	routes.InitTeamRoute(ginServer)
+
+	// routes/blog.go
 	routes.InitBlogRoute(ginServer)
 	routes.InitCommentRoute(ginServer)
-	routes.InitAiRouter(ginServer)
+
+	// routes/statistics.go
 	routes.InitStatisticsRoute(ginServer)
+
+	// routes/system.go
 	routes.InitSystemRoute(ginServer)
+
+	// routes/misc.go
+	routes.InitAiRouter(ginServer)
 	routes.InitMiscRoute(ginServer)
 
 	return nil
