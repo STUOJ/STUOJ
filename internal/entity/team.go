@@ -1,9 +1,5 @@
 package entity
 
-import (
-	"time"
-)
-
 // TeamStatus 团队状态: 1 禁止, 2 无效, 3 有效
 type TeamStatus uint8
 
@@ -34,8 +30,6 @@ type Team struct {
 	Name        string     `gorm:"type:text;not null;comment:队名" json:"name"`
 	Description string     `gorm:"type:longtext;not null;comment:简介" json:"description"`
 	Status      TeamStatus `gorm:"not null;default:1;comment:状态" json:"status"`
-	CreateTime  time.Time  `gorm:"type:timestamp;not null;default:CURRENT_TIMESTAMP;comment:创建时间" json:"create_time"`
-	UpdateTime  time.Time  `gorm:"type:timestamp;not null;default:CURRENT_TIMESTAMP;comment:更新时间" json:"update_time"`
 	User        User       `gorm:"foreignKey:UserId;references:Id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"user"`
 	Contest     Contest    `gorm:"foreignKey:ContestId;references:Id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"contest"`
 	UserIds     []uint64   `gorm:"-" json:"user_ids"`
