@@ -75,7 +75,9 @@ func (con *ContestWhere) GenerateWhereWithNoPage() func(*gorm.DB) *gorm.DB {
 		}
 		query := []string{"tbl_contest.*"}
 		query = append(query, briefUserSelect()...)
+		query = append(query, briefCollectionSelect()...)
 		where = briefUserJoins(where, "tbl_contest")
+		where = briefCollectionJoins(where, "tbl_contest")
 
 		return where.Select(query)
 	}

@@ -45,6 +45,11 @@ func SelectContestById(id uint64) (entity.Contest, error) {
 		Role:     auxiliaryContest.Role,
 		Avatar:   auxiliaryContest.Avatar,
 	}
+	ct.Collection = entity.Collection{
+		Id:          auxiliaryContest.CollectionId,
+		Title:       auxiliaryContest.Title,
+		Description: auxiliaryContest.Description,
+	}
 
 	return ct, nil
 }
@@ -62,14 +67,19 @@ func SelectContests(condition model.ContestWhere) ([]entity.Contest, error) {
 		return nil, tx.Error
 	}
 	for _, auxiliaryContest := range auxiliaryContests {
-		contest := auxiliaryContest.Contest
-		contest.User = entity.User{
+		ct := auxiliaryContest.Contest
+		ct.User = entity.User{
 			Id:       auxiliaryContest.UserId,
 			Username: auxiliaryContest.Username,
 			Role:     auxiliaryContest.Role,
 			Avatar:   auxiliaryContest.Avatar,
 		}
-		contests = append(contests, contest)
+		ct.Collection = entity.Collection{
+			Id:          auxiliaryContest.CollectionId,
+			Title:       auxiliaryContest.Title,
+			Description: auxiliaryContest.Description,
+		}
+		contests = append(contests, ct)
 	}
 
 	return contests, nil
