@@ -42,7 +42,7 @@ func SelectById(id uint64, userId uint64, role entity.Role) (entity.Collection, 
 	pCondition.Size.Set(uint64(100))
 	pCondition.ScoreUserId.Set(userId)
 	pCondition.OrderBy.Set(fmt.Sprintf("FIELD(tbl_problem.id,%s)", utils.Uint64SliceToString(c.ProblemIds)))
-	c.Problem, err = dao.SelectProblems(pCondition)
+	c.Problems, err = dao.SelectProblems(pCondition)
 	if err != nil {
 		return c, errors.New("获取题目信息失败")
 	}
