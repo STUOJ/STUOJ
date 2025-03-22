@@ -1,6 +1,6 @@
 package db
 
-import "STUOJ/internal/entity"
+import "STUOJ/internal/db/entity"
 
 func autoMigrate() error {
 	err := Db.AutoMigrate(

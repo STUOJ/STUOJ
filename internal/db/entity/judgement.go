@@ -60,17 +60,17 @@ func (s JudgeStatus) String() string {
 
 // Judgement 评测点结果
 type Judgement struct {
-	Id            uint64      `gorm:"primaryKey;autoIncrement;comment:评测点ID" json:"id"`
-	SubmissionId  uint64      `gorm:"not null;default:0;comment:提交记录ID" json:"submission_id"`
-	TestcaseId    uint64      `gorm:"not null;default:0;comment:评测点ID" json:"testcase_id"`
-	Time          float64     `gorm:"not null;default:0;comment:运行耗时（s）" json:"time"`
-	Memory        uint64      `gorm:"not null;default:0;comment:内存（kb）" json:"memory"`
-	Stdout        string      `gorm:"type:longtext;not null;comment:标准输出" json:"stdout"`
-	Stderr        string      `gorm:"type:longtext;not null;comment:标准错误输出" json:"stderr"`
-	CompileOutput string      `gorm:"type:longtext;not null;comment:编译输出" json:"compile_output"`
-	Message       string      `gorm:"type:longtext;not null;comment:信息" json:"message"`
-	Status        JudgeStatus `gorm:"not null;default:1;comment:状态" json:"status"`
-	Submission    Submission  `gorm:"foreignKey:SubmissionId;references:Id;constraint:OnUpdate:RESTRICT,OnDelete:CASCADE" json:"-"`
+	Id            uint64      `gorm:"primaryKey;autoIncrement;comment:评测点ID"`
+	SubmissionId  uint64      `gorm:"not null;default:0;comment:提交记录ID"`
+	TestcaseId    uint64      `gorm:"not null;default:0;comment:评测点ID"`
+	Time          float64     `gorm:"not null;default:0;comment:运行耗时（s）"`
+	Memory        uint64      `gorm:"not null;default:0;comment:内存（kb）"`
+	Stdout        string      `gorm:"type:longtext;not null;comment:标准输出"`
+	Stderr        string      `gorm:"type:longtext;not null;comment:标准错误输出"`
+	CompileOutput string      `gorm:"type:longtext;not null;comment:编译输出"`
+	Message       string      `gorm:"type:longtext;not null;comment:信息"`
+	Status        JudgeStatus `gorm:"not null;default:1;comment:状态"`
+	Submission    Submission  `gorm:"foreignKey:SubmissionId;references:Id;constraint:OnUpdate:RESTRICT,OnDelete:CASCADE"`
 }
 
 func (Judgement) TableName() string {
