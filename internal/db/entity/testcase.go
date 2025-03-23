@@ -1,5 +1,6 @@
 package entity
 
+//go:generate go run ../../../utils/gen/field_select.go -struct=Testcase
 // Testcase 测试用例
 type Testcase struct {
 	Id         uint64  `gorm:"primaryKey;autoIncrement;comment:评测点ID"`

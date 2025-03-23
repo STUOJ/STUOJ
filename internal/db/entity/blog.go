@@ -3,7 +3,7 @@ package entity
 import "time"
 
 // BlogStatus 状态：1 屏蔽, 2 草稿, 3 公开, 4 公告
-//go:generate go run ../../utils/gen/enum_valid.go BlogStatus entity
+//go:generate go run ../../../utils/gen/enum_valid.go BlogStatus entity
 type BlogStatus uint8
 
 const (
@@ -28,6 +28,7 @@ func (s BlogStatus) String() string {
 	}
 }
 
+//go:generate go run ../../../utils/gen/field_select.go -struct=Blog
 // Blog 博客
 type Blog struct {
 	Id         uint64     `gorm:"primaryKey;autoIncrement;comment:博客ID"`

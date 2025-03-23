@@ -3,7 +3,7 @@ package entity
 import "time"
 
 // CommentStatus 状态：1 屏蔽, 2 公开
-//go:generate go run ../../utils/gen/enum_valid.go CommentStatus entity
+//go:generate go run ../../../utils/gen/enum_valid.go CommentStatus entity
 type CommentStatus uint8
 
 const (
@@ -22,6 +22,7 @@ func (s CommentStatus) String() string {
 	}
 }
 
+//go:generate go run ../../../utils/gen/field_select.go -struct=Comment
 // Comment 评论
 type Comment struct {
 	Id         uint64        `gorm:"primaryKey;autoIncrement;comment:评论ID"`

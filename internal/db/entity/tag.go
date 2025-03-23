@@ -1,5 +1,6 @@
 package entity
 
+//go:generate go run ../../../utils/gen/field_select.go -struct=Tag
 // 标签
 type Tag struct {
 	Id   uint64 `gorm:"primaryKey;autoIncrement;comment:标签ID"`

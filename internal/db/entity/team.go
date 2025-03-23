@@ -22,6 +22,7 @@ func (s TeamStatus) String() string {
 	}
 }
 
+//go:generate go run ../../../utils/gen/field_select.go -struct=Team
 // Team 团队
 type Team struct {
 	Id          uint64     `gorm:"primaryKey;autoIncrement;comment:团队ID"`

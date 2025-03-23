@@ -58,6 +58,7 @@ func (s JudgeStatus) String() string {
 	}
 }
 
+//go:generate go run ../../../utils/gen/field_select.go -struct=Judgement
 // Judgement 评测点结果
 type Judgement struct {
 	Id            uint64      `gorm:"primaryKey;autoIncrement;comment:评测点ID"`

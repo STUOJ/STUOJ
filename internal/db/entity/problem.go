@@ -6,7 +6,7 @@ import (
 
 // Difficulty 难度：0 未知，1 入门，2 简单，3 中等，4 较难，5 困难，6 超难
 //
-//go:generate go run ../../utils/gen/enum_valid.go Difficulty entity
+//go:generate go run ../../../utils/gen/enum_valid.go Difficulty entity
 type Difficulty uint8
 
 const (
@@ -69,6 +69,8 @@ func (s ProblemStatus) String() string {
 }
 
 // Problem 题目
+//
+//go:generate go run ../../../utils/gen/field_select.go -struct=Problem
 type Problem struct {
 	Id           uint64        `gorm:"primaryKey;autoIncrement;comment:题目ID"`
 	Title        string        `gorm:"type:text;not null;comment:标题"`

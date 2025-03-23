@@ -6,7 +6,7 @@ import (
 
 // CollectionStatus 题单状态: 1 私有, 2 公开
 //
-//go:generate go run ../../utils/gen/enum_valid.go CollectionStatus entity
+//go:generate go run ../../../utils/gen/enum_valid.go CollectionStatus entity
 type CollectionStatus uint8
 
 const (
@@ -25,6 +25,7 @@ func (s CollectionStatus) String() string {
 	}
 }
 
+//go:generate go run ../../../utils/gen/field_select.go -struct=Collection
 type Collection struct {
 	Id          uint64           `gorm:"primaryKey;autoIncrement;comment:题单ID"`
 	UserId      uint64           `gorm:"not null;default:0;comment:用户ID"`
