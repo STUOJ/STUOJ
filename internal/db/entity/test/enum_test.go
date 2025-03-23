@@ -1,7 +1,7 @@
 package entity_test
 
 import (
-	"STUOJ/internal/entity"
+	"STUOJ/internal/db/entity"
 	"STUOJ/internal/model"
 	"testing"
 )
