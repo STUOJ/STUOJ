@@ -173,6 +173,10 @@ type {{.StructName}}Field struct {
 {{- end }}
 }
 
+func New{{.StructName}}Field() *{{.StructName}}Field {
+    return &{{.StructName}}Field{}
+}
+
 func (f *{{.StructName}}Field) SelectedColumns() []string {
     columns := make([]string, 0)
 {{- range .Fields }}
