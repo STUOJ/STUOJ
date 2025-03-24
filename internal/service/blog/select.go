@@ -20,7 +20,7 @@ func SelectById(id uint64, userId uint64, role entity.Role) (entity.Blog, error)
 		log.Println(err)
 		return entity.Blog{}, errors.New("获取博客失败")
 	}
-	if b.Status != entity.BlogPublic && role < entity.RoleAdmin && b.UserId != userId {
+	if b.Status >= entity.BlogPublic && role < entity.RoleAdmin && b.UserId != userId {
 		return entity.Blog{}, errors.New("该博客未公开")
 	}
 	return b, nil
