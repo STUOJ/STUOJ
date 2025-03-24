@@ -1,5 +1,6 @@
 package entity
 
+//go:generate go run ../../../utils/gen/enum_valid.go TeamStatus
 // TeamStatus 团队状态: 1 禁止, 2 无效, 3 有效
 type TeamStatus uint8
 
