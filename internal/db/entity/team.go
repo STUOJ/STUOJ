@@ -40,6 +40,7 @@ func (Team) TableName() string {
 	return "tbl_team"
 }
 
+//go:generate go run ../../../utils/gen/field_select.go -struct=TeamUser
 // TeamUser 团队用户关联
 type TeamUser struct {
 	TeamId uint64 `gorm:"primaryKey;not null;default:0;comment:团队ID"`
@@ -52,6 +53,7 @@ func (TeamUser) TableName() string {
 	return "tbl_team_user"
 }
 
+//go:generate go run ../../../utils/gen/field_select.go -struct=TeamSubmission
 // TeamSubmission 团队提交关联
 type TeamSubmission struct {
 	TeamId       uint64     `gorm:"primaryKey;not null;default:0;comment:团队ID"`

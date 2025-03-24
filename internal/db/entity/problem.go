@@ -94,6 +94,8 @@ func (Problem) TableName() string {
 }
 
 // 题目标签关系
+//
+//go:generate go run ../../../utils/gen/field_select.go -struct=ProblemTag
 type ProblemTag struct {
 	ProblemId uint64  `gorm:"primaryKey;not null;default:0;comment:题目ID"`
 	TagId     uint64  `gorm:"primaryKey;not null;default:0;comment:标签ID"`

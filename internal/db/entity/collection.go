@@ -41,6 +41,7 @@ func (Collection) TableName() string {
 	return "tbl_collection"
 }
 
+//go:generate go run ../../../utils/gen/field_select.go -struct=CollectionUser
 type CollectionUser struct {
 	CollectionId uint64     `gorm:"not null;default:0;primaryKey;comment:题单ID"`
 	UserId       uint64     `gorm:"not null;default:0;primaryKey;comment:用户ID"`
@@ -52,6 +53,7 @@ func (CollectionUser) TableName() string {
 	return "tbl_collection_user"
 }
 
+//go:generate go run ../../../utils/gen/field_select.go -struct=CollectionProblem
 type CollectionProblem struct {
 	CollectionId uint64     `gorm:"not null;default:0;primaryKey;comment:题单ID"`
 	ProblemId    uint64     `gorm:"not null;default:0;primaryKey;comment:题目ID"`
