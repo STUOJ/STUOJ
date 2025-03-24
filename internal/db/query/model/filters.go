@@ -29,9 +29,19 @@ type FilterCondition struct {
 	Value    any
 }
 
+func (f *FilterCondition) String() string {
+	return fmt.Sprintf("FilterCondition{Field: %s, Operator: %s, Value: %v}", f.Field, f.Operator, f.Value)
+}
+
 type Filters struct {
 	Conditions []FilterCondition
 	Errors     []error
+}
+
+func NewFilters() *Filters { return &Filters{} }
+
+func (f *Filters) String() string {
+	return fmt.Sprintf("Filters{Conditions: %v, Errors: %v}", f.Conditions, f.Errors)
 }
 
 func (f *Filters) Add(field string, operator FilterOperator, values ...any) (err error) {
