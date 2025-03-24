@@ -1,11 +1,14 @@
 package model
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+)
 
 type QueryOptions struct {
 	Filters Filters    // 过滤条件列表
 	Sort    Sort       // 排序条件
 	Page    Pagination // 分页条件
+	Field   FieldSelector
 	Errors  []error
 }
 
@@ -24,6 +27,9 @@ func (q *QueryOptions) GenerateQuery() func(*gorm.DB) *gorm.DB {
 		}
 		if q.Page.PageSize > 0 {
 			db = q.Page.GeneratePage()(db)
+		}
+		if q.Field != nil {
+			db = db.Select(q.Field.SelectedColumns())
 		}
 		return db
 	}
