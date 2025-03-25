@@ -1,5 +1,6 @@
 package entity
 
+//go:generate go run ../../../utils/gen/dao_store.go -struct=Testcase
 //go:generate go run ../../../utils/gen/field_select.go -struct=Testcase
 // Testcase 测试用例
 type Testcase struct {

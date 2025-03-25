@@ -23,6 +23,7 @@ func (s LanguageStatus) String() string {
 	}
 }
 
+//go:generate go run ../../../utils/gen/dao_store.go -struct=Language
 //go:generate go run ../../../utils/gen/field_select.go -struct=Language
 // Language 编程语言
 type Language struct {

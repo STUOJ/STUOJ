@@ -25,6 +25,7 @@ func (s CollectionStatus) String() string {
 	}
 }
 
+//go:generate go run ../../../utils/gen/dao_store.go -struct=Collection
 //go:generate go run ../../../utils/gen/field_select.go -struct=Collection
 type Collection struct {
 	Id          uint64           `gorm:"primaryKey;autoIncrement;comment:题单ID"`
@@ -41,6 +42,7 @@ func (Collection) TableName() string {
 	return "tbl_collection"
 }
 
+//go:generate go run ../../../utils/gen/dao_store.go -struct=CollectionUser
 //go:generate go run ../../../utils/gen/field_select.go -struct=CollectionUser
 type CollectionUser struct {
 	CollectionId uint64     `gorm:"not null;default:0;primaryKey;comment:题单ID"`
@@ -53,6 +55,7 @@ func (CollectionUser) TableName() string {
 	return "tbl_collection_user"
 }
 
+//go:generate go run ../../../utils/gen/dao_store.go -struct=CollectionProblem
 //go:generate go run ../../../utils/gen/field_select.go -struct=CollectionProblem
 type CollectionProblem struct {
 	CollectionId uint64     `gorm:"not null;default:0;primaryKey;comment:题单ID"`

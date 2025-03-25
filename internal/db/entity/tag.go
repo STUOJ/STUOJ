@@ -1,5 +1,6 @@
 package entity
 
+//go:generate go run ../../../utils/gen/dao_store.go -struct=Tag
 //go:generate go run ../../../utils/gen/field_select.go -struct=Tag
 // 标签
 type Tag struct {

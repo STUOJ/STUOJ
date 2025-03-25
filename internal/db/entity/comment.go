@@ -22,6 +22,7 @@ func (s CommentStatus) String() string {
 	}
 }
 
+//go:generate go run ../../../utils/gen/dao_store.go -struct=Comment
 //go:generate go run ../../../utils/gen/field_select.go -struct=Comment
 // Comment 评论
 type Comment struct {

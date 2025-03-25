@@ -28,6 +28,7 @@ func (s BlogStatus) String() string {
 	}
 }
 
+//go:generate go run ../../../utils/gen/dao_store.go -struct=Blog
 //go:generate go run ../../../utils/gen/field_select.go -struct=Blog
 // Blog 博客
 type Blog struct {

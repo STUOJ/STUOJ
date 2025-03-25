@@ -23,6 +23,7 @@ func (s TeamStatus) String() string {
 	}
 }
 
+//go:generate go run ../../../utils/gen/dao_store.go -struct=Team
 //go:generate go run ../../../utils/gen/field_select.go -struct=Team
 // Team 团队
 type Team struct {
@@ -40,6 +41,7 @@ func (Team) TableName() string {
 	return "tbl_team"
 }
 
+//go:generate go run ../../../utils/gen/dao_store.go -struct=TeamUser
 //go:generate go run ../../../utils/gen/field_select.go -struct=TeamUser
 // TeamUser 团队用户关联
 type TeamUser struct {
@@ -53,6 +55,7 @@ func (TeamUser) TableName() string {
 	return "tbl_team_user"
 }
 
+//go:generate go run ../../../utils/gen/dao_store.go -struct=TeamSubmission
 //go:generate go run ../../../utils/gen/field_select.go -struct=TeamSubmission
 // TeamSubmission 团队提交关联
 type TeamSubmission struct {

@@ -70,6 +70,7 @@ func (s ProblemStatus) String() string {
 
 // Problem 题目
 //
+//go:generate go run ../../../utils/gen/dao_store.go -struct=Problem
 //go:generate go run ../../../utils/gen/field_select.go -struct=Problem
 type Problem struct {
 	Id           uint64        `gorm:"primaryKey;autoIncrement;comment:题目ID"`
@@ -95,6 +96,7 @@ func (Problem) TableName() string {
 
 // 题目标签关系
 //
+//go:generate go run ../../../utils/gen/dao_store.go -struct=ProblemTag
 //go:generate go run ../../../utils/gen/field_select.go -struct=ProblemTag
 type ProblemTag struct {
 	ProblemId uint64  `gorm:"primaryKey;not null;default:0;comment:题目ID"`

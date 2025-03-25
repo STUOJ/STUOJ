@@ -6,6 +6,7 @@ import (
 
 // Submission 提交信息
 //
+//go:generate go run ../../../utils/gen/dao_store.go -struct=Submission
 //go:generate go run ../../../utils/gen/field_select.go -struct=Submission
 type Submission struct {
 	Id         uint64      `gorm:"primaryKey;autoIncrement;comment:提交记录ID"`

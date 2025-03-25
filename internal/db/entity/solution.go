@@ -1,5 +1,6 @@
 package entity
 
+//go:generate go run ../../../utils/gen/dao_store.go -struct=Solution
 //go:generate go run ../../../utils/gen/field_select.go -struct=Solution
 // 题解
 type Solution struct {
