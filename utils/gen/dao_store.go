@@ -25,7 +25,7 @@ package dao
 import (
 	"STUOJ/internal/db"
 	"STUOJ/internal/db/entity"
-	"STUOJ/internal/db/query/model"
+	"STUOJ/internal/db/query/option"
 	"gorm.io/gorm"
 )
 
@@ -42,9 +42,9 @@ func (store *_{{.StructName}}Store) Insert(entity_ entity.{{.StructName}}) (enti
 }
 
 // 查询记录
-func (store *_{{.StructName}}Store) Select(option model.QueryOptions) ([]entity.{{.StructName}}, error) {
+func (store *_{{.StructName}}Store) Select(options option.QueryOptions) ([]entity.{{.StructName}}, error) {
 	var entities []entity.{{.StructName}}
-	where := option.GenerateQuery()
+	where := options.GenerateQuery()
 	err := db.Db.Transaction(func(tx *gorm.DB) error {
 		return tx.Model(&entity.{{.StructName}}{}).Where(where).Find(&entities).Error
 	})
@@ -52,9 +52,9 @@ func (store *_{{.StructName}}Store) Select(option model.QueryOptions) ([]entity.
 }
 
 // 查询单条记录
-func (store *_{{.StructName}}Store) SelectOne(option model.QueryOptions) (entity.{{.StructName}}, error) {
+func (store *_{{.StructName}}Store) SelectOne(options option.QueryOptions) (entity.{{.StructName}}, error) {
 	var entity_ entity.{{.StructName}}
-	where := option.GenerateQuery()
+	where := options.GenerateQuery()
 	err := db.Db.Transaction(func(tx *gorm.DB) error {
 		return tx.Model(&entity.{{.StructName}}{}).Where(where).First(&entity_).Error
 	})
@@ -62,9 +62,9 @@ func (store *_{{.StructName}}Store) SelectOne(option model.QueryOptions) (entity
 }
 
 // 更新记录
-func (store *_{{.StructName}}Store) Updates(entity_ entity.{{.StructName}}, option model.QueryOptions) (int64, error) {
+func (store *_{{.StructName}}Store) Updates(entity_ entity.{{.StructName}}, options option.QueryOptions) (int64, error) {
 	var affected int64
-	where := option.GenerateQuery()
+	where := options.GenerateQuery()
 	err := db.Db.Transaction(func(tx *gorm.DB) error {
 		res := tx.Model(&entity.{{.StructName}}{}).Where(where).Updates(entity_)
 		affected = res.RowsAffected
@@ -74,17 +74,17 @@ func (store *_{{.StructName}}Store) Updates(entity_ entity.{{.StructName}}, opti
 }
 
 // 删除记录
-func (store *_{{.StructName}}Store) Delete(option model.QueryOptions) error {
-	where := option.GenerateQuery()
+func (store *_{{.StructName}}Store) Delete(options option.QueryOptions) error {
+	where := options.GenerateQuery()
 	return db.Db.Transaction(func(tx *gorm.DB) error {
 		return tx.Where(where).Delete(&entity.{{.StructName}}{}).Error
 	})
 }
 
 // 统计数量
-func (store *_{{.StructName}}Store) Count(option model.QueryOptions) (int64, error) {
+func (store *_{{.StructName}}Store) Count(options option.QueryOptions) (int64, error) {
 	var count int64
-	where := option.GenerateQuery()
+	where := options.GenerateQuery()
 	err := db.Db.Transaction(func(tx *gorm.DB) error {
 		return tx.Model(&entity.{{.StructName}}{}).Where(where).Count(&count).Error
 	})
