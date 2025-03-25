@@ -42,7 +42,7 @@ func (store *_{{.StructName}}Store) Insert(entity_ entity.{{.StructName}}) (enti
 }
 
 // 查询记录
-func (store *_{{.StructName}}Store) Select(options option.QueryOptions) ([]entity.{{.StructName}}, error) {
+func (store *_{{.StructName}}Store) Select(options *option.QueryOptions) ([]entity.{{.StructName}}, error) {
 	var entities []entity.{{.StructName}}
 	where := options.GenerateQuery()
 	err := db.Db.Transaction(func(tx *gorm.DB) error {
@@ -52,7 +52,7 @@ func (store *_{{.StructName}}Store) Select(options option.QueryOptions) ([]entit
 }
 
 // 查询单条记录
-func (store *_{{.StructName}}Store) SelectOne(options option.QueryOptions) (entity.{{.StructName}}, error) {
+func (store *_{{.StructName}}Store) SelectOne(options *option.QueryOptions) (entity.{{.StructName}}, error) {
 	var entity_ entity.{{.StructName}}
 	where := options.GenerateQuery()
 	err := db.Db.Transaction(func(tx *gorm.DB) error {
@@ -62,7 +62,7 @@ func (store *_{{.StructName}}Store) SelectOne(options option.QueryOptions) (enti
 }
 
 // 更新记录
-func (store *_{{.StructName}}Store) Updates(entity_ entity.{{.StructName}}, options option.QueryOptions) (int64, error) {
+func (store *_{{.StructName}}Store) Updates(entity_ entity.{{.StructName}}, options *option.QueryOptions) (int64, error) {
 	var affected int64
 	where := options.GenerateQuery()
 	err := db.Db.Transaction(func(tx *gorm.DB) error {
@@ -74,7 +74,7 @@ func (store *_{{.StructName}}Store) Updates(entity_ entity.{{.StructName}}, opti
 }
 
 // 删除记录
-func (store *_{{.StructName}}Store) Delete(options option.QueryOptions) error {
+func (store *_{{.StructName}}Store) Delete(options *option.QueryOptions) error {
 	where := options.GenerateQuery()
 	return db.Db.Transaction(func(tx *gorm.DB) error {
 		return tx.Where(where).Delete(&entity.{{.StructName}}{}).Error
@@ -82,7 +82,7 @@ func (store *_{{.StructName}}Store) Delete(options option.QueryOptions) error {
 }
 
 // 统计数量
-func (store *_{{.StructName}}Store) Count(options option.QueryOptions) (int64, error) {
+func (store *_{{.StructName}}Store) Count(options *option.QueryOptions) (int64, error) {
 	var count int64
 	where := options.GenerateQuery()
 	err := db.Db.Transaction(func(tx *gorm.DB) error {
