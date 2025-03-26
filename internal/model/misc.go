@@ -1,6 +1,7 @@
 package model
 
 import (
+	"STUOJ/internal/db/query/option"
 	"STUOJ/utils"
 	"errors"
 	"fmt"
@@ -9,7 +10,6 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
 type Page struct {
@@ -107,10 +107,51 @@ func (f *FieldList[T]) Parse(c *gin.Context, name string) error {
 	return nil
 }
 
-type ConditonWhere interface {
+type QueryContext interface {
 	Parse(c gin.Context)
-	GenerateWhere() func(gorm.DB) gorm.DB
-	GenerateWhereWithNoPage() func(gorm.DB) gorm.DB
+	GenerateOptions() *option.QueryOptions
+}
+
+type QuerySort struct {
+	Order   Field[string]
+	OrderBy Field[string]
+}
+
+func (s *QuerySort) Parse(c *gin.Context) {
+	s.Order.Parse(c, "order")
+	s.OrderBy.Parse(c, "order_by")
+}
+
+func (s *QuerySort) InsertOptions(options *option.QueryOptions) *option.QueryOptions {
+	if s.Order.Exist() && s.OrderBy.Exist() {
+		var order option.SortOrder
+		if s.Order.Value() == "asc" {
+			order = option.OrderAsc
+		} else {
+			order = option.OrderDesc
+		}
+		options.Sort = option.NewSortQuery(s.OrderBy.Value(), order)
+	}
+	return options
+}
+
+type QueryPage struct {
+	Page  Field[int]
+	Size  Field[int]
+	Total Field[int]
+}
+
+func (p *QueryPage) Parse(c *gin.Context) {
+	p.Page.Parse(c, "page")
+	p.Size.Parse(c, "size")
+	p.Total.Parse(c, "total")
+}
+
+func (p *QueryPage) InsertOptions(options *option.QueryOptions) *option.QueryOptions {
+	if p.Page.Exist() && p.Size.Exist() {
+		options.Page = option.NewPagination(p.Page.Value(), p.Size.Value())
+	}
+	return options
 }
 
 // 时间范围
