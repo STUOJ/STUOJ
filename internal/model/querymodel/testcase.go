@@ -8,20 +8,20 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type TestcaseQuery struct {
+type TestcaseQueryModel struct {
 	Id        model.FieldList[uint64]
 	ProblemId model.FieldList[uint64]
 	Page      model.QueryPage
 	Sort      model.QuerySort
 }
 
-func (query *TestcaseQuery) Parse(c *gin.Context) {
+func (query *TestcaseQueryModel) Parse(c *gin.Context) {
 	query.ProblemId.Parse(c, "problem")
 	query.Page.Parse(c)
 	query.Sort.Parse(c)
 }
 
-func (query *TestcaseQuery) GenerateOptions() *option.QueryOptions {
+func (query *TestcaseQueryModel) GenerateOptions() *option.QueryOptions {
 	options := option.NewQueryOptions()
 	if query.Id.Exist() {
 		options.Filters.Add(field.TestcaseId, option.OpIn, query.Id.Value())

@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type UserQuery struct {
+type UserQueryModel struct {
 	Id        model.FieldList[uint64]
 	Username  model.Field[string]
 	Role      model.FieldList[uint8]
@@ -19,7 +19,7 @@ type UserQuery struct {
 	Sort      model.QuerySort
 }
 
-func (query *UserQuery) Parse(c *gin.Context) {
+func (query *UserQueryModel) Parse(c *gin.Context) {
 	query.Username.Parse(c, "username")
 	query.Id.Parse(c, "id")
 	query.Role.Parse(c, "role")
@@ -33,7 +33,7 @@ func (query *UserQuery) Parse(c *gin.Context) {
 	query.Sort.Parse(c)
 }
 
-func (query *UserQuery) GenerateOptions() *option.QueryOptions {
+func (query *UserQueryModel) GenerateOptions() *option.QueryOptions {
 	options := option.NewQueryOptions()
 	if query.Id.Exist() {
 		options.Filters.Add(field.UserId, option.OpIn, query.Id.Value())
