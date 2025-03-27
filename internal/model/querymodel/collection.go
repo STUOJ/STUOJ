@@ -13,6 +13,7 @@ type CollectionQueryModel struct {
 	Id        model.FieldList[uint64]
 	Title     model.Field[string]
 	UserId    model.FieldList[uint64]
+	ProblemId model.FieldList[uint64]
 	Status    model.FieldList[uint64]
 	StartTime model.Field[time.Time]
 	EndTime   model.Field[time.Time]
@@ -23,6 +24,7 @@ type CollectionQueryModel struct {
 func (query *CollectionQueryModel) Parse(c *gin.Context) {
 	query.Title.Parse(c, "title")
 	query.UserId.Parse(c, "user")
+	query.ProblemId.Parse(c, "problem")
 	query.Status.Parse(c, "status")
 	timePreiod := &model.Period{}
 	err := timePreiod.GetPeriod(c)
@@ -44,6 +46,9 @@ func (query *CollectionQueryModel) GenerateOptions() *option.QueryOptions {
 	}
 	if query.UserId.Exist() {
 		options.Filters.Add(field.CollectionUserId, option.OpIn, query.UserId.Value())
+	}
+	if query.ProblemId.Exist() {
+		options.Filters.Add(field.CollectionProblem, option.OpHave, query.ProblemId.Value())
 	}
 	if query.Status.Exist() {
 		options.Filters.Add(field.CollectionStatus, option.OpIn, query.Status.Value())
