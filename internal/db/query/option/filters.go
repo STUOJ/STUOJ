@@ -21,6 +21,7 @@ const (
 	OpNotLike   FilterOperator = "NOT LIKE"
 	OpIsNull    FilterOperator = "IS NULL"
 	OpIsNotNull FilterOperator = "IS NOT NULL"
+	OpHave      FilterOperator = "HAVE"
 )
 
 type FilterCondition struct {
@@ -61,13 +62,26 @@ func (f *Filters) Add(field string, operator FilterOperator, values ...any) (err
 			err = fmt.Errorf("%s operator requires at least one value", operator)
 			return
 		}
-		value = values
+		if reflect.TypeOf(values[0]).Kind() != reflect.Slice {
+			value = values
+		} else {
+			value = values[0]
+		}
 	case OpLike, OpNotLike:
 		if len(values) == 0 {
 			return fmt.Errorf("%s operator requires a value", operator)
 		}
 		if _, ok := values[0].(string); !ok {
 			return fmt.Errorf("%s requires string value (got %T)", operator, values[0])
+		}
+	case OpHave:
+		if len(values) == 0 {
+			return fmt.Errorf("%s operator requires a value", operator)
+		}
+		if reflect.TypeOf(values[0]).Kind() != reflect.Slice {
+			value = values
+		} else {
+			value = values[0]
 		}
 	default:
 		if len(values) == 0 {
@@ -113,6 +127,13 @@ func (f *Filters) applyCondition(db *gorm.DB, c FilterCondition) *gorm.DB {
 		return db.Where(fmt.Sprintf("%s %s ?", c.Field, c.Operator), "%"+c.Value.(string)+"%")
 	case OpIsNull, OpIsNotNull:
 		return db.Where(fmt.Sprintf("%s %s", c.Field, c.Operator))
+	case OpHave:
+		if reflect.TypeOf(c.Value).Kind() != reflect.Slice {
+			f.Errors = append(f.Errors,
+				fmt.Errorf("HAVE操作需要slice类型参数(字段:%s)", c.Field))
+			return db
+		}
+		return db.Where(c.Field, c.Value, len(c.Value.([]any)))
 	default:
 		f.Errors = append(f.Errors,
 			fmt.Errorf("不支持的运算符:%s (字段:%s)", c.Operator, c.Field))
