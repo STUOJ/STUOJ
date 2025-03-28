@@ -1,8 +1,12 @@
 package neko
 
-import "STUOJ/internal/conf"
+type NekoConf struct {
+	Host  string `yaml:"host" json:"host"`
+	Port  string `yaml:"port" json:"port"`
+	Token string `yaml:"token" json:"token"`
+}
 
 var (
-	config conf.NekoConf
+	config NekoConf
 	preUrl string
 )

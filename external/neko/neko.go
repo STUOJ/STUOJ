@@ -1,8 +1,6 @@
 package neko
 
 import (
-	"STUOJ/internal/conf"
-	"STUOJ/internal/model"
 	"bytes"
 	"encoding/json"
 	"errors"
@@ -11,8 +9,12 @@ import (
 	"net/http"
 )
 
-func InitNekoAcm() error {
-	config = conf.Conf.NekoAcm
+func InitNekoAcm(host, port, token string) error {
+	config = NekoConf{
+		Host:  host,
+		Port:  port,
+		Token: token,
+	}
 	preUrl = config.Host + ":" + config.Port + "/api"
 	log.Println("Connecting to NekoACM service: " + preUrl)
 
@@ -23,7 +25,7 @@ func InitNekoAcm() error {
 	}
 
 	// 解析返回值
-	var resp model.NekoResp
+	var resp NekoResp
 	err = json.Unmarshal([]byte(bodyStr), &resp)
 	if err != nil {
 		return err
