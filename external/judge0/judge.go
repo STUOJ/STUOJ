@@ -1,7 +1,6 @@
 package judge0
 
 import (
-	"STUOJ/internal/conf"
 	"bytes"
 	"errors"
 	"io"
@@ -9,8 +8,12 @@ import (
 	"net/http"
 )
 
-func InitJudge() error {
-	config = conf.Conf.Judge
+func InitJudge(host, port, token string) error {
+	config = JudgeConf{
+		Host:  host,
+		Port:  port,
+		Token: token,
+	}
 	preUrl = config.Host + ":" + config.Port
 	log.Println("Connecting to judge server: " + preUrl)
 	response, err := About()

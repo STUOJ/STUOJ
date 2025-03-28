@@ -1,52 +1,51 @@
 package judge0
 
 import (
-	"STUOJ/internal/model"
 	"bytes"
 	"encoding/json"
 	"strconv"
 )
 
-func Submit(submission model.JudgeSubmission) (model.JudgeSubmissionResult, error) {
+func Submit(submission JudgeSubmission) (JudgeResult, error) {
 	data, err := json.Marshal(submission)
 	if err != nil {
-		return model.JudgeSubmissionResult{}, err
+		return JudgeResult{}, err
 	}
 	bodystr, err := httpInteraction("/submissions", "POST", bytes.NewReader(data))
 	if err != nil {
-		return model.JudgeSubmissionResult{}, err
+		return JudgeResult{}, err
 	}
-	var result model.JudgeSubmissionResult
+	var result JudgeResult
 	err = json.Unmarshal([]byte(bodystr), &result)
 	if err != nil {
-		return model.JudgeSubmissionResult{}, err
+		return JudgeResult{}, err
 	}
 
 	return result, nil
 }
 
-func QueryResult(token string) (model.JudgeSubmissionResult, error) {
+func QueryResult(token string) (JudgeResult, error) {
 	bodystr, err := httpInteraction("/submissions"+"/"+token, "GET", nil)
 	if err != nil {
-		return model.JudgeSubmissionResult{}, err
+		return JudgeResult{}, err
 	}
-	var result model.JudgeSubmissionResult
+	var result JudgeResult
 	err = json.Unmarshal([]byte(bodystr), &result)
 	if err != nil {
-		return model.JudgeSubmissionResult{}, err
+		return JudgeResult{}, err
 	}
 	return result, nil
 }
 
-func QueryResults(page uint64, per_page uint64) (model.JudgeSubmissionResults, error) {
+func QueryResults(page uint64, per_page uint64) (JudgeSubmissionResults, error) {
 	bodystr, err := httpInteraction("/submissions"+"/?page="+strconv.FormatUint(page, 10)+"&per_page="+strconv.FormatUint(per_page, 10), "GET", nil)
 	if err != nil {
-		return model.JudgeSubmissionResults{}, err
+		return JudgeSubmissionResults{}, err
 	}
-	var results model.JudgeSubmissionResults
+	var results JudgeSubmissionResults
 	err = json.Unmarshal([]byte(bodystr), &results)
 	if err != nil {
-		return model.JudgeSubmissionResults{}, err
+		return JudgeSubmissionResults{}, err
 	}
 	return results, nil
 }

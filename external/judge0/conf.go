@@ -1,8 +1,12 @@
 package judge0
 
-import "STUOJ/internal/conf"
+type JudgeConf struct {
+	Host  string `yaml:"host" json:"host"`
+	Port  string `yaml:"port" json:"port"`
+	Token string `yaml:"token" json:"token"`
+}
 
 var (
-	config conf.JudgeConf
+	config JudgeConf
 	preUrl string
 )

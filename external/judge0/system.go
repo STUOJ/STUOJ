@@ -1,17 +1,15 @@
 package judge0
 
 import (
-	"STUOJ/internal/entity"
-	"STUOJ/internal/model"
 	"encoding/json"
 )
 
-func GetLanguage() ([]entity.Language, error) {
+func GetLanguage() ([]JudgeLanguage, error) {
 	bodystr, err := httpInteraction("/languages", "GET", nil)
 	if err != nil {
 		return nil, err
 	}
-	var languages []entity.Language
+	var languages []JudgeLanguage
 	err = json.Unmarshal([]byte(bodystr), &languages)
 	if err != nil {
 		return nil, err
@@ -19,64 +17,64 @@ func GetLanguage() ([]entity.Language, error) {
 	return languages, nil
 }
 
-func GetConfigInfo() (model.JudgeConfigInfo, error) {
+func GetConfigInfo() (JudgeConfigInfo, error) {
 	bodystr, err := httpInteraction("/config_info", "GET", nil)
 	if err != nil {
-		return model.JudgeConfigInfo{}, err
+		return JudgeConfigInfo{}, err
 	}
-	var config model.JudgeConfigInfo
+	var config JudgeConfigInfo
 	err = json.Unmarshal([]byte(bodystr), &config)
 	if err != nil {
-		return model.JudgeConfigInfo{}, err
+		return JudgeConfigInfo{}, err
 	}
 	return config, nil
 }
 
-func GetSystemInfo() (model.JudgeSystemInfo, error) {
+func GetSystemInfo() (JudgeSystemInfo, error) {
 	bodystr, err := httpInteraction("/system_info", "GET", nil)
 	if err != nil {
-		return model.JudgeSystemInfo{}, err
+		return JudgeSystemInfo{}, err
 	}
-	var system model.JudgeSystemInfo
+	var system JudgeSystemInfo
 	err = json.Unmarshal([]byte(bodystr), &system)
 	if err != nil {
-		return model.JudgeSystemInfo{}, err
+		return JudgeSystemInfo{}, err
 	}
 	return system, nil
 }
 
-func GetStatistics() (model.JudgeStatistics, error) {
+func GetStatistics() (JudgeStatistics, error) {
 	bodystr, err := httpInteraction("/statistics", "GET", nil)
 	if err != nil {
-		return model.JudgeStatistics{}, err
+		return JudgeStatistics{}, err
 	}
-	var statistics model.JudgeStatistics
+	var statistics JudgeStatistics
 	err = json.Unmarshal([]byte(bodystr), &statistics)
 	if err != nil {
-		return model.JudgeStatistics{}, err
+		return JudgeStatistics{}, err
 	}
 	return statistics, nil
 }
 
-func GetAbout() (model.JudgeAbout, error) {
+func GetAbout() (JudgeAbout, error) {
 	bodystr, err := httpInteraction("/about", "GET", nil)
 	if err != nil {
-		return model.JudgeAbout{}, err
+		return JudgeAbout{}, err
 	}
-	var about model.JudgeAbout
+	var about JudgeAbout
 	err = json.Unmarshal([]byte(bodystr), &about)
 	if err != nil {
-		return model.JudgeAbout{}, err
+		return JudgeAbout{}, err
 	}
 	return about, nil
 }
 
-func GetWorkers() ([]model.JudgeWorker, error) {
+func GetWorkers() ([]JudgeWorker, error) {
 	bodystr, err := httpInteraction("/workers", "GET", nil)
 	if err != nil {
 		return nil, err
 	}
-	var workers []model.JudgeWorker
+	var workers []JudgeWorker
 	err = json.Unmarshal([]byte(bodystr), &workers)
 	if err != nil {
 		return nil, err
