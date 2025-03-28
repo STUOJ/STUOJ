@@ -2,16 +2,17 @@ package bootstrap
 
 import (
 	"STUOJ/external/judge0"
-	"STUOJ/internal/dao"
-	"STUOJ/internal/entity"
-	"STUOJ/internal/model"
+	"STUOJ/internal/conf"
+	"STUOJ/internal/db/query/option"
+	"STUOJ/internal/domain/language"
+	"STUOJ/internal/domain/runner"
 	"STUOJ/utils"
 	"log"
 )
 
 func initJudge0() {
 	var err error
-	err = judge0.InitJudge()
+	err = judge0.InitJudge(conf.Conf.Judge.Host, conf.Conf.Judge.Port, conf.Conf.Judge.Token)
 	if err != nil {
 		log.Println(err)
 		log.Println("初始化评测机失败！")
@@ -38,28 +39,28 @@ func initJudge0() {
 // 初始化评测机语言
 func InitJudgeLanguages() error {
 	// 读取评测机语言列表
-	languages, err := judge0.GetLanguage()
+	languages, err := runner.Runner.GetLanguage()
 	if err != nil {
 		return err
 	}
 
-	oldLangs, err := dao.SelectLanguage(model.LanguageWhere{})
+	oldLangs, err := language.Query.Select(&option.QueryOptions{})
 	if err != nil {
 		return err
 	}
-	oldLangMap := make(map[string]*entity.Language, len(oldLangs))
+	oldLangMap := make(map[string]*language.Language, len(oldLangs))
 	for i := range oldLangs {
-		oldLangMap[oldLangs[i].Name] = &oldLangs[i]
+		oldLangMap[oldLangs[i].Name.String()] = &oldLangs[i]
 	}
 	for i := range languages {
 		if lang, exists := oldLangMap[languages[i].Name]; exists {
 			lang.MapId = uint32(languages[i].Id)
-			//log.Println(*lang)
-			if err := dao.UpdateLanguage(*lang); err != nil {
+			if err := lang.Update(); err != nil {
 				return err
 			}
 		} else {
-			if _, err := dao.InsertLanguage(entity.Language{Name: languages[i].Name, MapId: uint32(languages[i].Id)}); err != nil {
+			lang := language.NewLanguage(language.WithName(languages[i].Name), language.WithMapId(uint32(languages[i].Id)))
+			if _, err := lang.Create(); err != nil {
 				return err
 			}
 		}
