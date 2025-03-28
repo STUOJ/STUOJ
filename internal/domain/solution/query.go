@@ -12,7 +12,7 @@ type _Query struct{}
 
 var Query = new(_Query)
 
-func (query *_Query) Select(model querymodel.SolutionQueryModel) ([]Solution, error) {
+func (*_Query) Select(model querymodel.SolutionQueryModel) ([]Solution, error) {
 	queryOptions := model.GenerateOptions()
 	entitySolutions, err := dao.SolutionStore.Select(queryOptions)
 	if err != nil {
@@ -26,7 +26,7 @@ func (query *_Query) Select(model querymodel.SolutionQueryModel) ([]Solution, er
 	return solutions, nil
 }
 
-func (query *_Query) SelectById(id uint64) (Solution, error) {
+func (*_Query) SelectById(id uint64) (Solution, error) {
 	queryOptions := option.NewQueryOptions()
 	queryOptions.Filters.Add(field.SolutionId, option.OpEqual, id)
 	entitySolution, err := dao.SolutionStore.SelectOne(queryOptions)
@@ -36,7 +36,7 @@ func (query *_Query) SelectById(id uint64) (Solution, error) {
 	return *NewSolution().fromEntity(entitySolution), nil
 }
 
-func (query *_Query) SelectByProblemId(problemId uint64) ([]Solution, error) {
+func (*_Query) SelectByProblemId(problemId uint64) ([]Solution, error) {
 	queryOptions := option.NewQueryOptions()
 	queryOptions.Filters.Add(field.SolutionProblemId, option.OpEqual, problemId)
 	entitySolutions, err := dao.SolutionStore.Select(queryOptions)
@@ -51,7 +51,7 @@ func (query *_Query) SelectByProblemId(problemId uint64) ([]Solution, error) {
 	return solutions, nil
 }
 
-func (query *_Query) SelectByLanguageId(languageId uint64) ([]Solution, error) {
+func (*_Query) SelectByLanguageId(languageId uint64) ([]Solution, error) {
 	queryOptions := option.NewQueryOptions()
 	queryOptions.Filters.Add(field.SolutionLanguageId, option.OpEqual, languageId)
 	entitySolutions, err := dao.SolutionStore.Select(queryOptions)
@@ -66,7 +66,7 @@ func (query *_Query) SelectByLanguageId(languageId uint64) ([]Solution, error) {
 	return solutions, nil
 }
 
-func (query *_Query) Count(model querymodel.SolutionQueryModel) (int64, error) {
+func (*_Query) Count(model querymodel.SolutionQueryModel) (int64, error) {
 	queryOptions := model.GenerateOptions()
 	count, err := dao.SolutionStore.Count(queryOptions)
 	if err != nil {

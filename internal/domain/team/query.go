@@ -11,57 +11,57 @@ type _Query struct{}
 
 var Query = new(_Query)
 
-func (query *_Query) SelectById(id uint64) (*Team, error) {
+func (*_Query) SelectById(id uint64) (Team, error) {
 	options := option.NewQueryOptions()
 	options.Filters.Add(field.TeamId, option.OpEqual, id)
 	team, err := dao.TeamStore.SelectOne(options)
 	if err != nil {
-		return nil, errors.ErrNotFound.WithMessage(err.Error())
+		return Team{}, errors.ErrNotFound.WithMessage(err.Error())
 	}
-	return NewTeam().fromEntity(team), nil
+	return *NewTeam().fromEntity(team), nil
 }
 
-func (query *_Query) SelectByUserId(userId uint64) ([]*Team, error) {
+func (*_Query) SelectByUserId(userId uint64) ([]Team, error) {
 	options := option.NewQueryOptions()
 	options.Filters.Add(field.TeamUserId, option.OpEqual, userId)
 	teams, err := dao.TeamStore.Select(options)
 	if err != nil {
 		return nil, errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	var result []*Team
+	var result []Team
 	for _, team := range teams {
-		result = append(result, NewTeam().fromEntity(team))
+		result = append(result, *NewTeam().fromEntity(team))
 	}
 	return result, nil
 }
 
-func (query *_Query) SelectByContestId(contestId uint64) ([]*Team, error) {
+func (*_Query) SelectByContestId(contestId uint64) ([]Team, error) {
 	options := option.NewQueryOptions()
 	options.Filters.Add(field.TeamContestId, option.OpEqual, contestId)
 	teams, err := dao.TeamStore.Select(options)
 	if err != nil {
 		return nil, errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	var result []*Team
+	var result []Team
 	for _, team := range teams {
-		result = append(result, NewTeam().fromEntity(team))
+		result = append(result, *NewTeam().fromEntity(team))
 	}
 	return result, nil
 }
 
-func (query *_Query) Select(options *option.QueryOptions) ([]*Team, error) {
+func (*_Query) Select(options *option.QueryOptions) ([]Team, error) {
 	teams, err := dao.TeamStore.Select(options)
 	if err != nil {
 		return nil, errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	var result []*Team
+	var result []Team
 	for _, team := range teams {
-		result = append(result, NewTeam().fromEntity(team))
+		result = append(result, *NewTeam().fromEntity(team))
 	}
 	return result, nil
 }
 
-func (query *_Query) Count(options *option.QueryOptions) (int64, error) {
+func (*_Query) Count(options *option.QueryOptions) (int64, error) {
 	count, err := dao.TeamStore.Count(options)
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())

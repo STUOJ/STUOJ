@@ -12,7 +12,7 @@ type _Query struct{}
 
 var Query = new(_Query)
 
-func (query *_Query) Select(model querymodel.TestcaseQueryModel) ([]Testcase, error) {
+func (*_Query) Select(model querymodel.TestcaseQueryModel) ([]Testcase, error) {
 	queryOptions := model.GenerateOptions()
 	entityTestcases, err := dao.TestcaseStore.Select(queryOptions)
 	if err != nil {
@@ -26,7 +26,7 @@ func (query *_Query) Select(model querymodel.TestcaseQueryModel) ([]Testcase, er
 	return testcases, nil
 }
 
-func (query *_Query) SelectById(id uint64) (Testcase, error) {
+func (*_Query) SelectById(id uint64) (Testcase, error) {
 	queryOptions := option.NewQueryOptions()
 	queryOptions.Filters.Add(field.TestcaseId, option.OpEqual, id)
 	entityTestcase, err := dao.TestcaseStore.SelectOne(queryOptions)
@@ -36,7 +36,7 @@ func (query *_Query) SelectById(id uint64) (Testcase, error) {
 	return *NewTestcase().fromEntity(entityTestcase), nil
 }
 
-func (query *_Query) SelectByProblemId(problemId uint64) ([]Testcase, error) {
+func (*_Query) SelectByProblemId(problemId uint64) ([]Testcase, error) {
 	queryOptions := option.NewQueryOptions()
 	queryOptions.Filters.Add(field.TestcaseProblemId, option.OpEqual, problemId)
 	entityTestcases, err := dao.TestcaseStore.Select(queryOptions)
@@ -51,7 +51,7 @@ func (query *_Query) SelectByProblemId(problemId uint64) ([]Testcase, error) {
 	return testcases, nil
 }
 
-func (query *_Query) Count(model querymodel.TestcaseQueryModel) (int64, error) {
+func (*_Query) Count(model querymodel.TestcaseQueryModel) (int64, error) {
 	queryOptions := model.GenerateOptions()
 	count, err := dao.TestcaseStore.Count(queryOptions)
 	if err != nil {

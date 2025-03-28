@@ -12,7 +12,7 @@ type _Query struct{}
 
 var Query = new(_Query)
 
-func (query *_Query) Select(model querymodel.BlogQueryModel) ([]Blog, error) {
+func (*_Query) Select(model querymodel.BlogQueryModel) ([]Blog, error) {
 	queryOptions := model.GenerateOptions()
 	entityBlogs, err := dao.BlogStore.Select(queryOptions)
 	if err != nil {
@@ -26,7 +26,7 @@ func (query *_Query) Select(model querymodel.BlogQueryModel) ([]Blog, error) {
 	return blogs, nil
 }
 
-func (query *_Query) SelectById(id uint64) (Blog, error) {
+func (*_Query) SelectById(id uint64) (Blog, error) {
 	queryOptions := option.NewQueryOptions()
 	queryOptions.Filters.Add(field.BlogId, option.OpEqual, id)
 	entityBlog, err := dao.BlogStore.SelectOne(queryOptions)
@@ -36,7 +36,7 @@ func (query *_Query) SelectById(id uint64) (Blog, error) {
 	return *NewBlog().fromEntity(entityBlog), nil
 }
 
-func (query *_Query) Count(model querymodel.BlogQueryModel) (int64, error) {
+func (*_Query) Count(model querymodel.BlogQueryModel) (int64, error) {
 	queryOptions := model.GenerateOptions()
 	count, err := dao.BlogStore.Count(queryOptions)
 	if err != nil {

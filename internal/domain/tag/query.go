@@ -12,7 +12,7 @@ type _Query struct{}
 
 var Query = new(_Query)
 
-func (query *_Query) Select(model querymodel.TagQueryModel) ([]Tag, error) {
+func (*_Query) Select(model querymodel.TagQueryModel) ([]Tag, error) {
 	queryOptions := model.GenerateOptions()
 	entityTags, err := dao.TagStore.Select(queryOptions)
 	if err != nil {
@@ -26,7 +26,7 @@ func (query *_Query) Select(model querymodel.TagQueryModel) ([]Tag, error) {
 	return tags, nil
 }
 
-func (query *_Query) SelectById(id uint64) (Tag, error) {
+func (*_Query) SelectById(id uint64) (Tag, error) {
 	queryOptions := option.NewQueryOptions()
 	queryOptions.Filters.Add(field.TagId, option.OpEqual, id)
 	entityTag, err := dao.TagStore.SelectOne(queryOptions)
@@ -36,7 +36,7 @@ func (query *_Query) SelectById(id uint64) (Tag, error) {
 	return *NewTag().fromEntity(entityTag), nil
 }
 
-func (query *_Query) SelectByName(name string) (Tag, error) {
+func (*_Query) SelectByName(name string) (Tag, error) {
 	queryOptions := option.NewQueryOptions()
 	queryOptions.Filters.Add(field.TagName, option.OpEqual, name)
 	entityTag, err := dao.TagStore.SelectOne(queryOptions)
@@ -46,7 +46,7 @@ func (query *_Query) SelectByName(name string) (Tag, error) {
 	return *NewTag().fromEntity(entityTag), nil
 }
 
-func (query *_Query) Count(model querymodel.TagQueryModel) (int64, error) {
+func (*_Query) Count(model querymodel.TagQueryModel) (int64, error) {
 	queryOptions := model.GenerateOptions()
 	count, err := dao.TagStore.Count(queryOptions)
 	if err != nil {

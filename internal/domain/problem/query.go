@@ -12,7 +12,7 @@ type _Query struct{}
 
 var Query = new(_Query)
 
-func (query *_Query) Select(model querymodel.ProblemQueryModel) ([]Problem, error) {
+func (*_Query) Select(model querymodel.ProblemQueryModel) ([]Problem, error) {
 	queryOptions := model.GenerateOptions()
 	entityProblems, err := dao.ProblemStore.Select(queryOptions)
 	if err != nil {
@@ -26,7 +26,7 @@ func (query *_Query) Select(model querymodel.ProblemQueryModel) ([]Problem, erro
 	return problems, nil
 }
 
-func (query *_Query) SelectById(id uint64) (Problem, error) {
+func (*_Query) SelectById(id uint64) (Problem, error) {
 	queryOptions := option.NewQueryOptions()
 	queryOptions.Filters.Add(field.ProblemId, option.OpEqual, id)
 	entityProblem, err := dao.ProblemStore.SelectOne(queryOptions)
@@ -36,7 +36,7 @@ func (query *_Query) SelectById(id uint64) (Problem, error) {
 	return *NewProblem().fromEntity(entityProblem), nil
 }
 
-func (query *_Query) Count(model querymodel.ProblemQueryModel) (int64, error) {
+func (*_Query) Count(model querymodel.ProblemQueryModel) (int64, error) {
 	queryOptions := model.GenerateOptions()
 	count, err := dao.ProblemStore.Count(queryOptions)
 	if err != nil {

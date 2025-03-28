@@ -12,7 +12,7 @@ type _Query struct{}
 
 var Query = new(_Query)
 
-func (query *_Query) Select(model querymodel.CollectionQueryModel) ([]Collection, error) {
+func (*_Query) Select(model querymodel.CollectionQueryModel) ([]Collection, error) {
 	queryOptions := model.GenerateOptions()
 	entityCollections, err := dao.CollectionStore.Select(queryOptions)
 	if err != nil {
@@ -26,7 +26,7 @@ func (query *_Query) Select(model querymodel.CollectionQueryModel) ([]Collection
 	return collections, nil
 }
 
-func (query *_Query) SelectById(id uint64) (Collection, error) {
+func (*_Query) SelectById(id uint64) (Collection, error) {
 	queryOptions := option.NewQueryOptions()
 	queryOptions.Filters.Add(field.CollectionId, option.OpEqual, id)
 	entityCollection, err := dao.CollectionStore.SelectOne(queryOptions)
@@ -36,7 +36,7 @@ func (query *_Query) SelectById(id uint64) (Collection, error) {
 	return *NewCollection().fromEntity(entityCollection), nil
 }
 
-func (query *_Query) Count(model querymodel.CollectionQueryModel) (int64, error) {
+func (*_Query) Count(model querymodel.CollectionQueryModel) (int64, error) {
 	queryOptions := model.GenerateOptions()
 	count, err := dao.CollectionStore.Count(queryOptions)
 	if err != nil {
@@ -45,7 +45,7 @@ func (query *_Query) Count(model querymodel.CollectionQueryModel) (int64, error)
 	return count, nil
 }
 
-func (query *_Query) SelectUserIds(id uint64) ([]uint64, error) {
+func (*_Query) SelectUserIds(id uint64) ([]uint64, error) {
 	queryOptions := option.NewQueryOptions()
 	queryOptions.Filters.Add(field.CollectionUserId, option.OpEqual, id)
 	entityCollectionUsers, err := dao.CollectionUserStore.Select(queryOptions)
@@ -59,7 +59,7 @@ func (query *_Query) SelectUserIds(id uint64) ([]uint64, error) {
 	return userIds, nil
 }
 
-func (query *_Query) SelectProblemIds(id uint64) ([]uint64, error) {
+func (*_Query) SelectProblemIds(id uint64) ([]uint64, error) {
 	queryOptions := option.NewQueryOptions()
 	queryOptions.Filters.Add(field.CollectionProblemCollectionId, option.OpEqual, id)
 	entityCollectionProblems, err := dao.CollectionProblemStore.Select(queryOptions)

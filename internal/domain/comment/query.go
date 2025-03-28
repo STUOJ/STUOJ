@@ -12,7 +12,7 @@ type _Query struct{}
 
 var Query = new(_Query)
 
-func (query *_Query) Select(model querymodel.CommentQueryModel) ([]Comment, error) {
+func (*_Query) Select(model querymodel.CommentQueryModel) ([]Comment, error) {
 	queryOptions := model.GenerateOptions()
 	entityComments, err := dao.CommentStore.Select(queryOptions)
 	if err != nil {
@@ -26,7 +26,7 @@ func (query *_Query) Select(model querymodel.CommentQueryModel) ([]Comment, erro
 	return comments, nil
 }
 
-func (query *_Query) SelectById(id uint64) (Comment, error) {
+func (*_Query) SelectById(id uint64) (Comment, error) {
 	queryOptions := option.NewQueryOptions()
 	queryOptions.Filters.Add(field.CommentId, option.OpEqual, id)
 	entityComment, err := dao.CommentStore.SelectOne(queryOptions)
@@ -36,7 +36,7 @@ func (query *_Query) SelectById(id uint64) (Comment, error) {
 	return *NewComment().fromEntity(entityComment), nil
 }
 
-func (query *_Query) SelectByUserId(userId uint64) ([]Comment, error) {
+func (*_Query) SelectByUserId(userId uint64) ([]Comment, error) {
 	queryOptions := option.NewQueryOptions()
 	queryOptions.Filters.Add(field.CommentUserId, option.OpEqual, userId)
 	entityComments, err := dao.CommentStore.Select(queryOptions)
@@ -51,7 +51,7 @@ func (query *_Query) SelectByUserId(userId uint64) ([]Comment, error) {
 	return comments, nil
 }
 
-func (query *_Query) SelectByBlogId(blogId uint64) ([]Comment, error) {
+func (*_Query) SelectByBlogId(blogId uint64) ([]Comment, error) {
 	queryOptions := option.NewQueryOptions()
 	queryOptions.Filters.Add(field.CommentBlogId, option.OpEqual, blogId)
 	entityComments, err := dao.CommentStore.Select(queryOptions)
@@ -66,7 +66,7 @@ func (query *_Query) SelectByBlogId(blogId uint64) ([]Comment, error) {
 	return comments, nil
 }
 
-func (query *_Query) Count(model querymodel.CommentQueryModel) (int64, error) {
+func (*_Query) Count(model querymodel.CommentQueryModel) (int64, error) {
 	queryOptions := model.GenerateOptions()
 	count, err := dao.CommentStore.Count(queryOptions)
 	if err != nil {
