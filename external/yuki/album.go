@@ -1,14 +1,13 @@
 package yuki
 
 import (
-	"STUOJ/internal/model"
 	"encoding/json"
 	"errors"
 
 	"github.com/mitchellh/mapstructure"
 )
 
-func GetAlbumList() ([]model.YukiAlbum, error) {
+func GetAlbumList() ([]YukiAlbum, error) {
 	bodystr, err := httpInteraction("/album", "GET", nil)
 	if err != nil {
 		return nil, err
@@ -28,7 +27,7 @@ func GetAlbumList() ([]model.YukiAlbum, error) {
 	if responses.Code == 0 {
 		return nil, errors.New(responses.Message)
 	}
-	var albumList []model.YukiAlbum
+	var albumList []YukiAlbum
 	err = mapstructure.Decode(responses.Data, &albumList)
 	if err != nil {
 		return nil, err
@@ -36,23 +35,23 @@ func GetAlbumList() ([]model.YukiAlbum, error) {
 	return albumList, nil
 }
 
-func GetAlbum(albumId uint64) (model.YukiAlbum, error) {
+func GetAlbum(albumId uint64) (YukiAlbum, error) {
 	bodystr, err := httpInteraction("/album/"+string(albumId), "GET", nil)
 	if err != nil {
-		return model.YukiAlbum{}, err
+		return YukiAlbum{}, err
 	}
-	var responses model.YukiResponses
+	var responses YukiResponses
 	err = json.Unmarshal([]byte(bodystr), &responses)
 	if err != nil {
-		return model.YukiAlbum{}, err
+		return YukiAlbum{}, err
 	}
 	if responses.Code == 0 {
-		return model.YukiAlbum{}, errors.New(responses.Message)
+		return YukiAlbum{}, errors.New(responses.Message)
 	}
-	var album model.YukiAlbum
+	var album YukiAlbum
 	err = mapstructure.Decode(responses.Data, &album)
 	if err != nil {
-		return model.YukiAlbum{}, err
+		return YukiAlbum{}, err
 	}
 	return album, nil
 }

@@ -1,7 +1,6 @@
 package yuki
 
 import (
-	"STUOJ/internal/model"
 	"bytes"
 	"encoding/json"
 	"errors"
@@ -9,44 +8,36 @@ import (
 	"log"
 	"mime/multipart"
 	"net/http"
-	"os"
 	"strconv"
 
 	"github.com/mitchellh/mapstructure"
 )
 
-func UploadImage(path string, role uint8) (model.YukiImage, error) {
+func UploadImage(reader io.Reader, filename string, role uint8) (YukiImage, error) {
 	url := preUrl + "/image"
 	req, err := http.NewRequest("POST", url, nil)
 	if err != nil {
-		return model.YukiImage{}, err
+		return YukiImage{}, err
 	}
 	req.Header.Set("Authorization", "Bearer "+config.Token)
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
-	err = writer.WriteField("album_name", model.GetAlbumName(role))
+	err = writer.WriteField("album_name", GetAlbumName(role))
 	if err != nil {
-		return model.YukiImage{}, err
+		return YukiImage{}, err
 	}
-	fileinfo, err := os.Stat(path)
-	part, err := writer.CreateFormFile("file", fileinfo.Name())
+	part, err := writer.CreateFormFile("file", filename)
 	if err != nil {
-		return model.YukiImage{}, err
+		return YukiImage{}, err
 	}
 
-	src, err := os.Open(path)
+	_, err = io.Copy(part, reader)
 	if err != nil {
-		return model.YukiImage{}, err
-	}
-	defer src.Close()
-
-	_, err = io.Copy(part, src)
-	if err != nil {
-		return model.YukiImage{}, err
+		return YukiImage{}, err
 	}
 	err = writer.Close()
 	if err != nil {
-		return model.YukiImage{}, err
+		return YukiImage{}, err
 	}
 	req.Body = io.NopCloser(body)
 	req.ContentLength = int64(body.Len())
@@ -55,100 +46,100 @@ func UploadImage(path string, role uint8) (model.YukiImage, error) {
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		// 如果发送请求失败，返回错误信息
-		return model.YukiImage{}, err
+		return YukiImage{}, err
 	}
 	defer resp.Body.Close()
 	log.Println("resp.StatusCode: ", resp.StatusCode)
 	bodys, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return model.YukiImage{}, err
+		return YukiImage{}, err
 	}
 	bodystr := string(bodys)
-	var responses model.YukiResponses
+	var responses YukiResponses
 	err = json.Unmarshal([]byte(bodystr), &responses)
 	if err != nil {
-		return model.YukiImage{}, err
+		return YukiImage{}, err
 	}
 	if resp.StatusCode != http.StatusCreated {
-		return model.YukiImage{}, errors.New(responses.Message)
+		return YukiImage{}, errors.New(responses.Message)
 	}
-	var image model.YukiImage
+	var image YukiImage
 	err = mapstructure.Decode(responses.Data, &image)
 	if err != nil {
-		return model.YukiImage{}, err
+		return YukiImage{}, err
 	}
 	return image, nil
 }
 
-func GetImageList(page uint64, role uint8) (model.YukiImageList, error) {
-	bodystr, err := httpInteraction("/album/image/"+model.GetAlbumName(role)+"/?page="+strconv.FormatUint(page, 10), "GET", nil)
+func GetImageList(page uint64, role uint8) (YukiImageList, error) {
+	bodystr, err := httpInteraction("/album/image/"+GetAlbumName(role)+"/?page="+strconv.FormatUint(page, 10), "GET", nil)
 	if err != nil {
-		return model.YukiImageList{}, err
+		return YukiImageList{}, err
 	}
-	var responses model.YukiResponses
+	var responses YukiResponses
 	err = json.Unmarshal([]byte(bodystr), &responses)
 	if err != nil {
-		return model.YukiImageList{}, err
+		return YukiImageList{}, err
 	}
 	if responses.Code == 0 {
-		return model.YukiImageList{}, errors.New(responses.Message)
+		return YukiImageList{}, errors.New(responses.Message)
 	}
-	var imageList model.YukiImageList
+	var imageList YukiImageList
 	err = mapstructure.Decode(responses.Data, &imageList)
 	if err != nil {
-		return model.YukiImageList{}, err
+		return YukiImageList{}, err
 	}
 	return imageList, nil
 }
 
-func GetImage(key string) (model.YukiImage, error) {
+func GetImage(key string) (YukiImage, error) {
 	bodystr, err := httpInteraction("/image/"+key, "GET", nil)
 	if err != nil {
-		return model.YukiImage{}, err
+		return YukiImage{}, err
 	}
-	var responses model.YukiResponses
+	var responses YukiResponses
 	err = json.Unmarshal([]byte(bodystr), &responses)
 	if err != nil {
-		return model.YukiImage{}, err
+		return YukiImage{}, err
 	}
 	if responses.Code == 0 {
-		return model.YukiImage{}, errors.New(responses.Message)
+		return YukiImage{}, errors.New(responses.Message)
 	}
-	var image model.YukiImage
+	var image YukiImage
 	err = mapstructure.Decode(responses.Data, &image)
 	if err != nil {
-		return model.YukiImage{}, err
+		return YukiImage{}, err
 	}
 	return image, nil
 }
 
-func GetImageFromUrl(url string) (model.YukiImage, error) {
+func GetImageFromUrl(url string) (YukiImage, error) {
 	bodystr, err := httpInteraction("/image/?url="+url, "GET", nil)
 	if err != nil {
-		return model.YukiImage{}, err
+		return YukiImage{}, err
 	}
-	var responses model.YukiResponses
+	var responses YukiResponses
 	err = json.Unmarshal([]byte(bodystr), &responses)
 	if err != nil {
-		return model.YukiImage{}, err
+		return YukiImage{}, err
 	}
 	if responses.Code == 0 {
-		return model.YukiImage{}, errors.New(responses.Message)
+		return YukiImage{}, errors.New(responses.Message)
 	}
-	var image model.YukiImage
+	var image YukiImage
 	err = mapstructure.Decode(responses.Data, &image)
 	if err != nil {
-		return model.YukiImage{}, err
+		return YukiImage{}, err
 	}
 	return image, nil
 }
 
-func DeleteImage(key string) error {
+func DeleteImageByKey(key string) error {
 	bodeystr, err := httpInteraction("/image"+"/"+key, "DELETE", nil)
 	if err != nil {
 		return err
 	}
-	var responses model.YukiResponses
+	var responses YukiResponses
 	err = json.Unmarshal([]byte(bodeystr), &responses)
 	if err != nil {
 		return err
@@ -157,4 +148,12 @@ func DeleteImage(key string) error {
 		return errors.New(responses.Message)
 	}
 	return nil
+}
+
+func DeleteImageByUrl(url string) error {
+	image, err := GetImageFromUrl(url)
+	if err != nil {
+		return err
+	}
+	return DeleteImageByKey(image.Key)
 }

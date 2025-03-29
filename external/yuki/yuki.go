@@ -1,15 +1,18 @@
 package yuki
 
 import (
-	"STUOJ/internal/conf"
 	"bytes"
 	"io"
 	"log"
 	"net/http"
 )
 
-func InitYukiImage() error {
-	config = conf.Conf.YukiImage
+func InitYukiImage(host, port, token string) error {
+	config = YukiConf{
+		Host:  host,
+		Port:  port,
+		Token: token,
+	}
 	preUrl = config.Host + ":" + config.Port + "/api/v1"
 	log.Println("Connecting to yuki-image service: " + preUrl)
 	_, err := GetAlbumList()
