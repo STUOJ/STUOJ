@@ -21,7 +21,7 @@ func (_Query) Select(options *option.QueryOptions) ([]Contest, error) {
 	for _, contest := range contests {
 		result = append(result, *NewContest().fromEntity(contest))
 	}
-	return result, nil
+	return result, &errors.NoError
 }
 
 func (_Query) SelectById(id uint64) (Contest, error) {
@@ -31,7 +31,7 @@ func (_Query) SelectById(id uint64) (Contest, error) {
 	if err != nil {
 		return Contest{}, errors.ErrNotFound.WithMessage(err.Error())
 	}
-	return *NewContest().fromEntity(contest), nil
+	return *NewContest().fromEntity(contest), &errors.NoError
 }
 
 func (_Query) SelectByUserId(userId uint64) ([]Contest, error) {
@@ -45,7 +45,7 @@ func (_Query) SelectByUserId(userId uint64) ([]Contest, error) {
 	for _, contest := range contests {
 		result = append(result, *NewContest().fromEntity(contest))
 	}
-	return result, nil
+	return result, &errors.NoError
 }
 
 func (_Query) SelectByStatus(status entity.ContestStatus) ([]Contest, error) {
@@ -59,7 +59,7 @@ func (_Query) SelectByStatus(status entity.ContestStatus) ([]Contest, error) {
 	for _, contest := range contests {
 		result = append(result, *NewContest().fromEntity(contest))
 	}
-	return result, nil
+	return result, &errors.NoError
 }
 
 func (_Query) Count(options *option.QueryOptions) (int64, error) {
@@ -67,5 +67,5 @@ func (_Query) Count(options *option.QueryOptions) (int64, error) {
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return count, nil
+	return count, &errors.NoError
 }

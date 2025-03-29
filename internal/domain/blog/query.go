@@ -23,7 +23,7 @@ func (*_Query) Select(model querymodel.BlogQueryModel) ([]Blog, error) {
 		blog := NewBlog().fromEntity(entityBlog)
 		blogs = append(blogs, *blog)
 	}
-	return blogs, nil
+	return blogs, &errors.NoError
 }
 
 func (*_Query) SelectById(id uint64) (Blog, error) {
@@ -33,7 +33,7 @@ func (*_Query) SelectById(id uint64) (Blog, error) {
 	if err != nil {
 		return Blog{}, errors.ErrNotFound.WithMessage(err.Error())
 	}
-	return *NewBlog().fromEntity(entityBlog), nil
+	return *NewBlog().fromEntity(entityBlog), &errors.NoError
 }
 
 func (*_Query) Count(model querymodel.BlogQueryModel) (int64, error) {
@@ -42,5 +42,5 @@ func (*_Query) Count(model querymodel.BlogQueryModel) (int64, error) {
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return count, nil
+	return count, &errors.NoError
 }

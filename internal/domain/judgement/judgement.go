@@ -74,7 +74,7 @@ func (j *Judgement) Create() (uint64, error) {
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return judgement.Id, nil
+	return judgement.Id, &errors.NoError
 }
 
 func (j *Judgement) Update() error {
@@ -92,7 +92,7 @@ func (j *Judgement) Update() error {
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return nil
+	return &errors.NoError
 }
 
 func (j *Judgement) Delete() error {
@@ -105,7 +105,7 @@ func (j *Judgement) Delete() error {
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return nil
+	return &errors.NoError
 }
 
 type Option func(*Judgement)

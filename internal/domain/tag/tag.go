@@ -65,7 +65,7 @@ func (t *Tag) Update() error {
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return nil
+	return &errors.NoError
 }
 
 func (t *Tag) Delete() error {
@@ -78,7 +78,7 @@ func (t *Tag) Delete() error {
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return nil
+	return &errors.NoError
 }
 
 type Option func(*Tag)

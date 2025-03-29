@@ -23,7 +23,7 @@ func (*_Query) Select(model querymodel.CommentQueryModel) ([]Comment, error) {
 		comment := NewComment().fromEntity(entityComment)
 		comments = append(comments, *comment)
 	}
-	return comments, nil
+	return comments, &errors.NoError
 }
 
 func (*_Query) SelectById(id uint64) (Comment, error) {
@@ -33,7 +33,7 @@ func (*_Query) SelectById(id uint64) (Comment, error) {
 	if err != nil {
 		return Comment{}, errors.ErrNotFound.WithMessage(err.Error())
 	}
-	return *NewComment().fromEntity(entityComment), nil
+	return *NewComment().fromEntity(entityComment), &errors.NoError
 }
 
 func (*_Query) SelectByUserId(userId uint64) ([]Comment, error) {
@@ -48,7 +48,7 @@ func (*_Query) SelectByUserId(userId uint64) ([]Comment, error) {
 		comment := NewComment().fromEntity(entityComment)
 		comments = append(comments, *comment)
 	}
-	return comments, nil
+	return comments, &errors.NoError
 }
 
 func (*_Query) SelectByBlogId(blogId uint64) ([]Comment, error) {
@@ -63,7 +63,7 @@ func (*_Query) SelectByBlogId(blogId uint64) ([]Comment, error) {
 		comment := NewComment().fromEntity(entityComment)
 		comments = append(comments, *comment)
 	}
-	return comments, nil
+	return comments, &errors.NoError
 }
 
 func (*_Query) Count(model querymodel.CommentQueryModel) (int64, error) {
@@ -72,5 +72,5 @@ func (*_Query) Count(model querymodel.CommentQueryModel) (int64, error) {
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return count, nil
+	return count, &errors.NoError
 }

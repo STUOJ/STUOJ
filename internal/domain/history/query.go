@@ -18,7 +18,7 @@ func (*_Query) SelectById(id uint64) (History, error) {
 	if err != nil {
 		return History{}, errors.ErrNotFound.WithMessage(err.Error())
 	}
-	return *NewHistory().fromEntity(history), nil
+	return *NewHistory().fromEntity(history), &errors.NoError
 }
 
 func (*_Query) SelectByUserId(userId uint64) ([]History, error) {
@@ -32,7 +32,7 @@ func (*_Query) SelectByUserId(userId uint64) ([]History, error) {
 	for _, history := range histories {
 		result = append(result, *NewHistory().fromEntity(history))
 	}
-	return result, nil
+	return result, &errors.NoError
 }
 
 func (*_Query) SelectByProblemId(problemId uint64) ([]History, error) {
@@ -46,7 +46,7 @@ func (*_Query) SelectByProblemId(problemId uint64) ([]History, error) {
 	for _, history := range histories {
 		result = append(result, *NewHistory().fromEntity(history))
 	}
-	return result, nil
+	return result, &errors.NoError
 }
 
 func (*_Query) Select(options *option.QueryOptions) ([]History, error) {
@@ -58,7 +58,7 @@ func (*_Query) Select(options *option.QueryOptions) ([]History, error) {
 	for _, history := range histories {
 		result = append(result, *NewHistory().fromEntity(history))
 	}
-	return result, nil
+	return result, &errors.NoError
 }
 
 func (*_Query) Count(options *option.QueryOptions) (int64, error) {
@@ -66,5 +66,5 @@ func (*_Query) Count(options *option.QueryOptions) (int64, error) {
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return count, nil
+	return count, &errors.NoError
 }

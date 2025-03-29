@@ -33,7 +33,7 @@ func (*_Query) SelectById(id uint64) (Tag, error) {
 	if err != nil {
 		return Tag{}, errors.ErrNotFound.WithMessage(err.Error())
 	}
-	return *NewTag().fromEntity(entityTag), nil
+	return *NewTag().fromEntity(entityTag), &errors.NoError
 }
 
 func (*_Query) SelectByName(name string) (Tag, error) {
@@ -43,7 +43,7 @@ func (*_Query) SelectByName(name string) (Tag, error) {
 	if err != nil {
 		return Tag{}, errors.ErrNotFound.WithMessage(err.Error())
 	}
-	return *NewTag().fromEntity(entityTag), nil
+	return *NewTag().fromEntity(entityTag), &errors.NoError
 }
 
 func (*_Query) Count(model querymodel.TagQueryModel) (int64, error) {
@@ -52,5 +52,5 @@ func (*_Query) Count(model querymodel.TagQueryModel) (int64, error) {
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return count, nil
+	return count, &errors.NoError
 }

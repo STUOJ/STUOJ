@@ -18,7 +18,7 @@ func (*_Query) SelectById(id uint64) (Submission, error) {
 	if err != nil {
 		return Submission{}, errors.ErrNotFound.WithMessage(err.Error())
 	}
-	return *NewSubmission().fromEntity(submission), nil
+	return *NewSubmission().fromEntity(submission), &errors.NoError
 }
 
 func (*_Query) SelectByUserId(userId uint64) ([]Submission, error) {
@@ -32,7 +32,7 @@ func (*_Query) SelectByUserId(userId uint64) ([]Submission, error) {
 	for _, submission := range submissions {
 		result = append(result, *NewSubmission().fromEntity(submission))
 	}
-	return result, nil
+	return result, &errors.NoError
 }
 
 func (*_Query) SelectByProblemId(problemId uint64) ([]Submission, error) {
@@ -46,7 +46,7 @@ func (*_Query) SelectByProblemId(problemId uint64) ([]Submission, error) {
 	for _, submission := range submissions {
 		result = append(result, *NewSubmission().fromEntity(submission))
 	}
-	return result, nil
+	return result, &errors.NoError
 }
 
 func (*_Query) Select(options *option.QueryOptions) ([]Submission, error) {
@@ -58,7 +58,7 @@ func (*_Query) Select(options *option.QueryOptions) ([]Submission, error) {
 	for _, submission := range submissions {
 		result = append(result, *NewSubmission().fromEntity(submission))
 	}
-	return result, nil
+	return result, &errors.NoError
 }
 
 func (*_Query) Count(options *option.QueryOptions) (int64, error) {
@@ -66,5 +66,5 @@ func (*_Query) Count(options *option.QueryOptions) (int64, error) {
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return count, nil
+	return count, &errors.NoError
 }

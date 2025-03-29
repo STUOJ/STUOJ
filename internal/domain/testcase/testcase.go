@@ -60,7 +60,7 @@ func (t *Testcase) Create() (uint64, error) {
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return testcase.Id, nil
+	return testcase.Id, &errors.NoError
 }
 
 func (t *Testcase) Update() error {
@@ -77,7 +77,7 @@ func (t *Testcase) Update() error {
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return nil
+	return &errors.NoError
 }
 
 func (t *Testcase) Delete() error {
@@ -90,7 +90,7 @@ func (t *Testcase) Delete() error {
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return nil
+	return &errors.NoError
 }
 
 type Option func(*Testcase)

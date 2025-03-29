@@ -23,7 +23,7 @@ func (*_Query) Select(model querymodel.ProblemQueryModel) ([]Problem, error) {
 		problem := NewProblem().fromEntity(entityProblem)
 		problems = append(problems, *problem)
 	}
-	return problems, nil
+	return problems, &errors.NoError
 }
 
 func (*_Query) SelectById(id uint64) (Problem, error) {
@@ -33,7 +33,7 @@ func (*_Query) SelectById(id uint64) (Problem, error) {
 	if err != nil {
 		return Problem{}, errors.ErrNotFound.WithMessage(err.Error())
 	}
-	return *NewProblem().fromEntity(entityProblem), nil
+	return *NewProblem().fromEntity(entityProblem), &errors.NoError
 }
 
 func (*_Query) Count(model querymodel.ProblemQueryModel) (int64, error) {
@@ -42,5 +42,5 @@ func (*_Query) Count(model querymodel.ProblemQueryModel) (int64, error) {
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return count, nil
+	return count, &errors.NoError
 }

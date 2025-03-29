@@ -70,7 +70,7 @@ func (c *Collection) Create() (uint64, error) {
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return collection.Id, nil
+	return collection.Id, &errors.NoError
 }
 
 func (c *Collection) Update() error {
@@ -88,7 +88,7 @@ func (c *Collection) Update() error {
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return nil
+	return &errors.NoError
 }
 
 func (c *Collection) Delete() error {
@@ -101,7 +101,7 @@ func (c *Collection) Delete() error {
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return nil
+	return &errors.NoError
 }
 
 func (c *Collection) UpdateUser(userIds []uint64) error {

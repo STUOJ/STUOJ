@@ -23,7 +23,7 @@ func (*_Query) Select(model querymodel.CollectionQueryModel) ([]Collection, erro
 		collection := NewCollection().fromEntity(entityCollection)
 		collections = append(collections, *collection)
 	}
-	return collections, nil
+	return collections, &errors.NoError
 }
 
 func (*_Query) SelectById(id uint64) (Collection, error) {
@@ -33,7 +33,7 @@ func (*_Query) SelectById(id uint64) (Collection, error) {
 	if err != nil {
 		return Collection{}, errors.ErrNotFound.WithMessage(err.Error())
 	}
-	return *NewCollection().fromEntity(entityCollection), nil
+	return *NewCollection().fromEntity(entityCollection), &errors.NoError
 }
 
 func (*_Query) Count(model querymodel.CollectionQueryModel) (int64, error) {
@@ -42,7 +42,7 @@ func (*_Query) Count(model querymodel.CollectionQueryModel) (int64, error) {
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return count, nil
+	return count, &errors.NoError
 }
 
 func (*_Query) SelectUserIds(id uint64) ([]uint64, error) {
@@ -56,7 +56,7 @@ func (*_Query) SelectUserIds(id uint64) ([]uint64, error) {
 	for _, entityCollectionUser := range entityCollectionUsers {
 		userIds = append(userIds, entityCollectionUser.UserId)
 	}
-	return userIds, nil
+	return userIds, &errors.NoError
 }
 
 func (*_Query) SelectProblemIds(id uint64) ([]uint64, error) {
@@ -70,5 +70,5 @@ func (*_Query) SelectProblemIds(id uint64) ([]uint64, error) {
 	for _, entityCollectionProblem := range entityCollectionProblems {
 		problemIds = append(problemIds, entityCollectionProblem.ProblemId)
 	}
-	return problemIds, nil
+	return problemIds, &errors.NoError
 }

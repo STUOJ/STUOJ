@@ -18,7 +18,7 @@ func (*_Query) SelectById(id uint64) (*Language, error) {
 	if err != nil {
 		return nil, errors.ErrNotFound.WithMessage(err.Error())
 	}
-	return NewLanguage().fromEntity(language), nil
+	return NewLanguage().fromEntity(language), &errors.NoError
 }
 
 func (*_Query) SelectByName(name string) (Language, error) {
@@ -28,7 +28,7 @@ func (*_Query) SelectByName(name string) (Language, error) {
 	if err != nil {
 		return Language{}, errors.ErrNotFound.WithMessage(err.Error())
 	}
-	return *NewLanguage().fromEntity(language), nil
+	return *NewLanguage().fromEntity(language), &errors.NoError
 }
 
 func (*_Query) Select(options *option.QueryOptions) ([]Language, error) {
@@ -40,7 +40,7 @@ func (*_Query) Select(options *option.QueryOptions) ([]Language, error) {
 	for _, language := range languages {
 		result = append(result, *NewLanguage().fromEntity(language))
 	}
-	return result, nil
+	return result, &errors.NoError
 }
 
 func (*_Query) Count(options *option.QueryOptions) (int64, error) {
@@ -48,5 +48,5 @@ func (*_Query) Count(options *option.QueryOptions) (int64, error) {
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return count, nil
+	return count, &errors.NoError
 }

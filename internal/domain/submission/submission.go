@@ -28,9 +28,9 @@ type Submission struct {
 
 func (s *Submission) verify() error {
 	if err := s.SourceCode.Verify(); err != nil {
-		return err
+		return errors.ErrValidation.WithMessage(err.Error())
 	}
-	return nil
+	return &errors.NoError
 }
 
 func (s *Submission) toEntity() entity.Submission {
@@ -82,7 +82,7 @@ func (s *Submission) Create() (uint64, error) {
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return submission.Id, nil
+	return submission.Id, &errors.NoError
 }
 
 func (s *Submission) Update() error {
@@ -100,7 +100,7 @@ func (s *Submission) Update() error {
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return nil
+	return &errors.NoError
 }
 
 func (s *Submission) Delete() error {
@@ -113,7 +113,7 @@ func (s *Submission) Delete() error {
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return nil
+	return &errors.NoError
 }
 
 type Option func(*Submission)

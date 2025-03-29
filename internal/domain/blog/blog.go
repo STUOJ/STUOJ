@@ -73,7 +73,7 @@ func (b *Blog) Create() (uint64, error) {
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return blog.Id, nil
+	return blog.Id, &errors.NoError
 }
 
 func (b *Blog) Update() error {
@@ -91,7 +91,7 @@ func (b *Blog) Update() error {
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return nil
+	return &errors.NoError
 }
 
 func (b *Blog) Delete() error {
@@ -104,7 +104,7 @@ func (b *Blog) Delete() error {
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return nil
+	return &errors.NoError
 }
 
 type Option func(*Blog)

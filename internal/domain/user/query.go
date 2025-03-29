@@ -18,7 +18,7 @@ func (*_Query) SelectById(id uint64) (User, error) {
 	if err != nil {
 		return User{}, errors.ErrNotFound.WithMessage(err.Error())
 	}
-	return *NewUser().fromEntity(user), nil
+	return *NewUser().fromEntity(user), &errors.NoError
 }
 
 func (*_Query) SelectByUsername(username string) (User, error) {
@@ -28,7 +28,7 @@ func (*_Query) SelectByUsername(username string) (User, error) {
 	if err != nil {
 		return User{}, errors.ErrNotFound.WithMessage(err.Error())
 	}
-	return *NewUser().fromEntity(user), nil
+	return *NewUser().fromEntity(user), &errors.NoError
 }
 
 func (*_Query) SelectByEmail(email string) (User, error) {
@@ -38,7 +38,7 @@ func (*_Query) SelectByEmail(email string) (User, error) {
 	if err != nil {
 		return User{}, errors.ErrNotFound.WithMessage(err.Error())
 	}
-	return *NewUser().fromEntity(user), nil
+	return *NewUser().fromEntity(user), &errors.NoError
 }
 
 func (*_Query) Select(options *option.QueryOptions) ([]User, error) {
@@ -50,7 +50,7 @@ func (*_Query) Select(options *option.QueryOptions) ([]User, error) {
 	for _, user := range users {
 		result = append(result, *NewUser().fromEntity(user))
 	}
-	return result, nil
+	return result, &errors.NoError
 }
 
 func (*_Query) Count(options *option.QueryOptions) (int64, error) {
@@ -58,5 +58,5 @@ func (*_Query) Count(options *option.QueryOptions) (int64, error) {
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return count, nil
+	return count, &errors.NoError
 }

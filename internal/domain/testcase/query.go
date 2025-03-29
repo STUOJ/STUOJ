@@ -23,7 +23,7 @@ func (*_Query) Select(model querymodel.TestcaseQueryModel) ([]Testcase, error) {
 		testcase := NewTestcase().fromEntity(entityTestcase)
 		testcases = append(testcases, *testcase)
 	}
-	return testcases, nil
+	return testcases, &errors.NoError
 }
 
 func (*_Query) SelectById(id uint64) (Testcase, error) {
@@ -33,7 +33,7 @@ func (*_Query) SelectById(id uint64) (Testcase, error) {
 	if err != nil {
 		return Testcase{}, errors.ErrNotFound.WithMessage(err.Error())
 	}
-	return *NewTestcase().fromEntity(entityTestcase), nil
+	return *NewTestcase().fromEntity(entityTestcase), &errors.NoError
 }
 
 func (*_Query) SelectByProblemId(problemId uint64) ([]Testcase, error) {
@@ -48,7 +48,7 @@ func (*_Query) SelectByProblemId(problemId uint64) ([]Testcase, error) {
 		testcase := NewTestcase().fromEntity(entityTestcase)
 		testcases = append(testcases, *testcase)
 	}
-	return testcases, nil
+	return testcases, &errors.NoError
 }
 
 func (*_Query) Count(model querymodel.TestcaseQueryModel) (int64, error) {
@@ -57,5 +57,5 @@ func (*_Query) Count(model querymodel.TestcaseQueryModel) (int64, error) {
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return count, nil
+	return count, &errors.NoError
 }

@@ -85,7 +85,7 @@ func (c *Contest) Create() (uint64, error) {
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return contest.Id, nil
+	return contest.Id, &errors.NoError
 }
 
 func (c *Contest) Update() error {
@@ -103,7 +103,7 @@ func (c *Contest) Update() error {
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return nil
+	return &errors.NoError
 }
 
 func (c *Contest) Delete() error {
@@ -116,7 +116,7 @@ func (c *Contest) Delete() error {
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return nil
+	return &errors.NoError
 }
 
 type Option func(*Contest)

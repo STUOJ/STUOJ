@@ -18,7 +18,7 @@ func (*_Query) SelectById(id uint64) (Judgement, error) {
 	if err != nil {
 		return Judgement{}, errors.ErrNotFound.WithMessage(err.Error())
 	}
-	return *NewJudgement().fromEntity(judgement), nil
+	return *NewJudgement().fromEntity(judgement), &errors.NoError
 }
 
 func (*_Query) SelectBySubmissionId(submissionId uint64) ([]Judgement, error) {
@@ -32,7 +32,7 @@ func (*_Query) SelectBySubmissionId(submissionId uint64) ([]Judgement, error) {
 	for _, judgement := range judgements {
 		result = append(result, *NewJudgement().fromEntity(judgement))
 	}
-	return result, nil
+	return result, &errors.NoError
 }
 
 func (*_Query) Select(options *option.QueryOptions) ([]Judgement, error) {
@@ -44,7 +44,7 @@ func (*_Query) Select(options *option.QueryOptions) ([]Judgement, error) {
 	for _, judgement := range judgements {
 		result = append(result, *NewJudgement().fromEntity(judgement))
 	}
-	return result, nil
+	return result, &errors.NoError
 }
 
 func (*_Query) Count(options *option.QueryOptions) (int64, error) {
@@ -52,5 +52,5 @@ func (*_Query) Count(options *option.QueryOptions) (int64, error) {
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return count, nil
+	return count, &errors.NoError
 }

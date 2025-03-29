@@ -85,7 +85,7 @@ func (u *User) Create() (uint64, error) {
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return user.Id, nil
+	return user.Id, &errors.NoError
 }
 
 func (u *User) Update() error {
@@ -103,7 +103,7 @@ func (u *User) Update() error {
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return nil
+	return &errors.NoError
 }
 
 func (u *User) Delete() error {
@@ -116,7 +116,7 @@ func (u *User) Delete() error {
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return nil
+	return &errors.NoError
 }
 
 type Option func(*User)
