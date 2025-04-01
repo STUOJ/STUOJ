@@ -4,31 +4,25 @@ import (
 	"time"
 )
 
-// ContestStatus 比赛状态: 1 作废, 2 编辑, 3 准备, 4 进行, 5 结束
+// ContestStatus 比赛状态: 1 作废, 2 隐藏, 3 公开
 //
 //go:generate go run ../../../utils/gen/enum_valid.go ContestStatus
 type ContestStatus uint8
 
 const (
-	ContestInvalid    ContestStatus = 1
-	ContestEditing    ContestStatus = 2
-	ContestReady      ContestStatus = 3
-	ContestProcessing ContestStatus = 4
-	ContestEnded      ContestStatus = 5
+	ContestInvalid ContestStatus = 1
+	ContestHidden  ContestStatus = 2
+	ContestPublic  ContestStatus = 3
 )
 
 func (s ContestStatus) String() string {
 	switch s {
 	case ContestInvalid:
 		return "作废"
-	case ContestEditing:
-		return "编辑"
-	case ContestReady:
-		return "准备"
-	case ContestProcessing:
-		return "进行"
-	case ContestEnded:
-		return "结束"
+	case ContestHidden:
+		return "隐藏"
+	case ContestPublic:
+		return "公开"
 	default:
 		return "未知"
 	}
@@ -63,20 +57,51 @@ func (f ContestFormat) String() string {
 //go:generate go run ../../../utils/gen/dao_store.go -struct=Contest
 //go:generate go run ../../../utils/gen/field_select.go -struct=Contest
 type Contest struct {
-	Id           uint64        `gorm:"primaryKey;autoIncrement;comment:比赛ID"`
-	UserId       uint64        `gorm:"not null;default:0;comment:用户ID"`
-	CollectionId uint64        `gorm:"not null;default:0;comment:题单ID"`
-	Status       ContestStatus `gorm:"not null;default:1;comment:状态"`
-	Format       ContestFormat `gorm:"not null;default:1;comment:赛制"`
-	TeamSize     uint8         `gorm:"not null;default:1;comment:组队人数"`
-	StartTime    time.Time     `gorm:"type:timestamp;not null;default:CURRENT_TIMESTAMP;comment:开始时间"`
-	EndTime      time.Time     `gorm:"type:timestamp;not null;default:CURRENT_TIMESTAMP;comment:结束时间"`
-	CreateTime   time.Time     `gorm:"type:timestamp;not null;default:CURRENT_TIMESTAMP;comment:创建时间"`
-	UpdateTime   time.Time     `gorm:"type:timestamp;not null;default:CURRENT_TIMESTAMP;comment:更新时间"`
-	User         User          `gorm:"foreignKey:UserId;references:Id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	Collection   Collection    `gorm:"foreignKey:CollectionId;references:Id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Id          uint64        `gorm:"primaryKey;autoIncrement;comment:比赛ID"`
+	Title       string        `gorm:"type:varchar(255);not null;comment:比赛标题"`
+	Description string        `gorm:"type:longtext;not null;comment:比赛描述"`
+	UserId      uint64        `gorm:"not null;default:0;comment:用户ID"`
+	Status      ContestStatus `gorm:"not null;default:1;comment:状态"`
+	Format      ContestFormat `gorm:"not null;default:1;comment:赛制"`
+	TeamSize    uint8         `gorm:"not null;default:1;comment:组队人数"`
+	StartTime   time.Time     `gorm:"type:timestamp;not null;default:CURRENT_TIMESTAMP;comment:开始时间"`
+	EndTime     time.Time     `gorm:"type:timestamp;not null;default:CURRENT_TIMESTAMP;comment:结束时间"`
+	CreateTime  time.Time     `gorm:"type:timestamp;not null;default:CURRENT_TIMESTAMP;comment:创建时间"`
+	UpdateTime  time.Time     `gorm:"type:timestamp;not null;default:CURRENT_TIMESTAMP;comment:更新时间"`
+	User        User          `gorm:"foreignKey:UserId;references:Id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
 func (Contest) TableName() string {
 	return "tbl_contest"
+}
+
+// ContestUser 比赛用户关联
+//
+//go:generate go run ../../../utils/gen/dao_store.go -struct=ContestUser
+//go:generate go run ../../../utils/gen/field_select.go -struct=ContestUser
+type ContestUser struct {
+	ContestId uint64  `gorm:"not null;default:0;primaryKey;comment:比赛ID"`
+	UserId    uint64  `gorm:"not null;default:0;primaryKey;comment:用户ID"`
+	User      User    `gorm:"foreignKey:UserId;references:Id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Contest   Contest `gorm:"foreignKey:ContestId;references:Id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+}
+
+func (ContestUser) TableName() string {
+	return "tbl_contest_user"
+}
+
+// ContestProblem 比赛题目关联
+//
+//go:generate go run ../../../utils/gen/dao_store.go -struct=ContestProblem
+//go:generate go run ../../../utils/gen/field_select.go -struct=ContestProblem
+type ContestProblem struct {
+	ContestId uint64  `gorm:"not null;default:0;primaryKey;comment:比赛ID"`
+	ProblemId uint64  `gorm:"not null;default:0;primaryKey;comment:题目ID"`
+	Serial    uint16  `gorm:"not null;default:0;comment:排序序号"`
+	Contest   Contest `gorm:"foreignKey:ContestId;references:Id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Problem   Problem `gorm:"foreignKey:ProblemId;references:Id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+}
+
+func (ContestProblem) TableName() string {
+	return "tbl_contest_problem"
 }
