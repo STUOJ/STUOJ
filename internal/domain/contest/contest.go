@@ -13,18 +13,17 @@ import (
 )
 
 type Contest struct {
-	Id           uint64
-	UserId       uint64
-	CollectionId uint64
-	Title        valueobject.Title
-	Description  valueobject.Description
-	Status       entity.ContestStatus
-	Format       entity.ContestFormat
-	TeamSize     uint8
-	StartTime    time.Time
-	EndTime      time.Time
-	CreateTime   time.Time
-	UpdateTime   time.Time
+	Id          uint64
+	UserId      uint64
+	Title       valueobject.Title
+	Description valueobject.Description
+	Status      entity.ContestStatus
+	Format      entity.ContestFormat
+	TeamSize    uint8
+	StartTime   time.Time
+	EndTime     time.Time
+	CreateTime  time.Time
+	UpdateTime  time.Time
 }
 
 func (c *Contest) verify() error {
@@ -42,23 +41,21 @@ func (c *Contest) verify() error {
 
 func (c *Contest) toEntity() entity.Contest {
 	return entity.Contest{
-		Id:           c.Id,
-		UserId:       c.UserId,
-		CollectionId: c.CollectionId,
-		Status:       c.Status,
-		Format:       c.Format,
-		TeamSize:     c.TeamSize,
-		StartTime:    c.StartTime,
-		EndTime:      c.EndTime,
-		CreateTime:   c.CreateTime,
-		UpdateTime:   c.UpdateTime,
+		Id:         c.Id,
+		UserId:     c.UserId,
+		Status:     c.Status,
+		Format:     c.Format,
+		TeamSize:   c.TeamSize,
+		StartTime:  c.StartTime,
+		EndTime:    c.EndTime,
+		CreateTime: c.CreateTime,
+		UpdateTime: c.UpdateTime,
 	}
 }
 
 func (c *Contest) fromEntity(contest entity.Contest) *Contest {
 	c.Id = contest.Id
 	c.UserId = contest.UserId
-	c.CollectionId = contest.CollectionId
 	c.Status = contest.Status
 	c.Format = contest.Format
 	c.TeamSize = contest.TeamSize
@@ -119,6 +116,63 @@ func (c *Contest) Delete() error {
 	return &errors.NoError
 }
 
+func (c *Contest) UpdateUser(userIds []uint64) error {
+	var err error
+	options := c.toOption()
+	_, err = dao.ContestStore.SelectOne(options)
+	if err != nil {
+		return errors.ErrNotFound.WithMessage(err.Error())
+	}
+	err = dao.ContestUserStore.Delete(options)
+	if err != nil {
+		return errors.ErrInternalServer.WithMessage(err.Error())
+	}
+	var errs []error
+	for _, id := range userIds {
+		_, err = dao.ContestUserStore.Insert(entity.ContestUser{
+			ContestId: c.Id,
+			UserId:    id,
+		})
+		if err != nil {
+			errs = append(errs, err)
+		}
+	}
+	if len(errs) > 0 {
+		return errors.ErrInternalServer.WithErrors(errs)
+	}
+	return nil
+}
+
+func (c *Contest) UpdateProblem(problemIds []uint64) error {
+	var err error
+	options := c.toOption()
+	_, err = dao.ContestStore.SelectOne(options)
+	if err != nil {
+		return errors.ErrNotFound.WithMessage(err.Error())
+	}
+	err = dao.ContestProblemStore.Delete(options)
+	if err != nil {
+		return errors.ErrInternalServer.WithMessage(err.Error())
+	}
+	var errs []error
+	var serial uint16 = 1
+	for _, id := range problemIds {
+		_, err = dao.ContestProblemStore.Insert(entity.ContestProblem{
+			ContestId: c.Id,
+			ProblemId: id,
+			Serial:    serial,
+		})
+		if err != nil {
+			errs = append(errs, err)
+		}
+		serial++
+	}
+	if len(errs) > 0 {
+		return errors.ErrInternalServer.WithErrors(errs)
+	}
+	return nil
+}
+
 type Option func(*Contest)
 
 func NewContest(option ...Option) *Contest {
@@ -138,12 +192,6 @@ func WithId(id uint64) Option {
 func WithUserId(userId uint64) Option {
 	return func(c *Contest) {
 		c.UserId = userId
-	}
-}
-
-func WithCollectionId(collectionId uint64) Option {
-	return func(c *Contest) {
-		c.CollectionId = collectionId
 	}
 }
 
