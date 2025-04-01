@@ -7,12 +7,10 @@ var (
 	ContestSimpleField = field.NewContestField().
 				SelectId().
 				SelectUserId().
-				SelectCollectionId().
+				SelectTitle().
 				SelectStatus().
 				SelectFormat().
 				SelectTeamSize().
 				SelectStartTime().
-				SelectEndTime().
-				SelectCreateTime().
-				SelectUpdateTime()
+				SelectEndTime()
 )

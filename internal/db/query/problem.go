@@ -8,10 +8,5 @@ var (
 				SelectId().
 				SelectTitle().
 				SelectSource().
-				SelectDifficulty().
-				SelectTimeLimit().
-				SelectMemoryLimit().
-				SelectStatus().
-				SelectCreateTime().
-				SelectUpdateTime()
+				SelectDifficulty()
 )

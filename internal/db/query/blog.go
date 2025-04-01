@@ -10,8 +10,5 @@ var (
 			SelectId().
 			SelectTitle().
 			SelectProblemId().
-			SelectCreateTime().
-			SelectUpdateTime().
-			SelectUserId().
-			SelectStatus()
+			SelectUserId()
 )
