@@ -219,3 +219,20 @@ func AESDecrypt(encryptedStr, token string) (string, error) {
 
 	return string(plaintext), nil
 }
+
+// StringToInt64Slice 将逗号分隔的字符串转换为int64数组
+func StringToInt64Slice(str string) ([]int64, error) {
+	if str == "" {
+		return []int64{}, nil
+	}
+	strArr := strings.Split(str, ",")
+	result := make([]int64, 0, len(strArr))
+	for _, s := range strArr {
+		num, err := strconv.ParseInt(strings.TrimSpace(s), 10, 64)
+		if err != nil {
+			return nil, fmt.Errorf("failed to parse value %s to int64: %w", s, err)
+		}
+		result = append(result, num)
+	}
+	return result, nil
+}
