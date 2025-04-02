@@ -32,13 +32,9 @@ func (f *Field[T]) Value() T {
 	return f.value
 }
 
-func (f *Field[T]) Set(value interface{}) error {
-	if v, ok := value.(T); ok {
-		f.exist = true
-		f.value = v
-		return nil
-	}
-	return fmt.Errorf("cannot set value of type %T to field of type %T", value, f.value)
+func (f *Field[T]) Set(value T) {
+	f.exist = true
+	f.value = value
 }
 
 func (f *Field[T]) Parse(c *gin.Context, name string) error {
@@ -54,7 +50,11 @@ func (f *Field[T]) Parse(c *gin.Context, name string) error {
 		return fmt.Errorf("failed to parse value for field %s: %w", name, err)
 	}
 
-	f.Set(ptr)
+	if v, ok := ptr.(T); ok {
+		f.Set(v)
+	} else {
+		return fmt.Errorf("type assertion failed: expected %T, got %T", *new(T), ptr)
+	}
 
 	f.exist = true
 	return nil
@@ -73,13 +73,9 @@ func (f *FieldList[T]) Value() []T {
 	return f.value
 }
 
-func (f *FieldList[T]) Set(value interface{}) error {
-	if v, ok := value.([]T); ok {
-		f.exist = true
-		f.value = v
-		return nil
-	}
-	return fmt.Errorf("cannot set value of type %T to field of type %T", value, f.value)
+func (f *FieldList[T]) Set(value []T) {
+	f.exist = true
+	f.value = value
 }
 
 func (f *FieldList[T]) Parse(c *gin.Context, name string) error {
@@ -118,9 +114,17 @@ type QuerySort struct {
 	OrderBy Field[string]
 }
 
-func (s *QuerySort) Parse(c *gin.Context) {
-	s.Order.Parse(c, "order")
-	s.OrderBy.Parse(c, "order_by")
+func NewQuerySort(order, orderBy string) QuerySort {
+	return QuerySort{
+		Order: Field[string]{
+			exist: true,
+			value: order,
+		},
+		OrderBy: Field[string]{
+			exist: true,
+			value: orderBy,
+		},
+	}
 }
 
 func (s *QuerySort) InsertOptions(options *option.QueryOptions) *option.QueryOptions {
@@ -137,15 +141,21 @@ func (s *QuerySort) InsertOptions(options *option.QueryOptions) *option.QueryOpt
 }
 
 type QueryPage struct {
-	Page  Field[int]
-	Size  Field[int]
-	Total Field[int]
+	Page Field[int64]
+	Size Field[int64]
 }
 
-func (p *QueryPage) Parse(c *gin.Context) {
-	p.Page.Parse(c, "page")
-	p.Size.Parse(c, "size")
-	p.Total.Parse(c, "total")
+func NewQuerPage(page, size int64) QueryPage {
+	return QueryPage{
+		Page: Field[int64]{
+			exist: true,
+			value: page,
+		},
+		Size: Field[int64]{
+			exist: true,
+			value: size,
+		},
+	}
 }
 
 func (p *QueryPage) InsertOptions(options *option.QueryOptions) *option.QueryOptions {
