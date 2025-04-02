@@ -10,26 +10,26 @@ import (
 )
 
 type ContestQueryModel struct {
-	Id           model.FieldList[uint64]
-	UserId       model.FieldList[uint64]
-	CollectionId model.FieldList[uint64]
-	Status       model.FieldList[uint8]
-	Format       model.FieldList[uint8]
-	TeamSize     model.FieldList[uint8]
-	StartTime    model.Field[time.Time]
-	EndTime      model.Field[time.Time]
-	BeginStart   model.Field[time.Time]
-	BeginEnd     model.Field[time.Time]
-	FinishStart  model.Field[time.Time]
-	FinishEnd    model.Field[time.Time]
-	Page         model.QueryPage
-	Sort         model.QuerySort
+	Id          model.FieldList[uint64]
+	UserId      model.FieldList[uint64]
+	Title       model.Field[string]
+	Status      model.FieldList[uint8]
+	Format      model.FieldList[uint8]
+	TeamSize    model.FieldList[uint8]
+	StartTime   model.Field[time.Time]
+	EndTime     model.Field[time.Time]
+	BeginStart  model.Field[time.Time]
+	BeginEnd    model.Field[time.Time]
+	FinishStart model.Field[time.Time]
+	FinishEnd   model.Field[time.Time]
+	Page        model.QueryPage
+	Sort        model.QuerySort
 }
 
 func (query *ContestQueryModel) Parse(c *gin.Context) {
 	query.UserId.Parse(c, "user")
-	query.CollectionId.Parse(c, "collection")
 	query.Status.Parse(c, "status")
+	query.Title.Parse(c, "title")
 	query.Format.Parse(c, "format")
 	query.TeamSize.Parse(c, "team_size")
 	query.StartTime.Parse(c, "start_time")
@@ -50,8 +50,8 @@ func (query *ContestQueryModel) GenerateOptions() *option.QueryOptions {
 	if query.UserId.Exist() {
 		options.Filters.Add(field.ContestUserId, option.OpIn, query.UserId.Value())
 	}
-	if query.CollectionId.Exist() {
-		options.Filters.Add(field.ContestCollectionId, option.OpIn, query.CollectionId.Value())
+	if query.Title.Exist() {
+		options.Filters.Add(field.ContestTitle, option.OpLike, query.Title.Value())
 	}
 	if query.Status.Exist() {
 		options.Filters.Add(field.ContestStatus, option.OpIn, query.Status.Value())
