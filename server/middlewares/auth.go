@@ -1,10 +1,10 @@
 package middlewares
 
 import (
+	"STUOJ/internal/app/service/user"
 	"STUOJ/internal/conf"
-	"STUOJ/internal/entity"
+	"STUOJ/internal/db/entity"
 	"STUOJ/internal/model"
-	"STUOJ/internal/service/user"
 	"STUOJ/utils"
 	"errors"
 	"log"
@@ -42,16 +42,16 @@ func TokenGetInfo() gin.HandlerFunc {
 			}
 		}
 
-		c.Set("id", uid)
-		c.Set("role", role)
+		c.Set("req_user_id", uid)
+		c.Set("req_user_role", role)
 		c.Next()
 	}
 }
 
 func TokenAuthUser() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		role, _ := utils.GetUserInfo(c)
-		if role < entity.RoleUser {
+		reqUser := model.NewReqUser(c)
+		if reqUser.Role < entity.RoleUser {
 			c.JSON(http.StatusForbidden, model.RespError("请登录", nil))
 			c.Abort()
 			return
@@ -63,8 +63,8 @@ func TokenAuthUser() gin.HandlerFunc {
 
 func TokenAuthEditor() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		role, _ := utils.GetUserInfo(c)
-		if role < entity.RoleEditor {
+		reqUser := model.NewReqUser(c)
+		if reqUser.Role < entity.RoleEditor {
 			c.JSON(http.StatusForbidden, model.RespError("权限不足", nil))
 			c.Abort()
 			return
@@ -76,8 +76,8 @@ func TokenAuthEditor() gin.HandlerFunc {
 
 func TokenAuthAdmin() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		role, _ := utils.GetUserInfo(c)
-		if role < entity.RoleAdmin {
+		reqUser := model.NewReqUser(c)
+		if reqUser.Role < entity.RoleAdmin {
 			c.JSON(http.StatusForbidden, model.RespError("权限不足", nil))
 			c.Abort()
 			return
@@ -90,8 +90,8 @@ func TokenAuthAdmin() gin.HandlerFunc {
 
 func TokenAuthRoot() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		role, _ := utils.GetUserInfo(c)
-		if role < entity.RoleRoot {
+		reqUser := model.NewReqUser(c)
+		if reqUser.Role < entity.RoleRoot {
 			c.JSON(http.StatusForbidden, model.RespError("权限不足", nil))
 			c.Abort()
 			return
@@ -118,8 +118,8 @@ func tokenAutoRefresh(c *gin.Context) error {
 		return nil
 	}
 
-	_, id_ := utils.GetUserInfo(c)
-	uid := uint64(id_)
+	reqUser := model.NewReqUser(c)
+	uid := uint64(reqUser.ID)
 
 	// 生成新token
 	token, err := utils.GenerateToken(uid)

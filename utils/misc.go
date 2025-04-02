@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"STUOJ/internal/entity"
+	"STUOJ/internal/db/entity"
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/sha256"
@@ -17,8 +17,6 @@ import (
 
 	"crypto/rand"
 	randv2 "math/rand/v2"
-
-	"github.com/gin-gonic/gin"
 )
 
 var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
@@ -48,19 +46,6 @@ func IsFileExists(filePath string) (bool, error) {
 		return false, err // 其他错误，返回false和错误
 	}
 	return true, nil // 文件存在，返回true和nil的error
-}
-
-func GetUserInfo(c *gin.Context) (entity.Role, uint64) {
-	role, exist := c.Get("role")
-	if !exist {
-		role = entity.RoleVisitor
-	}
-	id, exist := c.Get("id")
-	if !exist {
-		id = uint64(0)
-	}
-
-	return role.(entity.Role), id.(uint64)
 }
 
 func Uint64SliceToString(ids []uint64) string {
