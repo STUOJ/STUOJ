@@ -3,6 +3,7 @@ package problem
 import (
 	"STUOJ/internal/db/dao"
 	"STUOJ/internal/db/entity/field"
+	"STUOJ/internal/db/query"
 	"STUOJ/internal/db/query/option"
 	"STUOJ/internal/errors"
 	"STUOJ/internal/model/querymodel"
@@ -29,6 +30,17 @@ func (*_Query) Select(model querymodel.ProblemQueryModel) ([]Problem, error) {
 func (*_Query) SelectById(id uint64) (Problem, error) {
 	queryOptions := option.NewQueryOptions()
 	queryOptions.Filters.Add(field.ProblemId, option.OpEqual, id)
+	entityProblem, err := dao.ProblemStore.SelectOne(queryOptions)
+	if err != nil {
+		return Problem{}, errors.ErrNotFound.WithMessage(err.Error())
+	}
+	return *NewProblem().fromEntity(entityProblem), &errors.NoError
+}
+
+func (*_Query) SelectSimpleById(id uint64) (Problem, error) {
+	queryOptions := option.NewQueryOptions()
+	queryOptions.Filters.Add(field.ProblemId, option.OpEqual, id)
+	queryOptions.Field = query.ProblemSimpleField
 	entityProblem, err := dao.ProblemStore.SelectOne(queryOptions)
 	if err != nil {
 		return Problem{}, errors.ErrNotFound.WithMessage(err.Error())

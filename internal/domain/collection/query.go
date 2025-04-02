@@ -3,6 +3,7 @@ package collection
 import (
 	"STUOJ/internal/db/dao"
 	"STUOJ/internal/db/entity/field"
+	"STUOJ/internal/db/query"
 	"STUOJ/internal/db/query/option"
 	"STUOJ/internal/errors"
 	"STUOJ/internal/model/querymodel"
@@ -29,6 +30,17 @@ func (*_Query) Select(model querymodel.CollectionQueryModel) ([]Collection, erro
 func (*_Query) SelectById(id uint64) (Collection, error) {
 	queryOptions := option.NewQueryOptions()
 	queryOptions.Filters.Add(field.CollectionId, option.OpEqual, id)
+	entityCollection, err := dao.CollectionStore.SelectOne(queryOptions)
+	if err != nil {
+		return Collection{}, errors.ErrNotFound.WithMessage(err.Error())
+	}
+	return *NewCollection().fromEntity(entityCollection), &errors.NoError
+}
+
+func (*_Query) SelectSimpleById(id uint64) (Collection, error) {
+	queryOptions := option.NewQueryOptions()
+	queryOptions.Filters.Add(field.CollectionId, option.OpEqual, id)
+	queryOptions.Field = query.CollectionSimpleField
 	entityCollection, err := dao.CollectionStore.SelectOne(queryOptions)
 	if err != nil {
 		return Collection{}, errors.ErrNotFound.WithMessage(err.Error())

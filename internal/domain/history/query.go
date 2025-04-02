@@ -3,6 +3,7 @@ package history
 import (
 	"STUOJ/internal/db/dao"
 	"STUOJ/internal/db/entity/field"
+	"STUOJ/internal/db/query"
 	"STUOJ/internal/db/query/option"
 	"STUOJ/internal/errors"
 )
@@ -14,6 +15,17 @@ var Query = new(_Query)
 func (*_Query) SelectById(id uint64) (History, error) {
 	options := option.NewQueryOptions()
 	options.Filters.Add(field.HistoryId, option.OpEqual, id)
+	history, err := dao.HistoryStore.SelectOne(options)
+	if err != nil {
+		return History{}, errors.ErrNotFound.WithMessage(err.Error())
+	}
+	return *NewHistory().fromEntity(history), &errors.NoError
+}
+
+func (*_Query) SelectSimpleById(id uint64) (History, error) {
+	options := option.NewQueryOptions()
+	options.Filters.Add(field.HistoryId, option.OpEqual, id)
+	options.Field = query.HistorySimpleField
 	history, err := dao.HistoryStore.SelectOne(options)
 	if err != nil {
 		return History{}, errors.ErrNotFound.WithMessage(err.Error())

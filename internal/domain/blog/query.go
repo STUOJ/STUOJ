@@ -3,6 +3,7 @@ package blog
 import (
 	"STUOJ/internal/db/dao"
 	"STUOJ/internal/db/entity/field"
+	"STUOJ/internal/db/query"
 	"STUOJ/internal/db/query/option"
 	"STUOJ/internal/errors"
 	"STUOJ/internal/model/querymodel"
@@ -29,6 +30,17 @@ func (*_Query) Select(model querymodel.BlogQueryModel) ([]Blog, error) {
 func (*_Query) SelectById(id uint64) (Blog, error) {
 	queryOptions := option.NewQueryOptions()
 	queryOptions.Filters.Add(field.BlogId, option.OpEqual, id)
+	entityBlog, err := dao.BlogStore.SelectOne(queryOptions)
+	if err != nil {
+		return Blog{}, errors.ErrNotFound.WithMessage(err.Error())
+	}
+	return *NewBlog().fromEntity(entityBlog), &errors.NoError
+}
+
+func (*_Query) SelectSimpleById(id uint64) (Blog, error) {
+	queryOptions := option.NewQueryOptions()
+	queryOptions.Filters.Add(field.BlogId, option.OpEqual, id)
+	queryOptions.Field = query.BlogSimpleField
 	entityBlog, err := dao.BlogStore.SelectOne(queryOptions)
 	if err != nil {
 		return Blog{}, errors.ErrNotFound.WithMessage(err.Error())

@@ -3,6 +3,7 @@ package user
 import (
 	"STUOJ/internal/db/dao"
 	"STUOJ/internal/db/entity/field"
+	"STUOJ/internal/db/query"
 	"STUOJ/internal/db/query/option"
 	"STUOJ/internal/errors"
 )
@@ -14,6 +15,17 @@ var Query = new(_Query)
 func (*_Query) SelectById(id uint64) (User, error) {
 	options := option.NewQueryOptions()
 	options.Filters.Add(field.UserId, option.OpEqual, id)
+	user, err := dao.UserStore.SelectOne(options)
+	if err != nil {
+		return User{}, errors.ErrNotFound.WithMessage(err.Error())
+	}
+	return *NewUser().fromEntity(user), &errors.NoError
+}
+
+func (*_Query) SelectSimpleById(id uint64) (User, error) {
+	options := option.NewQueryOptions()
+	options.Filters.Add(field.UserId, option.OpEqual, id)
+	options.Field = query.UserSimpleField
 	user, err := dao.UserStore.SelectOne(options)
 	if err != nil {
 		return User{}, errors.ErrNotFound.WithMessage(err.Error())

@@ -3,6 +3,7 @@ package comment
 import (
 	"STUOJ/internal/db/dao"
 	"STUOJ/internal/db/entity/field"
+	"STUOJ/internal/db/query"
 	"STUOJ/internal/db/query/option"
 	"STUOJ/internal/errors"
 	"STUOJ/internal/model/querymodel"
@@ -29,6 +30,17 @@ func (*_Query) Select(model querymodel.CommentQueryModel) ([]Comment, error) {
 func (*_Query) SelectById(id uint64) (Comment, error) {
 	queryOptions := option.NewQueryOptions()
 	queryOptions.Filters.Add(field.CommentId, option.OpEqual, id)
+	entityComment, err := dao.CommentStore.SelectOne(queryOptions)
+	if err != nil {
+		return Comment{}, errors.ErrNotFound.WithMessage(err.Error())
+	}
+	return *NewComment().fromEntity(entityComment), &errors.NoError
+}
+
+func (*_Query) SelectSimpleById(id uint64) (Comment, error) {
+	queryOptions := option.NewQueryOptions()
+	queryOptions.Filters.Add(field.CommentId, option.OpEqual, id)
+	queryOptions.Field = query.CommentSimpleField
 	entityComment, err := dao.CommentStore.SelectOne(queryOptions)
 	if err != nil {
 		return Comment{}, errors.ErrNotFound.WithMessage(err.Error())

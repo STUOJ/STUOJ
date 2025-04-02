@@ -4,6 +4,7 @@ import (
 	"STUOJ/internal/db/dao"
 	"STUOJ/internal/db/entity"
 	"STUOJ/internal/db/entity/field"
+	"STUOJ/internal/db/query"
 	"STUOJ/internal/db/query/option"
 	"STUOJ/internal/errors"
 )
@@ -27,6 +28,17 @@ func (_Query) Select(options *option.QueryOptions) ([]Contest, error) {
 func (_Query) SelectById(id uint64) (Contest, error) {
 	options := option.NewQueryOptions()
 	options.Filters.Add(field.ContestId, option.OpEqual, id)
+	contest, err := dao.ContestStore.SelectOne(options)
+	if err != nil {
+		return Contest{}, errors.ErrNotFound.WithMessage(err.Error())
+	}
+	return *NewContest().fromEntity(contest), &errors.NoError
+}
+
+func (_Query) SelectSimpleById(id uint64) (Contest, error) {
+	options := option.NewQueryOptions()
+	options.Filters.Add(field.ContestId, option.OpEqual, id)
+	options.Field = query.ContestSimpleField
 	contest, err := dao.ContestStore.SelectOne(options)
 	if err != nil {
 		return Contest{}, errors.ErrNotFound.WithMessage(err.Error())

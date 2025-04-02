@@ -3,6 +3,7 @@ package submission
 import (
 	"STUOJ/internal/db/dao"
 	"STUOJ/internal/db/entity/field"
+	"STUOJ/internal/db/query"
 	"STUOJ/internal/db/query/option"
 	"STUOJ/internal/errors"
 )
@@ -14,6 +15,17 @@ var Query = new(_Query)
 func (*_Query) SelectById(id uint64) (Submission, error) {
 	options := option.NewQueryOptions()
 	options.Filters.Add(field.SubmissionId, option.OpEqual, id)
+	submission, err := dao.SubmissionStore.SelectOne(options)
+	if err != nil {
+		return Submission{}, errors.ErrNotFound.WithMessage(err.Error())
+	}
+	return *NewSubmission().fromEntity(submission), &errors.NoError
+}
+
+func (*_Query) SelectSimpleById(id uint64) (Submission, error) {
+	options := option.NewQueryOptions()
+	options.Filters.Add(field.SubmissionId, option.OpEqual, id)
+	options.Field = query.SubmissionSimpleField
 	submission, err := dao.SubmissionStore.SelectOne(options)
 	if err != nil {
 		return Submission{}, errors.ErrNotFound.WithMessage(err.Error())
