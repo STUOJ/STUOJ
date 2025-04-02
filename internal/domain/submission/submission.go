@@ -30,6 +30,9 @@ func (s *Submission) verify() error {
 	if err := s.SourceCode.Verify(); err != nil {
 		return errors.ErrValidation.WithMessage(err.Error())
 	}
+	if !entity.JudgeStatus(s.Status).IsValid() {
+		return errors.ErrValidation.WithMessage("状态码无效")
+	}
 	return &errors.NoError
 }
 

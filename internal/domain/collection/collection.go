@@ -1,6 +1,7 @@
 package collection
 
 import (
+	"fmt"
 	"time"
 
 	"STUOJ/internal/db/dao"
@@ -22,6 +23,12 @@ type Collection struct {
 }
 
 func (c *Collection) verify() error {
+	if c.UserId == 0 {
+		return fmt.Errorf("用户ID不能为空")
+	}
+	if !entity.CollectionStatus(c.Status).IsValid() {
+		return fmt.Errorf("题单状态不合法")
+	}
 	if err := c.Title.Verify(); err != nil {
 		return err
 	}

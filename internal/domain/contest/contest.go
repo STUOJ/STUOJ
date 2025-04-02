@@ -27,6 +27,21 @@ type Contest struct {
 }
 
 func (c *Contest) verify() error {
+	if c.UserId == 0 {
+		return fmt.Errorf("用户ID不能为空")
+	}
+	if !entity.ContestStatus(c.Status).IsValid() {
+		return fmt.Errorf("比赛状态不合法")
+	}
+	if !entity.ContestFormat(c.Format).IsValid() {
+		return fmt.Errorf("比赛格式不合法")
+	}
+	if c.StartTime.IsZero() {
+		return fmt.Errorf("比赛开始时间不能为空")
+	}
+	if c.EndTime.IsZero() {
+		return fmt.Errorf("比赛结束时间不能为空")
+	}
 	if err := c.Title.Verify(); err != nil {
 		return err
 	}

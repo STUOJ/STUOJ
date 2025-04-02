@@ -7,6 +7,7 @@ import (
 	"STUOJ/internal/db/query/option"
 	"STUOJ/internal/domain/team/valueobject"
 	"STUOJ/internal/errors"
+	"fmt"
 )
 
 type Team struct {
@@ -24,6 +25,12 @@ func (t *Team) verify() error {
 	}
 	if err := t.Description.Verify(); err != nil {
 		return err
+	}
+	if t.UserId == 0 {
+		return fmt.Errorf("用户ID不能为空")
+	}
+	if t.ContestId == 0 {
+		return fmt.Errorf("比赛ID不能为空")
 	}
 	return nil
 }

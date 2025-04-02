@@ -15,6 +15,7 @@ var Query = new(_Query)
 
 func (*_Query) Select(model querymodel.BlogQueryModel) ([]Blog, error) {
 	queryOptions := model.GenerateOptions()
+	queryOptions.Field = query.BlogAllField
 	entityBlogs, err := dao.BlogStore.Select(queryOptions)
 	if err != nil {
 		return nil, errors.ErrInternalServer.WithMessage(err.Error())
@@ -30,6 +31,7 @@ func (*_Query) Select(model querymodel.BlogQueryModel) ([]Blog, error) {
 func (*_Query) SelectById(id uint64) (Blog, error) {
 	queryOptions := option.NewQueryOptions()
 	queryOptions.Filters.Add(field.BlogId, option.OpEqual, id)
+	queryOptions.Field = query.BlogAllField
 	entityBlog, err := dao.BlogStore.SelectOne(queryOptions)
 	if err != nil {
 		return Blog{}, errors.ErrNotFound.WithMessage(err.Error())

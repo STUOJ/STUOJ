@@ -1,6 +1,7 @@
 package history
 
 import (
+	"fmt"
 	"time"
 
 	"STUOJ/internal/db/dao"
@@ -31,6 +32,12 @@ type History struct {
 }
 
 func (h *History) verify() error {
+	if h.UserId == 0 {
+		return fmt.Errorf("用户ID不能为空")
+	}
+	if !entity.Operation(h.Operation).IsValid() {
+		return fmt.Errorf("操作类型不合法")
+	}
 	if err := h.Title.Verify(); err != nil {
 		return err
 	}

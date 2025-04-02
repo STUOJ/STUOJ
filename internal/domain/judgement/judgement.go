@@ -1,6 +1,7 @@
 package judgement
 
 import (
+	"fmt"
 	"time"
 
 	"STUOJ/internal/db/dao"
@@ -26,6 +27,12 @@ type Judgement struct {
 }
 
 func (j *Judgement) verify() error {
+	if j.SubmissionId == 0 {
+		return fmt.Errorf("SubmissionId不能为空")
+	}
+	if j.TestcaseId == 0 {
+		return fmt.Errorf("TestcaseId不能为空")
+	}
 	return nil
 }
 

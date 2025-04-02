@@ -1,6 +1,7 @@
 package blog
 
 import (
+	"fmt"
 	"time"
 
 	"STUOJ/internal/db/dao"
@@ -23,6 +24,12 @@ type Blog struct {
 }
 
 func (b *Blog) verify() error {
+	if b.UserID == 0 {
+		return fmt.Errorf("用户ID不能为空")
+	}
+	if !entity.BlogStatus(b.Status).IsValid() {
+		return fmt.Errorf("博客状态不合法")
+	}
 	if err := b.Title.Verify(); err != nil {
 		return err
 	}
