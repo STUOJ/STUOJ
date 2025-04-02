@@ -7,14 +7,17 @@ import (
 	"STUOJ/internal/db/query"
 	"STUOJ/internal/db/query/option"
 	"STUOJ/internal/errors"
+	"STUOJ/internal/model/querymodel"
 )
 
 type _Query struct{}
 
 var Query = new(_Query)
 
-func (_Query) Select(options *option.QueryOptions) ([]Contest, error) {
-	contests, err := dao.ContestStore.Select(options)
+func (_Query) Select(model querymodel.ContestQueryModel) ([]Contest, error) {
+	queryOptions := model.GenerateOptions()
+	queryOptions.Field = query.ContestListItemField
+	contests, err := dao.ContestStore.Select(queryOptions)
 	if err != nil {
 		return nil, errors.ErrInternalServer.WithMessage(err.Error())
 	}
@@ -26,9 +29,10 @@ func (_Query) Select(options *option.QueryOptions) ([]Contest, error) {
 }
 
 func (_Query) SelectById(id uint64) (Contest, error) {
-	options := option.NewQueryOptions()
-	options.Filters.Add(field.ContestId, option.OpEqual, id)
-	contest, err := dao.ContestStore.SelectOne(options)
+	queryOptions := option.NewQueryOptions()
+	queryOptions.Filters.Add(field.ContestId, option.OpEqual, id)
+	queryOptions.Field = query.ContestAllField
+	contest, err := dao.ContestStore.SelectOne(queryOptions)
 	if err != nil {
 		return Contest{}, errors.ErrNotFound.WithMessage(err.Error())
 	}
@@ -36,10 +40,10 @@ func (_Query) SelectById(id uint64) (Contest, error) {
 }
 
 func (_Query) SelectSimpleById(id uint64) (Contest, error) {
-	options := option.NewQueryOptions()
-	options.Filters.Add(field.ContestId, option.OpEqual, id)
-	options.Field = query.ContestSimpleField
-	contest, err := dao.ContestStore.SelectOne(options)
+	queryOptions := option.NewQueryOptions()
+	queryOptions.Filters.Add(field.ContestId, option.OpEqual, id)
+	queryOptions.Field = query.ContestSimpleField
+	contest, err := dao.ContestStore.SelectOne(queryOptions)
 	if err != nil {
 		return Contest{}, errors.ErrNotFound.WithMessage(err.Error())
 	}
@@ -49,6 +53,7 @@ func (_Query) SelectSimpleById(id uint64) (Contest, error) {
 func (_Query) SelectByUserId(userId uint64) ([]Contest, error) {
 	options := option.NewQueryOptions()
 	options.Filters.Add(field.ContestUserId, option.OpEqual, userId)
+	options.Field = query.ContestAllField
 	contests, err := dao.ContestStore.Select(options)
 	if err != nil {
 		return nil, errors.ErrInternalServer.WithMessage(err.Error())
@@ -63,6 +68,7 @@ func (_Query) SelectByUserId(userId uint64) ([]Contest, error) {
 func (_Query) SelectByStatus(status entity.ContestStatus) ([]Contest, error) {
 	options := option.NewQueryOptions()
 	options.Filters.Add(field.ContestStatus, option.OpEqual, status)
+	options.Field = query.ContestAllField
 	contests, err := dao.ContestStore.Select(options)
 	if err != nil {
 		return nil, errors.ErrInternalServer.WithMessage(err.Error())
@@ -74,8 +80,9 @@ func (_Query) SelectByStatus(status entity.ContestStatus) ([]Contest, error) {
 	return result, &errors.NoError
 }
 
-func (_Query) Count(options *option.QueryOptions) (int64, error) {
-	count, err := dao.ContestStore.Count(options)
+func (_Query) Count(model querymodel.ContestQueryModel) (int64, error) {
+	queryOptions := model.GenerateOptions()
+	count, err := dao.ContestStore.Count(queryOptions)
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
 	}

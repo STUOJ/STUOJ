@@ -15,6 +15,7 @@ var Query = new(_Query)
 
 func (*_Query) Select(model querymodel.CollectionQueryModel) ([]Collection, error) {
 	queryOptions := model.GenerateOptions()
+	queryOptions.Field = query.CollectionListItemField
 	entityCollections, err := dao.CollectionStore.Select(queryOptions)
 	if err != nil {
 		return nil, errors.ErrInternalServer.WithMessage(err.Error())
@@ -30,6 +31,7 @@ func (*_Query) Select(model querymodel.CollectionQueryModel) ([]Collection, erro
 func (*_Query) SelectById(id uint64) (Collection, error) {
 	queryOptions := option.NewQueryOptions()
 	queryOptions.Filters.Add(field.CollectionId, option.OpEqual, id)
+	queryOptions.Field = query.CollectionAllField
 	entityCollection, err := dao.CollectionStore.SelectOne(queryOptions)
 	if err != nil {
 		return Collection{}, errors.ErrNotFound.WithMessage(err.Error())

@@ -6,6 +6,7 @@ import (
 	"STUOJ/internal/db/query"
 	"STUOJ/internal/db/query/option"
 	"STUOJ/internal/errors"
+	"STUOJ/internal/model/querymodel"
 )
 
 type _Query struct{}
@@ -36,6 +37,7 @@ func (*_Query) SelectSimpleById(id uint64) (Team, error) {
 func (*_Query) SelectByUserId(userId uint64) ([]Team, error) {
 	options := option.NewQueryOptions()
 	options.Filters.Add(field.TeamUserId, option.OpEqual, userId)
+	options.Field = query.TeamAllField
 	teams, err := dao.TeamStore.Select(options)
 	if err != nil {
 		return nil, errors.ErrInternalServer.WithMessage(err.Error())
@@ -50,6 +52,7 @@ func (*_Query) SelectByUserId(userId uint64) ([]Team, error) {
 func (*_Query) SelectByContestId(contestId uint64) ([]Team, error) {
 	options := option.NewQueryOptions()
 	options.Filters.Add(field.TeamContestId, option.OpEqual, contestId)
+	options.Field = query.TeamAllField
 	teams, err := dao.TeamStore.Select(options)
 	if err != nil {
 		return nil, errors.ErrInternalServer.WithMessage(err.Error())
@@ -61,8 +64,10 @@ func (*_Query) SelectByContestId(contestId uint64) ([]Team, error) {
 	return result, &errors.NoError
 }
 
-func (*_Query) Select(options *option.QueryOptions) ([]Team, error) {
-	teams, err := dao.TeamStore.Select(options)
+func (*_Query) Select(model querymodel.TeamQueryModel) ([]Team, error) {
+	queryOptions := model.GenerateOptions()
+	queryOptions.Field = query.TeamAllField
+	teams, err := dao.TeamStore.Select(queryOptions)
 	if err != nil {
 		return nil, errors.ErrInternalServer.WithMessage(err.Error())
 	}
@@ -73,8 +78,9 @@ func (*_Query) Select(options *option.QueryOptions) ([]Team, error) {
 	return result, &errors.NoError
 }
 
-func (*_Query) Count(options *option.QueryOptions) (int64, error) {
-	count, err := dao.TeamStore.Count(options)
+func (*_Query) Count(model querymodel.TeamQueryModel) (int64, error) {
+	queryOptions := model.GenerateOptions()
+	count, err := dao.TeamStore.Count(queryOptions)
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
 	}

@@ -6,6 +6,7 @@ import (
 	"STUOJ/internal/db/query"
 	"STUOJ/internal/db/query/option"
 	"STUOJ/internal/errors"
+	"STUOJ/internal/model/querymodel"
 )
 
 type _Query struct{}
@@ -15,6 +16,7 @@ var Query = new(_Query)
 func (*_Query) SelectById(id uint64) (History, error) {
 	options := option.NewQueryOptions()
 	options.Filters.Add(field.HistoryId, option.OpEqual, id)
+	options.Field = query.HistoryAllField
 	history, err := dao.HistoryStore.SelectOne(options)
 	if err != nil {
 		return History{}, errors.ErrNotFound.WithMessage(err.Error())
@@ -36,6 +38,7 @@ func (*_Query) SelectSimpleById(id uint64) (History, error) {
 func (*_Query) SelectByUserId(userId uint64) ([]History, error) {
 	options := option.NewQueryOptions()
 	options.Filters.Add(field.HistoryUserId, option.OpEqual, userId)
+	options.Field = query.HistorySimpleField
 	histories, err := dao.HistoryStore.Select(options)
 	if err != nil {
 		return nil, errors.ErrInternalServer.WithMessage(err.Error())
@@ -50,6 +53,7 @@ func (*_Query) SelectByUserId(userId uint64) ([]History, error) {
 func (*_Query) SelectByProblemId(problemId uint64) ([]History, error) {
 	options := option.NewQueryOptions()
 	options.Filters.Add(field.HistoryProblemId, option.OpEqual, problemId)
+	options.Field = query.HistorySimpleField
 	histories, err := dao.HistoryStore.Select(options)
 	if err != nil {
 		return nil, errors.ErrInternalServer.WithMessage(err.Error())
@@ -61,7 +65,9 @@ func (*_Query) SelectByProblemId(problemId uint64) ([]History, error) {
 	return result, &errors.NoError
 }
 
-func (*_Query) Select(options *option.QueryOptions) ([]History, error) {
+func (*_Query) Select(model querymodel.HistoryQueryModel) ([]History, error) {
+	options := model.GenerateOptions()
+	options.Field = query.HistorySimpleField
 	histories, err := dao.HistoryStore.Select(options)
 	if err != nil {
 		return nil, errors.ErrInternalServer.WithMessage(err.Error())
@@ -73,7 +79,8 @@ func (*_Query) Select(options *option.QueryOptions) ([]History, error) {
 	return result, &errors.NoError
 }
 
-func (*_Query) Count(options *option.QueryOptions) (int64, error) {
+func (*_Query) Count(model querymodel.HistoryQueryModel) (int64, error) {
+	options := model.GenerateOptions()
 	count, err := dao.HistoryStore.Count(options)
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())

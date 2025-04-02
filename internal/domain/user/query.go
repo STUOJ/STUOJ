@@ -6,6 +6,7 @@ import (
 	"STUOJ/internal/db/query"
 	"STUOJ/internal/db/query/option"
 	"STUOJ/internal/errors"
+	"STUOJ/internal/model/querymodel"
 )
 
 type _Query struct{}
@@ -36,6 +37,7 @@ func (*_Query) SelectSimpleById(id uint64) (User, error) {
 func (*_Query) SelectByUsername(username string) (User, error) {
 	options := option.NewQueryOptions()
 	options.Filters.Add(field.UserUsername, option.OpEqual, username)
+	options.Field = query.UserAllField
 	user, err := dao.UserStore.SelectOne(options)
 	if err != nil {
 		return User{}, errors.ErrNotFound.WithMessage(err.Error())
@@ -46,6 +48,7 @@ func (*_Query) SelectByUsername(username string) (User, error) {
 func (*_Query) SelectByEmail(email string) (User, error) {
 	options := option.NewQueryOptions()
 	options.Filters.Add(field.UserEmail, option.OpEqual, email)
+	options.Field = query.UserAllField
 	user, err := dao.UserStore.SelectOne(options)
 	if err != nil {
 		return User{}, errors.ErrNotFound.WithMessage(err.Error())
@@ -53,8 +56,10 @@ func (*_Query) SelectByEmail(email string) (User, error) {
 	return *NewUser().fromEntity(user), &errors.NoError
 }
 
-func (*_Query) Select(options *option.QueryOptions) ([]User, error) {
-	users, err := dao.UserStore.Select(options)
+func (*_Query) Select(model querymodel.UserQueryModel) ([]User, error) {
+	queryOptions := model.GenerateOptions()
+	queryOptions.Field = query.UserAllField
+	users, err := dao.UserStore.Select(queryOptions)
 	if err != nil {
 		return nil, errors.ErrInternalServer.WithMessage(err.Error())
 	}
@@ -65,8 +70,9 @@ func (*_Query) Select(options *option.QueryOptions) ([]User, error) {
 	return result, &errors.NoError
 }
 
-func (*_Query) Count(options *option.QueryOptions) (int64, error) {
-	count, err := dao.UserStore.Count(options)
+func (*_Query) Count(model querymodel.UserQueryModel) (int64, error) {
+	queryOptions := model.GenerateOptions()
+	count, err := dao.UserStore.Count(queryOptions)
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
 	}

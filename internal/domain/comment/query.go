@@ -15,6 +15,7 @@ var Query = new(_Query)
 
 func (*_Query) Select(model querymodel.CommentQueryModel) ([]Comment, error) {
 	queryOptions := model.GenerateOptions()
+	queryOptions.Field = query.CommentAllField
 	entityComments, err := dao.CommentStore.Select(queryOptions)
 	if err != nil {
 		return nil, errors.ErrInternalServer.WithMessage(err.Error())
@@ -30,6 +31,7 @@ func (*_Query) Select(model querymodel.CommentQueryModel) ([]Comment, error) {
 func (*_Query) SelectById(id uint64) (Comment, error) {
 	queryOptions := option.NewQueryOptions()
 	queryOptions.Filters.Add(field.CommentId, option.OpEqual, id)
+	queryOptions.Field = query.CommentAllField
 	entityComment, err := dao.CommentStore.SelectOne(queryOptions)
 	if err != nil {
 		return Comment{}, errors.ErrNotFound.WithMessage(err.Error())
