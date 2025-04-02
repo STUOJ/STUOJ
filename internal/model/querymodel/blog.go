@@ -5,35 +5,18 @@ import (
 	"STUOJ/internal/db/query/option"
 	"STUOJ/internal/model"
 	"time"
-
-	"github.com/gin-gonic/gin"
 )
 
 type BlogQueryModel struct {
-	Id        model.FieldList[uint64]
-	UserId    model.FieldList[uint64]
-	ProblemId model.FieldList[uint64]
+	Id        model.FieldList[int64]
+	UserId    model.FieldList[int64]
+	ProblemId model.FieldList[int64]
 	Title     model.Field[string]
-	Status    model.FieldList[uint64]
+	Status    model.FieldList[int64]
 	StartTime model.Field[time.Time]
 	EndTime   model.Field[time.Time]
 	Page      model.QueryPage
 	Sort      model.QuerySort
-}
-
-func (query *BlogQueryModel) Parse(c *gin.Context) {
-	query.Title.Parse(c, "title")
-	query.Status.Parse(c, "status")
-	query.ProblemId.Parse(c, "problem")
-	query.UserId.Parse(c, "user")
-	timePreiod := &model.Period{}
-	err := timePreiod.GetPeriod(c)
-	if err == nil {
-		query.StartTime.Set(timePreiod.StartTime)
-		query.EndTime.Set(timePreiod.EndTime)
-	}
-	query.Page.Parse(c)
-	query.Sort.Parse(c)
 }
 
 func (query *BlogQueryModel) GenerateOptions() *option.QueryOptions {

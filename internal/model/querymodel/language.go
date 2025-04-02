@@ -4,8 +4,6 @@ import (
 	"STUOJ/internal/db/entity/field"
 	"STUOJ/internal/db/query/option"
 	"STUOJ/internal/model"
-
-	"github.com/gin-gonic/gin"
 )
 
 type LanguageQueryModel struct {
@@ -16,15 +14,6 @@ type LanguageQueryModel struct {
 	Status model.FieldList[uint8]
 	Page   model.QueryPage
 	Sort   model.QuerySort
-}
-
-func (query *LanguageQueryModel) Parse(c *gin.Context) {
-	query.Name.Parse(c, "name")
-	query.Serial.Parse(c, "serial")
-	query.MapId.Parse(c, "map")
-	query.Status.Parse(c, "status")
-	query.Page.Parse(c)
-	query.Sort.Parse(c)
 }
 
 func (query *LanguageQueryModel) GenerateOptions() *option.QueryOptions {

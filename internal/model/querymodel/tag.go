@@ -4,8 +4,6 @@ import (
 	"STUOJ/internal/db/entity/field"
 	"STUOJ/internal/db/query/option"
 	"STUOJ/internal/model"
-
-	"github.com/gin-gonic/gin"
 )
 
 type TagQueryModel struct {
@@ -13,11 +11,6 @@ type TagQueryModel struct {
 	Name model.Field[string]
 	Page model.QueryPage
 	Sort model.QuerySort
-}
-
-func (query *TagQueryModel) Parse(c *gin.Context) {
-	query.Name.Parse(c, "name")
-	query.Page.Parse(c)
 }
 
 func (query *TagQueryModel) GenerateOptions() *option.QueryOptions {

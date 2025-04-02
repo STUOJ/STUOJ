@@ -5,8 +5,6 @@ import (
 	"STUOJ/internal/db/query/option"
 	"STUOJ/internal/model"
 	"time"
-
-	"github.com/gin-gonic/gin"
 )
 
 type HistoryQueryModel struct {
@@ -19,21 +17,6 @@ type HistoryQueryModel struct {
 	EndTime    model.Field[time.Time]
 	Page       model.QueryPage
 	Sort       model.QuerySort
-}
-
-func (query *HistoryQueryModel) Parse(c *gin.Context) {
-	query.UserId.Parse(c, "user")
-	query.ProblemId.Parse(c, "problem")
-	query.Title.Parse(c, "title")
-	query.Difficulty.Parse(c, "difficulty")
-	timePreiod := &model.Period{}
-	err := timePreiod.GetPeriod(c)
-	if err == nil {
-		query.StartTime.Set(timePreiod.StartTime)
-		query.EndTime.Set(timePreiod.EndTime)
-	}
-	query.Page.Parse(c)
-	query.Sort.Parse(c)
 }
 
 func (query *HistoryQueryModel) GenerateOptions() *option.QueryOptions {

@@ -5,8 +5,6 @@ import (
 	"STUOJ/internal/db/query/option"
 	"STUOJ/internal/model"
 	"time"
-
-	"github.com/gin-gonic/gin"
 )
 
 type UserQueryModel struct {
@@ -17,20 +15,6 @@ type UserQueryModel struct {
 	EndTime   model.Field[time.Time]
 	Page      model.QueryPage
 	Sort      model.QuerySort
-}
-
-func (query *UserQueryModel) Parse(c *gin.Context) {
-	query.Username.Parse(c, "username")
-	query.Id.Parse(c, "id")
-	query.Role.Parse(c, "role")
-	timePreiod := &model.Period{}
-	err := timePreiod.GetPeriod(c)
-	if err == nil {
-		query.StartTime.Set(timePreiod.StartTime)
-		query.EndTime.Set(timePreiod.EndTime)
-	}
-	query.Page.Parse(c)
-	query.Sort.Parse(c)
 }
 
 func (query *UserQueryModel) GenerateOptions() *option.QueryOptions {

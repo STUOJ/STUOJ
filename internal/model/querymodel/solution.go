@@ -4,8 +4,6 @@ import (
 	"STUOJ/internal/db/entity/field"
 	"STUOJ/internal/db/query/option"
 	"STUOJ/internal/model"
-
-	"github.com/gin-gonic/gin"
 )
 
 type SolutionQueryModel struct {
@@ -14,13 +12,6 @@ type SolutionQueryModel struct {
 	LanguageID model.FieldList[uint64]
 	Page       model.QueryPage
 	Sort       model.QuerySort
-}
-
-func (query *SolutionQueryModel) Parse(c *gin.Context) {
-	query.ProblemId.Parse(c, "problem")
-	query.LanguageID.Parse(c, "language")
-	query.Page.Parse(c)
-	query.Sort.Parse(c)
 }
 
 func (query *SolutionQueryModel) GenerateOptions() *option.QueryOptions {

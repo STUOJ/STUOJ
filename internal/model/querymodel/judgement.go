@@ -4,8 +4,6 @@ import (
 	"STUOJ/internal/db/entity/field"
 	"STUOJ/internal/db/query/option"
 	"STUOJ/internal/model"
-
-	"github.com/gin-gonic/gin"
 )
 
 type JudgementQueryModel struct {
@@ -15,14 +13,6 @@ type JudgementQueryModel struct {
 	Status       model.FieldList[uint64]
 	Page         model.QueryPage
 	Sort         model.QuerySort
-}
-
-func (query *JudgementQueryModel) Parse(c *gin.Context) {
-	query.SubmissionId.Parse(c, "submission")
-	query.TestcaseId.Parse(c, "testcase")
-	query.Status.Parse(c, "status")
-	query.Page.Parse(c)
-	query.Sort.Parse(c)
 }
 
 func (query *JudgementQueryModel) GenerateOptions() *option.QueryOptions {

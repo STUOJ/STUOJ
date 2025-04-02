@@ -4,8 +4,6 @@ import (
 	"STUOJ/internal/db/entity/field"
 	"STUOJ/internal/db/query/option"
 	"STUOJ/internal/model"
-
-	"github.com/gin-gonic/gin"
 )
 
 type TeamUserQuery struct {
@@ -13,13 +11,6 @@ type TeamUserQuery struct {
 	UserId model.FieldList[uint64]
 	Page   model.QueryPage
 	Sort   model.QuerySort
-}
-
-func (query *TeamUserQuery) Parse(c *gin.Context) {
-	query.TeamId.Parse(c, "team")
-	query.UserId.Parse(c, "user")
-	query.Page.Parse(c)
-	query.Sort.Parse(c)
 }
 
 func (query *TeamUserQuery) GenerateOptions() *option.QueryOptions {

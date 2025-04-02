@@ -5,8 +5,6 @@ import (
 	"STUOJ/internal/db/query/option"
 	"STUOJ/internal/model"
 	"time"
-
-	"github.com/gin-gonic/gin"
 )
 
 type ProblemQueryModel struct {
@@ -19,21 +17,6 @@ type ProblemQueryModel struct {
 	EndTime   model.Field[time.Time]
 	Page      model.QueryPage
 	Sort      model.QuerySort
-}
-
-func (query *ProblemQueryModel) Parse(c *gin.Context) {
-	query.Title.Parse(c, "title")
-	query.Source.Parse(c, "source")
-	query.Status.Parse(c, "status")
-	query.Tag.Parse(c, "tag")
-	timePreiod := &model.Period{}
-	err := timePreiod.GetPeriod(c)
-	if err == nil {
-		query.StartTime.Set(timePreiod.StartTime)
-		query.EndTime.Set(timePreiod.EndTime)
-	}
-	query.Page.Parse(c)
-	query.Sort.Parse(c)
 }
 
 func (query *ProblemQueryModel) GenerateOptions() *option.QueryOptions {

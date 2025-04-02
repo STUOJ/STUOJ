@@ -4,8 +4,6 @@ import (
 	"STUOJ/internal/db/entity/field"
 	"STUOJ/internal/db/query/option"
 	"STUOJ/internal/model"
-
-	"github.com/gin-gonic/gin"
 )
 
 type CollectionUserQueryModel struct {
@@ -14,13 +12,6 @@ type CollectionUserQueryModel struct {
 	CollectionId model.FieldList[uint64]
 	Page         model.QueryPage
 	Sort         model.QuerySort
-}
-
-func (query *CollectionUserQueryModel) Parse(c *gin.Context) {
-	query.UserId.Parse(c, "user")
-	query.CollectionId.Parse(c, "collection")
-	query.Page.Parse(c)
-	query.Sort.Parse(c)
 }
 
 func (query *CollectionUserQueryModel) GenerateOptions() *option.QueryOptions {
