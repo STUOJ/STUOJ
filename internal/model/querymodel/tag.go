@@ -7,10 +7,11 @@ import (
 )
 
 type TagQueryModel struct {
-	Id   model.FieldList[uint64]
-	Name model.Field[string]
-	Page model.QueryPage
-	Sort model.QuerySort
+	Id    model.FieldList[int64]
+	Name  model.FieldList[string]
+	Page  model.QueryPage
+	Sort  model.QuerySort
+	Field field.TagField
 }
 
 func (query *TagQueryModel) GenerateOptions() *option.QueryOptions {
@@ -23,5 +24,6 @@ func (query *TagQueryModel) GenerateOptions() *option.QueryOptions {
 	}
 	query.Page.InsertOptions(options)
 	query.Sort.InsertOptions(options)
+	options.Field = &query.Field
 	return options
 }

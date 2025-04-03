@@ -7,10 +7,11 @@ import (
 )
 
 type TestcaseQueryModel struct {
-	Id        model.FieldList[uint64]
-	ProblemId model.FieldList[uint64]
+	Id        model.FieldList[int64]
+	ProblemId model.FieldList[int64]
 	Page      model.QueryPage
 	Sort      model.QuerySort
+	Field     field.TestcaseField
 }
 
 func (query *TestcaseQueryModel) GenerateOptions() *option.QueryOptions {
@@ -23,5 +24,6 @@ func (query *TestcaseQueryModel) GenerateOptions() *option.QueryOptions {
 	}
 	query.Page.InsertOptions(options)
 	query.Sort.InsertOptions(options)
+	options.Field = &query.Field
 	return options
 }

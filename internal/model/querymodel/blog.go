@@ -17,6 +17,7 @@ type BlogQueryModel struct {
 	EndTime   model.Field[time.Time]
 	Page      model.QueryPage
 	Sort      model.QuerySort
+	Field     field.BlogField
 }
 
 func (query *BlogQueryModel) GenerateOptions() *option.QueryOptions {
@@ -44,5 +45,6 @@ func (query *BlogQueryModel) GenerateOptions() *option.QueryOptions {
 	}
 	query.Page.InsertOptions(options)
 	query.Sort.InsertOptions(options)
+	options.Field = &query.Field
 	return options
 }

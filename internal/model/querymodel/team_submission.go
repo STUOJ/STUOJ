@@ -7,10 +7,11 @@ import (
 )
 
 type TeamSubmissionQuery struct {
-	TeamId       model.FieldList[uint64]
-	SubmissionId model.FieldList[uint64]
+	TeamId       model.FieldList[int64]
+	SubmissionId model.FieldList[int64]
 	Page         model.QueryPage
 	Sort         model.QuerySort
+	Field        field.TeamSubmissionField
 }
 
 func (query *TeamSubmissionQuery) GenerateOptions() *option.QueryOptions {
@@ -23,5 +24,6 @@ func (query *TeamSubmissionQuery) GenerateOptions() *option.QueryOptions {
 	}
 	query.Page.InsertOptions(options)
 	query.Sort.InsertOptions(options)
+	options.Field = &query.Field
 	return options
 }

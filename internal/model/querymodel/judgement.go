@@ -7,12 +7,13 @@ import (
 )
 
 type JudgementQueryModel struct {
-	Id           model.FieldList[uint64]
-	SubmissionId model.FieldList[uint64]
-	TestcaseId   model.FieldList[uint64]
-	Status       model.FieldList[uint64]
+	Id           model.FieldList[int64]
+	SubmissionId model.FieldList[int64]
+	TestcaseId   model.FieldList[int64]
+	Status       model.FieldList[int64]
 	Page         model.QueryPage
 	Sort         model.QuerySort
+	Field        field.JudgementField
 }
 
 func (query *JudgementQueryModel) GenerateOptions() *option.QueryOptions {
@@ -31,5 +32,6 @@ func (query *JudgementQueryModel) GenerateOptions() *option.QueryOptions {
 	}
 	query.Page.InsertOptions(options)
 	query.Sort.InsertOptions(options)
+	options.Field = &query.Field
 	return options
 }

@@ -7,13 +7,14 @@ import (
 )
 
 type TeamQueryModel struct {
-	Id        model.FieldList[uint64]
-	UserId    model.FieldList[uint64]
-	ContestId model.FieldList[uint64]
+	Id        model.FieldList[int64]
+	UserId    model.FieldList[int64]
+	ContestId model.FieldList[int64]
 	Name      model.Field[string]
-	Status    model.FieldList[uint8]
+	Status    model.FieldList[int8]
 	Page      model.QueryPage
 	Sort      model.QuerySort
+	Field     field.TeamField
 }
 
 func (query *TeamQueryModel) GenerateOptions() *option.QueryOptions {
@@ -35,5 +36,6 @@ func (query *TeamQueryModel) GenerateOptions() *option.QueryOptions {
 	}
 	query.Page.InsertOptions(options)
 	query.Sort.InsertOptions(options)
+	options.Field = &query.Field
 	return options
 }

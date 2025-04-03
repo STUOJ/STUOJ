@@ -8,15 +8,16 @@ import (
 )
 
 type ProblemQueryModel struct {
-	Id        model.FieldList[uint64]
+	Id        model.FieldList[int64]
 	Title     model.Field[string]
 	Source    model.Field[string]
-	Status    model.FieldList[uint8]
-	Tag       model.FieldList[uint64]
+	Status    model.FieldList[int8]
+	Tag       model.FieldList[int64]
 	StartTime model.Field[time.Time]
 	EndTime   model.Field[time.Time]
 	Page      model.QueryPage
 	Sort      model.QuerySort
+	Field     field.ProblemField
 }
 
 func (query *ProblemQueryModel) GenerateOptions() *option.QueryOptions {
@@ -44,5 +45,6 @@ func (query *ProblemQueryModel) GenerateOptions() *option.QueryOptions {
 	}
 	query.Page.InsertOptions(options)
 	query.Sort.InsertOptions(options)
+	options.Field = &query.Field
 	return options
 }

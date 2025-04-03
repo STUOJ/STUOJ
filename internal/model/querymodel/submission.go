@@ -8,15 +8,16 @@ import (
 )
 
 type SubmissionQueryModel struct {
-	Id        model.FieldList[uint64]
-	UserId    model.FieldList[uint64]
-	ProblemId model.FieldList[uint64]
-	Status    model.FieldList[uint8]
-	Language  model.FieldList[uint64]
+	Id        model.FieldList[int64]
+	UserId    model.FieldList[int64]
+	ProblemId model.FieldList[int64]
+	Status    model.FieldList[int8]
+	Language  model.FieldList[int64]
 	StartTime model.Field[time.Time]
 	EndTime   model.Field[time.Time]
 	Page      model.QueryPage
 	Sort      model.QuerySort
+	Field     field.SubmissionField
 }
 
 func (query *SubmissionQueryModel) GenerateOptions() *option.QueryOptions {
@@ -44,5 +45,6 @@ func (query *SubmissionQueryModel) GenerateOptions() *option.QueryOptions {
 	}
 	query.Page.InsertOptions(options)
 	query.Sort.InsertOptions(options)
+	options.Field = &query.Field
 	return options
 }

@@ -7,10 +7,11 @@ import (
 )
 
 type CollectionProblemQueryModel struct {
-	CollectionId model.FieldList[uint64]
-	ProblemId    model.FieldList[uint64]
+	CollectionId model.FieldList[int64]
+	ProblemId    model.FieldList[int64]
 	Page         model.QueryPage
 	Sort         model.QuerySort
+	Field        field.CollectionProblemField
 }
 
 func (query *CollectionProblemQueryModel) GenerateOptions() *option.QueryOptions {
@@ -23,5 +24,6 @@ func (query *CollectionProblemQueryModel) GenerateOptions() *option.QueryOptions
 	}
 	query.Page.InsertOptions(options)
 	query.Sort.InsertOptions(options)
+	options.Field = &query.Field
 	return options
 }

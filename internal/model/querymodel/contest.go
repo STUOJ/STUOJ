@@ -8,12 +8,12 @@ import (
 )
 
 type ContestQueryModel struct {
-	Id          model.FieldList[uint64]
-	UserId      model.FieldList[uint64]
+	Id          model.FieldList[int64]
+	UserId      model.FieldList[int64]
 	Title       model.Field[string]
-	Status      model.FieldList[uint8]
-	Format      model.FieldList[uint8]
-	TeamSize    model.FieldList[uint8]
+	Status      model.FieldList[int8]
+	Format      model.FieldList[int8]
+	TeamSize    model.FieldList[int8]
 	StartTime   model.Field[time.Time]
 	EndTime     model.Field[time.Time]
 	BeginStart  model.Field[time.Time]
@@ -22,6 +22,7 @@ type ContestQueryModel struct {
 	FinishEnd   model.Field[time.Time]
 	Page        model.QueryPage
 	Sort        model.QuerySort
+	Field       field.ContestField
 }
 
 func (query *ContestQueryModel) GenerateOptions() *option.QueryOptions {
@@ -64,5 +65,6 @@ func (query *ContestQueryModel) GenerateOptions() *option.QueryOptions {
 	}
 	query.Page.InsertOptions(options)
 	query.Sort.InsertOptions(options)
+	options.Field = &query.Field
 	return options
 }

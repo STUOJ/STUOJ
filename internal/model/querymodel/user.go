@@ -8,13 +8,14 @@ import (
 )
 
 type UserQueryModel struct {
-	Id        model.FieldList[uint64]
+	Id        model.FieldList[int64]
 	Username  model.Field[string]
-	Role      model.FieldList[uint8]
+	Role      model.FieldList[int8]
 	StartTime model.Field[time.Time]
 	EndTime   model.Field[time.Time]
 	Page      model.QueryPage
 	Sort      model.QuerySort
+	Field     field.UserField
 }
 
 func (query *UserQueryModel) GenerateOptions() *option.QueryOptions {
@@ -36,5 +37,6 @@ func (query *UserQueryModel) GenerateOptions() *option.QueryOptions {
 	}
 	query.Page.InsertOptions(options)
 	query.Sort.InsertOptions(options)
+	options.Field = &query.Field
 	return options
 }

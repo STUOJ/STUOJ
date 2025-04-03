@@ -7,13 +7,14 @@ import (
 )
 
 type LanguageQueryModel struct {
-	Id     model.FieldList[uint64]
+	Id     model.FieldList[int64]
 	Name   model.Field[string]
-	Serial model.FieldList[uint16]
-	MapId  model.FieldList[uint64]
-	Status model.FieldList[uint8]
+	Serial model.FieldList[int16]
+	MapId  model.FieldList[int64]
+	Status model.FieldList[int8]
 	Page   model.QueryPage
 	Sort   model.QuerySort
+	Field  field.LanguageField
 }
 
 func (query *LanguageQueryModel) GenerateOptions() *option.QueryOptions {
@@ -35,5 +36,6 @@ func (query *LanguageQueryModel) GenerateOptions() *option.QueryOptions {
 	}
 	query.Page.InsertOptions(options)
 	query.Sort.InsertOptions(options)
+	options.Field = &query.Field
 	return options
 }

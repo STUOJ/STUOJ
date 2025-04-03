@@ -8,14 +8,15 @@ import (
 )
 
 type CommentQueryModel struct {
-	Id        model.FieldList[uint64]
-	UserId    model.FieldList[uint64]
-	BlogId    model.Field[uint64]
-	Status    model.FieldList[uint64]
+	Id        model.FieldList[int64]
+	UserId    model.FieldList[int64]
+	BlogId    model.Field[int64]
+	Status    model.FieldList[int64]
 	StartTime model.Field[time.Time]
 	EndTime   model.Field[time.Time]
 	Page      model.QueryPage
 	Sort      model.QuerySort
+	Field     field.CommentField
 }
 
 func (query *CommentQueryModel) GenerateOptions() *option.QueryOptions {
@@ -40,5 +41,6 @@ func (query *CommentQueryModel) GenerateOptions() *option.QueryOptions {
 	}
 	query.Page.InsertOptions(options)
 	query.Sort.InsertOptions(options)
+	options.Field = &query.Field
 	return options
 }

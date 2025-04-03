@@ -7,11 +7,12 @@ import (
 )
 
 type CollectionUserQueryModel struct {
-	Id           model.FieldList[uint64]
-	UserId       model.FieldList[uint64]
-	CollectionId model.FieldList[uint64]
+	Id           model.FieldList[int64]
+	UserId       model.FieldList[int64]
+	CollectionId model.FieldList[int64]
 	Page         model.QueryPage
 	Sort         model.QuerySort
+	Field        field.CollectionUserField
 }
 
 func (query *CollectionUserQueryModel) GenerateOptions() *option.QueryOptions {
@@ -27,5 +28,6 @@ func (query *CollectionUserQueryModel) GenerateOptions() *option.QueryOptions {
 	}
 	query.Page.InsertOptions(options)
 	query.Sort.InsertOptions(options)
+	options.Field = &query.Field
 	return options
 }
