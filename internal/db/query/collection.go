@@ -8,6 +8,11 @@ var (
 				SelectId().
 				SelectTitle().
 				SelectUserId().
+				SelectStatus()
+	CollectionListItemField = field.NewCollectionField().
+				SelectId().
+				SelectTitle().
+				SelectUserId().
 				SelectStatus().
 				SelectCreateTime().
 				SelectUpdateTime()

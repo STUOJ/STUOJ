@@ -9,4 +9,11 @@ var (
 				SelectTitle().
 				SelectSource().
 				SelectDifficulty()
+	ProblemListItemField = field.NewProblemField().
+				SelectId().
+				SelectTitle().
+				SelectSource().
+				SelectDifficulty().
+				SelectCreateTime().
+				SelectUpdateTime()
 )
