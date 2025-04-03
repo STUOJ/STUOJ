@@ -13,6 +13,19 @@ type _Query struct{}
 
 var Query = new(_Query)
 
+func (*_Query) Select(model querymodel.JudgementQueryModel) ([]Judgement, error) {
+	queryOptions := model.GenerateOptions()
+	judgements, err := dao.JudgementStore.Select(queryOptions)
+	if err != nil {
+		return nil, errors.ErrInternalServer.WithMessage(err.Error())
+	}
+	var result []Judgement
+	for _, judgement := range judgements {
+		result = append(result, *NewJudgement().fromEntity(judgement))
+	}
+	return result, &errors.NoError
+}
+
 func (*_Query) SelectById(id uint64) (Judgement, error) {
 	options := option.NewQueryOptions()
 	options.Filters.Add(field.JudgementId, option.OpEqual, id)
@@ -29,20 +42,6 @@ func (*_Query) SelectBySubmissionId(submissionId uint64) ([]Judgement, error) {
 	options.Filters.Add(field.JudgementSubmissionId, option.OpEqual, submissionId)
 	options.Field = query.JudgementAllField
 	judgements, err := dao.JudgementStore.Select(options)
-	if err != nil {
-		return nil, errors.ErrInternalServer.WithMessage(err.Error())
-	}
-	var result []Judgement
-	for _, judgement := range judgements {
-		result = append(result, *NewJudgement().fromEntity(judgement))
-	}
-	return result, &errors.NoError
-}
-
-func (*_Query) Select(model querymodel.JudgementQueryModel) ([]Judgement, error) {
-	queryOptions := model.GenerateOptions()
-	queryOptions.Field = query.JudgementAllField
-	judgements, err := dao.JudgementStore.Select(queryOptions)
 	if err != nil {
 		return nil, errors.ErrInternalServer.WithMessage(err.Error())
 	}

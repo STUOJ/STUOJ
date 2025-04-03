@@ -2,7 +2,6 @@ package contest
 
 import (
 	"STUOJ/internal/db/dao"
-	"STUOJ/internal/db/entity"
 	"STUOJ/internal/db/entity/field"
 	"STUOJ/internal/db/query"
 	"STUOJ/internal/db/query/option"
@@ -16,7 +15,6 @@ var Query = new(_Query)
 
 func (_Query) Select(model querymodel.ContestQueryModel) ([]Contest, error) {
 	queryOptions := model.GenerateOptions()
-	queryOptions.Field = query.ContestListItemField
 	contests, err := dao.ContestStore.Select(queryOptions)
 	if err != nil {
 		return nil, errors.ErrInternalServer.WithMessage(err.Error())
@@ -48,36 +46,6 @@ func (_Query) SelectSimpleById(id uint64) (Contest, error) {
 		return Contest{}, errors.ErrNotFound.WithMessage(err.Error())
 	}
 	return *NewContest().fromEntity(contest), &errors.NoError
-}
-
-func (_Query) SelectByUserId(userId uint64) ([]Contest, error) {
-	options := option.NewQueryOptions()
-	options.Filters.Add(field.ContestUserId, option.OpEqual, userId)
-	options.Field = query.ContestAllField
-	contests, err := dao.ContestStore.Select(options)
-	if err != nil {
-		return nil, errors.ErrInternalServer.WithMessage(err.Error())
-	}
-	var result []Contest
-	for _, contest := range contests {
-		result = append(result, *NewContest().fromEntity(contest))
-	}
-	return result, &errors.NoError
-}
-
-func (_Query) SelectByStatus(status entity.ContestStatus) ([]Contest, error) {
-	options := option.NewQueryOptions()
-	options.Filters.Add(field.ContestStatus, option.OpEqual, status)
-	options.Field = query.ContestAllField
-	contests, err := dao.ContestStore.Select(options)
-	if err != nil {
-		return nil, errors.ErrInternalServer.WithMessage(err.Error())
-	}
-	var result []Contest
-	for _, contest := range contests {
-		result = append(result, *NewContest().fromEntity(contest))
-	}
-	return result, &errors.NoError
 }
 
 func (_Query) Count(model querymodel.ContestQueryModel) (int64, error) {

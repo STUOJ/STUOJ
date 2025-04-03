@@ -16,6 +16,7 @@ var Query = new(_Query)
 func (*_Query) SelectById(id uint64) (Team, error) {
 	options := option.NewQueryOptions()
 	options.Filters.Add(field.TeamId, option.OpEqual, id)
+	options.Field = query.TeamAllField
 	team, err := dao.TeamStore.SelectOne(options)
 	if err != nil {
 		return Team{}, errors.ErrNotFound.WithMessage(err.Error())

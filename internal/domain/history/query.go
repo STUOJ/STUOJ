@@ -13,6 +13,19 @@ type _Query struct{}
 
 var Query = new(_Query)
 
+func (*_Query) Select(model querymodel.HistoryQueryModel) ([]History, error) {
+	options := model.GenerateOptions()
+	histories, err := dao.HistoryStore.Select(options)
+	if err != nil {
+		return nil, errors.ErrInternalServer.WithMessage(err.Error())
+	}
+	var result []History
+	for _, history := range histories {
+		result = append(result, *NewHistory().fromEntity(history))
+	}
+	return result, &errors.NoError
+}
+
 func (*_Query) SelectById(id uint64) (History, error) {
 	options := option.NewQueryOptions()
 	options.Filters.Add(field.HistoryId, option.OpEqual, id)
@@ -53,20 +66,6 @@ func (*_Query) SelectByUserId(userId uint64) ([]History, error) {
 func (*_Query) SelectByProblemId(problemId uint64) ([]History, error) {
 	options := option.NewQueryOptions()
 	options.Filters.Add(field.HistoryProblemId, option.OpEqual, problemId)
-	options.Field = query.HistorySimpleField
-	histories, err := dao.HistoryStore.Select(options)
-	if err != nil {
-		return nil, errors.ErrInternalServer.WithMessage(err.Error())
-	}
-	var result []History
-	for _, history := range histories {
-		result = append(result, *NewHistory().fromEntity(history))
-	}
-	return result, &errors.NoError
-}
-
-func (*_Query) Select(model querymodel.HistoryQueryModel) ([]History, error) {
-	options := model.GenerateOptions()
 	options.Field = query.HistorySimpleField
 	histories, err := dao.HistoryStore.Select(options)
 	if err != nil {

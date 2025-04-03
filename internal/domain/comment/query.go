@@ -15,7 +15,6 @@ var Query = new(_Query)
 
 func (*_Query) Select(model querymodel.CommentQueryModel) ([]Comment, error) {
 	queryOptions := model.GenerateOptions()
-	queryOptions.Field = query.CommentAllField
 	entityComments, err := dao.CommentStore.Select(queryOptions)
 	if err != nil {
 		return nil, errors.ErrInternalServer.WithMessage(err.Error())

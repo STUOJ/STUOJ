@@ -15,7 +15,6 @@ var Query = new(_Query)
 
 func (*_Query) Select(model querymodel.BlogQueryModel) ([]Blog, error) {
 	queryOptions := model.GenerateOptions()
-	queryOptions.Field = query.BlogAllField
 	entityBlogs, err := dao.BlogStore.Select(queryOptions)
 	if err != nil {
 		return nil, errors.ErrInternalServer.WithMessage(err.Error())

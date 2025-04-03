@@ -15,7 +15,6 @@ var Query = new(_Query)
 
 func (*_Query) Select(model querymodel.CollectionQueryModel) ([]Collection, error) {
 	queryOptions := model.GenerateOptions()
-	queryOptions.Field = query.CollectionListItemField
 	entityCollections, err := dao.CollectionStore.Select(queryOptions)
 	if err != nil {
 		return nil, errors.ErrInternalServer.WithMessage(err.Error())

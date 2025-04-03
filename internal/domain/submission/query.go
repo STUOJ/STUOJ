@@ -13,6 +13,19 @@ type _Query struct{}
 
 var Query = new(_Query)
 
+func (*_Query) Select(model querymodel.SubmissionQueryModel) ([]Submission, error) {
+	queryOptions := model.GenerateOptions()
+	submissions, err := dao.SubmissionStore.Select(queryOptions)
+	if err != nil {
+		return nil, errors.ErrInternalServer.WithMessage(err.Error())
+	}
+	var result []Submission
+	for _, submission := range submissions {
+		result = append(result, *NewSubmission().fromEntity(submission))
+	}
+	return result, &errors.NoError
+}
+
 func (*_Query) SelectById(id uint64) (Submission, error) {
 	options := option.NewQueryOptions()
 	options.Filters.Add(field.SubmissionId, option.OpEqual, id)
@@ -54,20 +67,6 @@ func (*_Query) SelectByProblemId(problemId uint64) ([]Submission, error) {
 	options.Filters.Add(field.SubmissionProblemId, option.OpEqual, problemId)
 	options.Field = query.SubmissionAllField
 	submissions, err := dao.SubmissionStore.Select(options)
-	if err != nil {
-		return nil, errors.ErrInternalServer.WithMessage(err.Error())
-	}
-	var result []Submission
-	for _, submission := range submissions {
-		result = append(result, *NewSubmission().fromEntity(submission))
-	}
-	return result, &errors.NoError
-}
-
-func (*_Query) Select(model querymodel.SubmissionQueryModel) ([]Submission, error) {
-	queryOptions := model.GenerateOptions()
-	queryOptions.Field = query.SubmissionAllField
-	submissions, err := dao.SubmissionStore.Select(queryOptions)
 	if err != nil {
 		return nil, errors.ErrInternalServer.WithMessage(err.Error())
 	}

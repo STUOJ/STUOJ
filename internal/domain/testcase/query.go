@@ -3,6 +3,7 @@ package testcase
 import (
 	"STUOJ/internal/db/dao"
 	"STUOJ/internal/db/entity/field"
+	"STUOJ/internal/db/query"
 	"STUOJ/internal/db/query/option"
 	"STUOJ/internal/errors"
 	"STUOJ/internal/model/querymodel"
@@ -29,6 +30,7 @@ func (*_Query) Select(model querymodel.TestcaseQueryModel) ([]Testcase, error) {
 func (*_Query) SelectById(id uint64) (Testcase, error) {
 	queryOptions := option.NewQueryOptions()
 	queryOptions.Filters.Add(field.TestcaseId, option.OpEqual, id)
+	queryOptions.Field = query.TestcaseAllField
 	entityTestcase, err := dao.TestcaseStore.SelectOne(queryOptions)
 	if err != nil {
 		return Testcase{}, errors.ErrNotFound.WithMessage(err.Error())
@@ -39,6 +41,7 @@ func (*_Query) SelectById(id uint64) (Testcase, error) {
 func (*_Query) SelectByProblemId(problemId uint64) ([]Testcase, error) {
 	queryOptions := option.NewQueryOptions()
 	queryOptions.Filters.Add(field.TestcaseProblemId, option.OpEqual, problemId)
+	queryOptions.Field = query.TestcaseAllField
 	entityTestcases, err := dao.TestcaseStore.Select(queryOptions)
 	if err != nil {
 		return nil, errors.ErrInternalServer.WithMessage(err.Error())

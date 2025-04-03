@@ -30,6 +30,7 @@ func (*_Query) Select(model querymodel.ProblemQueryModel) ([]Problem, error) {
 func (*_Query) SelectById(id uint64) (Problem, error) {
 	queryOptions := option.NewQueryOptions()
 	queryOptions.Filters.Add(field.ProblemId, option.OpEqual, id)
+	queryOptions.Field = query.ProblemAllField
 	entityProblem, err := dao.ProblemStore.SelectOne(queryOptions)
 	if err != nil {
 		return Problem{}, errors.ErrNotFound.WithMessage(err.Error())

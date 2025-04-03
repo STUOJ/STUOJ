@@ -37,7 +37,6 @@ func (*_Query) SelectByName(name string) (Language, error) {
 
 func (*_Query) Select(model querymodel.LanguageQueryModel) ([]Language, error) {
 	queryOptions := model.GenerateOptions()
-	queryOptions.Field = query.LanguageAllField
 	languages, err := dao.LanguageStore.Select(queryOptions)
 	if err != nil {
 		return nil, errors.ErrInternalServer.WithMessage(err.Error())

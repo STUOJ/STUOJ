@@ -13,6 +13,19 @@ type _Query struct{}
 
 var Query = new(_Query)
 
+func (*_Query) Select(model querymodel.UserQueryModel) ([]User, error) {
+	queryOptions := model.GenerateOptions()
+	users, err := dao.UserStore.Select(queryOptions)
+	if err != nil {
+		return nil, errors.ErrInternalServer.WithMessage(err.Error())
+	}
+	var result []User
+	for _, user := range users {
+		result = append(result, *NewUser().fromEntity(user))
+	}
+	return result, &errors.NoError
+}
+
 func (*_Query) SelectById(id uint64) (User, error) {
 	options := option.NewQueryOptions()
 	options.Filters.Add(field.UserId, option.OpEqual, id)
@@ -34,17 +47,6 @@ func (*_Query) SelectSimpleById(id uint64) (User, error) {
 	return *NewUser().fromEntity(user), &errors.NoError
 }
 
-func (*_Query) SelectByUsername(username string) (User, error) {
-	options := option.NewQueryOptions()
-	options.Filters.Add(field.UserUsername, option.OpEqual, username)
-	options.Field = query.UserAllField
-	user, err := dao.UserStore.SelectOne(options)
-	if err != nil {
-		return User{}, errors.ErrNotFound.WithMessage(err.Error())
-	}
-	return *NewUser().fromEntity(user), &errors.NoError
-}
-
 func (*_Query) SelectByEmail(email string) (User, error) {
 	options := option.NewQueryOptions()
 	options.Filters.Add(field.UserEmail, option.OpEqual, email)
@@ -54,20 +56,6 @@ func (*_Query) SelectByEmail(email string) (User, error) {
 		return User{}, errors.ErrNotFound.WithMessage(err.Error())
 	}
 	return *NewUser().fromEntity(user), &errors.NoError
-}
-
-func (*_Query) Select(model querymodel.UserQueryModel) ([]User, error) {
-	queryOptions := model.GenerateOptions()
-	queryOptions.Field = query.UserAllField
-	users, err := dao.UserStore.Select(queryOptions)
-	if err != nil {
-		return nil, errors.ErrInternalServer.WithMessage(err.Error())
-	}
-	var result []User
-	for _, user := range users {
-		result = append(result, *NewUser().fromEntity(user))
-	}
-	return result, &errors.NoError
 }
 
 func (*_Query) Count(model querymodel.UserQueryModel) (int64, error) {
