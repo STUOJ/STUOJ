@@ -6,6 +6,7 @@
 package main
 
 import (
+	"STUOJ/utils"
 	"flag"
 	"fmt"
 	"go/ast"
@@ -15,7 +16,6 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"regexp"
 	"strings"
 )
 
@@ -27,6 +27,9 @@ import (
 	"STUOJ/internal/db/entity"
 	"STUOJ/internal/db/query/option"
 	"gorm.io/gorm"
+	{{- range.Imports}}
+	"{{.}}"
+	{{- end}}
 )
 
 type _{{.StructName}}Store struct {}
@@ -42,8 +45,8 @@ func (store *_{{.StructName}}Store) Insert(entity_ entity.{{.StructName}}) (enti
 }
 
 // 查询记录
-func (store *_{{.StructName}}Store) Select(options *option.QueryOptions) ([]entity.{{.StructName}}, error) {
-	var entities []entity.{{.StructName}}
+func (store *_{{.StructName}}Store) Select(options *option.QueryOptions) ([]map[string]any, error) {
+	var entities []map[string]any
 	where := options.GenerateQuery()
 	err := db.Db.Transaction(func(tx *gorm.DB) error {
 		return tx.Model(&entity.{{.StructName}}{}).Where(where).Find(&entities).Error
@@ -52,8 +55,8 @@ func (store *_{{.StructName}}Store) Select(options *option.QueryOptions) ([]enti
 }
 
 // 查询单条记录
-func (store *_{{.StructName}}Store) SelectOne(options *option.QueryOptions) (entity.{{.StructName}}, error) {
-	var entity_ entity.{{.StructName}}
+func (store *_{{.StructName}}Store) SelectOne(options *option.QueryOptions) (map[string]any, error) {
+	var entity_ map[string]any
 	where := options.GenerateQuery()
 	err := db.Db.Transaction(func(tx *gorm.DB) error {
 		return tx.Model(&entity.{{.StructName}}{}).Where(where).First(&entity_).Error
@@ -89,7 +92,31 @@ func (store *_{{.StructName}}Store) Count(options *option.QueryOptions) (int64, 
 		return tx.Model(&entity.{{.StructName}}{}).Where(where).Count(&count).Error
 	})
 	return count, err
-}`
+}
+
+func (store *_{{.StructName}}Store) Dto(data map[string]any) entity.{{.StructName}} {
+	var entity_ entity.{{.StructName}}
+	{{- range .Fields}}
+	{{- if .PkgPath}}
+	if v, ok := data["{{.Name | toSnake}}"].({{.PkgPath}}.{{.Type}}); ok {
+		entity_.{{.Name}} = v
+	}
+	{{- else}}
+	if v, ok := data["{{.Name | toSnake}}"].({{.Type}}); ok {
+		entity_.{{.Name}} = v
+	}
+	{{- end}}
+	{{- end}}
+	return entity_
+}
+
+`
+
+type FieldInfo struct {
+	Name    string
+	Type    string
+	PkgPath string
+}
 
 func main() {
 	// 解析命令行参数
@@ -140,6 +167,57 @@ func main() {
 		log.Fatalf("未找到类型 %s 对应的结构体", typeName)
 	}
 
+	// 解析结构体字段
+	var fields []FieldInfo
+	pkgPaths := make(map[string]struct{})
+	for _, f := range targetStruct.Fields.List {
+		if len(f.Names) == 0 {
+			continue
+		}
+		fieldName := f.Names[0].Name
+		if f.Tag == nil {
+			continue
+		}
+		gormTag := getGormTag(f.Tag.Value)
+		if hasForeignKey(gormTag) {
+			continue
+		}
+		// 获取字段类型
+		typeExpr := f.Type
+		var fieldType, pkgPath string
+		switch t := typeExpr.(type) {
+		case *ast.Ident:
+			fieldType = t.Name
+			// 如果是自定义类型（非基本类型），添加entity包路径
+			if !isBuiltinType(fieldType) {
+				pkgPath = "entity"
+				pkgPaths[pkgPath] = struct{}{}
+			}
+		case *ast.SelectorExpr:
+			fieldType = t.Sel.Name
+			if ident, ok := t.X.(*ast.Ident); ok {
+				pkgPath = ident.Name
+				pkgPaths[pkgPath] = struct{}{}
+			}
+		case *ast.ArrayType:
+			fieldType = "[]" + getArrayElemType(t.Elt)
+		case *ast.StarExpr:
+			fieldType = "*" + getStarExprType(t.X)
+		default:
+			continue
+		}
+		fields = append(fields, FieldInfo{Name: fieldName, Type: fieldType, PkgPath: pkgPath})
+	}
+
+	// 导入包路径
+	var imports []string
+	for pkgPath := range pkgPaths {
+		if pkgPath == "entity" {
+			continue
+		}
+		imports = append(imports, pkgPath)
+	}
+
 	// 创建输出目录
 	outputDir := "../dao"
 	if err := os.MkdirAll(outputDir, 0755); err != nil {
@@ -147,19 +225,23 @@ func main() {
 	}
 
 	// 创建模板并渲染
-	t := template.Must(template.New("dao").Parse(tmpl))
-	outputFile := filepath.Join(outputDir, fmt.Sprintf("%s_store_generated.go", snakeCase(typeName)))
+	t := template.Must(template.New("dao").
+		Funcs(template.FuncMap{"toSnake": utils.ToSnakeCase}).
+		Parse(tmpl))
+	data := map[string]any{
+		"StructName": typeName,
+		"Fields":     fields,
+		"Imports":    imports,
+	}
+
+	outputFile := filepath.Join(outputDir, fmt.Sprintf("%s_store_generated.go", utils.ToSnakeCase(typeName)))
 	f, err := os.Create(outputFile)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer f.Close()
 
-	err = t.Execute(f, struct {
-		StructName string
-	}{
-		StructName: typeName,
-	})
+	err = t.Execute(f, data)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -167,11 +249,70 @@ func main() {
 	fmt.Printf("生成成功: %s\n", outputFile)
 }
 
-func snakeCase(s string) string {
-	var matchFirstCap = regexp.MustCompile("(.)([A-Z][a-z]+)")
-	var matchAllCap = regexp.MustCompile("([a-z0-9])([A-Z])")
+func getGormTag(tag string) string {
+	tag = strings.Trim(tag, "`")
+	for _, part := range strings.Split(tag, " ") {
+		if strings.HasPrefix(part, "gorm:") {
+			return strings.Trim(strings.SplitN(part, ":", 2)[1], `"`)
+		}
+	}
+	return ""
+}
+func hasForeignKey(tag string) bool {
+	for _, part := range strings.Split(tag, ";") {
+		if strings.HasPrefix(strings.TrimSpace(part), "foreignKey:") {
+			return true
+		}
+	}
+	return false
+}
 
-	snake := matchFirstCap.ReplaceAllString(s, "${1}_${2}")
-	snake = matchAllCap.ReplaceAllString(snake, "${1}_${2}")
-	return strings.ToLower(snake)
+func getArrayElemType(expr ast.Expr) string {
+	switch t := expr.(type) {
+	case *ast.Ident:
+		return t.Name
+	case *ast.SelectorExpr:
+		return t.Sel.Name
+	default:
+		return "interface{}"
+	}
+}
+
+func getStarExprType(expr ast.Expr) string {
+	switch t := expr.(type) {
+	case *ast.Ident:
+		return t.Name
+	case *ast.SelectorExpr:
+		return t.Sel.Name
+	default:
+		return "interface{}"
+	}
+}
+
+// 判断是否为Go的内置类型
+func isBuiltinType(typeName string) bool {
+	builtinTypes := map[string]struct{}{
+		"bool":       {},
+		"uint8":      {},
+		"uint16":     {},
+		"uint32":     {},
+		"uint64":     {},
+		"int8":       {},
+		"int16":      {},
+		"int32":      {},
+		"int64":      {},
+		"float32":    {},
+		"float64":    {},
+		"complex64":  {},
+		"complex128": {},
+		"string":     {},
+		"int":        {},
+		"uint":       {},
+		"uintptr":    {},
+		"byte":       {},
+		"rune":       {},
+		"error":      {},
+	}
+	_, ok := builtinTypes[typeName]
+	return ok
 }
