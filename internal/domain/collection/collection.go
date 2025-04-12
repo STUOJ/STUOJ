@@ -111,7 +111,7 @@ func (c *Collection) Delete() error {
 	return &errors.NoError
 }
 
-func (c *Collection) UpdateUser(userIds []uint64) error {
+func (c *Collection) UpdateUser(userIds []int64) error {
 	var err error
 	options := c.toOption()
 	_, err = dao.CollectionStore.SelectOne(options)
@@ -126,7 +126,7 @@ func (c *Collection) UpdateUser(userIds []uint64) error {
 	for _, id := range userIds {
 		_, err = dao.CollectionUserStore.Insert(entity.CollectionUser{
 			CollectionId: c.Id,
-			UserId:       id,
+			UserId:       uint64(id),
 		})
 		if err != nil {
 			errs = append(errs, err)
@@ -138,7 +138,7 @@ func (c *Collection) UpdateUser(userIds []uint64) error {
 	return nil
 }
 
-func (c *Collection) UpdateProblem(problemIds []uint64) error {
+func (c *Collection) UpdateProblem(problemIds []int64) error {
 	var err error
 	options := c.toOption()
 	_, err = dao.CollectionStore.SelectOne(options)
@@ -154,7 +154,7 @@ func (c *Collection) UpdateProblem(problemIds []uint64) error {
 	for _, id := range problemIds {
 		_, err = dao.CollectionProblemStore.Insert(entity.CollectionProblem{
 			CollectionId: c.Id,
-			ProblemId:    id,
+			ProblemId:    uint64(id),
 			Serial:       serial,
 		})
 		if err != nil {
