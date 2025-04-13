@@ -3,6 +3,7 @@ package bootstrap
 import (
 	"STUOJ/external/judge0"
 	"STUOJ/internal/conf"
+	"STUOJ/internal/db/dao"
 	"STUOJ/internal/db/query/option"
 	"STUOJ/internal/domain/language"
 	"STUOJ/internal/domain/runner"
@@ -44,9 +45,13 @@ func InitJudgeLanguages() error {
 		return err
 	}
 
-	oldLangs, err := language.Query.Select(&option.QueryOptions{})
+	oldLang_Map, err := dao.LanguageStore.Select(option.NewQueryOptions())
 	if err != nil {
 		return err
+	}
+	oldLangs := make([]language.Language, len(oldLang_Map))
+	for i := range oldLang_Map {
+		oldLangs[i] = language.Dto(oldLang_Map[i])
 	}
 	oldLangMap := make(map[string]*language.Language, len(oldLangs))
 	for i := range oldLangs {
