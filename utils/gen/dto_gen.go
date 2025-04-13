@@ -1,0 +1,258 @@
+//go:build ignore
+
+// 为domain目录下的实体结构体生成dto.go文件
+// 例如：go run ../../../utils/gen/dto_gen.go blog
+
+package main
+
+import (
+	"STUOJ/utils"
+	"bytes"
+	"fmt"
+	"go/ast"
+	"go/format"
+	"go/parser"
+	"go/token"
+	"log"
+	"os"
+	"path/filepath"
+	"strings"
+	"text/template"
+)
+
+const dtoTmpl = `package {{.PackageName}}
+
+{{if or .NeedsEntity .NeedsTime .NeedsValueObject}}import ({{if .NeedsEntity}}
+	"STUOJ/internal/db/entity"{{end}}{{if .NeedsValueObject}}
+	"STUOJ/internal/domain/{{.PackageName}}/valueobject"{{end}}{{if .NeedsTime}}
+	"time"{{end}}
+){{end}}
+
+func Dto(data map[string]any) {{.StructName}} {
+	var entity_ {{.StructName}}
+{{range .Fields}}	{{.}}
+{{end}}	return entity_
+}
+`
+
+type FieldInfo struct {
+	Name            string
+	Type            string
+	IsValueObject   bool
+	ValueObjectType string
+}
+
+type TemplateData struct {
+	PackageName      string
+	StructName       string
+	Fields           []string
+	NeedsTime        bool
+	NeedsEntity      bool
+	NeedsValueObject bool
+}
+
+func main() {
+	// 检查命令行参数
+	if len(os.Args) < 2 {
+		log.Fatal("Usage: go run dto_gen.go <entity-name>")
+	}
+	entityName := os.Args[1]
+
+	// 获取当前工作目录，即实体所在的目录
+	cwd, err := os.Getwd()
+	if err != nil {
+		log.Fatalf("获取当前工作目录失败: %v\n", err)
+	}
+
+	// 处理单个实体
+	err = processEntity(cwd, entityName)
+	if err != nil {
+		log.Fatalf("处理实体失败: %v\n", err)
+	}
+}
+
+// 处理单个实体的dto生成
+func processEntity(dir string, entityName string) error {
+	// 获取包名
+	pkgName := filepath.Base(dir)
+
+	// 查找实体结构体定义文件
+	entityFile := filepath.Join(dir, entityName+".go")
+	if _, err := os.Stat(entityFile); os.IsNotExist(err) {
+		return fmt.Errorf("实体文件 %s 不存在", entityFile)
+	}
+
+	// 解析实体结构体
+	fset := token.NewFileSet()
+	node, err := parser.ParseFile(fset, entityFile, nil, parser.ParseComments)
+	if err != nil {
+		return fmt.Errorf("解析文件 %s 失败: %v", entityFile, err)
+	}
+
+	// 查找结构体定义
+	var structName string
+	var fields []FieldInfo
+	ast.Inspect(node, func(n ast.Node) bool {
+		typeSpec, ok := n.(*ast.TypeSpec)
+		if !ok || typeSpec.Type == nil {
+			return true
+		}
+
+		structType, ok := typeSpec.Type.(*ast.StructType)
+		if !ok {
+			return true
+		}
+
+		// 找到第一个结构体定义
+		structName = typeSpec.Name.Name
+
+		// 解析结构体字段
+		for _, field := range structType.Fields.List {
+			if len(field.Names) == 0 {
+				continue
+			}
+
+			fieldName := field.Names[0].Name
+			fieldType := getFieldType(field.Type)
+			isValueObject, valueObjectType := isValueObjectType(fieldType)
+
+			fields = append(fields, FieldInfo{
+				Name:            fieldName,
+				Type:            fieldType,
+				IsValueObject:   isValueObject,
+				ValueObjectType: valueObjectType,
+			})
+		}
+
+		return false
+	})
+
+	if structName == "" {
+		return fmt.Errorf("在文件 %s 中未找到结构体定义", entityFile)
+	}
+
+	// 生成dto.go文件
+	dtoFile := filepath.Join(dir, "dto_generated.go")
+
+	// 生成字段处理代码
+	fieldStrings, needsTime, needsEntity, needsValueObject := generateFieldStrings(fields, pkgName)
+
+	// 准备模板数据
+	templateData := TemplateData{
+		PackageName:      pkgName,
+		StructName:       structName,
+		Fields:           fieldStrings,
+		NeedsTime:        needsTime,
+		NeedsEntity:      needsEntity,
+		NeedsValueObject: needsValueObject,
+	}
+
+	// 渲染模板
+	tmpl, err := template.New("dto").Parse(dtoTmpl)
+	if err != nil {
+		return fmt.Errorf("解析模板失败: %v", err)
+	}
+
+	var buf bytes.Buffer
+	if err := tmpl.Execute(&buf, templateData); err != nil {
+		return fmt.Errorf("渲染模板失败: %v", err)
+	}
+
+	// 格式化代码
+	formattedCode, err := format.Source(buf.Bytes())
+	if err != nil {
+		return fmt.Errorf("格式化代码失败: %v", err)
+	}
+
+	// 写入文件
+	if err := os.WriteFile(dtoFile, formattedCode, 0644); err != nil {
+		return fmt.Errorf("写入文件 %s 失败: %v", dtoFile, err)
+	}
+
+	fmt.Printf("成功生成 %s\n", dtoFile)
+	return nil
+}
+
+// 获取字段类型的字符串表示
+func getFieldType(expr ast.Expr) string {
+	switch t := expr.(type) {
+	case *ast.Ident:
+		return t.Name
+	case *ast.SelectorExpr:
+		pkg, ok := t.X.(*ast.Ident)
+		if !ok {
+			return ""
+		}
+		return pkg.Name + "." + t.Sel.Name
+	default:
+		return ""
+	}
+}
+
+// 判断是否为值对象类型
+func isValueObjectType(fieldType string) (bool, string) {
+	if strings.HasPrefix(fieldType, "valueobject.") {
+		return true, strings.TrimPrefix(fieldType, "valueobject.")
+	}
+	return false, ""
+}
+
+// 生成字段处理代码
+func generateFieldStrings(fields []FieldInfo, pkgName string) ([]string, bool, bool, bool) {
+	// 标记是否需要导入time、entity和valueobject包
+	needsTime := false
+	needsEntity := false
+	needsValueObject := false
+	var result []string
+
+	for _, field := range fields {
+		var fieldStr string
+
+		// 根据字段类型生成不同的处理代码
+		switch {
+		case field.IsValueObject:
+			// 值对象类型
+			jsonKey := utils.ToSnakeCase(field.Name)
+			fieldStr = fmt.Sprintf("if v, ok := data[\"%s\"].(string); ok {\n\t\tentity_.%s = valueobject.New%s(v)\n\t}", jsonKey, field.Name, field.ValueObjectType)
+			needsValueObject = true
+
+		case field.Type == "time.Time":
+			// 时间类型
+			jsonKey := utils.ToSnakeCase(field.Name)
+			fieldStr = fmt.Sprintf("if v, ok := data[\"%s\"].(time.Time); ok {\n\t\tentity_.%s = v\n\t}", jsonKey, field.Name)
+			needsTime = true
+
+		case strings.HasPrefix(field.Type, "entity."):
+			// 枚举类型
+			jsonKey := utils.ToSnakeCase(field.Name)
+			fieldStr = fmt.Sprintf("if v, ok := data[\"%s\"].(%s); ok {\n\t\tentity_.%s = v\n\t}", jsonKey, field.Type, field.Name)
+			needsEntity = true
+
+		case field.Type == "uint64" || field.Type == "uint32" || field.Type == "uint16" || field.Type == "uint8" ||
+			field.Type == "int64" || field.Type == "int32" || field.Type == "int16" || field.Type == "int8" ||
+			field.Type == "int" || field.Type == "uint":
+			// 整数类型
+			jsonKey := utils.ToSnakeCase(field.Name)
+			fieldStr = fmt.Sprintf("if v, ok := data[\"%s\"].(%s); ok {\n\t\tentity_.%s = v\n\t}", jsonKey, field.Type, field.Name)
+
+		case field.Type == "string":
+			// 字符串类型
+			jsonKey := utils.ToSnakeCase(field.Name)
+			fieldStr = fmt.Sprintf("if v, ok := data[\"%s\"].(string); ok {\n\t\tentity_.%s = v\n\t}", jsonKey, field.Name)
+
+		case field.Type == "bool":
+			// 布尔类型
+			jsonKey := utils.ToSnakeCase(field.Name)
+			fieldStr = fmt.Sprintf("if v, ok := data[\"%s\"].(bool); ok {\n\t\tentity_.%s = v\n\t}", jsonKey, field.Name)
+
+		default:
+			// 其他类型
+			jsonKey := utils.ToSnakeCase(field.Name)
+			fieldStr = fmt.Sprintf("if v, ok := data[\"%s\"].(%s); ok {\n\t\tentity_.%s = v\n\t}", jsonKey, field.Type, field.Name)
+		}
+
+		result = append(result, fieldStr)
+	}
+
+	return result, needsTime, needsEntity, needsValueObject
+}
