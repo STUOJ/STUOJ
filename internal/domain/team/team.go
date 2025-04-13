@@ -1,5 +1,7 @@
 package team
 
+//go:generate go run ../../../utils/gen/dto_gen.go team
+
 import (
 	"STUOJ/internal/db/dao"
 	"STUOJ/internal/db/entity"

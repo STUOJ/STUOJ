@@ -1,5 +1,7 @@
 package collection
 
+//go:generate go run ../../../utils/gen/dto_gen.go collection
+
 import (
 	"fmt"
 	"time"
@@ -54,7 +56,7 @@ func (c *Collection) fromEntity(collection entity.Collection) *Collection {
 	c.Id = collection.Id
 	c.UserId = collection.UserId
 	c.Title = valueobject.NewTitle(collection.Title)
-	c.Description = valueobject.NewContent(collection.Description)
+	c.Description = valueobject.NewDescription(collection.Description)
 	c.Status = collection.Status
 	c.CreateTime = collection.CreateTime
 	c.UpdateTime = collection.UpdateTime
@@ -135,7 +137,7 @@ func (c *Collection) UpdateUser(userIds []int64) error {
 	if len(errs) > 0 {
 		return errors.ErrInternalServer.WithErrors(errs)
 	}
-	return nil
+	return &errors.NoError
 }
 
 func (c *Collection) UpdateProblem(problemIds []int64) error {
@@ -165,7 +167,7 @@ func (c *Collection) UpdateProblem(problemIds []int64) error {
 	if len(errs) > 0 {
 		return errors.ErrInternalServer.WithErrors(errs)
 	}
-	return nil
+	return &errors.NoError
 }
 
 type Option func(*Collection)
@@ -200,7 +202,7 @@ func WithTitle(title string) Option {
 
 func WithDescription(description string) Option {
 	return func(c *Collection) {
-		c.Description = valueobject.NewContent(description)
+		c.Description = valueobject.NewDescription(description)
 	}
 }
 

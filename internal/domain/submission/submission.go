@@ -1,5 +1,7 @@
 package submission
 
+//go:generate go run ../../../utils/gen/dto_gen.go submission
+
 import (
 	"time"
 

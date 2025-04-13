@@ -1,5 +1,7 @@
 package history
 
+//go:generate go run ../../../utils/gen/dto_gen.go history
+
 import (
 	"fmt"
 	"time"

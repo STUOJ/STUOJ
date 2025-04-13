@@ -1,5 +1,7 @@
 package blog
 
+//go:generate go run ../../../utils/gen/dto_gen.go blog
+
 import (
 	"fmt"
 	"time"

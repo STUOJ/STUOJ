@@ -1,5 +1,7 @@
 package tag
 
+//go:generate go run ../../../utils/gen/dto_gen.go tag
+
 import (
 	"STUOJ/internal/db/dao"
 	"STUOJ/internal/db/entity"
@@ -48,13 +50,12 @@ func (t *Tag) Create() (uint64, error) {
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return tag.Id, nil
+	return tag.Id, &errors.NoError
 }
 
 func (t *Tag) Update() error {
-	var err error
 	options := t.toOption()
-	_, err = dao.TagStore.SelectOne(options)
+	_, err := dao.TagStore.SelectOne(options)
 	if err != nil {
 		return errors.ErrNotFound.WithMessage(err.Error())
 	}

@@ -1,5 +1,7 @@
 package problem
 
+//go:generate go run ../../../utils/gen/dto_gen.go problem
+
 import (
 	"time"
 
@@ -170,7 +172,7 @@ func (p *Problem) UpdateTags(tagIds []uint64) error {
 	if len(errs) > 0 {
 		return errors.ErrInternalServer.WithErrors(errs)
 	}
-	return nil
+	return &errors.NoError
 }
 
 type Option func(*Problem)

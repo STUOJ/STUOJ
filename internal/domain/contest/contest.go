@@ -1,5 +1,7 @@
 package contest
 
+//go:generate go run ../../../utils/gen/dto_gen.go contest
+
 import (
 	"fmt"
 	"time"
@@ -155,7 +157,7 @@ func (c *Contest) UpdateUser(userIds []uint64) error {
 	if len(errs) > 0 {
 		return errors.ErrInternalServer.WithErrors(errs)
 	}
-	return nil
+	return &errors.NoError
 }
 
 func (c *Contest) UpdateProblem(problemIds []uint64) error {
@@ -185,7 +187,7 @@ func (c *Contest) UpdateProblem(problemIds []uint64) error {
 	if len(errs) > 0 {
 		return errors.ErrInternalServer.WithErrors(errs)
 	}
-	return nil
+	return &errors.NoError
 }
 
 type Option func(*Contest)

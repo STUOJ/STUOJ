@@ -1,5 +1,7 @@
 package language
 
+//go:generate go run ../../../utils/gen/dto_gen.go language
+
 import (
 	"STUOJ/internal/db/dao"
 	"STUOJ/internal/db/entity"

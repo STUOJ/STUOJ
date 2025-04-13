@@ -8,7 +8,7 @@ type Description struct {
 	value string
 }
 
-func NewContent(value string) Description {
+func NewDescription(value string) Description {
 	return Description{value: value}
 }
 

@@ -1,5 +1,7 @@
 package user
 
+//go:generate go run ../../../utils/gen/dto_gen.go user
+
 import (
 	"time"
 
