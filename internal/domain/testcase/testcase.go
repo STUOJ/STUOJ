@@ -1,6 +1,7 @@
 package testcase
 
 //go:generate go run ../../../utils/gen/dto_gen.go testcase
+//go:generate go run ../../../utils/gen/query_gen.go testcase
 
 import (
 	"STUOJ/internal/db/dao"

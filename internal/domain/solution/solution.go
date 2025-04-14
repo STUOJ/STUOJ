@@ -1,6 +1,7 @@
 package solution
 
 //go:generate go run ../../../utils/gen/dto_gen.go solution
+//go:generate go run ../../../utils/gen/query_gen.go solution
 
 import (
 	"STUOJ/internal/db/dao"

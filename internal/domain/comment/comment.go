@@ -1,6 +1,7 @@
 package comment
 
 //go:generate go run ../../../utils/gen/dto_gen.go comment
+//go:generate go run ../../../utils/gen/query_gen.go comment
 
 import (
 	"fmt"

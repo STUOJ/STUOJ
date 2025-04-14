@@ -1,6 +1,7 @@
 package contest
 
 //go:generate go run ../../../utils/gen/dto_gen.go contest
+//go:generate go run ../../../utils/gen/query_gen.go contest
 
 import (
 	"fmt"

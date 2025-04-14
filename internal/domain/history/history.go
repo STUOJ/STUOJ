@@ -1,6 +1,7 @@
 package history
 
 //go:generate go run ../../../utils/gen/dto_gen.go history
+//go:generate go run ../../../utils/gen/query_gen.go history
 
 import (
 	"fmt"
