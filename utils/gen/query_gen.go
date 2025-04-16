@@ -23,6 +23,7 @@ const queryTmpl = `package {{.PackageName}}
 
 import (
 	"STUOJ/internal/db/dao"
+	"STUOJ/internal/db/query/option"
 	"STUOJ/internal/errors"
 	"STUOJ/internal/model/querymodel"
 )
@@ -31,20 +32,27 @@ type _Query struct{}
 
 var Query = new(_Query)
 
-func (*_Query) Select(model querymodel.{{.EntityName}}QueryModel) ([]map[string]any, error) {
-	res, err := dao.{{.EntityName}}Store.Select(model.GenerateOptions())
-	if err != nil {
-		return res, errors.ErrInternalServer.WithMessage("查询失败")
+func (*_Query) Select(model querymodel.{{.EntityName}}QueryModel, optionFunc ...option.QueryContextOption) ([]{{.EntityName}}, []map[string]any, error) {
+	for _, o := range optionFunc {
+		o(&model)
 	}
-	return res, &errors.NoError
+	map_, err := dao.{{.EntityName}}Store.Select(model.GenerateOptions())
+	if err != nil {
+		return nil, nil, errors.ErrInternalServer.WithMessage("查询失败")
+	}
+	return Dtos(map_), map_, &errors.NoError
 }
 
-func (*_Query) SelectOne(model querymodel.{{.EntityName}}QueryModel) (map[string]any, error) {
-	res, err := dao.{{.EntityName}}Store.SelectOne(model.GenerateOptions())
-	if err != nil {
-		return res, errors.ErrNotFound.WithMessage("未查询到该{{.VarName}}")
+func (*_Query) SelectOne(model querymodel.{{.EntityName}}QueryModel, optionFunc ...option.QueryContextOption) ({{.EntityName}}, map[string]any, error) {
+	for _, o := range optionFunc {
+		o(&model)
 	}
-	return res, &errors.NoError
+	model.Page = option.NewPagination(0, 1)
+	map_, err := dao.{{.EntityName}}Store.SelectOne(model.GenerateOptions())
+	if err != nil {
+		return {{.EntityName}}{}, nil, errors.ErrNotFound.WithMessage("未查询到该{{.VarName}}")
+	}
+	return Dto(map_), map_, &errors.NoError
 }
 
 func (*_Query) Count(model querymodel.{{.EntityName}}QueryModel) (int64, error) {
@@ -166,6 +174,6 @@ func processEntity(dir string, entityName string) error {
 		return fmt.Errorf("写入文件 %s 失败: %v", queryFile, err)
 	}
 
-	fmt.Printf("成功生成 %s %s\n", structName, queryFile)
+	fmt.Printf("生成成功: %s %s\n", structName, queryFile)
 	return nil
 }
