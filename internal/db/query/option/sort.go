@@ -18,8 +18,15 @@ type SortQuery struct {
 	Order   SortOrder
 }
 
-func NewSortQuery(orderBy string, order SortOrder) Sort {
-	return &SortQuery{OrderBy: orderBy, Order: order}
+func NewSortQuery(orderBy string, order string) Sort {
+	res := &SortQuery{OrderBy: orderBy}
+	if order == "asc" || order == "ASC" {
+		res.Order = OrderAsc
+	}
+	if order == "desc" || order == "DESC" {
+		res.Order = OrderDesc
+	}
+	return res
 }
 
 func (con *SortQuery) GenerateSort() func(*gorm.DB) *gorm.DB {
