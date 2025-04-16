@@ -132,7 +132,7 @@ func processEntity(dir string, entityName string) error {
 	}
 
 	// 生成dto.go文件
-	dtoFile := filepath.Join("..", "dto_generated.go")
+	dtoFile := filepath.Join("dto_generated.go")
 
 	// 生成字段处理代码
 	fieldStrings, needsTime, needsEntity, needsValueObject := generateFieldStrings(fields, pkgName)
@@ -169,7 +169,7 @@ func processEntity(dir string, entityName string) error {
 		return fmt.Errorf("写入文件 %s 失败: %v", dtoFile, err)
 	}
 
-	fmt.Printf("成功生成 %s\n", dtoFile)
+	fmt.Printf("成功生成 %s %s\n", structName, dtoFile)
 	return nil
 }
 

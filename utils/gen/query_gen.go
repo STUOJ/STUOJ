@@ -124,7 +124,7 @@ func processEntity(dir string, entityName string) error {
 	}
 
 	// 生成query_generated.go文件
-	queryFile := filepath.Join("..", "query_generated.go")
+	queryFile := filepath.Join("query_generated.go")
 
 	// 准备模板数据
 	varName := strings.ToLower(structName[:1]) + structName[1:]
@@ -166,6 +166,6 @@ func processEntity(dir string, entityName string) error {
 		return fmt.Errorf("写入文件 %s 失败: %v", queryFile, err)
 	}
 
-	fmt.Printf("成功生成 %s\n", queryFile)
+	fmt.Printf("成功生成 %s %s\n", structName, queryFile)
 	return nil
 }
