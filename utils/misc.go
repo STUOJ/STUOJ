@@ -238,6 +238,14 @@ func StringToInt64Slice(str string) ([]int64, error) {
 	return result, nil
 }
 
+func Int64ToUint64Slice(src []int64) []uint64 {
+	dst := make([]uint64, len(src))
+	for i, v := range src {
+		dst[i] = uint64(v)
+	}
+	return dst
+}
+
 func ToSnakeCase(s string) string {
 	matchFirstCap := regexp.MustCompile("(.)([A-Z][a-z]+)")
 	matchAllCap := regexp.MustCompile("([a-z0-9])([A-Z])")
