@@ -2,7 +2,6 @@ package model
 
 import (
 	"STUOJ/internal/db/entity"
-	"STUOJ/internal/db/query/option"
 	"STUOJ/utils"
 	"errors"
 	"fmt"
@@ -78,6 +77,11 @@ func (f *FieldList[T]) Set(value []T) {
 	f.value = value
 }
 
+func (f *FieldList[T]) Add(value ...T) {
+	f.exist = true
+	f.value = append(f.value, value...)
+}
+
 func (f *FieldList[T]) Parse(c *gin.Context, name string) error {
 	query := c.Query(name)
 	if query == "" {
@@ -102,67 +106,6 @@ func (f *FieldList[T]) Parse(c *gin.Context, name string) error {
 	f.Set(tmp)
 	f.exist = true
 	return nil
-}
-
-type QueryContext interface {
-	Parse(c gin.Context)
-	GenerateOptions() *option.QueryOptions
-}
-
-type QuerySort struct {
-	Order   Field[string]
-	OrderBy Field[string]
-}
-
-func NewQuerySort(order, orderBy string) QuerySort {
-	return QuerySort{
-		Order: Field[string]{
-			exist: true,
-			value: order,
-		},
-		OrderBy: Field[string]{
-			exist: true,
-			value: orderBy,
-		},
-	}
-}
-
-func (s *QuerySort) InsertOptions(options *option.QueryOptions) *option.QueryOptions {
-	if s.Order.Exist() && s.OrderBy.Exist() {
-		var order option.SortOrder
-		if s.Order.Value() == "asc" {
-			order = option.OrderAsc
-		} else {
-			order = option.OrderDesc
-		}
-		options.Sort = option.NewSortQuery(s.OrderBy.Value(), order)
-	}
-	return options
-}
-
-type QueryPage struct {
-	Page Field[int64]
-	Size Field[int64]
-}
-
-func NewQuerPage(page, size int64) QueryPage {
-	return QueryPage{
-		Page: Field[int64]{
-			exist: true,
-			value: page,
-		},
-		Size: Field[int64]{
-			exist: true,
-			value: size,
-		},
-	}
-}
-
-func (p *QueryPage) InsertOptions(options *option.QueryOptions) *option.QueryOptions {
-	if p.Page.Exist() && p.Size.Exist() {
-		options.Page = option.NewPagination(p.Page.Value(), p.Size.Value())
-	}
-	return options
 }
 
 // 时间范围

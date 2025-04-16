@@ -6,14 +6,15 @@ import (
 	"STUOJ/internal/model"
 )
 
+//go:generate go run ../../../utils/gen/querymodel_gen.go LanguageQueryModel
 type LanguageQueryModel struct {
 	Id     model.FieldList[int64]
 	Name   model.Field[string]
 	Serial model.FieldList[int16]
 	MapId  model.FieldList[int64]
 	Status model.FieldList[int8]
-	Page   model.QueryPage
-	Sort   model.QuerySort
+	Page   option.Pagination
+	Sort   option.Sort
 	Field  field.LanguageField
 }
 
@@ -34,8 +35,8 @@ func (query *LanguageQueryModel) GenerateOptions() *option.QueryOptions {
 	if query.Status.Exist() {
 		options.Filters.Add(field.LanguageStatus, option.OpIn, query.Status.Value())
 	}
-	query.Page.InsertOptions(options)
-	query.Sort.InsertOptions(options)
+	options.Page = query.Page
+	options.Sort = query.Sort
 	options.Field = &query.Field
 	return options
 }

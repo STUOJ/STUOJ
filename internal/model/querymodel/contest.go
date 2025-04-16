@@ -7,6 +7,7 @@ import (
 	"time"
 )
 
+//go:generate go run ../../../utils/gen/querymodel_gen.go ContestQueryModel
 type ContestQueryModel struct {
 	Id          model.FieldList[int64]
 	UserId      model.FieldList[int64]
@@ -20,8 +21,8 @@ type ContestQueryModel struct {
 	BeginEnd    model.Field[time.Time]
 	FinishStart model.Field[time.Time]
 	FinishEnd   model.Field[time.Time]
-	Page        model.QueryPage
-	Sort        model.QuerySort
+	Page        option.Pagination
+	Sort        option.Sort
 	Field       field.ContestField
 }
 
@@ -63,8 +64,8 @@ func (query *ContestQueryModel) GenerateOptions() *option.QueryOptions {
 	if query.FinishEnd.Exist() {
 		options.Filters.Add(field.ContestEndTime, option.OpLessEq, query.FinishEnd.Value())
 	}
-	query.Page.InsertOptions(options)
-	query.Sort.InsertOptions(options)
+	options.Page = query.Page
+	options.Sort = query.Sort
 	options.Field = &query.Field
 	return options
 }

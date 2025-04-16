@@ -7,6 +7,7 @@ import (
 	"time"
 )
 
+//go:generate go run ../../../utils/gen/querymodel_gen.go CommentQueryModel
 type CommentQueryModel struct {
 	Id        model.FieldList[int64]
 	UserId    model.FieldList[int64]
@@ -14,8 +15,8 @@ type CommentQueryModel struct {
 	Status    model.FieldList[int64]
 	StartTime model.Field[time.Time]
 	EndTime   model.Field[time.Time]
-	Page      model.QueryPage
-	Sort      model.QuerySort
+	Page      option.Pagination
+	Sort      option.Sort
 	Field     field.CommentField
 }
 
@@ -39,8 +40,8 @@ func (query *CommentQueryModel) GenerateOptions() *option.QueryOptions {
 	if query.EndTime.Exist() {
 		options.Filters.Add(field.CommentCreateTime, option.OpLessEq, query.EndTime.Value())
 	}
-	query.Page.InsertOptions(options)
-	query.Sort.InsertOptions(options)
+	options.Page = query.Page
+	options.Sort = query.Sort
 	options.Field = &query.Field
 	return options
 }

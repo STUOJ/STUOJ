@@ -6,11 +6,12 @@ import (
 	"STUOJ/internal/model"
 )
 
+//go:generate go run ../../../utils/gen/querymodel_gen.go CollectionProblemQueryModel
 type CollectionProblemQueryModel struct {
 	CollectionId model.FieldList[int64]
 	ProblemId    model.FieldList[int64]
-	Page         model.QueryPage
-	Sort         model.QuerySort
+	Page         option.Pagination
+	Sort         option.Sort
 	Field        field.CollectionProblemField
 }
 
@@ -22,8 +23,8 @@ func (query *CollectionProblemQueryModel) GenerateOptions() *option.QueryOptions
 	if query.ProblemId.Exist() {
 		options.Filters.Add(field.CollectionProblemProblemId, option.OpIn, query.ProblemId.Value())
 	}
-	query.Page.InsertOptions(options)
-	query.Sort.InsertOptions(options)
+	options.Page = query.Page
+	options.Sort = query.Sort
 	options.Field = &query.Field
 	return options
 }

@@ -6,12 +6,13 @@ import (
 	"STUOJ/internal/model"
 )
 
+//go:generate go run ../../../utils/gen/querymodel_gen.go CollectionUserQueryModel
 type CollectionUserQueryModel struct {
 	Id           model.FieldList[int64]
 	UserId       model.FieldList[int64]
 	CollectionId model.FieldList[int64]
-	Page         model.QueryPage
-	Sort         model.QuerySort
+	Page         option.Pagination
+	Sort         option.Sort
 	Field        field.CollectionUserField
 }
 
@@ -26,8 +27,8 @@ func (query *CollectionUserQueryModel) GenerateOptions() *option.QueryOptions {
 	if query.CollectionId.Exist() {
 		options.Filters.Add(field.CollectionId, option.OpIn, query.CollectionId.Value())
 	}
-	query.Page.InsertOptions(options)
-	query.Sort.InsertOptions(options)
+	options.Page = query.Page
+	options.Sort = query.Sort
 	options.Field = &query.Field
 	return options
 }

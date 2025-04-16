@@ -6,11 +6,12 @@ import (
 	"STUOJ/internal/model"
 )
 
+//go:generate go run ../../../utils/gen/querymodel_gen.go TagQueryModel
 type TagQueryModel struct {
 	Id    model.FieldList[int64]
 	Name  model.FieldList[string]
-	Page  model.QueryPage
-	Sort  model.QuerySort
+	Page  option.Pagination
+	Sort  option.Sort
 	Field field.TagField
 }
 
@@ -22,8 +23,8 @@ func (query *TagQueryModel) GenerateOptions() *option.QueryOptions {
 	if query.Name.Exist() {
 		options.Filters.Add(field.TagName, option.OpLike, query.Name.Value())
 	}
-	query.Page.InsertOptions(options)
-	query.Sort.InsertOptions(options)
+	options.Page = query.Page
+	options.Sort = query.Sort
 	options.Field = &query.Field
 	return options
 }

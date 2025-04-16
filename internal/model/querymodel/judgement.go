@@ -6,13 +6,14 @@ import (
 	"STUOJ/internal/model"
 )
 
+//go:generate go run ../../../utils/gen/querymodel_gen.go JudgementQueryModel
 type JudgementQueryModel struct {
 	Id           model.FieldList[int64]
 	SubmissionId model.FieldList[int64]
 	TestcaseId   model.FieldList[int64]
 	Status       model.FieldList[int64]
-	Page         model.QueryPage
-	Sort         model.QuerySort
+	Page         option.Pagination
+	Sort         option.Sort
 	Field        field.JudgementField
 }
 
@@ -30,8 +31,8 @@ func (query *JudgementQueryModel) GenerateOptions() *option.QueryOptions {
 	if query.Status.Exist() {
 		options.Filters.Add(field.JudgementStatus, option.OpIn, query.Status.Value())
 	}
-	query.Page.InsertOptions(options)
-	query.Sort.InsertOptions(options)
+	options.Page = query.Page
+	options.Sort = query.Sort
 	options.Field = &query.Field
 	return options
 }

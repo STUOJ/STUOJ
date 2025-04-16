@@ -7,6 +7,7 @@ import (
 	"time"
 )
 
+//go:generate go run ../../../utils/gen/querymodel_gen.go ProblemQueryModel
 type ProblemQueryModel struct {
 	Id        model.FieldList[int64]
 	Title     model.Field[string]
@@ -15,8 +16,8 @@ type ProblemQueryModel struct {
 	Tag       model.FieldList[int64]
 	StartTime model.Field[time.Time]
 	EndTime   model.Field[time.Time]
-	Page      model.QueryPage
-	Sort      model.QuerySort
+	Page      option.Pagination
+	Sort      option.Sort
 	Field     field.ProblemField
 }
 
@@ -43,8 +44,8 @@ func (query *ProblemQueryModel) GenerateOptions() *option.QueryOptions {
 	if query.EndTime.Exist() {
 		options.Filters.Add(field.ProblemCreateTime, option.OpLessEq, query.EndTime.Value())
 	}
-	query.Page.InsertOptions(options)
-	query.Sort.InsertOptions(options)
+	options.Page = query.Page
+	options.Sort = query.Sort
 	options.Field = &query.Field
 	return options
 }

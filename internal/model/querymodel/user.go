@@ -7,14 +7,15 @@ import (
 	"time"
 )
 
+//go:generate go run ../../../utils/gen/querymodel_gen.go UserQueryModel
 type UserQueryModel struct {
 	Id        model.FieldList[int64]
 	Username  model.Field[string]
 	Role      model.FieldList[int8]
 	StartTime model.Field[time.Time]
 	EndTime   model.Field[time.Time]
-	Page      model.QueryPage
-	Sort      model.QuerySort
+	Page      option.Pagination
+	Sort      option.Sort
 	Field     field.UserField
 }
 
@@ -35,8 +36,8 @@ func (query *UserQueryModel) GenerateOptions() *option.QueryOptions {
 	if query.EndTime.Exist() {
 		options.Filters.Add(field.UserCreateTime, option.OpLessEq, query.EndTime.Value())
 	}
-	query.Page.InsertOptions(options)
-	query.Sort.InsertOptions(options)
+	options.Page = query.Page
+	options.Sort = query.Sort
 	options.Field = &query.Field
 	return options
 }
