@@ -49,7 +49,9 @@ func (store *_{{.StructName}}Store) Select(options *option.QueryOptions) ([]map[
 	var entities []map[string]any
 	where := options.GenerateQuery()
 	err := db.Db.Transaction(func(tx *gorm.DB) error {
-		return tx.Model(&entity.{{.StructName}}{}).Where(where).Find(&entities).Error
+		tx = tx.Model(&entity.{{.StructName}}{})
+		tx = where(tx)
+		return tx.Find(&entities).Error
 	})
 	return entities, err
 }
@@ -59,7 +61,9 @@ func (store *_{{.StructName}}Store) SelectOne(options *option.QueryOptions) (map
 	var entity_ map[string]any
 	where := options.GenerateQuery()
 	err := db.Db.Transaction(func(tx *gorm.DB) error {
-		return tx.Model(&entity.{{.StructName}}{}).Where(where).First(&entity_).Error
+		tx = tx.Model(&entity.{{.StructName}}{})
+		tx = where(tx)
+		return tx.First(&entity_).Error
 	})
 	return entity_, err
 }
@@ -69,7 +73,9 @@ func (store *_{{.StructName}}Store) Updates(entity_ entity.{{.StructName}}, opti
 	var affected int64
 	where := options.GenerateQuery()
 	err := db.Db.Transaction(func(tx *gorm.DB) error {
-		res := tx.Model(&entity.{{.StructName}}{}).Where(where).Updates(entity_)
+		tx = tx.Model(&entity.{{.StructName}}{})
+		tx = where(tx)
+		res := tx.Updates(entity_)
 		affected = res.RowsAffected
 		return res.Error
 	})
@@ -80,7 +86,9 @@ func (store *_{{.StructName}}Store) Updates(entity_ entity.{{.StructName}}, opti
 func (store *_{{.StructName}}Store) Delete(options *option.QueryOptions) error {
 	where := options.GenerateQuery()
 	return db.Db.Transaction(func(tx *gorm.DB) error {
-		return tx.Where(where).Delete(&entity.{{.StructName}}{}).Error
+		tx = tx.Model(&entity.{{.StructName}}{})
+		tx = where(tx)
+		return tx.Delete(&entity.{{.StructName}}{}).Error
 	})
 }
 
@@ -89,7 +97,9 @@ func (store *_{{.StructName}}Store) Count(options *option.QueryOptions) (int64, 
 	var count int64
 	where := options.GenerateQuery()
 	err := db.Db.Transaction(func(tx *gorm.DB) error {
-		return tx.Model(&entity.{{.StructName}}{}).Where(where).Count(&count).Error
+		tx = tx.Model(&entity.{{.StructName}}{})
+		tx = where(tx)
+		return tx.Count(&count).Error
 	})
 	return count, err
 }
