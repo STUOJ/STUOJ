@@ -33,6 +33,14 @@ func Dto(data map[string]any) {{.StructName}} {
 {{range .Fields}}	{{.}}
 {{end}}	return entity_
 }
+
+func Dtos(datas []map[string]any) []{{.StructName}} {
+	var entitys = make([]{{.StructName}}, len(datas))
+	for _, e := range datas {
+		entitys = append(entitys, Dto(e))
+	}
+	return entitys
+}
 `
 
 type FieldInfo struct {
@@ -169,7 +177,7 @@ func processEntity(dir string, entityName string) error {
 		return fmt.Errorf("写入文件 %s 失败: %v", dtoFile, err)
 	}
 
-	fmt.Printf("成功生成 %s %s\n", structName, dtoFile)
+	fmt.Printf("生成成功: %s %s\n", structName, dtoFile)
 	return nil
 }
 
