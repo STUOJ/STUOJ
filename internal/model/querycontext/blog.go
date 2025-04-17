@@ -1,4 +1,4 @@
-package querymodel
+package querycontext
 
 import (
 	"STUOJ/internal/db/entity/field"
@@ -7,8 +7,8 @@ import (
 	"time"
 )
 
-//go:generate go run ../../../utils/gen/querymodel_gen.go BlogQueryModel
-type BlogQueryModel struct {
+//go:generate go run ../../../utils/gen/querycontext_gen.go BlogQueryContext
+type BlogQueryContext struct {
 	Id        model.FieldList[int64]
 	UserId    model.FieldList[int64]
 	ProblemId model.FieldList[int64]
@@ -16,12 +16,11 @@ type BlogQueryModel struct {
 	Status    model.FieldList[int64]
 	StartTime model.Field[time.Time]
 	EndTime   model.Field[time.Time]
-	Page      option.Pagination
-	Sort      option.Sort
-	Field     field.BlogField
+	option.QueryParams
+	Field field.BlogField
 }
 
-func (query *BlogQueryModel) GenerateOptions() *option.QueryOptions {
+func (query *BlogQueryContext) GenerateOptions() *option.QueryOptions {
 	options := option.NewQueryOptions()
 	if query.Id.Exist() {
 		options.Filters.Add(field.BlogId, option.OpIn, query.Id.Value())
@@ -44,6 +43,7 @@ func (query *BlogQueryModel) GenerateOptions() *option.QueryOptions {
 	if query.EndTime.Exist() {
 		options.Filters.Add(field.BlogCreateTime, option.OpLessEq, query.EndTime.Value())
 	}
+	options.Filters.AddFiter(query.ExtraFilters.Conditions...)
 	options.Page = query.Page
 	options.Sort = query.Sort
 	options.Field = &query.Field

@@ -1,4 +1,4 @@
-package querymodel
+package querycontext
 
 import (
 	"STUOJ/internal/db/entity/field"
@@ -6,17 +6,16 @@ import (
 	"STUOJ/internal/model"
 )
 
-//go:generate go run ../../../utils/gen/querymodel_gen.go CollectionUserQueryModel
-type CollectionUserQueryModel struct {
+//go:generate go run ../../../utils/gen/querycontext_gen.go CollectionUserQueryContext
+type CollectionUserQueryContext struct {
 	Id           model.FieldList[int64]
 	UserId       model.FieldList[int64]
 	CollectionId model.FieldList[int64]
-	Page         option.Pagination
-	Sort         option.Sort
-	Field        field.CollectionUserField
+	option.QueryParams
+	Field field.CollectionUserField
 }
 
-func (query *CollectionUserQueryModel) GenerateOptions() *option.QueryOptions {
+func (query *CollectionUserQueryContext) GenerateOptions() *option.QueryOptions {
 	options := option.NewQueryOptions()
 	if query.Id.Exist() {
 		options.Filters.Add(field.CollectionUserId, option.OpIn, query.Id.Value())
@@ -27,6 +26,7 @@ func (query *CollectionUserQueryModel) GenerateOptions() *option.QueryOptions {
 	if query.CollectionId.Exist() {
 		options.Filters.Add(field.CollectionId, option.OpIn, query.CollectionId.Value())
 	}
+	options.Filters.AddFiter(query.ExtraFilters.Conditions...)
 	options.Page = query.Page
 	options.Sort = query.Sort
 	options.Field = &query.Field

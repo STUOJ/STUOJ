@@ -1,4 +1,4 @@
-package querymodel
+package querycontext
 
 import (
 	"STUOJ/internal/db/entity/field"
@@ -6,19 +6,18 @@ import (
 	"STUOJ/internal/model"
 )
 
-//go:generate go run ../../../utils/gen/querymodel_gen.go LanguageQueryModel
-type LanguageQueryModel struct {
+//go:generate go run ../../../utils/gen/querycontext_gen.go LanguageQueryContext
+type LanguageQueryContext struct {
 	Id     model.FieldList[int64]
 	Name   model.Field[string]
 	Serial model.FieldList[int16]
 	MapId  model.FieldList[int64]
 	Status model.FieldList[int8]
-	Page   option.Pagination
-	Sort   option.Sort
-	Field  field.LanguageField
+	option.QueryParams
+	Field field.LanguageField
 }
 
-func (query *LanguageQueryModel) GenerateOptions() *option.QueryOptions {
+func (query *LanguageQueryContext) GenerateOptions() *option.QueryOptions {
 	options := option.NewQueryOptions()
 	if query.Id.Exist() {
 		options.Filters.Add(field.LanguageId, option.OpIn, query.Id.Value())
@@ -35,6 +34,7 @@ func (query *LanguageQueryModel) GenerateOptions() *option.QueryOptions {
 	if query.Status.Exist() {
 		options.Filters.Add(field.LanguageStatus, option.OpIn, query.Status.Value())
 	}
+	options.Filters.AddFiter(query.ExtraFilters.Conditions...)
 	options.Page = query.Page
 	options.Sort = query.Sort
 	options.Field = &query.Field

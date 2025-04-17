@@ -1,4 +1,4 @@
-package querymodel
+package querycontext
 
 import (
 	"STUOJ/internal/db/entity/field"
@@ -7,8 +7,8 @@ import (
 	"time"
 )
 
-//go:generate go run ../../../utils/gen/querymodel_gen.go CollectionQueryModel
-type CollectionQueryModel struct {
+//go:generate go run ../../../utils/gen/querycontext_gen.go CollectionQueryContext
+type CollectionQueryContext struct {
 	Id        model.FieldList[int64]
 	Title     model.Field[string]
 	UserId    model.FieldList[int64]
@@ -16,12 +16,11 @@ type CollectionQueryModel struct {
 	Status    model.FieldList[int64]
 	StartTime model.Field[time.Time]
 	EndTime   model.Field[time.Time]
-	Page      option.Pagination
-	Sort      option.Sort
-	Field     field.CollectionField
+	option.QueryParams
+	Field field.CollectionField
 }
 
-func (query *CollectionQueryModel) GenerateOptions() *option.QueryOptions {
+func (query *CollectionQueryContext) GenerateOptions() *option.QueryOptions {
 	options := option.NewQueryOptions()
 	if query.Id.Exist() {
 		options.Filters.Add(field.CollectionId, option.OpIn, query.Id.Value())
@@ -33,7 +32,7 @@ func (query *CollectionQueryModel) GenerateOptions() *option.QueryOptions {
 		options.Filters.Add(field.CollectionUserId, option.OpIn, query.UserId.Value())
 	}
 	if query.ProblemId.Exist() {
-		options.Filters.Add(field.CollectionProblem, option.OpHave, query.ProblemId.Value())
+		options.Filters.Add(field.CollectionProblem, option.OpExtra, query.ProblemId.Value(), len(query.ProblemId.Value()))
 	}
 	if query.Status.Exist() {
 		options.Filters.Add(field.CollectionStatus, option.OpIn, query.Status.Value())
@@ -44,6 +43,7 @@ func (query *CollectionQueryModel) GenerateOptions() *option.QueryOptions {
 	if query.EndTime.Exist() {
 		options.Filters.Add(field.CollectionCreateTime, option.OpLessEq, query.EndTime.Value())
 	}
+	options.Filters.AddFiter(query.ExtraFilters.Conditions...)
 	options.Page = query.Page
 	options.Sort = query.Sort
 	options.Field = &query.Field

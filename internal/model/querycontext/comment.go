@@ -1,4 +1,4 @@
-package querymodel
+package querycontext
 
 import (
 	"STUOJ/internal/db/entity/field"
@@ -7,20 +7,19 @@ import (
 	"time"
 )
 
-//go:generate go run ../../../utils/gen/querymodel_gen.go CommentQueryModel
-type CommentQueryModel struct {
+//go:generate go run ../../../utils/gen/querycontext_gen.go CommentQueryContext
+type CommentQueryContext struct {
 	Id        model.FieldList[int64]
 	UserId    model.FieldList[int64]
 	BlogId    model.Field[int64]
 	Status    model.FieldList[int64]
 	StartTime model.Field[time.Time]
 	EndTime   model.Field[time.Time]
-	Page      option.Pagination
-	Sort      option.Sort
-	Field     field.CommentField
+	option.QueryParams
+	Field field.CommentField
 }
 
-func (query *CommentQueryModel) GenerateOptions() *option.QueryOptions {
+func (query *CommentQueryContext) GenerateOptions() *option.QueryOptions {
 	options := option.NewQueryOptions()
 	if query.Id.Exist() {
 		options.Filters.Add(field.CommentId, option.OpIn, query.Id.Value())
@@ -40,6 +39,7 @@ func (query *CommentQueryModel) GenerateOptions() *option.QueryOptions {
 	if query.EndTime.Exist() {
 		options.Filters.Add(field.CommentCreateTime, option.OpLessEq, query.EndTime.Value())
 	}
+	options.Filters.AddFiter(query.ExtraFilters.Conditions...)
 	options.Page = query.Page
 	options.Sort = query.Sort
 	options.Field = &query.Field

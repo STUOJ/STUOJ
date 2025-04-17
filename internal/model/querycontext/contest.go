@@ -1,4 +1,4 @@
-package querymodel
+package querycontext
 
 import (
 	"STUOJ/internal/db/entity/field"
@@ -7,8 +7,8 @@ import (
 	"time"
 )
 
-//go:generate go run ../../../utils/gen/querymodel_gen.go ContestQueryModel
-type ContestQueryModel struct {
+//go:generate go run ../../../utils/gen/querycontext_gen.go ContestQueryContext
+type ContestQueryContext struct {
 	Id          model.FieldList[int64]
 	UserId      model.FieldList[int64]
 	Title       model.Field[string]
@@ -21,12 +21,11 @@ type ContestQueryModel struct {
 	BeginEnd    model.Field[time.Time]
 	FinishStart model.Field[time.Time]
 	FinishEnd   model.Field[time.Time]
-	Page        option.Pagination
-	Sort        option.Sort
-	Field       field.ContestField
+	option.QueryParams
+	Field field.ContestField
 }
 
-func (query *ContestQueryModel) GenerateOptions() *option.QueryOptions {
+func (query *ContestQueryContext) GenerateOptions() *option.QueryOptions {
 	options := option.NewQueryOptions()
 	if query.Id.Exist() {
 		options.Filters.Add(field.ContestId, option.OpIn, query.Id.Value())
@@ -64,6 +63,7 @@ func (query *ContestQueryModel) GenerateOptions() *option.QueryOptions {
 	if query.FinishEnd.Exist() {
 		options.Filters.Add(field.ContestEndTime, option.OpLessEq, query.FinishEnd.Value())
 	}
+	options.Filters.AddFiter(query.ExtraFilters.Conditions...)
 	options.Page = query.Page
 	options.Sort = query.Sort
 	options.Field = &query.Field

@@ -1,4 +1,4 @@
-package querymodel
+package querycontext
 
 import (
 	"STUOJ/internal/db/entity/field"
@@ -6,13 +6,12 @@ import (
 	"STUOJ/internal/model"
 )
 
-//go:generate go run ../../../utils/gen/querymodel_gen.go TeamUserQuery
+//go:generate go run ../../../utils/gen/querycontext_gen.go TeamUserQuery
 type TeamUserQuery struct {
 	TeamId model.FieldList[int64]
 	UserId model.FieldList[int64]
-	Page   option.Pagination
-	Sort   option.Sort
-	Field  field.TeamUserField
+	option.QueryParams
+	Field field.TeamUserField
 }
 
 func (query *TeamUserQuery) GenerateOptions() *option.QueryOptions {
@@ -23,6 +22,7 @@ func (query *TeamUserQuery) GenerateOptions() *option.QueryOptions {
 	if query.UserId.Exist() {
 		options.Filters.Add(field.UserId, option.OpIn, query.UserId.Value())
 	}
+	options.Filters.AddFiter(query.ExtraFilters.Conditions...)
 	options.Page = query.Page
 	options.Sort = query.Sort
 	options.Field = &query.Field

@@ -1,4 +1,4 @@
-package querymodel
+package querycontext
 
 import (
 	"STUOJ/internal/db/entity/field"
@@ -6,18 +6,17 @@ import (
 	"STUOJ/internal/model"
 )
 
-//go:generate go run ../../../utils/gen/querymodel_gen.go JudgementQueryModel
-type JudgementQueryModel struct {
+//go:generate go run ../../../utils/gen/querycontext_gen.go JudgementQueryContext
+type JudgementQueryContext struct {
 	Id           model.FieldList[int64]
 	SubmissionId model.FieldList[int64]
 	TestcaseId   model.FieldList[int64]
 	Status       model.FieldList[int64]
-	Page         option.Pagination
-	Sort         option.Sort
-	Field        field.JudgementField
+	option.QueryParams
+	Field field.JudgementField
 }
 
-func (query *JudgementQueryModel) GenerateOptions() *option.QueryOptions {
+func (query *JudgementQueryContext) GenerateOptions() *option.QueryOptions {
 	options := option.NewQueryOptions()
 	if query.Id.Exist() {
 		options.Filters.Add(field.JudgementId, option.OpIn, query.Id.Value())
@@ -31,6 +30,7 @@ func (query *JudgementQueryModel) GenerateOptions() *option.QueryOptions {
 	if query.Status.Exist() {
 		options.Filters.Add(field.JudgementStatus, option.OpIn, query.Status.Value())
 	}
+	options.Filters.AddFiter(query.ExtraFilters.Conditions...)
 	options.Page = query.Page
 	options.Sort = query.Sort
 	options.Field = &query.Field

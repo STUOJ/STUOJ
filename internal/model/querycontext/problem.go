@@ -1,4 +1,4 @@
-package querymodel
+package querycontext
 
 import (
 	"STUOJ/internal/db/entity/field"
@@ -7,8 +7,8 @@ import (
 	"time"
 )
 
-//go:generate go run ../../../utils/gen/querymodel_gen.go ProblemQueryModel
-type ProblemQueryModel struct {
+//go:generate go run ../../../utils/gen/querycontext_gen.go ProblemQueryContext
+type ProblemQueryContext struct {
 	Id        model.FieldList[int64]
 	Title     model.Field[string]
 	Source    model.Field[string]
@@ -16,12 +16,11 @@ type ProblemQueryModel struct {
 	Tag       model.FieldList[int64]
 	StartTime model.Field[time.Time]
 	EndTime   model.Field[time.Time]
-	Page      option.Pagination
-	Sort      option.Sort
-	Field     field.ProblemField
+	option.QueryParams
+	Field field.ProblemField
 }
 
-func (query *ProblemQueryModel) GenerateOptions() *option.QueryOptions {
+func (query *ProblemQueryContext) GenerateOptions() *option.QueryOptions {
 	options := option.NewQueryOptions()
 	if query.Id.Exist() {
 		options.Filters.Add(field.ProblemId, option.OpIn, query.Id.Value())
@@ -36,7 +35,7 @@ func (query *ProblemQueryModel) GenerateOptions() *option.QueryOptions {
 		options.Filters.Add(field.ProblemStatus, option.OpIn, query.Status.Value())
 	}
 	if query.Tag.Exist() {
-		options.Filters.Add(field.ProblemTag, option.OpHave, query.Tag.Value())
+		options.Filters.Add(field.ProblemTag, option.OpExtra, query.Tag.Value(), len(query.Tag.Value()))
 	}
 	if query.StartTime.Exist() {
 		options.Filters.Add(field.ProblemCreateTime, option.OpGreaterEq, query.StartTime.Value())
@@ -44,6 +43,7 @@ func (query *ProblemQueryModel) GenerateOptions() *option.QueryOptions {
 	if query.EndTime.Exist() {
 		options.Filters.Add(field.ProblemCreateTime, option.OpLessEq, query.EndTime.Value())
 	}
+	options.Filters.AddFiter(query.ExtraFilters.Conditions...)
 	options.Page = query.Page
 	options.Sort = query.Sort
 	options.Field = &query.Field

@@ -1,4 +1,4 @@
-package querymodel
+package querycontext
 
 import (
 	"STUOJ/internal/db/entity/field"
@@ -6,16 +6,15 @@ import (
 	"STUOJ/internal/model"
 )
 
-//go:generate go run ../../../utils/gen/querymodel_gen.go CollectionProblemQueryModel
-type CollectionProblemQueryModel struct {
+//go:generate go run ../../../utils/gen/querycontext_gen.go CollectionProblemQueryContext
+type CollectionProblemQueryContext struct {
 	CollectionId model.FieldList[int64]
 	ProblemId    model.FieldList[int64]
-	Page         option.Pagination
-	Sort         option.Sort
-	Field        field.CollectionProblemField
+	option.QueryParams
+	Field field.CollectionProblemField
 }
 
-func (query *CollectionProblemQueryModel) GenerateOptions() *option.QueryOptions {
+func (query *CollectionProblemQueryContext) GenerateOptions() *option.QueryOptions {
 	options := option.NewQueryOptions()
 	if query.CollectionId.Exist() {
 		options.Filters.Add(field.CollectionProblemCollectionId, option.OpIn, query.CollectionId.Value())
@@ -23,6 +22,7 @@ func (query *CollectionProblemQueryModel) GenerateOptions() *option.QueryOptions
 	if query.ProblemId.Exist() {
 		options.Filters.Add(field.CollectionProblemProblemId, option.OpIn, query.ProblemId.Value())
 	}
+	options.Filters.AddFiter(query.ExtraFilters.Conditions...)
 	options.Page = query.Page
 	options.Sort = query.Sort
 	options.Field = &query.Field

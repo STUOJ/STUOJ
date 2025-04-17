@@ -1,4 +1,4 @@
-package querymodel
+package querycontext
 
 import (
 	"STUOJ/internal/db/entity/field"
@@ -7,8 +7,8 @@ import (
 	"time"
 )
 
-//go:generate go run ../../../utils/gen/querymodel_gen.go HistoryQueryModel
-type HistoryQueryModel struct {
+//go:generate go run ../../../utils/gen/querycontext_gen.go HistoryQueryContext
+type HistoryQueryContext struct {
 	Id         model.FieldList[int64]
 	UserId     model.FieldList[int64]
 	ProblemId  model.FieldList[int64]
@@ -16,12 +16,11 @@ type HistoryQueryModel struct {
 	Difficulty model.FieldList[int64]
 	StartTime  model.Field[time.Time]
 	EndTime    model.Field[time.Time]
-	Page       option.Pagination
-	Sort       option.Sort
-	Field      field.HistoryField
+	option.QueryParams
+	Field field.HistoryField
 }
 
-func (query *HistoryQueryModel) GenerateOptions() *option.QueryOptions {
+func (query *HistoryQueryContext) GenerateOptions() *option.QueryOptions {
 	options := option.NewQueryOptions()
 	if query.Id.Exist() {
 		options.Filters.Add(field.HistoryId, option.OpIn, query.Id.Value())
@@ -44,6 +43,7 @@ func (query *HistoryQueryModel) GenerateOptions() *option.QueryOptions {
 	if query.EndTime.Exist() {
 		options.Filters.Add(field.HistoryCreateTime, option.OpLessEq, query.EndTime.Value())
 	}
+	options.Filters.AddFiter(query.ExtraFilters.Conditions...)
 	options.Page = query.Page
 	options.Sort = query.Sort
 	options.Field = &query.Field
