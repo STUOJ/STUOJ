@@ -1,5 +1,8 @@
 package judgement
 
+//go:generate go run ../../../utils/gen/dto_gen.go judgement
+//go:generate go run ../../../utils/gen/query_gen.go judgement
+
 import (
 	"fmt"
 	"time"
