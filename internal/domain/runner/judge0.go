@@ -1,9 +1,8 @@
-package judge0
+package runner
 
 import (
 	"STUOJ/external/judge0"
 	"STUOJ/internal/db/entity"
-	"STUOJ/internal/domain/runner/valueobject"
 
 	"sync"
 
@@ -12,7 +11,7 @@ import (
 
 type Judge0 struct{}
 
-func (j *Judge0) CodeRun(runnerSubmission valueobject.RunnerSubmission) valueobject.RunnerResult {
+func (j *Judge0) CodeRun(runnerSubmission RunnerSubmission) RunnerResult {
 	judgeSubmissions := runnerSubmissionToJudgeSubmission(runnerSubmission)
 	runNum := len(judgeSubmissions)
 	chJudgement := make(chan judge0.JudgeResult, runNum)
@@ -50,14 +49,14 @@ func (j *Judge0) CodeRun(runnerSubmission valueobject.RunnerSubmission) valueobj
 	return judgeResultToRunnerResult(judgeResult)
 }
 
-func (j *Judge0) GetLanguage() ([]valueobject.RunnerLanguage, error) {
+func (j *Judge0) GetLanguage() ([]RunnerLanguage, error) {
 	languages, err := judge0.GetLanguage()
 	if err != nil {
 		return nil, err
 	}
-	var runnerLanguages []valueobject.RunnerLanguage
+	var runnerLanguages []RunnerLanguage
 	for _, language := range languages {
-		runnerLanguages = append(runnerLanguages, valueobject.RunnerLanguage{
+		runnerLanguages = append(runnerLanguages, RunnerLanguage{
 			Id:   language.Id,
 			Name: language.Name,
 		})
@@ -65,7 +64,7 @@ func (j *Judge0) GetLanguage() ([]valueobject.RunnerLanguage, error) {
 	return runnerLanguages, nil
 }
 
-func runnerSubmissionToJudgeSubmission(submission valueobject.RunnerSubmission) []judge0.JudgeSubmission {
+func runnerSubmissionToJudgeSubmission(submission RunnerSubmission) []judge0.JudgeSubmission {
 	var judgeSubmissions = make([]judge0.JudgeSubmission, len(submission.Testcase))
 	for _, testCase := range submission.Testcase {
 		judgeSubmissions = append(judgeSubmissions, judge0.JudgeSubmission{
@@ -80,14 +79,14 @@ func runnerSubmissionToJudgeSubmission(submission valueobject.RunnerSubmission) 
 	return judgeSubmissions
 }
 
-func judgeResultToRunnerResult(judgeResult []judge0.JudgeResult) valueobject.RunnerResult {
-	var runnerResult valueobject.RunnerResult
+func judgeResultToRunnerResult(judgeResult []judge0.JudgeResult) RunnerResult {
+	var runnerResult RunnerResult
 	for _, result := range judgeResult {
-		status := valueobject.RunnerStatus{
+		status := RunnerStatus{
 			Id:          result.Status.Id,
 			Description: result.Status.Description,
 		}
-		runnerResult.TestResult = append(runnerResult.TestResult, valueobject.RunnerTestcaseResult{
+		runnerResult.TestResult = append(runnerResult.TestResult, RunnerTestcaseResult{
 			Stdout:  result.Stdout,
 			Time:    result.Time,
 			Memory:  result.Memory,
