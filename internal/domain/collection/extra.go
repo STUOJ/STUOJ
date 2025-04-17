@@ -3,7 +3,7 @@ package collection
 import "STUOJ/internal/db/query/option"
 
 const (
-	QueryCollectionProblem = "(SELECT GROUP_CONCAT(DISTINCT tbl_collection_problem.problem_id ORDER BY serial ASC) FROM tbl_collection_problem WHERE tbl_collection_problem.collection_id = tbl_collection.id) AS collection_problemIds"
+	QueryCollectionProblem = "(SELECT GROUP_CONCAT(DISTINCT tbl_collection_problem.problem_id ORDER BY serial ASC) FROM tbl_collection_problem WHERE tbl_collection_problem.collection_id = tbl_collection.id) AS collection_problem_id"
 )
 
 func QueryProblemId() option.QueryContextOption {
@@ -16,7 +16,7 @@ func QueryProblemId() option.QueryContextOption {
 }
 
 const (
-	QueryCollectionUser = "(SELECT GROUP_CONCAT(DISTINCT tbl_collection_user.user_id) FROM tbl_collection_user WHERE tbl_collection_user.collection_id = tbl_collection.id) AS collection_userIds"
+	QueryCollectionUser = "(SELECT GROUP_CONCAT(DISTINCT tbl_collection_user.user_id) FROM tbl_collection_user WHERE tbl_collection_user.collection_id = tbl_collection.id) AS collection_user_id"
 )
 
 func QueryUserId() option.QueryContextOption {
