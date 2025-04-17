@@ -4,10 +4,10 @@ import (
 	"STUOJ/internal/app/dto/request"
 	"STUOJ/internal/app/dto/response"
 	"STUOJ/internal/db/query"
+	"STUOJ/internal/db/querycontext"
 	"STUOJ/internal/domain/language"
 	"STUOJ/internal/domain/runner"
 	"STUOJ/internal/model"
-	"STUOJ/internal/model/querycontext"
 )
 
 func TestRun(req request.TestRunReq, reqUser model.ReqUser) (response.TestRunRes, error) {

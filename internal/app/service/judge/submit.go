@@ -5,6 +5,7 @@ import (
 	"STUOJ/internal/db/entity"
 	"STUOJ/internal/db/query"
 	"STUOJ/internal/db/query/option"
+	"STUOJ/internal/db/querycontext"
 	"STUOJ/internal/domain/judgement"
 	"STUOJ/internal/domain/language"
 	"STUOJ/internal/domain/problem"
@@ -13,7 +14,6 @@ import (
 	"STUOJ/internal/domain/testcase"
 	"STUOJ/internal/errors"
 	"STUOJ/internal/model"
-	"STUOJ/internal/model/querycontext"
 	"STUOJ/utils"
 	"slices"
 )
