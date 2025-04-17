@@ -3,6 +3,7 @@ package option
 import (
 	"fmt"
 	"reflect"
+	"strings"
 
 	"gorm.io/gorm"
 )
@@ -21,7 +22,7 @@ const (
 	OpNotLike   FilterOperator = "NOT LIKE"
 	OpIsNull    FilterOperator = "IS NULL"
 	OpIsNotNull FilterOperator = "IS NOT NULL"
-	OpHave      FilterOperator = "HAVE"
+	OpExtra     FilterOperator = ""
 )
 
 type FilterCondition struct {
@@ -74,15 +75,8 @@ func (f *Filters) Add(field string, operator FilterOperator, values ...any) (err
 		if _, ok := values[0].(string); !ok {
 			return fmt.Errorf("%s requires string value (got %T)", operator, values[0])
 		}
-	case OpHave:
-		if len(values) == 0 {
-			return fmt.Errorf("%s operator requires a value", operator)
-		}
-		if reflect.TypeOf(values[0]).Kind() != reflect.Slice {
-			value = values
-		} else {
-			value = values[0]
-		}
+	case OpExtra:
+		value = values
 	default:
 		if len(values) == 0 {
 			err = fmt.Errorf("%s operator requires a value", operator)
@@ -97,6 +91,10 @@ func (f *Filters) Add(field string, operator FilterOperator, values ...any) (err
 		Value:    value,
 	})
 	return
+}
+
+func (f *Filters) AddFiter(filter ...FilterCondition) {
+	f.Conditions = append(f.Conditions, filter...)
 }
 
 func (f *Filters) GenerateWhere() func(*gorm.DB) *gorm.DB {
@@ -127,13 +125,31 @@ func (f *Filters) applyCondition(db *gorm.DB, c FilterCondition) *gorm.DB {
 		return db.Where(fmt.Sprintf("%s %s ?", c.Field, c.Operator), "%"+c.Value.(string)+"%")
 	case OpIsNull, OpIsNotNull:
 		return db.Where(fmt.Sprintf("%s %s", c.Field, c.Operator))
-	case OpHave:
-		if reflect.TypeOf(c.Value).Kind() != reflect.Slice {
+	case OpExtra:
+		// 计算Field中问号的数量
+		questionMarkCount := strings.Count(c.Field, "?")
+
+		// 如果没有问号，直接传递所有参数
+		if questionMarkCount == 0 {
+			return db.Where(c.Field, c.Value)
+		}
+
+		// 如果只有一个问号，直接使用参数
+		if questionMarkCount == 1 {
+			return db.Where(c.Field, c.Value)
+		}
+
+		// 如果有多个问号，需要确保参数是切片且长度匹配
+		values, ok := c.Value.([]any)
+		if !ok || len(values) != questionMarkCount {
 			f.Errors = append(f.Errors,
-				fmt.Errorf("HAVE操作需要slice类型参数(字段:%s)", c.Field))
+				fmt.Errorf("问号数量(%d)与参数数量(%d)不匹配(字段:%s)",
+					questionMarkCount, len(values), c.Field))
 			return db
 		}
-		return db.Where(c.Field, c.Value, len(c.Value.([]any)))
+
+		// 问号数量与值数量匹配，直接使用Where
+		return db.Where(c.Field, values...)
 	default:
 		f.Errors = append(f.Errors,
 			fmt.Errorf("不支持的运算符:%s (字段:%s)", c.Operator, c.Field))
