@@ -23,13 +23,26 @@ func QueryMaxScore(userId int64) option.QueryContextOption {
 }
 
 const (
-	ProblemTag = "tbl_problem.id IN (SELECT problem_id FROM tbl_problem_tag WHERE tag_id In(?) GROUP BY problem_id HAVING COUNT(DISTINCT tag_id) =?)"
+	QueryProblemTag = `(SELECT GROUP_CONCAT(DISTINCT tbl_problem_tag.tag_id) FROM tbl_problem_tag WHERE problem_id = tbl_problem.id) AS problem_tag_id`
+)
+
+func QueryTag() option.QueryContextOption {
+	return func(pqm option.QueryContext) option.QueryContext {
+		field := pqm.GetField()
+		selector := option.NewSelector(QueryProblemTag, option.OpExtra)
+		field.AddSelect(*selector)
+		return pqm
+	}
+}
+
+const (
+	WhereProblemTag = "tbl_problem.id IN (SELECT problem_id FROM tbl_problem_tag WHERE tag_id In(?) GROUP BY problem_id HAVING COUNT(DISTINCT tag_id) =?)"
 )
 
 func WhereTag(tag []int64) option.QueryContextOption {
 	return func(pqm option.QueryContext) option.QueryContext {
 		filter := pqm.GetExtraFilters()
-		filter.Add(ProblemTag, option.OpExtra, tag, len(tag))
+		filter.Add(WhereProblemTag, option.OpExtra, tag, len(tag))
 		return pqm
 	}
 }
