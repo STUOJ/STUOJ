@@ -17,14 +17,14 @@ type RunnerResult struct {
 	Status        RunnerStatus           `json:"status"`
 	TestResult    []RunnerTestcaseResult `json:"test_result"`
 	CompileOutput string                 `json:"compile_output,omitempty"`
-	Time          string                 `json:"time,omitempty"`
+	Time          float64                `json:"time,omitempty"`
 	Memory        float64                `json:"memory,omitempty"`
 	Message       string                 `json:"message,omitempty"`
 }
 
 type RunnerTestcaseResult struct {
 	Stdout  string       `json:"stdout,omitempty"`
-	Time    string       `json:"time,omitempty"`
+	Time    float64      `json:"time,omitempty"`
 	Memory  float64      `json:"memory,omitempty"`
 	Stderr  string       `json:"stderr,omitempty"`
 	Message string       `json:"message,omitempty"`

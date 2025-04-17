@@ -3,6 +3,7 @@ package runner
 import (
 	"STUOJ/external/judge0"
 	"STUOJ/internal/db/entity"
+	"strconv"
 
 	"sync"
 
@@ -86,9 +87,10 @@ func judgeResultToRunnerResult(judgeResult []judge0.JudgeResult) RunnerResult {
 			Id:          result.Status.Id,
 			Description: result.Status.Description,
 		}
+		time, _ := strconv.ParseFloat(result.Time, 64)
 		runnerResult.TestResult = append(runnerResult.TestResult, RunnerTestcaseResult{
 			Stdout:  result.Stdout,
-			Time:    result.Time,
+			Time:    time,
 			Memory:  result.Memory,
 			Stderr:  result.Stderr,
 			Message: result.Message,
@@ -97,8 +99,8 @@ func judgeResultToRunnerResult(judgeResult []judge0.JudgeResult) RunnerResult {
 		if result.Status.Id > runnerResult.Status.Id {
 			runnerResult.Status = status
 		}
-		if result.Time > runnerResult.Time {
-			runnerResult.Time = result.Time
+		if timeFloat, _ := strconv.ParseFloat(result.Time, 64); timeFloat > runnerResult.Time {
+			runnerResult.Time = timeFloat
 		}
 		if result.Memory > runnerResult.Memory {
 			runnerResult.Memory = result.Memory
