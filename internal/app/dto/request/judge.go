@@ -4,7 +4,7 @@ type JudgeReq struct {
 	// 语言id
 	LanguageID int64 `json:"language_id"`
 	// 题目id
-	ProblemID string `json:"problem_id"`
+	ProblemID int64 `json:"problem_id"`
 	// 源程序代码
 	SourceCode string `json:"source_code"`
 }
