@@ -13,7 +13,6 @@ type ProblemQueryContext struct {
 	Title     model.Field[string]
 	Source    model.Field[string]
 	Status    model.FieldList[int8]
-	Tag       model.FieldList[int64]
 	StartTime model.Field[time.Time]
 	EndTime   model.Field[time.Time]
 	option.QueryParams
@@ -33,9 +32,6 @@ func (query *ProblemQueryContext) GenerateOptions() *option.QueryOptions {
 	}
 	if query.Status.Exist() {
 		options.Filters.Add(field.ProblemStatus, option.OpIn, query.Status.Value())
-	}
-	if query.Tag.Exist() {
-		options.Filters.Add(field.ProblemTag, option.OpExtra, query.Tag.Value(), len(query.Tag.Value()))
 	}
 	if query.StartTime.Exist() {
 		options.Filters.Add(field.ProblemCreateTime, option.OpGreaterEq, query.StartTime.Value())

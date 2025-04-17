@@ -12,7 +12,6 @@ type CollectionQueryContext struct {
 	Id        model.FieldList[int64]
 	Title     model.Field[string]
 	UserId    model.FieldList[int64]
-	ProblemId model.FieldList[int64]
 	Status    model.FieldList[int64]
 	StartTime model.Field[time.Time]
 	EndTime   model.Field[time.Time]
@@ -30,9 +29,6 @@ func (query *CollectionQueryContext) GenerateOptions() *option.QueryOptions {
 	}
 	if query.UserId.Exist() {
 		options.Filters.Add(field.CollectionUserId, option.OpIn, query.UserId.Value())
-	}
-	if query.ProblemId.Exist() {
-		options.Filters.Add(field.CollectionProblem, option.OpExtra, query.ProblemId.Value(), len(query.ProblemId.Value()))
 	}
 	if query.Status.Exist() {
 		options.Filters.Add(field.CollectionStatus, option.OpIn, query.Status.Value())
