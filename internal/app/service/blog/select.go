@@ -73,7 +73,7 @@ func Select(params request.QueryBlogParams, resUser model.ReqUser) (BlogPage, er
 	problemQueryContext := querycontext.ProblemQueryContext{}
 	problemQueryContext.Id.Add(problemIds...)
 	problemQueryContext.Field = *query.ProblemSimpleField
-	_, problemMap, err := problem.Query.Select(problemQueryContext, problem.QueryMaxScore(resUser.ID), problem.QueryTag())
+	_, problemMap, err := problem.Query.SelectByIds(problemQueryContext, problem.QueryMaxScore(resUser.ID), problem.QueryTag())
 
 	userQueryContext := querycontext.UserQueryContext{}
 	userQueryContext.Id.Add(userIds...)
