@@ -66,7 +66,10 @@ func (*_Query) Count(context querycontext.{{.EntityName}}QueryContext) (int64, e
 }
 
 {{if .HaveId}}
-func (*_Query) SelectByIds(context querycontext.{{.EntityName}}QueryContext) (map[int64]{{.EntityName}}, map[int64]map[string]any, error) {
+func (*_Query) SelectByIds(context querycontext.{{.EntityName}}QueryContext, optionFunc ...option.QueryContextOption) (map[int64]{{.EntityName}}, map[int64]map[string]any, error) {
+	for _, o := range optionFunc {
+		o(&context)
+	}
 	context.Page = option.NewPagination(0, int64(len(context.Id.Value())))
 	res, err := dao.{{.EntityName}}Store.Select(context.GenerateOptions())
 	if err!= nil {
