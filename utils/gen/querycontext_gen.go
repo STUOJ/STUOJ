@@ -1,8 +1,8 @@
 //go:build ignore
 
 // 为querymodel目录下的结构体生成GenerateOptions()和GetField()方法
-// 使用方法：go run querymodel_gen.go <struct-name>
-// 例如：go run querymodel_gen.go ProblemQueryModel
+// 使用方法：go run querycontext_gen.go <struct-name>
+// 例如：go run querycontext_gen.go ProblemQueryContext
 
 package main
 
@@ -20,7 +20,7 @@ import (
 	"text/template"
 )
 
-const queryModelTmpl = `package querymodel
+const queryModelTmpl = `package querycontext
 
 import (
 	"STUOJ/internal/db/query/option"
@@ -29,6 +29,11 @@ import (
 func (query *{{.StructName}}) GetField() option.FieldSelector {
 	return &query.Field
 }
+
+func (query *{{.StructName}}) GetExtraFilters() *option.Filters {
+	return &query.ExtraFilters
+}
+
 `
 
 type FieldInfo struct {
@@ -47,7 +52,7 @@ type TemplateData struct {
 func main() {
 	// 检查命令行参数
 	if len(os.Args) < 2 {
-		log.Fatal("Usage: go run querymodel_gen.go <struct-name>")
+		log.Fatal("Usage: go run querycontext_gen.go <struct-name>")
 	}
 	structName := os.Args[1]
 
@@ -58,14 +63,14 @@ func main() {
 	}
 
 	// 处理结构体
-	err = processQueryModel(cwd, structName)
+	err = processQueryContext(cwd, structName)
 	if err != nil {
 		log.Fatalf("处理查询模型失败: %v\n", err)
 	}
 }
 
 // 处理查询模型的方法生成
-func processQueryModel(dir string, structName string) error {
+func processQueryContext(dir string, structName string) error {
 	// 查找querymodel目录
 	// 使用相对路径，避免路径依赖
 	queryModelDir := filepath.Join(dir)
@@ -193,7 +198,7 @@ func processQueryModel(dir string, structName string) error {
 			}
 
 			// 根据字段名确定字段常量
-			entityName := strings.TrimSuffix(structName, "QueryModel")
+			entityName := strings.TrimSuffix(structName, "QueryContext")
 			fieldConst = entityName + fieldName
 
 			// 根据字段类型确定操作符
@@ -236,7 +241,7 @@ func processQueryModel(dir string, structName string) error {
 	}
 
 	// 渲染模板
-	tmpl, err := template.New("querymodel").Parse(queryModelTmpl)
+	tmpl, err := template.New("querycontext").Parse(queryModelTmpl)
 	if err != nil {
 		return fmt.Errorf("解析模板失败: %v", err)
 	}
