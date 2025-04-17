@@ -1,6 +1,9 @@
 package response
 
-import "STUOJ/internal/domain/problem"
+import (
+	"STUOJ/internal/domain/problem"
+	"STUOJ/utils"
+)
 
 type ProblemData struct {
 	CreateTime   string           `json:"create_time,omitempty"`
@@ -20,7 +23,6 @@ type ProblemData struct {
 	Title        string           `json:"title"`
 	UpdateTime   string           `json:"update_time,omitempty"`
 	User         []UserSimpleData `json:"user"`
-	ProblemUserScore
 }
 
 type ProblemSimpleData struct {
@@ -40,6 +42,22 @@ func Domain2ProblemSimpleData(p problem.Problem) ProblemSimpleData {
 	}
 }
 
+func Map2ProblemSimpleData(p map[string]any) ProblemSimpleData {
+	tagIds, _ := utils.StringToInt64Slice(p["tag_ids"].(string))
+	return ProblemSimpleData{
+		Difficulty: p["difficulty"].(int64),
+		ID:         p["id"].(int64),
+		Source:     p["source"].(string),
+		Title:      p["title"].(string),
+		TagIDS:     tagIds,
+	}
+}
+
+type ProblemQueryData struct {
+	ProblemData
+	ProblemUserScore
+}
+
 type ProblemListItemData struct {
 	CreateTime string  `json:"create_time,omitempty"`
 	Difficulty int64   `json:"difficulty"`
@@ -55,4 +73,13 @@ type ProblemListItemData struct {
 type ProblemUserScore struct {
 	HasUserSubmission bool  `json:"has_user_submission"`
 	UserScore         int64 `json:"user_score,omitempty"`
+}
+
+func Map2ProblemUserScore(p map[string]any) ProblemUserScore {
+	var score ProblemUserScore
+	score.HasUserSubmission = p["has_user_submission"].(bool)
+	if p["user_score"] != nil {
+		score.UserScore = p["user_score"].(int64)
+	}
+	return score
 }

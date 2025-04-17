@@ -14,10 +14,18 @@ type UserData struct {
 	Role      int64   `json:"role"`
 	Signature *string `json:"signature,omitempty"`
 	// 更新日期
-	UpdateTime  *string `json:"update_time,omitempty"`
-	ACCount     int64   `json:"ac_count"`
-	BlogCount   string  `json:"blog_count"`
-	SubmitCount string  `json:"submit_count"`
+	UpdateTime *string `json:"update_time,omitempty"`
+}
+
+type UserStatistics struct {
+	ACCount     int64  `json:"ac_count"`
+	BlogCount   string `json:"blog_count"`
+	SubmitCount string `json:"submit_count"`
+}
+
+type UserQueryData struct {
+	UserData
+	UserStatistics
 }
 
 type UserSimpleData struct {
