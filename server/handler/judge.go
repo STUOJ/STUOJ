@@ -1,83 +1,51 @@
 package handler
 
 import (
-	"STUOJ/internal/entity"
+	"STUOJ/internal/app/dto/request"
+	"STUOJ/internal/app/service/judge"
+	"STUOJ/internal/errors"
 	"STUOJ/internal/model"
-	"STUOJ/internal/service/judge"
-	"STUOJ/utils"
-	"log"
+
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
 // 提交评测
-type ReqJudgeSubmit struct {
-	LanguageId uint64 `json:"language_id" binding:"required"`
-	ProblemId  uint64 `json:"problem_id" binding:"required"`
-	SourceCode string `json:"source_code" binding:"required"`
-}
-
 func JudgeSubmit(c *gin.Context) {
-	_, id_ := utils.GetUserInfo(c)
-	uid := uint64(id_)
-	var req ReqJudgeSubmit
+	reqUser := model.NewReqUser(c)
+	var req request.JudgeReq
 
 	// 参数绑定
 	err := c.ShouldBindBodyWithJSON(&req)
 	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		c.Error(&errors.ErrValidation)
 		return
 	}
 
-	// 初始化提交对象
-	s := entity.Submission{
-		UserId:     uid,
-		ProblemId:  req.ProblemId,
-		LanguageId: req.LanguageId,
-		SourceCode: req.SourceCode,
-	}
-
-	// 提交代码
-	//s.Id, err = judge.AsyncSubmit(s)
-	s.Id, err = judge.AsyncSubmit(s)
+	id, err := judge.Submit(req, *reqUser)
 	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		c.Error(err)
 		return
 	}
 
 	// 返回提交ID
-	c.JSON(http.StatusOK, model.RespOk("提交成功，返回记录提交ID", s.Id))
-
-}
-
-type ReqJudgeTestRun struct {
-	LanguageId uint64 `json:"language_id" binding:"required"`
-	SourceCode string `json:"source_code" binding:"required"`
-	Stdin      string `json:"stdin"`
+	c.JSON(http.StatusOK, model.RespOk("提交成功，返回记录提交ID", id))
 }
 
 func JudgeTestRun(c *gin.Context) {
-	var req ReqJudgeTestRun
+	reqUser := model.NewReqUser(c)
+	var req request.TestRunReq
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		c.Error(&errors.ErrValidation)
 		return
 	}
 
-	// 初始化提交对象
-	s := entity.Submission{
-		LanguageId: req.LanguageId,
-		SourceCode: req.SourceCode,
-	}
-
 	// 测试运行
-	j, err := judge.TestRun(s, req.Stdin)
+	j, err := judge.TestRun(req, *reqUser)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		c.Error(err)
 		return
 	}
 
