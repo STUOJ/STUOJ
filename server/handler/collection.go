@@ -1,11 +1,11 @@
 package handler
 
 import (
-	"STUOJ/internal/entity"
+	"STUOJ/internal/app/dto/request"
+	"STUOJ/internal/app/service/collection"
+	"STUOJ/internal/errors"
 	"STUOJ/internal/model"
-	"STUOJ/internal/service/collection"
-	"STUOJ/utils"
-	"log"
+
 	"net/http"
 	"strconv"
 
@@ -14,18 +14,16 @@ import (
 
 // 获取题单数据
 func CollectionInfo(c *gin.Context) {
-	role, uid := utils.GetUserInfo(c)
+	reqUser := model.NewReqUser(c)
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		c.Error(&errors.ErrValidation)
 		return
 	}
 
-	cid := uint64(id)
-	coll, err := collection.SelectById(cid, uid, role)
+	coll, err := collection.SelectById(int64(id), *reqUser)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		c.Error(err)
 		return
 	}
 
@@ -34,91 +32,60 @@ func CollectionInfo(c *gin.Context) {
 
 // 获取题单列表
 func CollectionList(c *gin.Context) {
-	role, uid := utils.GetUserInfo(c)
-
-	condition := model.CollectionWhere{}
-	condition.Parse(c)
-
-	users, err := collection.Select(condition, uid, role)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+	reqUser := model.NewReqUser(c)
+	params := request.QueryCollectionParams{}
+	if err := c.ShouldBindQuery(&params); err != nil {
+		c.Error(&errors.ErrValidation)
 		return
 	}
 
-	c.JSON(http.StatusOK, model.RespOk("OK", users))
+	collections, err := collection.Select(params, *reqUser)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	c.JSON(http.StatusOK, model.RespOk("OK", collections))
 }
 
 // 添加题单
-type ReqCollectionAdd struct {
-	Title       string                  `json:"title" binding:"required"`
-	Description string                  `json:"description" binding:"required"`
-	Status      entity.CollectionStatus `json:"status" binding:"required,statusRange"`
-}
-
 func CollectionAdd(c *gin.Context) {
-	var req ReqCollectionAdd
-
-	_, uid := utils.GetUserInfo(c)
+	reqUser := model.NewReqUser(c)
+	var req request.CreateCollectionReq
 
 	// 参数绑定
 	err := c.ShouldBindBodyWithJSON(&req)
 	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", err.Error()))
+		c.Error(&errors.ErrValidation)
 		return
 	}
 
-	// 初始化题单
-	coll := entity.Collection{
-		UserId:      uid,
-		Title:       req.Title,
-		Description: req.Description,
-		Status:      req.Status,
-	}
-
 	// 插入题单
-	coll.Id, err = collection.Insert(coll)
+	id, err := collection.Insert(req, *reqUser)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		c.Error(err)
 		return
 	}
 
 	// 返回结果
-	c.JSON(http.StatusOK, model.RespOk("添加成功，返回题单ID", coll.Id))
+	c.JSON(http.StatusOK, model.RespOk("添加成功，返回题单ID", id))
 }
 
 // 修改题单数据
-type ReqCollectionModify struct {
-	Id          uint64                  `json:"id" binding:"required"`
-	Title       string                  `json:"title" binding:"required"`
-	Description string                  `json:"description" binding:"required"`
-	Status      entity.CollectionStatus `json:"status" binding:"required,statusRange"`
-}
-
 func CollectionModify(c *gin.Context) {
-	var req ReqCollectionModify
-
-	role, uid := utils.GetUserInfo(c)
+	reqUser := model.NewReqUser(c)
+	var req request.UpdateCollectionReq
 
 	// 参数绑定
 	err := c.ShouldBindBodyWithJSON(&req)
 	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", err.Error()))
+		c.Error(&errors.ErrValidation)
 		return
 	}
 
-	// 初始化题单
-	coll := entity.Collection{
-		Id:          req.Id,
-		Title:       req.Title,
-		Description: req.Description,
-		Status:      req.Status,
-	}
-
-	err = collection.Update(coll, uid, role)
+	err = collection.Update(req, *reqUser)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		c.Error(err)
 		return
 	}
 
@@ -128,164 +95,57 @@ func CollectionModify(c *gin.Context) {
 
 // 删除题单
 func CollectionRemove(c *gin.Context) {
-	role, uid := utils.GetUserInfo(c)
+	reqUser := model.NewReqUser(c)
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		c.Error(&errors.ErrValidation)
 		return
 	}
 
 	pid := uint64(id)
-	err = collection.Delete(pid, uid, role)
+	err = collection.Delete(pid, *reqUser)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		c.Error(err)
 		return
 	}
 
 	c.JSON(http.StatusOK, model.RespOk("删除成功", nil))
-}
-
-// 添加题目到题单
-type ReqCollectionAddProblem struct {
-	CollectionId uint64 `json:"collection_id" binding:"required"`
-	ProblemId    uint64 `json:"problem_id" binding:"required"`
-	Serial       uint16 `json:"serial" binding:"required"`
-}
-
-func CollectionAddProblem(c *gin.Context) {
-	role, uid := utils.GetUserInfo(c)
-	var req ReqCollectionAddProblem
-
-	// 参数绑定
-	err := c.ShouldBindBodyWithJSON(&req)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
-		return
-	}
-
-	// 添加题单
-	err = collection.InsertProblem(req.CollectionId, req.ProblemId, uid, role)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
-		return
-	}
-
-	// 返回结果
-	c.JSON(http.StatusOK, model.RespOk("添加成功", nil))
-}
-
-type ReqCollectionModifyProblem struct {
-	CollectionId uint64 `json:"collection_id" binding:"required"`
-	ProblemId    uint64 `json:"problem_id" binding:"required"`
-	Serial       uint16 `json:"serial" binding:"required"`
 }
 
 func CollectionModifyProblem(c *gin.Context) {
-	role, uid := utils.GetUserInfo(c)
-	var req ReqCollectionModifyProblem
+	reqUser := model.NewReqUser(c)
+	var req request.UpdateCollectionProblemReq
 
 	// 参数绑定
 	err := c.ShouldBindBodyWithJSON(&req)
 	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		c.Error(&errors.ErrValidation)
 		return
 	}
 
-	cp := entity.CollectionProblem{CollectionId: req.CollectionId, ProblemId: req.ProblemId, Serial: req.Serial}
-
-	err = collection.UpdateProblem(cp, uid, role)
+	err = collection.UpdateProblem(req, *reqUser)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		c.Error(err)
 		return
 	}
+
+	c.JSON(http.StatusOK, model.RespOk("修改成功", nil))
 }
 
-// 删除题单的某个题目
-type ReqCollectionRemoveProblem struct {
-	CollectionId uint64 `json:"collection_id" binding:"required"`
-	ProblemId    uint64 `json:"problem_id" binding:"required"`
-}
+func CollectionModifyUser(c *gin.Context) {
+	reqUser := model.NewReqUser(c)
+	var req request.UpdateCollectionUserReq
 
-func CollectionRemoveProblem(c *gin.Context) {
-	role, uid := utils.GetUserInfo(c)
-	var req ReqCollectionRemoveProblem
-
-	// 参数绑定
 	err := c.ShouldBindBodyWithJSON(&req)
 	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		c.Error(&errors.ErrValidation)
 		return
 	}
-
-	// 删除题目
-	err = collection.DeleteProblem(req.CollectionId, req.ProblemId, uid, role)
+	err = collection.UpdateUser(req, *reqUser)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		c.Error(err)
 		return
 	}
 
-	// 返回结果
-	c.JSON(http.StatusOK, model.RespOk("删除成功", nil))
-}
-
-// 添加编辑者到题单
-type ReqCollectionAddUser struct {
-	CollectionId uint64 `json:"collection_id" binding:"required"`
-	UserId       uint64 `json:"user_id" binding:"required"`
-}
-
-func CollectionAddUser(c *gin.Context) {
-	role, uid := utils.GetUserInfo(c)
-	var req ReqCollectionAddUser
-
-	// 参数绑定
-	err := c.ShouldBindBodyWithJSON(&req)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
-		return
-	}
-
-	// 添加题单
-	err = collection.InsertUser(req.CollectionId, req.UserId, uid, role)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
-		return
-	}
-
-	// 返回结果
-	c.JSON(http.StatusOK, model.RespOk("添加成功", nil))
-}
-
-// 删除题单的某个编辑者
-type ReqCollectionRemoveUser struct {
-	CollectionId uint64 `json:"collection_id" binding:"required"`
-	UserId       uint64 `json:"user_id" binding:"required"`
-}
-
-func CollectionRemoveUser(c *gin.Context) {
-	role, uid := utils.GetUserInfo(c)
-	var req ReqCollectionRemoveUser
-
-	// 参数绑定
-	err := c.ShouldBindBodyWithJSON(&req)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
-		return
-	}
-
-	// 删除题目
-	err = collection.DeleteUser(req.CollectionId, req.UserId, uid, role)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
-		return
-	}
-
-	// 返回结果
-	c.JSON(http.StatusOK, model.RespOk("删除成功", nil))
+	c.JSON(http.StatusOK, model.RespOk("修改成功", nil))
 }
