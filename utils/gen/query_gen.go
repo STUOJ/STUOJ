@@ -64,6 +64,23 @@ func (*_Query) Count(context querycontext.{{.EntityName}}QueryContext) (int64, e
 	}
 	return res, &errors.NoError
 }
+
+{{if .HaveId}}
+func (*_Query) SelectByIds(context querycontext.{{.EntityName}}QueryContext) (map[int64]{{.EntityName}}, map[int64]map[string]any, error) {
+	context.Page = option.NewPagination(0, int64(len(context.Id.Value())))
+	res, err := dao.{{.EntityName}}Store.Select(context.GenerateOptions())
+	if err!= nil {
+		return nil, nil, errors.ErrInternalServer.WithMessage("查询失败")
+	}
+	res{{.EntityName}}s := make(map[int64]{{.EntityName}}, len(res))
+	resMaps := make(map[int64]map[string]any, len(res))
+	for _, v := range res {
+		res{{.EntityName}}s[v["id"].(int64)] = Dto(v)
+		resMaps[v["id"].(int64)] = v
+	}
+	return res{{.EntityName}}s, resMaps, &errors.NoError
+}
+{{end}}
 `
 
 type TemplateData struct {
@@ -71,6 +88,7 @@ type TemplateData struct {
 	StructName  string
 	EntityName  string
 	VarName     string
+	HaveId      bool
 }
 
 func main() {
@@ -113,19 +131,34 @@ func processEntity(dir string, entityName string) error {
 
 	// 查找结构体定义
 	var structName string
+	var haveId bool
 	ast.Inspect(node, func(n ast.Node) bool {
 		typeSpec, ok := n.(*ast.TypeSpec)
 		if !ok || typeSpec.Type == nil {
 			return true
 		}
 
-		_, ok = typeSpec.Type.(*ast.StructType)
+		structType, ok := typeSpec.Type.(*ast.StructType)
 		if !ok {
 			return true
 		}
 
 		// 找到第一个结构体定义
 		structName = typeSpec.Name.Name
+
+		// 检查是否有Id字段
+		for _, field := range structType.Fields.List {
+			if len(field.Names) == 0 {
+				continue
+			}
+
+			fieldName := field.Names[0].Name
+			if fieldName == "Id" {
+				haveId = true
+				break
+			}
+		}
+
 		return false
 	})
 
@@ -144,6 +177,7 @@ func processEntity(dir string, entityName string) error {
 		StructName:  structName,
 		EntityName:  entityStructName,
 		VarName:     varName,
+		HaveId:      haveId,
 	}
 
 	// 渲染模板
