@@ -34,31 +34,31 @@ type _Query struct{}
 
 var Query = new(_Query)
 
-func (*_Query) Select(model querycontext.{{.EntityName}}QueryContext, optionFunc ...option.QueryContextOption) ([]{{.EntityName}}, []map[string]any, error) {
+func (*_Query) Select(context querycontext.{{.EntityName}}QueryContext, optionFunc ...option.QueryContextOption) ([]{{.EntityName}}, []map[string]any, error) {
 	for _, o := range optionFunc {
-		o(&model)
+		o(&context)
 	}
-	map_, err := dao.{{.EntityName}}Store.Select(model.GenerateOptions())
+	map_, err := dao.{{.EntityName}}Store.Select(context.GenerateOptions())
 	if err != nil {
 		return nil, nil, errors.ErrInternalServer.WithMessage("查询失败")
 	}
 	return Dtos(map_), map_, &errors.NoError
 }
 
-func (*_Query) SelectOne(model querycontext.{{.EntityName}}QueryContext, optionFunc ...option.QueryContextOption) ({{.EntityName}}, map[string]any, error) {
+func (*_Query) SelectOne(context querycontext.{{.EntityName}}QueryContext, optionFunc ...option.QueryContextOption) ({{.EntityName}}, map[string]any, error) {
 	for _, o := range optionFunc {
-		o(&model)
+		o(&context)
 	}
-	model.Page = option.NewPagination(0, 1)
-	map_, err := dao.{{.EntityName}}Store.SelectOne(model.GenerateOptions())
+	context.Page = option.NewPagination(0, 1)
+	map_, err := dao.{{.EntityName}}Store.SelectOne(context.GenerateOptions())
 	if err != nil {
 		return {{.EntityName}}{}, nil, errors.ErrNotFound.WithMessage("未查询到该{{.VarName}}")
 	}
 	return Dto(map_), map_, &errors.NoError
 }
 
-func (*_Query) Count(model querycontext.{{.EntityName}}QueryContext) (int64, error) {
-	res, err := dao.{{.EntityName}}Store.Count(model.GenerateOptions())
+func (*_Query) Count(context querycontext.{{.EntityName}}QueryContext) (int64, error) {
+	res, err := dao.{{.EntityName}}Store.Count(context.GenerateOptions())
 	if err != nil {
 		return res, errors.ErrInternalServer.WithMessage("查询失败")
 	}
