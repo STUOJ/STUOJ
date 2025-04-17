@@ -25,14 +25,14 @@ import (
 	"STUOJ/internal/db/dao"
 	"STUOJ/internal/db/query/option"
 	"STUOJ/internal/errors"
-	"STUOJ/internal/model/querymodel"
+	"STUOJ/internal/model/querycontext"
 )
 
 type _Query struct{}
 
 var Query = new(_Query)
 
-func (*_Query) Select(model querymodel.{{.EntityName}}QueryModel, optionFunc ...option.QueryContextOption) ([]{{.EntityName}}, []map[string]any, error) {
+func (*_Query) Select(model querycontext.{{.EntityName}}QueryContext, optionFunc ...option.QueryContextOption) ([]{{.EntityName}}, []map[string]any, error) {
 	for _, o := range optionFunc {
 		o(&model)
 	}
@@ -43,7 +43,7 @@ func (*_Query) Select(model querymodel.{{.EntityName}}QueryModel, optionFunc ...
 	return Dtos(map_), map_, &errors.NoError
 }
 
-func (*_Query) SelectOne(model querymodel.{{.EntityName}}QueryModel, optionFunc ...option.QueryContextOption) ({{.EntityName}}, map[string]any, error) {
+func (*_Query) SelectOne(model querycontext.{{.EntityName}}QueryContext, optionFunc ...option.QueryContextOption) ({{.EntityName}}, map[string]any, error) {
 	for _, o := range optionFunc {
 		o(&model)
 	}
@@ -55,7 +55,7 @@ func (*_Query) SelectOne(model querymodel.{{.EntityName}}QueryModel, optionFunc 
 	return Dto(map_), map_, &errors.NoError
 }
 
-func (*_Query) Count(model querymodel.{{.EntityName}}QueryModel) (int64, error) {
+func (*_Query) Count(model querycontext.{{.EntityName}}QueryContext) (int64, error) {
 	res, err := dao.{{.EntityName}}Store.Count(model.GenerateOptions())
 	if err != nil {
 		return res, errors.ErrInternalServer.WithMessage("查询失败")
