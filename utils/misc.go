@@ -238,6 +238,22 @@ func StringToInt64Slice(str string) ([]int64, error) {
 	return result, nil
 }
 
+func StringToint8Slice(str string) ([]int8, error) {
+	if str == "" {
+		return []int8{}, nil
+	}
+	strArr := strings.Split(str, ",")
+	result := make([]int8, 0, len(strArr))
+	for _, s := range strArr {
+		num, err := strconv.ParseInt(strings.TrimSpace(s), 10, 8)
+		if err != nil {
+			return nil, fmt.Errorf("failed to parse value %s to int8: %w", s, err)
+		}
+		result = append(result, int8(num))
+	}
+	return result, nil
+}
+
 func Int64ToUint64Slice(src []int64) []uint64 {
 	dst := make([]uint64, len(src))
 	for i, v := range src {
