@@ -79,11 +79,20 @@ func (u *User) toOption() *option.QueryOptions {
 }
 
 func (u *User) Create() (uint64, error) {
+	var err error
+
 	u.CreateTime = time.Now()
 	u.UpdateTime = time.Now()
 	if err := u.verify(); err != nil {
 		return 0, errors.ErrValidation.WithMessage(err.Error())
 	}
+
+	// 加密
+	u.Password, err = u.Password.Hash()
+	if err != nil {
+		return 0, errors.ErrInternalServer.WithMessage(err.Error())
+	}
+
 	user, err := dao.UserStore.Insert(u.toEntity())
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
@@ -98,10 +107,18 @@ func (u *User) Update() error {
 	if err != nil {
 		return errors.ErrNotFound.WithMessage(err.Error())
 	}
+
 	u.UpdateTime = time.Now()
 	if err := u.verify(); err != nil {
 		return errors.ErrValidation.WithMessage(err.Error())
 	}
+
+	// 加密
+	u.Password, err = u.Password.Hash()
+	if err != nil {
+		return errors.ErrInternalServer.WithMessage(err.Error())
+	}
+
 	_, err = dao.UserStore.Updates(u.toEntity(), options)
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
@@ -120,68 +137,4 @@ func (u *User) Delete() error {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
 	return &errors.NoError
-}
-
-type Option func(*User)
-
-func NewUser(options ...Option) *User {
-	user := &User{}
-	for _, option := range options {
-		option(user)
-	}
-	return user
-}
-
-func WithId(id uint64) Option {
-	return func(u *User) {
-		u.Id = id
-	}
-}
-
-func WithUsername(username string) Option {
-	return func(u *User) {
-		u.Username = valueobject.NewUsername(username)
-	}
-}
-
-func WithPassword(password string) Option {
-	return func(u *User) {
-		u.Password = valueobject.NewPassword(password)
-	}
-}
-
-func WithRole(role entity.Role) Option {
-	return func(u *User) {
-		u.Role = role
-	}
-}
-
-func WithEmail(email string) Option {
-	return func(u *User) {
-		u.Email = valueobject.NewEmail(email)
-	}
-}
-
-func WithAvatar(avatar string) Option {
-	return func(u *User) {
-		u.Avatar = valueobject.NewAvatar(avatar)
-	}
-}
-
-func WithSignature(signature string) Option {
-	return func(u *User) {
-		u.Signature = valueobject.NewSignature(signature)
-	}
-}
-
-func WithCreateTime(createTime time.Time) Option {
-	return func(u *User) {
-		u.CreateTime = createTime
-	}
-}
-
-func WithUpdateTime(updateTime time.Time) Option {
-	return func(u *User) {
-		u.UpdateTime = updateTime
-	}
 }
