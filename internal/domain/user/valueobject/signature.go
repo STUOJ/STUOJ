@@ -1,6 +1,7 @@
 package valueobject
 
 import (
+	"STUOJ/utils"
 	"errors"
 )
 
@@ -11,6 +12,10 @@ func (s Signature) Verify() error {
 		return errors.New("个性签名长度不能超过200个字符！")
 	}
 	return nil
+}
+
+func (s Signature) Sanitize() Signature {
+	return Signature(utils.Senitize(string(s)))
 }
 
 func (s Signature) String() string {
