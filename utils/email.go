@@ -3,6 +3,7 @@ package utils
 import (
 	"crypto/rand"
 	"crypto/tls"
+	"errors"
 	"fmt"
 	"log"
 	"math/big"
@@ -23,7 +24,7 @@ var (
 
 var (
 	// cache for storing verification codes
-	// 缓存中的验证代码将在创建后5分钟内有效，且每隔10分钟进行一次���理。
+	// 缓存中的验证代码将在创建后5分钟内有效，且每隔10分钟进行一次清理
 	verificationCodeCache = cache.New(5*time.Minute, 10*time.Minute)
 )
 
@@ -109,24 +110,24 @@ func generateVerificationCode() string {
 }
 
 // VerifyVerificationCode verifies the verification code sent to the user
-func VerifyVerificationCode(email string, code string) bool {
+func VerifyVerificationCode(email string, code string) error {
 	// retrieve the verification code from the cache
 	cachedCode, found := verificationCodeCache.Get(email)
 	// 如果没有找到验证码或者验证码过期，返回false
 	if !found {
-		return false
+		return errors.New("验证码已过期或不存在")
 	}
 
 	// compare the cached code with the provided code
 	if cachedCode != code {
-		return false
+		return errors.New("验证码错误")
 	}
 
 	// 验证成功后，从缓存中删除验证码
 	verificationCodeCache.Delete(email)
 	// verificationCodeCache.Delete(email + "_timestamp")
 
-	return true
+	return nil
 }
 
 // return a smtp client
