@@ -58,13 +58,14 @@ func (s JudgeStatus) String() string {
 	}
 }
 
+// Judgement 评测点结果
+//
 //go:generate go run ../../../utils/gen/dao_store.go -struct=Judgement
 //go:generate go run ../../../utils/gen/field_select.go -struct=Judgement
-// Judgement 评测点结果
 type Judgement struct {
-	Id            uint64      `gorm:"primaryKey;autoIncrement;comment:评测点ID"`
-	SubmissionId  uint64      `gorm:"not null;default:0;comment:提交记录ID"`
-	TestcaseId    uint64      `gorm:"not null;default:0;comment:评测点ID"`
+	Id            uint64      `gorm:"primaryKey;autoIncrement;comment:评测点Id"`
+	SubmissionId  uint64      `gorm:"not null;default:0;comment:提交记录Id"`
+	TestcaseId    uint64      `gorm:"not null;default:0;comment:评测点Id"`
 	Time          float64     `gorm:"not null;default:0;comment:运行耗时（s）"`
 	Memory        uint64      `gorm:"not null;default:0;comment:内存（kb）"`
 	Stdout        string      `gorm:"type:longtext;not null;comment:标准输出"`

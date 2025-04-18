@@ -172,7 +172,7 @@ func (p *Period) GetPeriod(c *gin.Context) error {
 }
 
 type ReqUser struct {
-	ID   int64
+	Id   int64
 	Role entity.Role
 }
 
@@ -185,7 +185,7 @@ func (r *ReqUser) Parse(c *gin.Context) {
 	if !exist {
 		id = 0
 	}
-	r.ID = id.(int64)
+	r.Id = id.(int64)
 	r.Role = role.(entity.Role)
 }
 

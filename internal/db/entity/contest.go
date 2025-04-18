@@ -57,10 +57,10 @@ func (f ContestFormat) String() string {
 //go:generate go run ../../../utils/gen/dao_store.go -struct=Contest
 //go:generate go run ../../../utils/gen/field_select.go -struct=Contest
 type Contest struct {
-	Id          uint64        `gorm:"primaryKey;autoIncrement;comment:比赛ID"`
+	Id          uint64        `gorm:"primaryKey;autoIncrement;comment:比赛Id"`
 	Title       string        `gorm:"type:varchar(255);not null;comment:比赛标题"`
 	Description string        `gorm:"type:longtext;not null;comment:比赛描述"`
-	UserId      uint64        `gorm:"not null;default:0;comment:用户ID"`
+	UserId      uint64        `gorm:"not null;default:0;comment:用户Id"`
 	Status      ContestStatus `gorm:"not null;default:1;comment:状态"`
 	Format      ContestFormat `gorm:"not null;default:1;comment:赛制"`
 	TeamSize    uint8         `gorm:"not null;default:1;comment:组队人数"`
@@ -80,8 +80,8 @@ func (Contest) TableName() string {
 //go:generate go run ../../../utils/gen/dao_store.go -struct=ContestUser
 //go:generate go run ../../../utils/gen/field_select.go -struct=ContestUser
 type ContestUser struct {
-	ContestId uint64  `gorm:"not null;default:0;primaryKey;comment:比赛ID"`
-	UserId    uint64  `gorm:"not null;default:0;primaryKey;comment:用户ID"`
+	ContestId uint64  `gorm:"not null;default:0;primaryKey;comment:比赛Id"`
+	UserId    uint64  `gorm:"not null;default:0;primaryKey;comment:用户Id"`
 	User      User    `gorm:"foreignKey:UserId;references:Id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Contest   Contest `gorm:"foreignKey:ContestId;references:Id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
@@ -95,8 +95,8 @@ func (ContestUser) TableName() string {
 //go:generate go run ../../../utils/gen/dao_store.go -struct=ContestProblem
 //go:generate go run ../../../utils/gen/field_select.go -struct=ContestProblem
 type ContestProblem struct {
-	ContestId uint64  `gorm:"not null;default:0;primaryKey;comment:比赛ID"`
-	ProblemId uint64  `gorm:"not null;default:0;primaryKey;comment:题目ID"`
+	ContestId uint64  `gorm:"not null;default:0;primaryKey;comment:比赛Id"`
+	ProblemId uint64  `gorm:"not null;default:0;primaryKey;comment:题目Id"`
 	Serial    uint16  `gorm:"not null;default:0;comment:排序序号"`
 	Contest   Contest `gorm:"foreignKey:ContestId;references:Id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Problem   Problem `gorm:"foreignKey:ProblemId;references:Id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`

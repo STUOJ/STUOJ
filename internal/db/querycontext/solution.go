@@ -10,7 +10,7 @@ import (
 type SolutionQueryContext struct {
 	Id         model.FieldList[int64]
 	ProblemId  model.FieldList[int64]
-	LanguageID model.FieldList[int64]
+	LanguageId model.FieldList[int64]
 	option.QueryParams
 	Field field.SolutionField
 }
@@ -23,8 +23,8 @@ func (query *SolutionQueryContext) GenerateOptions() *option.QueryOptions {
 	if query.ProblemId.Exist() {
 		options.Filters.Add(field.SolutionProblemId, option.OpIn, query.ProblemId.Value())
 	}
-	if query.LanguageID.Exist() {
-		options.Filters.Add(field.SolutionLanguageId, option.OpIn, query.LanguageID.Value())
+	if query.LanguageId.Exist() {
+		options.Filters.Add(field.SolutionLanguageId, option.OpIn, query.LanguageId.Value())
 	}
 	options.Filters.AddFiter(query.ExtraFilters.Conditions...)
 	options.Page = query.Page

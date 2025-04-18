@@ -16,7 +16,7 @@ type FpsProblem struct {
 // fps题解
 type FpsSolution struct {
 	CreateTime string `json:"create_time"`
-	LanguageID int64  `json:"language_id"`
+	LanguageId int64  `json:"language_id"`
 	SourceCode string `json:"source_code"`
 	UpdateTime string `json:"update_time"`
 }

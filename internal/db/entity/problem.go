@@ -73,7 +73,7 @@ func (s ProblemStatus) String() string {
 //go:generate go run ../../../utils/gen/dao_store.go -struct=Problem
 //go:generate go run ../../../utils/gen/field_select.go -struct=Problem
 type Problem struct {
-	Id           uint64        `gorm:"primaryKey;autoIncrement;comment:题目ID"`
+	Id           uint64        `gorm:"primaryKey;autoIncrement;comment:题目Id"`
 	Title        string        `gorm:"type:text;not null;comment:标题"`
 	Source       string        `gorm:"type:text;not null;comment:题目来源"`
 	Difficulty   Difficulty    `gorm:"not null;default:0;comment:难度"`
@@ -99,8 +99,8 @@ func (Problem) TableName() string {
 //go:generate go run ../../../utils/gen/dao_store.go -struct=ProblemTag
 //go:generate go run ../../../utils/gen/field_select.go -struct=ProblemTag
 type ProblemTag struct {
-	ProblemId uint64  `gorm:"primaryKey;not null;default:0;comment:题目ID"`
-	TagId     uint64  `gorm:"primaryKey;not null;default:0;comment:标签ID"`
+	ProblemId uint64  `gorm:"primaryKey;not null;default:0;comment:题目Id"`
+	TagId     uint64  `gorm:"primaryKey;not null;default:0;comment:标签Id"`
 	Problem   Problem `gorm:"foreignKey:ProblemId;references:Id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 	Tag       Tag     `gorm:"foreignKey:TagId;references:Id;constraint:OnUpdate:CASCADE,OnDelete:RESTRICT"`
 }

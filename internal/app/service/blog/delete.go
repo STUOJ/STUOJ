@@ -6,7 +6,7 @@ import (
 	"STUOJ/internal/model"
 )
 
-// 根据ID删除博客（检查用户ID）
+// 根据Id删除博客（检查用户Id）
 func Delete(id uint64, reqUser model.ReqUser) error {
 	queryContext := querycontext.BlogQueryContext{}
 	blog, _, err := blog.Query.SelectOne(queryContext)

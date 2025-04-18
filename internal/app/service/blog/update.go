@@ -11,7 +11,7 @@ import (
 
 func Update(req request.UpdateBlogReq, reqUser model.ReqUser) error {
 	blogQueryContext := querycontext.BlogQueryContext{}
-	blogQueryContext.Id.Add(int64(req.ID))
+	blogQueryContext.Id.Add(req.Id)
 	blogQueryContext.Field.SelectId().SelectStatus().SelectUserId()
 	blog0, _, err := blog.Query.SelectOne(blogQueryContext)
 	if err != nil {
@@ -25,11 +25,11 @@ func Update(req request.UpdateBlogReq, reqUser model.ReqUser) error {
 		return errors.ErrUnauthorized.WithMessage("没有权限将博客封禁或设为公告")
 	}
 
-	blog_ := blog.NewBlog(blog.WithID(uint64(req.ID)),
+	blog_ := blog.NewBlog(blog.WithId(uint64(req.Id)),
 		blog.WithContent(req.Content),
 		blog.WithTitle(req.Title),
 		blog.WithStatus(entity.BlogStatus(req.Status)),
-		blog.WithProblemID(uint64(req.ProblemID)))
+		blog.WithProblemId(uint64(req.ProblemId)))
 
 	return blog_.Update()
 }

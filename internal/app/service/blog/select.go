@@ -18,7 +18,7 @@ type BlogPage struct {
 	model.Page
 }
 
-// 根据ID查询博客
+// 根据Id查询博客
 func SelectById(id uint64, reqUser model.ReqUser) (response.BlogData, error) {
 	var res response.BlogData
 	blogQuery := querycontext.BlogQueryContext{}
@@ -31,16 +31,16 @@ func SelectById(id uint64, reqUser model.ReqUser) (response.BlogData, error) {
 	}
 	res = domain2response(domainBlog)
 	userQuery := querycontext.UserQueryContext{}
-	userQuery.Id.Add(int64(domainBlog.UserID))
+	userQuery.Id.Add(int64(domainBlog.UserId))
 	userQuery.Field = *query.UserSimpleField
 	domainUser, _, err := user.Query.SelectOne(userQuery)
 	if err == nil {
 		res.User = response.Domain2UserSimpleData(domainUser)
 	}
 	problemQuery := querycontext.ProblemQueryContext{}
-	problemQuery.Id.Add(int64(domainBlog.ProblemID))
+	problemQuery.Id.Add(int64(domainBlog.ProblemId))
 	problemQuery.Field = *query.ProblemSimpleField
-	_, map_, err := problem.Query.SelectOne(problemQuery, problem.QueryMaxScore(reqUser.ID), problem.QueryTag())
+	_, map_, err := problem.Query.SelectOne(problemQuery, problem.QueryMaxScore(reqUser.Id), problem.QueryTag())
 	if err == nil {
 		res.Problem.ProblemSimpleData = response.Map2ProblemSimpleData(map_)
 		res.Problem.ProblemUserScore = response.Map2ProblemUserScore(map_)
@@ -55,7 +55,7 @@ func Select(params request.QueryBlogParams, resUser model.ReqUser) (BlogPage, er
 		query_.Status.Set([]int64{int64(entity.BlogPublic)})
 	}
 	if (slices.Contains(query_.Status.Value(), int64(entity.BlogBanned)) || slices.Contains(query_.Status.Value(), int64(entity.BlogDraft))) && resUser.Role < entity.RoleAdmin {
-		query_.UserId.Set([]int64{resUser.ID})
+		query_.UserId.Set([]int64{resUser.Id})
 	}
 	query_.Field = *query.BlogAllField
 	blogs, _, err := blog.Query.Select(query_)
@@ -64,16 +64,16 @@ func Select(params request.QueryBlogParams, resUser model.ReqUser) (BlogPage, er
 	}
 	problemIds := make([]int64, len(blogs))
 	for i, blog_ := range blogs {
-		problemIds[i] = int64(blog_.ProblemID)
+		problemIds[i] = int64(blog_.ProblemId)
 	}
 	userIds := make([]int64, len(blogs))
 	for i, blog_ := range blogs {
-		userIds[i] = int64(blog_.UserID)
+		userIds[i] = int64(blog_.UserId)
 	}
 	problemQueryContext := querycontext.ProblemQueryContext{}
 	problemQueryContext.Id.Add(problemIds...)
 	problemQueryContext.Field = *query.ProblemSimpleField
-	_, problemMap, err := problem.Query.SelectByIds(problemQueryContext, problem.QueryMaxScore(resUser.ID), problem.QueryTag())
+	_, problemMap, err := problem.Query.SelectByIds(problemQueryContext, problem.QueryMaxScore(resUser.Id), problem.QueryTag())
 
 	userQueryContext := querycontext.UserQueryContext{}
 	userQueryContext.Id.Add(userIds...)
@@ -83,12 +83,12 @@ func Select(params request.QueryBlogParams, resUser model.ReqUser) (BlogPage, er
 	for _, blog_ := range blogs {
 		var resBlog response.BlogData
 		resBlog = domain2response(blog_)
-		if blog_.ProblemID != 0 {
-			resBlog.Problem.ProblemSimpleData = response.Map2ProblemSimpleData(problemMap[int64(blog_.ProblemID)])
-			resBlog.Problem.ProblemUserScore = response.Map2ProblemUserScore(problemMap[int64(blog_.ProblemID)])
+		if blog_.ProblemId != 0 {
+			resBlog.Problem.ProblemSimpleData = response.Map2ProblemSimpleData(problemMap[int64(blog_.ProblemId)])
+			resBlog.Problem.ProblemUserScore = response.Map2ProblemUserScore(problemMap[int64(blog_.ProblemId)])
 		}
-		if blog_.UserID != 0 {
-			resBlog.User = response.Domain2UserSimpleData(users[int64(blog_.UserID)])
+		if blog_.UserId != 0 {
+			resBlog.User = response.Domain2UserSimpleData(users[int64(blog_.UserId)])
 		}
 		res.Blogs = append(res.Blogs, resBlog)
 	}

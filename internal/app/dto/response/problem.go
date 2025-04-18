@@ -10,7 +10,7 @@ type ProblemData struct {
 	Description  string           `json:"description,omitempty"`
 	Difficulty   int64            `json:"difficulty"`
 	Hint         string           `json:"hint,omitempty"`
-	ID           int64            `json:"id"`
+	Id           int64            `json:"id"`
 	Input        string           `json:"input,omitempty"`
 	MemoryLimit  int64            `json:"memory_limit,omitempty"`
 	Output       string           `json:"output,omitempty"`
@@ -18,7 +18,7 @@ type ProblemData struct {
 	SampleOutput string           `json:"sample_output,omitempty"`
 	Source       string           `json:"source,omitempty"`
 	Status       int64            `json:"status,omitempty"`
-	TagIDS       []int64          `json:"tag_ids"`
+	TagIdS       []int64          `json:"tag_ids"`
 	TimeLimit    int64            `json:"time_limit,omitempty"`
 	Title        string           `json:"title"`
 	UpdateTime   string           `json:"update_time,omitempty"`
@@ -27,16 +27,16 @@ type ProblemData struct {
 
 type ProblemSimpleData struct {
 	Difficulty int64   `json:"difficulty,omitempty"`
-	ID         int64   `json:"id"`
+	Id         int64   `json:"id"`
 	Source     string  `json:"source,omitempty"`
 	Title      string  `json:"title"`
-	TagIDS     []int64 `json:"tag_ids"`
+	TagIdS     []int64 `json:"tag_ids"`
 }
 
 func Domain2ProblemSimpleData(p problem.Problem) ProblemSimpleData {
 	return ProblemSimpleData{
 		Difficulty: int64(p.Difficulty),
-		ID:         int64(p.Id),
+		Id:         int64(p.Id),
 		Source:     p.Source.String(),
 		Title:      p.Title.String(),
 	}
@@ -46,10 +46,10 @@ func Map2ProblemSimpleData(p map[string]any) ProblemSimpleData {
 	tagIds, _ := utils.StringToInt64Slice(p["tag_ids"].(string))
 	return ProblemSimpleData{
 		Difficulty: p["difficulty"].(int64),
-		ID:         p["id"].(int64),
+		Id:         p["id"].(int64),
 		Source:     p["source"].(string),
 		Title:      p["title"].(string),
-		TagIDS:     tagIds,
+		TagIdS:     tagIds,
 	}
 }
 
@@ -61,10 +61,10 @@ type ProblemQueryData struct {
 type ProblemListItemData struct {
 	CreateTime string  `json:"create_time,omitempty"`
 	Difficulty int64   `json:"difficulty"`
-	ID         int64   `json:"id"`
+	Id         int64   `json:"id"`
 	Source     string  `json:"source,omitempty"`
 	Status     int64   `json:"status,omitempty"`
-	TagIDS     []int64 `json:"tag_ids"`
+	TagIdS     []int64 `json:"tag_ids"`
 	Title      string  `json:"title"`
 	UpdateTime string  `json:"update_time,omitempty"`
 	ProblemUserScore

@@ -2,7 +2,7 @@ package request
 
 type QueryUserParams struct {
 	EndTime   *string `form:"end-time,omitempty"`
-	ID        *string `form:"id,omitempty"`
+	Id        *string `form:"id,omitempty"`
 	Order     *string `form:"order,omitempty"`
 	OrderBy   *string `form:"order_by,omitempty"`
 	Page      *int64  `form:"page,omitempty"`
@@ -27,4 +27,21 @@ type AddUserReq struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 	Username string `json:"username"`
+}
+
+type UserUpdateReq struct {
+	Id        uint64 `json:"id"`
+	Username  string `json:"username"`
+	Signature string `json:"signature"`
+}
+
+type UserChangeEmailReq struct {
+	Email      string `json:"email"`
+	VerifyCode string `json:"verify_code"`
+}
+
+type UserForgetPasswordReq struct {
+	Email      string `json:"email"`
+	Password   string `json:"password"`
+	VerifyCode string `json:"verify_code"`
 }

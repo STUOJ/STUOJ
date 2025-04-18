@@ -12,7 +12,7 @@ import (
 
 func TestRun(req request.TestRunReq, reqUser model.ReqUser) (response.TestRunRes, error) {
 	languageQuery := querycontext.LanguageQueryContext{}
-	languageQuery.Id.Add(req.LanguageID)
+	languageQuery.Id.Add(req.LanguageId)
 	languageQuery.Field = *query.LanguageAllField
 	languageDomain, _, err := language.Query.SelectOne(languageQuery)
 	if err != nil {

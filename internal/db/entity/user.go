@@ -58,7 +58,7 @@ func (e Email) String() string {
 //go:generate go run ../../../utils/gen/dao_store.go -struct=User
 //go:generate go run ../../../utils/gen/field_select.go -struct=User
 type User struct {
-	Id         uint64    `gorm:"primaryKey;autoIncrement;comment:用户ID"`
+	Id         uint64    `gorm:"primaryKey;autoIncrement;comment:用户Id"`
 	Username   string    `gorm:"type:varchar(255);not null;comment:用户名;unique"`
 	Password   string    `gorm:"type:varchar(255);not null;default:123456;comment:密码"`
 	Role       Role      `gorm:"not null;default:1;comment:角色"`

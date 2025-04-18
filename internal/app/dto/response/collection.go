@@ -4,7 +4,7 @@ type CollectionData struct {
 	Collaborator []UserSimpleData `json:"collaborator"`
 	CreateTime   string           `json:"create_time"`
 	Description  string           `json:"description"`
-	ID           int64            `json:"id"`
+	Id           int64            `json:"id"`
 	Problems     []struct {
 		ProblemSimpleData
 		ProblemUserScore
@@ -17,7 +17,7 @@ type CollectionData struct {
 
 type CollectionListItem struct {
 	CreateTime string         `json:"create_time"`
-	ID         int64          `json:"id"`
+	Id         int64          `json:"id"`
 	Status     int64          `json:"status"`
 	Title      string         `json:"title"`
 	UpdateTime string         `json:"update_time"`

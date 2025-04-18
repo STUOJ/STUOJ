@@ -13,12 +13,12 @@ type QueryCommentParams struct {
 }
 
 type CreateCommentReq struct {
-	BlogID  int64  `json:"blog_id"`
+	BlogId  int64  `json:"blog_id"`
 	Content string `json:"content"`
 }
 
 type UpdateCommentReq struct {
 	Content string `json:"content"`
-	ID      int64  `json:"id"`
+	Id      int64  `json:"id"`
 	Status  int64  `json:"status"`
 }

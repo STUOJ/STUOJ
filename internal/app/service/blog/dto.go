@@ -55,7 +55,7 @@ func params2Model(params request.QueryBlogParams) (query querycontext.BlogQueryC
 
 func domain2response(domainBlog blog.Blog) (res response.BlogData) {
 	res = response.BlogData{
-		ID:         int64(domainBlog.ID),
+		Id:         int64(domainBlog.Id),
 		Title:      domainBlog.Title.String(),
 		Content:    domainBlog.Content.String(),
 		Status:     int64(domainBlog.Status),

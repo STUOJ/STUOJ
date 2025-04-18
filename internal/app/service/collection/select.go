@@ -21,7 +21,7 @@ type CollectionPage struct {
 	model.Page
 }
 
-// 根据ID查询题单
+// 根据Id查询题单
 func SelectById(id int64, reqUser model.ReqUser) (response.CollectionData, error) {
 	var res response.CollectionData
 	// 获取题单信息
@@ -42,7 +42,7 @@ func SelectById(id int64, reqUser model.ReqUser) (response.CollectionData, error
 	problemQuery.Field = *query.ProblemSimpleField
 	problemIds, _ := utils.StringToInt64Slice(collectionMap["collection_problem_id"].(string))
 	problemQuery.Id.Set(problemIds)
-	_, problemMap, err := problem.Query.SelectByIds(problemQuery, problem.QueryMaxScore(res.User.ID), problem.QueryTag())
+	_, problemMap, err := problem.Query.SelectByIds(problemQuery, problem.QueryMaxScore(res.User.Id), problem.QueryTag())
 
 	if err == nil {
 		for _, p := range problemIds {
@@ -79,7 +79,7 @@ func Select(params request.QueryCollectionParams, reqUser model.ReqUser) (Collec
 		query_.Status.Set([]int64{int64(entity.CollectionPublic)})
 	}
 	if slices.Contains(query_.Status.Value(), int64(entity.CollectionPrivate)) && reqUser.Role < entity.RoleAdmin {
-		query_.UserId.Set([]int64{reqUser.ID})
+		query_.UserId.Set([]int64{reqUser.Id})
 	}
 	query_.Field = *query.CollectionListItemField
 	collections, _, err := collection.Query.Select(query_)

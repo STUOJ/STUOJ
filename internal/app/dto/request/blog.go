@@ -15,16 +15,16 @@ type QueryBlogParams struct {
 
 type CreateBlogReq struct {
 	Content   string `json:"content"`
-	ProblemID int64  `json:"problem_id,omitempty"`
+	ProblemId int64  `json:"problem_id,omitempty"`
 	Status    int64  `json:"status"`
 	Title     string `json:"title"`
-	UserID    int64  `json:"user_id"`
+	UserId    int64  `json:"user_id"`
 }
 
 type UpdateBlogReq struct {
 	Content   string `form:"content"`
-	ID        int64  `form:"id"`
-	ProblemID int64  `form:"problem_id,omitempty"`
+	Id        int64  `form:"id"`
+	ProblemId int64  `form:"problem_id,omitempty"`
 	Status    int64  `form:"status"`
 	Title     string `form:"title"`
 }

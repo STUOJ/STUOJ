@@ -30,10 +30,10 @@ func (t *Team) verify() error {
 		return err
 	}
 	if t.UserId == 0 {
-		return fmt.Errorf("用户ID不能为空")
+		return fmt.Errorf("用户Id不能为空")
 	}
 	if t.ContestId == 0 {
-		return fmt.Errorf("比赛ID不能为空")
+		return fmt.Errorf("比赛Id不能为空")
 	}
 	return nil
 }

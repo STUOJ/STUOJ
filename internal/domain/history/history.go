@@ -36,7 +36,7 @@ type History struct {
 
 func (h *History) verify() error {
 	if h.UserId == 0 {
-		return fmt.Errorf("用户ID不能为空")
+		return fmt.Errorf("用户Id不能为空")
 	}
 	if !entity.Operation(h.Operation).IsValid() {
 		return fmt.Errorf("操作类型不合法")

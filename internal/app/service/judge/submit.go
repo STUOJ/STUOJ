@@ -20,7 +20,7 @@ import (
 
 func Submit(req request.JudgeReq, reqUser model.ReqUser) (uint64, error) {
 	languageQuery := querycontext.LanguageQueryContext{}
-	languageQuery.Id.Add(req.LanguageID)
+	languageQuery.Id.Add(req.LanguageId)
 	languageQuery.Field = *query.LanguageAllField
 	languageDomain, _, err := language.Query.SelectOne(languageQuery)
 	if err != nil {
@@ -29,7 +29,7 @@ func Submit(req request.JudgeReq, reqUser model.ReqUser) (uint64, error) {
 	languageMapId := languageDomain.MapId
 
 	problemQuery := querycontext.ProblemQueryContext{}
-	problemQuery.Id.Add(req.ProblemID)
+	problemQuery.Id.Add(req.ProblemId)
 	problemDomain, problemMap, err := problem.Query.SelectOne(problemQuery)
 	if err != nil {
 		return 0, errors.ErrNotFound.WithMessage("题目不存在")
@@ -39,15 +39,15 @@ func Submit(req request.JudgeReq, reqUser model.ReqUser) (uint64, error) {
 		if err != nil {
 			return 0, errors.ErrInternalServer.WithMessage("内部错误")
 		}
-		if !slices.Contains(userIds, reqUser.ID) {
+		if !slices.Contains(userIds, reqUser.Id) {
 			return 0, errors.ErrNotFound.WithMessage("题目不存在")
 		}
 	}
 
 	// 先创建提交记录，状态为等待评测，确保CreateTime是提交时间
 	submissionDomain := submission.NewSubmission(
-		submission.WithUserId(uint64(reqUser.ID)),
-		submission.WithProblemId(uint64(req.ProblemID)),
+		submission.WithUserId(uint64(reqUser.Id)),
+		submission.WithProblemId(uint64(req.ProblemId)),
 		submission.WithStatus(entity.JudgeIE), // 设置为IE状态,保证在错误导致中断的情况下显示为IE
 		submission.WithLength(uint32(len(req.SourceCode))),
 		submission.WithLanguageId(uint64(languageDomain.Id)),
@@ -59,7 +59,7 @@ func Submit(req request.JudgeReq, reqUser model.ReqUser) (uint64, error) {
 	}
 
 	testcaseQuery := querycontext.TestcaseQueryContext{}
-	testcaseQuery.ProblemId.Add(req.ProblemID)
+	testcaseQuery.ProblemId.Add(req.ProblemId)
 	testcaseQuery.Page = option.NewPagination(0, 1000)
 	testcaseQuery.Field = *query.TestcaseAllField
 	testcaseDomain, _, err := testcase.Query.Select(testcaseQuery)
