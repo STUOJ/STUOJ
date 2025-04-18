@@ -7,5 +7,6 @@ var (
 	LanguageSimpleField = field.NewLanguageField().
 				SelectId().
 				SelectName().
-				SelectStatus()
+				SelectStatus().
+				SelectSerial()
 )
