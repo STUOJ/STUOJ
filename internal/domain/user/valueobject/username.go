@@ -18,14 +18,12 @@ func (u Username) Verify() error {
 	return nil
 }
 
-func (u Username) Sanitize() Username {
-	return Username(utils.Senitize(string(u)))
-}
-
 func (u Username) String() string {
 	return string(u)
 }
 
-func NewUsername(username string) Username {
-	return Username(username)
+func NewUsername(un string) Username {
+	un = utils.Senitize(un)
+
+	return Username(un)
 }

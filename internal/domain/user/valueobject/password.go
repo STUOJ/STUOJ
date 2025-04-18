@@ -31,6 +31,6 @@ func (p Password) VerifyHash(hashedPassword string) error {
 	return bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(p))
 }
 
-func NewPassword(password string) Password {
-	return Password(password)
+func NewPassword(pw string) Password {
+	return Password(pw)
 }
