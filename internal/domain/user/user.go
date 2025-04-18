@@ -100,7 +100,7 @@ func (u *User) Create() (uint64, error) {
 	return user.Id, &errors.NoError
 }
 
-func (u *User) Update() error {
+func (u *User) Update(hashPw bool) error {
 	var err error
 	options := u.toOption()
 	_, err = dao.UserStore.SelectOne(options)
@@ -114,9 +114,11 @@ func (u *User) Update() error {
 	}
 
 	// 加密
-	u.Password, err = u.Password.Hash()
-	if err != nil {
-		return errors.ErrInternalServer.WithMessage(err.Error())
+	if hashPw {
+		u.Password, err = u.Password.Hash()
+		if err != nil {
+			return errors.ErrInternalServer.WithMessage(err.Error())
+		}
 	}
 
 	_, err = dao.UserStore.Updates(u.toEntity(), options)

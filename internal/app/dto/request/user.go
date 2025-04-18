@@ -30,7 +30,6 @@ type AddUserReq struct {
 }
 
 type UserUpdateReq struct {
-	Id        uint64 `json:"id"`
 	Username  string `json:"username"`
 	Signature string `json:"signature"`
 }
@@ -44,4 +43,9 @@ type UserForgetPasswordReq struct {
 	Email      string `json:"email"`
 	Password   string `json:"password"`
 	VerifyCode string `json:"verify_code"`
+}
+
+type UserUpdateRoleReq struct {
+	Id   int64 `json:"id"`
+	Role int8  `json:"role"`
 }
