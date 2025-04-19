@@ -3,22 +3,18 @@ package response
 import "STUOJ/internal/domain/user"
 
 type UserData struct {
-	// 用户头像
-	Avatar string `json:"avatar"`
-	// 注册日期
-	CreateTime *string `json:"create_time,omitempty"`
-	// 用户id，Id 编号
-	Id   uint64 `json:"id"`
-	Name string `json:"name"`
-	// 角色
-	Role      uint8   `json:"role"`
-	Signature *string `json:"signature,omitempty"`
-	// 更新日期
-	UpdateTime *string `json:"update_time,omitempty"`
+	Id         uint64 `json:"id"`
+	Username   string `json:"name"`
+	Role       uint8  `json:"role"`
+	Avatar     string `json:"avatar"`
+	Email      string `json:"email"`
+	Signature  string `json:"signature"`
+	CreateTime string `json:"create_time"`
+	UpdateTime string `json:"update_time"`
 }
 
 type UserStatistics struct {
-	ACCount     int64  `json:"ac_count"`
+	ACCount     uint64 `json:"ac_count"`
 	BlogCount   string `json:"blog_count"`
 	SubmitCount string `json:"submit_count"`
 }
@@ -29,13 +25,10 @@ type UserQueryData struct {
 }
 
 type UserSimpleData struct {
-	// 用户头像
+	Id     uint64 `json:"id"`
+	Name   string `json:"name"`
+	Role   uint8  `json:"role"`
 	Avatar string `json:"avatar"`
-	// 用户id，Id 编号
-	Id   uint64 `json:"id"`
-	Name string `json:"name"`
-	// 角色
-	Role uint8 `json:"role"`
 }
 
 func Domain2UserSimpleData(u user.User) UserSimpleData {

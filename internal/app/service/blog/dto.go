@@ -24,19 +24,19 @@ func params2Model(params request.QueryBlogParams) (query querycontext.BlogQueryC
 		}
 	}
 	if params.Problem != nil {
-		ids, err := utils.StringToInt64Slice(*params.Problem)
+		ids, err := utils.StringToUint64Slice(*params.Problem)
 		if err != nil {
 			query.ProblemId.Set(ids)
 		}
 	}
 	if params.User != nil {
-		ids, err := utils.StringToInt64Slice(*params.User)
+		ids, err := utils.StringToUint64Slice(*params.User)
 		if err != nil {
 			query.UserId.Set(ids)
 		}
 	}
 	if params.Status != nil {
-		ids, err := utils.StringToInt64Slice(*params.Status)
+		ids, err := utils.StringToUint8Slice(*params.Status)
 		if err != nil {
 			query.Status.Set(ids)
 		}
@@ -55,10 +55,10 @@ func params2Model(params request.QueryBlogParams) (query querycontext.BlogQueryC
 
 func domain2response(domainBlog blog.Blog) (res response.BlogData) {
 	res = response.BlogData{
-		Id:         int64(domainBlog.Id),
+		Id:         domainBlog.Id,
 		Title:      domainBlog.Title.String(),
 		Content:    domainBlog.Content.String(),
-		Status:     int64(domainBlog.Status),
+		Status:     uint8(domainBlog.Status),
 		CreateTime: domainBlog.CreateTime.String(),
 		UpdateTime: domainBlog.UpdateTime.String(),
 	}

@@ -26,6 +26,40 @@ func StringToInt64Slice(str string) ([]int64, error) {
 	return result, nil
 }
 
+// StringToUint64Slice 将逗号分隔的字符串转换为int64数组
+func StringToUint64Slice(str string) ([]uint64, error) {
+	if str == "" {
+		return []uint64{}, nil
+	}
+	strArr := strings.Split(str, ",")
+	result := make([]uint64, 0, len(strArr))
+	for _, s := range strArr {
+		num, err := strconv.ParseUint(strings.TrimSpace(s), 10, 64)
+		if err != nil {
+			return nil, fmt.Errorf("failed to parse value %s to uint64: %w", s, err)
+		}
+		result = append(result, num)
+	}
+	return result, nil
+}
+
+// StringToUint8Slice 将逗号分隔的字符串转换为int64数组
+func StringToUint8Slice(str string) ([]uint8, error) {
+	if str == "" {
+		return []uint8{}, nil
+	}
+	strArr := strings.Split(str, ",")
+	result := make([]uint8, 0, len(strArr))
+	for _, s := range strArr {
+		num, err := strconv.ParseUint(strings.TrimSpace(s), 10, 8)
+		if err != nil {
+			return nil, fmt.Errorf("failed to parse value %s to uint8: %w", s, err)
+		}
+		result = append(result, uint8(num))
+	}
+	return result, nil
+}
+
 func Int64ToUint64Slice(src []int64) []uint64 {
 	dst := make([]uint64, len(src))
 	for i, v := range src {
