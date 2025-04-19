@@ -70,7 +70,7 @@ func (*_Query) SelectByIds(context querycontext.{{.EntityName}}QueryContext, opt
 	for _, o := range optionFunc {
 		o(&context)
 	}
-	context.Page = option.NewPagination(0, int64(len(context.Id.Value())))
+	context.Page = option.NewPagination(0, uint64(len(context.Id.Value())))
 	res, err := dao.{{.EntityName}}Store.Select(context.GenerateOptions())
 	if err!= nil {
 		return nil, nil, errors.ErrInternalServer.WithMessage("查询失败")
