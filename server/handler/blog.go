@@ -20,8 +20,7 @@ func BlogInfo(c *gin.Context) {
 		return
 	}
 
-	bid := uint64(id)
-	b, err := blog.SelectById(bid, *reqUser)
+	b, err := blog.SelectById(int64(id), *reqUser)
 	if err != nil {
 		c.Error(err)
 		return
@@ -102,8 +101,7 @@ func BlogRemove(c *gin.Context) {
 	}
 
 	// 删除博客
-	bid := uint64(id)
-	err = blog.Delete(bid, *reqUser)
+	err = blog.Delete(int64(id), *reqUser)
 	if err != nil {
 		c.Error(err)
 		return

@@ -102,8 +102,7 @@ func CollectionRemove(c *gin.Context) {
 		return
 	}
 
-	pid := uint64(id)
-	err = collection.Delete(pid, *reqUser)
+	err = collection.Delete(int64(id), *reqUser)
 	if err != nil {
 		c.Error(err)
 		return
