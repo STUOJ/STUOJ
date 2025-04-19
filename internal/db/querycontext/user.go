@@ -9,7 +9,7 @@ import (
 
 //go:generate go run ../../../utils/gen/querycontext_gen.go UserQueryContext
 type UserQueryContext struct {
-	Id        model.FieldList[uint64]
+	Id        model.FieldList[int64]
 	Username  model.Field[string]
 	Email     model.Field[string]
 	Role      model.FieldList[uint8]

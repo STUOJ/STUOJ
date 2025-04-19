@@ -9,9 +9,9 @@ import (
 
 //go:generate go run ../../../utils/gen/querycontext_gen.go BlogQueryContext
 type BlogQueryContext struct {
-	Id        model.FieldList[uint64]
-	UserId    model.FieldList[uint64]
-	ProblemId model.FieldList[uint64]
+	Id        model.FieldList[int64]
+	UserId    model.FieldList[int64]
+	ProblemId model.FieldList[int64]
 	Title     model.Field[string]
 	Status    model.FieldList[uint8]
 	StartTime model.Field[time.Time]

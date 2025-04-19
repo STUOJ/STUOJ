@@ -8,8 +8,8 @@ import (
 
 //go:generate go run ../../../utils/gen/querycontext_gen.go TestcaseQueryContext
 type TestcaseQueryContext struct {
-	Id        model.FieldList[uint64]
-	ProblemId model.FieldList[uint64]
+	Id        model.FieldList[int64]
+	ProblemId model.FieldList[int64]
 	option.QueryParams
 	Field field.TestcaseField
 }

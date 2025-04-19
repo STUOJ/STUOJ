@@ -8,7 +8,7 @@ import (
 
 //go:generate go run ../../../utils/gen/querycontext_gen.go LanguageQueryContext
 type LanguageQueryContext struct {
-	Id     model.FieldList[uint64]
+	Id     model.FieldList[int64]
 	Name   model.Field[string]
 	Serial model.FieldList[uint16]
 	MapId  model.FieldList[uint32]
