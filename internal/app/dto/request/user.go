@@ -5,9 +5,9 @@ type QueryUserParams struct {
 	Id        *string `form:"id,omitempty"`
 	Order     *string `form:"order,omitempty"`
 	OrderBy   *string `form:"order_by,omitempty"`
-	Page      *uint64 `form:"page,omitempty"`
+	Page      *int64  `form:"page,omitempty"`
 	Role      *string `form:"role,omitempty"`
-	Size      *uint64 `form:"size,omitempty"`
+	Size      *int64  `form:"size,omitempty"`
 	StartTime *string `form:"start-time,omitempty"`
 	Username  *string `form:"username,omitempty"`
 	Email     *string `form:"email,omitempty"`
@@ -48,6 +48,6 @@ type UserForgetPasswordReq struct {
 }
 
 type UserUpdateRoleReq struct {
-	Id   uint64 `json:"id"`
-	Role uint8  `json:"role"`
+	Id   int64 `json:"id"`
+	Role uint8 `json:"role"`
 }

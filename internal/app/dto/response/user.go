@@ -3,7 +3,7 @@ package response
 import "STUOJ/internal/domain/user"
 
 type UserData struct {
-	Id         uint64 `json:"id"`
+	Id         int64  `json:"id"`
 	Username   string `json:"name"`
 	Role       uint8  `json:"role"`
 	Avatar     string `json:"avatar"`
@@ -14,7 +14,7 @@ type UserData struct {
 }
 
 type UserStatistics struct {
-	ACCount     uint64 `json:"ac_count"`
+	ACCount     int64  `json:"ac_count"`
 	BlogCount   string `json:"blog_count"`
 	SubmitCount string `json:"submit_count"`
 }
@@ -25,7 +25,7 @@ type UserQueryData struct {
 }
 
 type UserSimpleData struct {
-	Id     uint64 `json:"id"`
+	Id     int64  `json:"id"`
 	Name   string `json:"name"`
 	Role   uint8  `json:"role"`
 	Avatar string `json:"avatar"`

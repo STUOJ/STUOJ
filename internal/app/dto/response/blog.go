@@ -3,7 +3,7 @@ package response
 type BlogData struct {
 	Content    string `json:"content"`
 	CreateTime string `json:"create_time"`
-	Id         uint64 `json:"id"`
+	Id         int64  `json:"id"`
 	Problem    struct {
 		ProblemSimpleData
 		ProblemUserScore

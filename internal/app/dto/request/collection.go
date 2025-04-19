@@ -36,5 +36,5 @@ type UpdateCollectionProblemReq struct {
 
 type UpdateCollectionUserReq struct {
 	CollectionId int64   `json:"collection_id"`
-	UserIdS      []int64 `json:"user_ids"`
+	UserIds      []int64 `json:"user_ids"`
 }
