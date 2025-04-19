@@ -19,17 +19,17 @@ type UserPage struct {
 // SelectById 根据ID查询用户
 func SelectById(id uint64, reqUser model.ReqUser) (response.UserData, error) {
 	var resp response.UserData
+
+	// 查询
 	qc := querycontext.UserQueryContext{}
 	qc.Id.Add(id)
 	qc.Field.SelectId().SelectUsername().SelectRole().SelectEmail().SelectAvatar().SelectSignature().SelectCreateTime().SelectUpdateTime()
-
-	// 查询
-	dmUser, _, err := user.Query.SelectOne(qc)
+	u0, _, err := user.Query.SelectOne(qc)
 	if err != nil {
 		return resp, err
 	}
 
-	resp = domain2Resp(dmUser)
+	resp = domain2Resp(u0)
 	return resp, nil
 }
 
@@ -83,20 +83,20 @@ func LoginByEmail(req request.UserLoginReq, reqUser model.ReqUser) (string, erro
 	qc.Field.SelectId().SelectUsername().SelectRole().SelectEmail().SelectAvatar().SelectSignature().SelectCreateTime().SelectUpdateTime()
 
 	// 查询
-	dmUser, _, err := user.Query.SelectOne(qc)
+	u0, _, err := user.Query.SelectOne(qc)
 	if err != nil {
 		return "", err
 	}
 
 	// 验证密码
-	err = dmUser.Password.VerifyHash(req.Password)
+	err = u0.Password.VerifyHash(req.Password)
 	if err != nil {
 		log.Println(err)
 		return "", errors.ErrUnauthorized.WithMessage("密码错误")
 	}
 
 	// 生成token
-	token, err := utils.GenerateToken(dmUser.Id)
+	token, err := utils.GenerateToken(u0.Id)
 	if err != nil {
 		log.Println(err)
 		return "", errors.ErrInternalServer.WithMessage("生成Token失败")

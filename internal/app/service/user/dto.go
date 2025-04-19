@@ -10,16 +10,16 @@ import (
 	"time"
 )
 
-func domain2Resp(dmUser user.User) (resp response.UserData) {
+func domain2Resp(dm user.User) (resp response.UserData) {
 	resp = response.UserData{
-		Id:         dmUser.Id,
-		Username:   dmUser.Username.String(),
-		Role:       uint8(dmUser.Role),
-		Email:      dmUser.Email.String(),
-		Avatar:     dmUser.Avatar.String(),
-		Signature:  dmUser.Signature.String(),
-		CreateTime: dmUser.CreateTime.String(),
-		UpdateTime: dmUser.UpdateTime.String(),
+		Id:         dm.Id,
+		Username:   dm.Username.String(),
+		Role:       uint8(dm.Role),
+		Email:      dm.Email.String(),
+		Avatar:     dm.Avatar.String(),
+		Signature:  dm.Signature.String(),
+		CreateTime: dm.CreateTime.String(),
+		UpdateTime: dm.UpdateTime.String(),
 	}
 	return
 }

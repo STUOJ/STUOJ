@@ -14,6 +14,11 @@ import (
 
 // Update 根据Id更新用户
 func Update(uid uint64, req request.UserUpdateReq, reqUser model.ReqUser) error {
+	// 检查权限
+	if reqUser.Id != uid && reqUser.Role < entity.RoleAdmin {
+		return &errors.ErrUnauthorized
+	}
+
 	// 读取用户
 	qt := querycontext.UserQueryContext{}
 	qt.Id.Add(uid)
@@ -44,6 +49,11 @@ func UpdatePassword(req request.UserForgetPasswordReq, reqUser model.ReqUser) er
 		return err
 	}
 
+	// 检查权限
+	if reqUser.Id != u0.Id && reqUser.Role < entity.RoleAdmin {
+		return &errors.ErrUnauthorized
+	}
+
 	u1 := user.NewUser(
 		user.WithId(u0.Id),
 		user.WithPassword(req.Password),
@@ -67,7 +77,7 @@ func UpdateRole(req request.UserUpdateRoleReq, reqUser model.ReqUser) error {
 
 	// 检查权限
 	if u0.Role >= reqUser.Role || newRole >= reqUser.Role {
-		return errors.ErrUnauthorized.WithMessage("没有权限修改用户权限组")
+		return &errors.ErrUnauthorized
 	}
 
 	u1 := user.NewUser(
@@ -90,7 +100,7 @@ func UpdateAvatar(uid uint64, reader io.Reader, filename string, reqUser model.R
 	}
 
 	if u0.Id != reqUser.Id && reqUser.Role < entity.RoleAdmin {
-		return "", errors.ErrUnauthorized.WithMessage("没有权限修改其他用户的头像")
+		return "", &errors.ErrUnauthorized
 	}
 
 	// 上传头像
