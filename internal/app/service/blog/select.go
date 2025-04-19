@@ -38,7 +38,7 @@ func SelectById(id uint64, reqUser model.ReqUser) (response.BlogData, error) {
 		res.User = response.Domain2UserSimpleData(domainUser)
 	}
 	problemQuery := querycontext.ProblemQueryContext{}
-	problemQuery.Id.Add(int64(domainBlog.ProblemId))
+	problemQuery.Id.Add(domainBlog.ProblemId)
 	problemQuery.Field = *query.ProblemSimpleField
 	_, map_, err := problem.Query.SelectOne(problemQuery, problem.QueryMaxScore(reqUser.Id), problem.QueryTag())
 	if err == nil {
@@ -62,9 +62,9 @@ func Select(params request.QueryBlogParams, reqUser model.ReqUser) (BlogPage, er
 	if err != nil {
 		return BlogPage{}, err
 	}
-	problemIds := make([]int64, len(blogs))
+	problemIds := make([]uint64, len(blogs))
 	for i, blog_ := range blogs {
-		problemIds[i] = int64(blog_.ProblemId)
+		problemIds[i] = blog_.ProblemId
 	}
 	userIds := make([]uint64, len(blogs))
 	for i, blog_ := range blogs {

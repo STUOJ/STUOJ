@@ -11,6 +11,8 @@ import (
 func Delete(id uint64, reqUser model.ReqUser) error {
 	// 查询用户
 	qc := querycontext.UserQueryContext{}
+	qc.Id.Add(id)
+	qc.Field.SelectId()
 	u0, _, err := user.Query.SelectOne(qc)
 	if err != nil {
 		log.Println(err)
@@ -19,7 +21,7 @@ func Delete(id uint64, reqUser model.ReqUser) error {
 	// 检查权限
 	err = isPermission(reqUser)
 	if err != nil {
-		log.Println(err)
+		return err
 	}
 
 	return u0.Delete()

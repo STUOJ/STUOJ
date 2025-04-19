@@ -15,16 +15,16 @@ import (
 func Insert(req request.CreateBlogReq, reqUser model.ReqUser) (uint64, error) {
 	blog := blog.NewBlog(blog.WithContent(req.Content),
 		blog.WithTitle(req.Title),
-		blog.WithUserId(uint64(reqUser.Id)),
+		blog.WithUserId(reqUser.Id),
 		blog.WithStatus(entity.BlogStatus(req.Status)),
-		blog.WithProblemId(uint64(req.ProblemId)),
+		blog.WithProblemId(req.ProblemId),
 	)
 	if (blog.Status == entity.BlogBanned || blog.Status == entity.BlogNotice) && reqUser.Role < entity.RoleAdmin {
 		return 0, errors.ErrUnauthorized.WithMessage("没有权限创建被封禁或公告的博客")
 	}
 	if blog.ProblemId != 0 {
 		problemQueryContext := querycontext.ProblemQueryContext{}
-		problemQueryContext.Id.Add(int64(blog.ProblemId))
+		problemQueryContext.Id.Add(blog.ProblemId)
 		problemQueryContext.Field.SelectStatus()
 		problem, _, err := problem.Query.SelectOne(problemQueryContext)
 		if err != nil {

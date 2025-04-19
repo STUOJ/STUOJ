@@ -21,7 +21,7 @@ func Update(req request.UpdateBlogReq, reqUser model.ReqUser) error {
 	if err != nil {
 		return err
 	}
-	if (req.Status == int64(entity.BlogBanned) || req.Status == int64(entity.BlogNotice)) && reqUser.Role < entity.RoleAdmin {
+	if (req.Status == uint8(entity.BlogBanned) || req.Status == uint8(entity.BlogNotice)) && reqUser.Role < entity.RoleAdmin {
 		return errors.ErrUnauthorized.WithMessage("没有权限将博客封禁或设为公告")
 	}
 
