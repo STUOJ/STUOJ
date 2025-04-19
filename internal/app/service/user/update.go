@@ -1,23 +1,24 @@
 package user
 
 import (
-	"STUOJ/external/yuki"
 	"STUOJ/internal/app/dto/request"
 	"STUOJ/internal/db/entity"
 	"STUOJ/internal/db/querycontext"
+	"STUOJ/internal/domain/image"
+	imgval "STUOJ/internal/domain/image/valueobject"
 	"STUOJ/internal/domain/user"
 	"STUOJ/internal/domain/user/valueobject"
 	"STUOJ/internal/errors"
 	"STUOJ/internal/model"
-	"log"
+	"io"
 )
 
 // Update 根据Id更新用户
-func Update(uid int64, req request.UserUpdateReq, reqUser model.ReqUser) error {
+func Update(uid uint64, req request.UserUpdateReq, reqUser model.ReqUser) error {
 	// 读取用户
 	qt := querycontext.UserQueryContext{}
 	qt.Id.Add(uid)
-	qt.Field.SelectId()
+	qt.Field.SelectId().SelectUsername().SelectSignature()
 	u0, _, err := user.Query.SelectOne(qt)
 	if err != nil {
 		return err
@@ -35,7 +36,7 @@ func UpdatePassword(req request.UserForgetPasswordReq, reqUser model.ReqUser) er
 	// 读取用户
 	qt := querycontext.UserQueryContext{}
 	qt.Id.Add(reqUser.Id)
-	qt.Field.SelectId()
+	qt.Field.SelectId().SelectPassword()
 	u0, _, err := user.Query.SelectOne(qt)
 	if err != nil {
 		return err
@@ -51,7 +52,7 @@ func UpdateRole(req request.UserUpdateRoleReq, reqUser model.ReqUser) error {
 	// 读取用户
 	qt := querycontext.UserQueryContext{}
 	qt.Id.Add(req.Id)
-	qt.Field.SelectId()
+	qt.Field.SelectId().SelectRole()
 	u0, _, err := user.Query.SelectOne(qt)
 	if err != nil {
 		return err
@@ -70,11 +71,11 @@ func UpdateRole(req request.UserUpdateRoleReq, reqUser model.ReqUser) error {
 }
 
 // UpdateAvatar 更新用户头像
-func UpdateAvatar(uid int64, dst string, reqUser model.ReqUser) (string, error) {
+func UpdateAvatar(uid uint64, reader io.Reader, filename string, reqUser model.ReqUser) (string, error) {
 	// 读取用户
 	qt := querycontext.UserQueryContext{}
 	qt.Id.Add(uid)
-	qt.Field.SelectId()
+	qt.Field.SelectId().SelectAvatar()
 	u0, _, err := user.Query.SelectOne(qt)
 	if err != nil {
 		return "", err
@@ -85,25 +86,31 @@ func UpdateAvatar(uid int64, dst string, reqUser model.ReqUser) (string, error) 
 	}
 
 	// 上传头像
-	image, err := yuki.UploadImage(dst, model.YukiAvatarAlbum)
+	newImage := image.NewImage(
+		image.WithReader(reader),
+		image.WithKey(filename),
+		image.WithAlbum(uint8(imgval.Avatar)),
+	)
+	url, err := newImage.Upload()
 	if err != nil {
-		log.Println(err)
 		return "", errors.ErrInternalServer.WithMessage("头像上传失败")
 	}
 
 	// 删除旧头像
-	err = yuki.DeleteOldAvatar(u0.Avatar)
+	oldImage := image.NewImage(
+		image.WithUrl(u0.Avatar.String()),
+	)
+	err = oldImage.Delete()
 	if err != nil {
-		log.Println(err)
+		return "", errors.ErrInternalServer.WithMessage("旧头像删除失败")
 	}
 
 	// 更新头像
-	u0.Avatar = valueobject.Avatar(image.Url)
-
+	u0.Avatar = valueobject.Avatar(url)
 	err = u0.Update(false)
 	if err != nil {
 		return "", err
 	}
 
-	return image.Url, nil
+	return url, nil
 }

@@ -9,9 +9,9 @@ import (
 
 //go:generate go run ../../../utils/gen/querycontext_gen.go UserQueryContext
 type UserQueryContext struct {
-	Id        model.FieldList[int64]
+	Id        model.FieldList[uint64]
 	Username  model.Field[string]
-	Role      model.FieldList[int8]
+	Role      model.FieldList[uint8]
 	StartTime model.Field[time.Time]
 	EndTime   model.Field[time.Time]
 	option.QueryParams

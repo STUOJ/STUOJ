@@ -46,6 +46,6 @@ type UserForgetPasswordReq struct {
 }
 
 type UserUpdateRoleReq struct {
-	Id   int64 `json:"id"`
-	Role int8  `json:"role"`
+	Id   uint64 `json:"id"`
+	Role uint8  `json:"role"`
 }
