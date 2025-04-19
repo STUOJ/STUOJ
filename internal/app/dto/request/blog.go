@@ -4,9 +4,9 @@ type QueryBlogParams struct {
 	EndTime   *string `form:"end-time,omitempty"`
 	Order     *string `form:"order,omitempty"`
 	OrderBy   *string `form:"order_by,omitempty"`
-	Page      *int64  `form:"page,omitempty"`
+	Page      *uint64 `form:"page,omitempty"`
 	Problem   *string `form:"problem,omitempty"`
-	Size      *int64  `form:"size,omitempty"`
+	Size      *uint64 `form:"size,omitempty"`
 	StartTime *string `form:"start-time,omitempty"`
 	Status    *string `form:"status,omitempty"`
 	Title     *string `form:"title,omitempty"`

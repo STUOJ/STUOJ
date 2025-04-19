@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-func params2Model(params request.QueryBlogParams) (query querycontext.BlogQueryContext) {
+func params2Query(params request.QueryBlogParams) (query querycontext.BlogQueryContext) {
 	if params.EndTime != nil {
 		t, err := time.Parse("2006-01-02 15:04:05", *params.EndTime)
 		if err == nil {
@@ -53,7 +53,7 @@ func params2Model(params request.QueryBlogParams) (query querycontext.BlogQueryC
 	return query
 }
 
-func domain2response(domainBlog blog.Blog) (res response.BlogData) {
+func domain2Resp(domainBlog blog.Blog) (res response.BlogData) {
 	res = response.BlogData{
 		Id:         domainBlog.Id,
 		Title:      domainBlog.Title.String(),
