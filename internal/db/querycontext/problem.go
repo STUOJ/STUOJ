@@ -9,10 +9,10 @@ import (
 
 //go:generate go run ../../../utils/gen/querycontext_gen.go ProblemQueryContext
 type ProblemQueryContext struct {
-	Id        model.FieldList[int64]
+	Id        model.FieldList[uint64]
 	Title     model.Field[string]
 	Source    model.Field[string]
-	Status    model.FieldList[int8]
+	Status    model.FieldList[uint8]
 	StartTime model.Field[time.Time]
 	EndTime   model.Field[time.Time]
 	option.QueryParams
