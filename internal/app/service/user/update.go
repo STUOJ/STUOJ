@@ -9,19 +9,18 @@ import (
 	"STUOJ/internal/domain/user"
 	"STUOJ/internal/errors"
 	"STUOJ/internal/model"
-	"io"
 )
 
 // Update 根据Id更新用户
-func Update(uid int64, req request.UserUpdateReq, reqUser model.ReqUser) error {
+func Update(req request.UserUpdateReq, reqUser model.ReqUser) error {
 	// 检查权限
-	if reqUser.Id != uid && reqUser.Role < entity.RoleAdmin {
+	if reqUser.Id != req.Id && reqUser.Role < entity.RoleAdmin {
 		return &errors.ErrUnauthorized
 	}
 
 	// 读取用户
 	qt := querycontext.UserQueryContext{}
-	qt.Id.Add(uid)
+	qt.Id.Add(req.Id)
 	qt.Field.SelectId().SelectUsername().SelectSignature()
 	u0, _, err := user.Query.SelectOne(qt)
 	if err != nil {
@@ -89,24 +88,27 @@ func UpdateRole(req request.UserUpdateRoleReq, reqUser model.ReqUser) error {
 }
 
 // UpdateAvatar 更新用户头像
-func UpdateAvatar(uid int64, reader io.Reader, filename string, reqUser model.ReqUser) (string, error) {
+func UpdateAvatar(req request.UserChangeAvatarReq, reqUser model.ReqUser) (string, error) {
+	if req.Id != reqUser.Id && reqUser.Role < entity.RoleAdmin {
+		return "", &errors.ErrUnauthorized
+	}
 	// 读取用户
 	qt := querycontext.UserQueryContext{}
-	qt.Id.Add(uid)
+	qt.Id.Add(req.Id)
 	qt.Field.SelectId().SelectAvatar()
 	u0, _, err := user.Query.SelectOne(qt)
 	if err != nil {
 		return "", err
 	}
 
-	if u0.Id != reqUser.Id && reqUser.Role < entity.RoleAdmin {
-		return "", &errors.ErrUnauthorized
+	reader, err := req.File.Open()
+	if err != nil {
+		return "", errors.ErrInternalServer.WithMessage("头像读取失败")
 	}
-
 	// 上传头像
 	newImage := image.NewImage(
 		image.WithReader(reader),
-		image.WithKey(filename),
+		image.WithKey(req.File.Filename),
 		image.WithAlbum(uint8(imgval.Avatar)),
 	)
 	url, err := newImage.Upload()

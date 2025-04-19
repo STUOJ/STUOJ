@@ -2,6 +2,7 @@ package user
 
 import (
 	"STUOJ/internal/app/dto/request"
+	"STUOJ/internal/db/entity"
 	"STUOJ/internal/domain/user"
 	"STUOJ/internal/errors"
 	"STUOJ/internal/model"
@@ -16,9 +17,11 @@ func Register(req request.UserRegisterReq, reqUser model.ReqUser) (int64, error)
 		user.WithEmail(req.Email),
 	)
 
-	// 验证码校验
-	if err := utils.VerifyVerificationCode(req.Email, req.VerifyCode); err != nil {
-		return 0, errors.ErrUnauthorized.WithMessage(err.Error())
+	if reqUser.Role < entity.RoleAdmin {
+		// 验证码校验
+		if err := utils.VerifyVerificationCode(req.Email, req.VerifyCode); err != nil {
+			return 0, errors.ErrUnauthorized.WithMessage(err.Error())
+		}
 	}
 
 	return u.Create()
