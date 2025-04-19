@@ -8,10 +8,10 @@ type UserData struct {
 	// 注册日期
 	CreateTime *string `json:"create_time,omitempty"`
 	// 用户id，Id 编号
-	Id   int64  `json:"id"`
+	Id   uint64 `json:"id"`
 	Name string `json:"name"`
 	// 角色
-	Role      int64   `json:"role"`
+	Role      uint8   `json:"role"`
 	Signature *string `json:"signature,omitempty"`
 	// 更新日期
 	UpdateTime *string `json:"update_time,omitempty"`
@@ -32,17 +32,17 @@ type UserSimpleData struct {
 	// 用户头像
 	Avatar string `json:"avatar"`
 	// 用户id，Id 编号
-	Id   int64  `json:"id"`
+	Id   uint64 `json:"id"`
 	Name string `json:"name"`
 	// 角色
-	Role int64 `json:"role"`
+	Role uint8 `json:"role"`
 }
 
 func Domain2UserSimpleData(u user.User) UserSimpleData {
 	return UserSimpleData{
 		Avatar: u.Avatar.String(),
-		Id:     int64(u.Id),
+		Id:     u.Id,
 		Name:   u.Username.String(),
-		Role:   int64(u.Role),
+		Role:   uint8(u.Role),
 	}
 }

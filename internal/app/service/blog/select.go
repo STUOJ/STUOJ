@@ -22,7 +22,7 @@ type BlogPage struct {
 func SelectById(id uint64, reqUser model.ReqUser) (response.BlogData, error) {
 	var res response.BlogData
 	blogQuery := querycontext.BlogQueryContext{}
-	blogQuery.Id.Add(int64(id))
+	blogQuery.Id.Add(id)
 	blogQuery.Field = *query.BlogAllField
 
 	domainBlog, _, err := blog.Query.SelectOne(blogQuery)
@@ -31,7 +31,7 @@ func SelectById(id uint64, reqUser model.ReqUser) (response.BlogData, error) {
 	}
 	res = domain2response(domainBlog)
 	userQuery := querycontext.UserQueryContext{}
-	userQuery.Id.Add(int64(domainBlog.UserId))
+	userQuery.Id.Add(domainBlog.UserId)
 	userQuery.Field = *query.UserSimpleField
 	domainUser, _, err := user.Query.SelectOne(userQuery)
 	if err == nil {
@@ -52,10 +52,10 @@ func Select(params request.QueryBlogParams, resUser model.ReqUser) (BlogPage, er
 	var res BlogPage
 	query_ := params2Model(params)
 	if !query_.Status.Exist() {
-		query_.Status.Set([]int64{int64(entity.BlogPublic)})
+		query_.Status.Set([]uint8{uint8(entity.BlogPublic)})
 	}
-	if (slices.Contains(query_.Status.Value(), int64(entity.BlogBanned)) || slices.Contains(query_.Status.Value(), int64(entity.BlogDraft))) && resUser.Role < entity.RoleAdmin {
-		query_.UserId.Set([]int64{resUser.Id})
+	if (slices.Contains(query_.Status.Value(), uint8(entity.BlogBanned)) || slices.Contains(query_.Status.Value(), uint8(entity.BlogDraft))) && resUser.Role < entity.RoleAdmin {
+		query_.UserId.Set([]uint64{resUser.Id})
 	}
 	query_.Field = *query.BlogAllField
 	blogs, _, err := blog.Query.Select(query_)
@@ -66,9 +66,9 @@ func Select(params request.QueryBlogParams, resUser model.ReqUser) (BlogPage, er
 	for i, blog_ := range blogs {
 		problemIds[i] = int64(blog_.ProblemId)
 	}
-	userIds := make([]int64, len(blogs))
+	userIds := make([]uint64, len(blogs))
 	for i, blog_ := range blogs {
-		userIds[i] = int64(blog_.UserId)
+		userIds[i] = blog_.UserId
 	}
 	problemQueryContext := querycontext.ProblemQueryContext{}
 	problemQueryContext.Id.Add(problemIds...)
@@ -88,7 +88,7 @@ func Select(params request.QueryBlogParams, resUser model.ReqUser) (BlogPage, er
 			resBlog.Problem.ProblemUserScore = response.Map2ProblemUserScore(problemMap[int64(blog_.ProblemId)])
 		}
 		if blog_.UserId != 0 {
-			resBlog.User = response.Domain2UserSimpleData(users[int64(blog_.UserId)])
+			resBlog.User = response.Domain2UserSimpleData(users[blog_.UserId])
 		}
 		res.Blogs = append(res.Blogs, resBlog)
 	}
