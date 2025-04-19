@@ -1,5 +1,7 @@
 package request
 
+import "mime/multipart"
+
 type QueryUserParams struct {
 	EndTime   *string `form:"end-time,omitempty"`
 	Id        *string `form:"id,omitempty"`
@@ -32,11 +34,13 @@ type AddUserReq struct {
 }
 
 type UserUpdateReq struct {
+	Id        int64  `json:"id"`
 	Username  string `json:"username"`
 	Signature string `json:"signature"`
 }
 
 type UserChangeEmailReq struct {
+	Id         int64  `json:"id"`
 	Email      string `json:"email"`
 	VerifyCode string `json:"verify_code"`
 }
@@ -50,4 +54,9 @@ type UserForgetPasswordReq struct {
 type UserUpdateRoleReq struct {
 	Id   int64 `json:"id"`
 	Role uint8 `json:"role"`
+}
+
+type UserChangeAvatarReq struct {
+	Id   int64                 `form:"id"`
+	File *multipart.FileHeader `form:"file"`
 }
