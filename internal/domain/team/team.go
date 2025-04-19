@@ -14,9 +14,9 @@ import (
 )
 
 type Team struct {
-	Id          uint64
-	UserId      uint64
-	ContestId   uint64
+	Id          int64
+	UserId      int64
+	ContestId   int64
 	Name        valueobject.Name
 	Description valueobject.Description
 	Status      entity.TeamStatus
@@ -40,9 +40,9 @@ func (t *Team) verify() error {
 
 func (t *Team) toEntity() entity.Team {
 	return entity.Team{
-		Id:          t.Id,
-		UserId:      t.UserId,
-		ContestId:   t.ContestId,
+		Id:          uint64(t.Id),
+		UserId:      uint64(t.UserId),
+		ContestId:   uint64(t.ContestId),
 		Name:        t.Name.String(),
 		Description: t.Description.String(),
 		Status:      t.Status,
@@ -50,9 +50,9 @@ func (t *Team) toEntity() entity.Team {
 }
 
 func (t *Team) fromEntity(team entity.Team) *Team {
-	t.Id = team.Id
-	t.UserId = team.UserId
-	t.ContestId = team.ContestId
+	t.Id = int64(team.Id)
+	t.UserId = int64(team.UserId)
+	t.ContestId = int64(team.ContestId)
 	t.Name = valueobject.NewName(team.Name)
 	t.Description = valueobject.NewDescription(team.Description)
 	t.Status = team.Status
@@ -65,7 +65,7 @@ func (t *Team) toOption() *option.QueryOptions {
 	return options
 }
 
-func (t *Team) Create() (uint64, error) {
+func (t *Team) Create() (int64, error) {
 	if err := t.verify(); err != nil {
 		return 0, errors.ErrValidation.WithMessage(err.Error())
 	}
@@ -73,7 +73,7 @@ func (t *Team) Create() (uint64, error) {
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return team.Id, &errors.NoError
+	return int64(team.Id), &errors.NoError
 }
 
 func (t *Team) Update() error {
@@ -116,19 +116,19 @@ func NewTeam(options ...Option) *Team {
 	return team
 }
 
-func WithId(id uint64) Option {
+func WithId(id int64) Option {
 	return func(t *Team) {
 		t.Id = id
 	}
 }
 
-func WithUserId(userId uint64) Option {
+func WithUserId(userId int64) Option {
 	return func(t *Team) {
 		t.UserId = userId
 	}
 }
 
-func WithContestId(contestId uint64) Option {
+func WithContestId(contestId int64) Option {
 	return func(t *Team) {
 		t.ContestId = contestId
 	}

@@ -16,7 +16,7 @@ func NewUser(options ...Option) *User {
 	return user
 }
 
-func WithId(id uint64) Option {
+func WithId(id int64) Option {
 	return func(u *User) {
 		u.Id = id
 	}

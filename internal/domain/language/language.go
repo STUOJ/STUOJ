@@ -13,7 +13,7 @@ import (
 )
 
 type Language struct {
-	Id     uint64
+	Id     int64
 	Name   valueobject.Name
 	Serial uint16
 	MapId  uint32
@@ -29,7 +29,7 @@ func (l *Language) verify() error {
 
 func (l *Language) toEntity() entity.Language {
 	return entity.Language{
-		Id:     l.Id,
+		Id:     uint64(l.Id),
 		Name:   l.Name.String(),
 		Serial: l.Serial,
 		MapId:  l.MapId,
@@ -38,7 +38,7 @@ func (l *Language) toEntity() entity.Language {
 }
 
 func (l *Language) fromEntity(language entity.Language) *Language {
-	l.Id = language.Id
+	l.Id = int64(language.Id)
 	l.Name = valueobject.NewName(language.Name)
 	l.Serial = language.Serial
 	l.MapId = language.MapId
@@ -52,7 +52,7 @@ func (l *Language) toOption() *option.QueryOptions {
 	return options
 }
 
-func (l *Language) Create() (uint64, error) {
+func (l *Language) Create() (int64, error) {
 	if err := l.verify(); err != nil {
 		return 0, errors.ErrValidation.WithMessage(err.Error())
 	}
@@ -60,7 +60,7 @@ func (l *Language) Create() (uint64, error) {
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return language.Id, &errors.NoError
+	return int64(language.Id), &errors.NoError
 }
 
 func (l *Language) Update() error {
@@ -103,7 +103,7 @@ func NewLanguage(option ...Option) *Language {
 	return l
 }
 
-func WithId(id uint64) Option {
+func WithId(id int64) Option {
 	return func(l *Language) {
 		l.Id = id
 	}

@@ -2,10 +2,10 @@ package runner
 
 type RunnerSubmission struct {
 	SourceCode   string                     `json:"source_code"`
-	LanguageId   uint64                     `json:"language_id"`
+	LanguageId   int64                      `json:"language_id"`
 	Testcase     []RunnerTestcaseSubmission `json:"testcase,omitempty"`
 	CPUTimeLimit float64                    `json:"cpu_time_limit,omitempty"`
-	MemoryLimit  uint64                     `json:"memory_limit,omitempty"`
+	MemoryLimit  int64                      `json:"memory_limit,omitempty"`
 }
 
 type RunnerTestcaseSubmission struct {
@@ -32,12 +32,12 @@ type RunnerTestcaseResult struct {
 }
 
 type RunnerStatus struct {
-	Id          uint64 `json:"id"`
+	Id          int64  `json:"id"`
 	Description string `json:"description"`
 }
 
 type RunnerLanguage struct {
-	Id   uint64 `json:"id"`
+	Id   int64  `json:"id"`
 	Name string `json:"name"`
 }
 

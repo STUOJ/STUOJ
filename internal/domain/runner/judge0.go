@@ -58,7 +58,7 @@ func (j *Judge0) GetLanguage() ([]RunnerLanguage, error) {
 	var runnerLanguages []RunnerLanguage
 	for _, language := range languages {
 		runnerLanguages = append(runnerLanguages, RunnerLanguage{
-			Id:   language.Id,
+			Id:   int64(language.Id),
 			Name: language.Name,
 		})
 	}
@@ -70,11 +70,11 @@ func runnerSubmissionToJudgeSubmission(submission RunnerSubmission) []judge0.Jud
 	for _, testCase := range submission.Testcase {
 		judgeSubmissions = append(judgeSubmissions, judge0.JudgeSubmission{
 			SourceCode:     submission.SourceCode,
-			LanguageId:     submission.LanguageId,
+			LanguageId:     uint64(submission.LanguageId),
 			Stdin:          testCase.Input,
 			ExpectedOutput: testCase.ExpectedOutput,
 			CPUTimeLimit:   submission.CPUTimeLimit,
-			MemoryLimit:    submission.MemoryLimit,
+			MemoryLimit:    uint64(submission.MemoryLimit),
 		})
 	}
 	return judgeSubmissions
@@ -84,7 +84,7 @@ func judgeResultToRunnerResult(judgeResult []judge0.JudgeResult) RunnerResult {
 	var runnerResult RunnerResult
 	for _, result := range judgeResult {
 		status := RunnerStatus{
-			Id:          result.Status.Id,
+			Id:          int64(result.Status.Id),
 			Description: result.Status.Description,
 		}
 		time, _ := strconv.ParseFloat(result.Time, 64)
@@ -96,7 +96,7 @@ func judgeResultToRunnerResult(judgeResult []judge0.JudgeResult) RunnerResult {
 			Message: result.Message,
 			Status:  status,
 		})
-		if result.Status.Id > runnerResult.Status.Id {
+		if result.Status.Id > uint64(runnerResult.Status.Id) {
 			runnerResult.Status = status
 		}
 		if timeFloat, _ := strconv.ParseFloat(result.Time, 64); timeFloat > runnerResult.Time {
@@ -112,8 +112,8 @@ func judgeResultToRunnerResult(judgeResult []judge0.JudgeResult) RunnerResult {
 			runnerResult.CompileOutput = result.CompileOutput
 		}
 	}
-	if runnerResult.Status.Id < uint64(entity.JudgeAC) {
-		runnerResult.Status.Id = uint64(entity.JudgeIE)
+	if runnerResult.Status.Id < int64(entity.JudgeAC) {
+		runnerResult.Status.Id = int64(entity.JudgeIE)
 		runnerResult.Status.Description = entity.JudgeIE.String()
 	}
 	return runnerResult

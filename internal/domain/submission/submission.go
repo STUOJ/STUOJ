@@ -15,15 +15,15 @@ import (
 )
 
 type Submission struct {
-	Id         uint64
-	UserId     uint64
-	ProblemId  uint64
+	Id         int64
+	UserId     int64
+	ProblemId  int64
 	Status     entity.JudgeStatus
 	Score      uint8
-	Memory     uint64
+	Memory     int64
 	Time       float64
 	Length     uint32
-	LanguageId uint64
+	LanguageId int64
 	SourceCode valueobject.SourceCode
 	CreateTime time.Time
 	UpdateTime time.Time
@@ -41,15 +41,15 @@ func (s *Submission) verify() error {
 
 func (s *Submission) toEntity() entity.Submission {
 	return entity.Submission{
-		Id:         s.Id,
-		UserId:     s.UserId,
-		ProblemId:  s.ProblemId,
+		Id:         uint64(s.Id),
+		UserId:     uint64(s.UserId),
+		ProblemId:  uint64(s.ProblemId),
 		Status:     s.Status,
 		Score:      s.Score,
-		Memory:     s.Memory,
+		Memory:     uint64(s.Memory),
 		Time:       s.Time,
 		Length:     s.Length,
-		LanguageId: s.LanguageId,
+		LanguageId: uint64(s.LanguageId),
 		SourceCode: s.SourceCode.String(),
 		CreateTime: s.CreateTime,
 		UpdateTime: s.UpdateTime,
@@ -57,15 +57,15 @@ func (s *Submission) toEntity() entity.Submission {
 }
 
 func (s *Submission) fromEntity(submission entity.Submission) *Submission {
-	s.Id = submission.Id
-	s.UserId = submission.UserId
-	s.ProblemId = submission.ProblemId
+	s.Id = int64(submission.Id)
+	s.UserId = int64(submission.UserId)
+	s.ProblemId = int64(submission.ProblemId)
 	s.Status = submission.Status
 	s.Score = submission.Score
-	s.Memory = submission.Memory
+	s.Memory = int64(submission.Memory)
 	s.Time = submission.Time
 	s.Length = submission.Length
-	s.LanguageId = submission.LanguageId
+	s.LanguageId = int64(submission.LanguageId)
 	s.SourceCode = valueobject.NewSourceCode(submission.SourceCode)
 	s.CreateTime = submission.CreateTime
 	s.UpdateTime = submission.UpdateTime
@@ -78,7 +78,7 @@ func (s *Submission) toOption() *option.QueryOptions {
 	return options
 }
 
-func (s *Submission) Create() (uint64, error) {
+func (s *Submission) Create() (int64, error) {
 	s.CreateTime = time.Now()
 	s.UpdateTime = time.Now()
 	if err := s.verify(); err != nil {
@@ -88,7 +88,7 @@ func (s *Submission) Create() (uint64, error) {
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return submission.Id, &errors.NoError
+	return int64(submission.Id), &errors.NoError
 }
 
 func (s *Submission) Update() error {
@@ -134,19 +134,19 @@ func NewSubmission(option ...Option) *Submission {
 	return s
 }
 
-func WithId(id uint64) Option {
+func WithId(id int64) Option {
 	return func(s *Submission) {
 		s.Id = id
 	}
 }
 
-func WithUserId(userId uint64) Option {
+func WithUserId(userId int64) Option {
 	return func(s *Submission) {
 		s.UserId = userId
 	}
 }
 
-func WithProblemId(problemId uint64) Option {
+func WithProblemId(problemId int64) Option {
 	return func(s *Submission) {
 		s.ProblemId = problemId
 	}
@@ -164,7 +164,7 @@ func WithScore(score uint8) Option {
 	}
 }
 
-func WithMemory(memory uint64) Option {
+func WithMemory(memory int64) Option {
 	return func(s *Submission) {
 		s.Memory = memory
 	}
@@ -182,7 +182,7 @@ func WithLength(length uint32) Option {
 	}
 }
 
-func WithLanguageId(languageId uint64) Option {
+func WithLanguageId(languageId int64) Option {
 	return func(s *Submission) {
 		s.LanguageId = languageId
 	}

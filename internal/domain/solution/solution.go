@@ -13,9 +13,9 @@ import (
 )
 
 type Solution struct {
-	Id         uint64
-	LanguageId uint64
-	ProblemId  uint64
+	Id         int64
+	LanguageId int64
+	ProblemId  int64
 	SourceCode valueobject.SourceCode
 }
 
@@ -28,17 +28,17 @@ func (s *Solution) verify() error {
 
 func (s *Solution) toEntity() entity.Solution {
 	return entity.Solution{
-		Id:         s.Id,
-		LanguageId: s.LanguageId,
-		ProblemId:  s.ProblemId,
+		Id:         uint64(s.Id),
+		LanguageId: uint64(s.LanguageId),
+		ProblemId:  uint64(s.ProblemId),
 		SourceCode: s.SourceCode.String(),
 	}
 }
 
 func (s *Solution) fromEntity(solution entity.Solution) *Solution {
-	s.Id = solution.Id
-	s.LanguageId = solution.LanguageId
-	s.ProblemId = solution.ProblemId
+	s.Id = int64(solution.Id)
+	s.LanguageId = int64(solution.LanguageId)
+	s.ProblemId = int64(solution.ProblemId)
 	s.SourceCode = valueobject.NewSourceCode(solution.SourceCode)
 	return s
 }
@@ -49,7 +49,7 @@ func (s *Solution) toOption() *option.QueryOptions {
 	return options
 }
 
-func (s *Solution) Create() (uint64, error) {
+func (s *Solution) Create() (int64, error) {
 	if err := s.verify(); err != nil {
 		return 0, errors.ErrValidation.WithMessage(err.Error())
 	}
@@ -57,7 +57,7 @@ func (s *Solution) Create() (uint64, error) {
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return solution.Id, &errors.NoError
+	return int64(solution.Id), &errors.NoError
 }
 
 func (s *Solution) Update() error {
@@ -100,19 +100,19 @@ func NewSolution(option ...Option) *Solution {
 	return s
 }
 
-func WithId(id uint64) Option {
+func WithId(id int64) Option {
 	return func(s *Solution) {
 		s.Id = id
 	}
 }
 
-func WithLanguageId(languageId uint64) Option {
+func WithLanguageId(languageId int64) Option {
 	return func(s *Solution) {
 		s.LanguageId = languageId
 	}
 }
 
-func WithProblemId(problemId uint64) Option {
+func WithProblemId(problemId int64) Option {
 	return func(s *Solution) {
 		s.ProblemId = problemId
 	}

@@ -17,19 +17,19 @@ func NewBlog(option ...Option) *Blog {
 	return b
 }
 
-func WithId(id uint64) Option {
+func WithId(id int64) Option {
 	return func(b *Blog) {
 		b.Id = id
 	}
 }
 
-func WithUserId(userId uint64) Option {
+func WithUserId(userId int64) Option {
 	return func(b *Blog) {
 		b.UserId = userId
 	}
 }
 
-func WithProblemId(problemId uint64) Option {
+func WithProblemId(problemId int64) Option {
 	return func(b *Blog) {
 		b.ProblemId = problemId
 	}

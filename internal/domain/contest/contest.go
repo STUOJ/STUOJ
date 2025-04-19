@@ -16,8 +16,8 @@ import (
 )
 
 type Contest struct {
-	Id          uint64
-	UserId      uint64
+	Id          int64
+	UserId      int64
 	Title       valueobject.Title
 	Description valueobject.Description
 	Status      entity.ContestStatus
@@ -59,8 +59,8 @@ func (c *Contest) verify() error {
 
 func (c *Contest) toEntity() entity.Contest {
 	return entity.Contest{
-		Id:         c.Id,
-		UserId:     c.UserId,
+		Id:         uint64(c.Id),
+		UserId:     uint64(c.UserId),
 		Status:     c.Status,
 		Format:     c.Format,
 		TeamSize:   c.TeamSize,
@@ -72,8 +72,8 @@ func (c *Contest) toEntity() entity.Contest {
 }
 
 func (c *Contest) fromEntity(contest entity.Contest) *Contest {
-	c.Id = contest.Id
-	c.UserId = contest.UserId
+	c.Id = int64(contest.Id)
+	c.UserId = int64(contest.UserId)
 	c.Status = contest.Status
 	c.Format = contest.Format
 	c.TeamSize = contest.TeamSize
@@ -90,7 +90,7 @@ func (c *Contest) toOption() *option.QueryOptions {
 	return options
 }
 
-func (c *Contest) Create() (uint64, error) {
+func (c *Contest) Create() (int64, error) {
 	c.CreateTime = time.Now()
 	c.UpdateTime = time.Now()
 	if err := c.verify(); err != nil {
@@ -100,7 +100,7 @@ func (c *Contest) Create() (uint64, error) {
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return contest.Id, &errors.NoError
+	return int64(contest.Id), &errors.NoError
 }
 
 func (c *Contest) Update() error {
@@ -134,7 +134,7 @@ func (c *Contest) Delete() error {
 	return &errors.NoError
 }
 
-func (c *Contest) UpdateUser(userIds []uint64) error {
+func (c *Contest) UpdateUser(userIds []int64) error {
 	var err error
 	options := c.toOption()
 	_, err = dao.ContestStore.SelectOne(options)
@@ -148,8 +148,8 @@ func (c *Contest) UpdateUser(userIds []uint64) error {
 	var errs []error
 	for _, id := range userIds {
 		_, err = dao.ContestUserStore.Insert(entity.ContestUser{
-			ContestId: c.Id,
-			UserId:    id,
+			ContestId: uint64(c.Id),
+			UserId:    uint64(id),
 		})
 		if err != nil {
 			errs = append(errs, err)
@@ -161,7 +161,7 @@ func (c *Contest) UpdateUser(userIds []uint64) error {
 	return &errors.NoError
 }
 
-func (c *Contest) UpdateProblem(problemIds []uint64) error {
+func (c *Contest) UpdateProblem(problemIds []int64) error {
 	var err error
 	options := c.toOption()
 	_, err = dao.ContestStore.SelectOne(options)
@@ -176,8 +176,8 @@ func (c *Contest) UpdateProblem(problemIds []uint64) error {
 	var serial uint16 = 1
 	for _, id := range problemIds {
 		_, err = dao.ContestProblemStore.Insert(entity.ContestProblem{
-			ContestId: c.Id,
-			ProblemId: id,
+			ContestId: uint64(c.Id),
+			ProblemId: uint64(id),
 			Serial:    serial,
 		})
 		if err != nil {
@@ -201,13 +201,13 @@ func NewContest(option ...Option) *Contest {
 	return c
 }
 
-func WithId(id uint64) Option {
+func WithId(id int64) Option {
 	return func(c *Contest) {
 		c.Id = id
 	}
 }
 
-func WithUserId(userId uint64) Option {
+func WithUserId(userId int64) Option {
 	return func(c *Contest) {
 		c.UserId = userId
 	}

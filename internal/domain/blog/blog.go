@@ -16,9 +16,9 @@ import (
 )
 
 type Blog struct {
-	Id         uint64
-	UserId     uint64
-	ProblemId  uint64
+	Id         int64
+	UserId     int64
+	ProblemId  int64
 	Title      valueobject.Title
 	Content    valueobject.Content
 	Status     entity.BlogStatus
@@ -44,9 +44,9 @@ func (b *Blog) verify() error {
 
 func (b *Blog) toEntity() entity.Blog {
 	return entity.Blog{
-		Id:         b.Id,
-		UserId:     b.UserId,
-		ProblemId:  b.ProblemId,
+		Id:         uint64(b.Id),
+		UserId:     uint64(b.UserId),
+		ProblemId:  uint64(b.ProblemId),
 		Title:      b.Title.String(),
 		Content:    b.Content.String(),
 		Status:     b.Status,
@@ -56,9 +56,9 @@ func (b *Blog) toEntity() entity.Blog {
 }
 
 func (b *Blog) fromEntity(blog entity.Blog) *Blog {
-	b.Id = blog.Id
-	b.UserId = blog.UserId
-	b.ProblemId = blog.ProblemId
+	b.Id = int64(blog.Id)
+	b.UserId = int64(blog.UserId)
+	b.ProblemId = int64(blog.ProblemId)
 	b.Title = valueobject.NewTitle(blog.Title)
 	b.Content = valueobject.NewContent(blog.Content)
 	b.Status = blog.Status
@@ -73,7 +73,7 @@ func (b *Blog) toOption() *option.QueryOptions {
 	return options
 }
 
-func (b *Blog) Create() (uint64, error) {
+func (b *Blog) Create() (int64, error) {
 	b.CreateTime = time.Now()
 	b.UpdateTime = time.Now()
 	if err := b.verify(); err != nil {
@@ -83,7 +83,7 @@ func (b *Blog) Create() (uint64, error) {
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return blog.Id, &errors.NoError
+	return int64(blog.Id), &errors.NoError
 }
 
 func (b *Blog) Update() error {

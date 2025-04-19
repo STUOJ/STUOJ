@@ -13,7 +13,7 @@ import (
 )
 
 type Tag struct {
-	Id   uint64
+	Id   int64
 	Name valueobject.Name
 }
 
@@ -26,13 +26,13 @@ func (t *Tag) verify() error {
 
 func (t *Tag) toEntity() entity.Tag {
 	return entity.Tag{
-		Id:   t.Id,
+		Id:   uint64(t.Id),
 		Name: t.Name.String(),
 	}
 }
 
 func (t *Tag) fromEntity(tag entity.Tag) *Tag {
-	t.Id = tag.Id
+	t.Id = int64(tag.Id)
 	t.Name = valueobject.NewName(tag.Name)
 	return t
 }
@@ -43,7 +43,7 @@ func (t *Tag) toOption() *option.QueryOptions {
 	return options
 }
 
-func (t *Tag) Create() (uint64, error) {
+func (t *Tag) Create() (int64, error) {
 	if err := t.verify(); err != nil {
 		return 0, errors.ErrValidation.WithMessage(err.Error())
 	}
@@ -51,7 +51,7 @@ func (t *Tag) Create() (uint64, error) {
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return tag.Id, &errors.NoError
+	return int64(tag.Id), &errors.NoError
 }
 
 func (t *Tag) Update() error {
@@ -93,7 +93,7 @@ func NewTag(options ...Option) *Tag {
 	return tag
 }
 
-func WithId(id uint64) Option {
+func WithId(id int64) Option {
 	return func(t *Tag) {
 		t.Id = id
 	}

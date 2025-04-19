@@ -15,11 +15,11 @@ import (
 )
 
 type Judgement struct {
-	Id            uint64
-	SubmissionId  uint64
-	TestcaseId    uint64
+	Id            int64
+	SubmissionId  int64
+	TestcaseId    int64
 	Time          float64
-	Memory        uint64
+	Memory        int64
 	Stdout        string
 	Stderr        string
 	CompileOutput string
@@ -41,11 +41,11 @@ func (j *Judgement) verify() error {
 
 func (j *Judgement) toEntity() entity.Judgement {
 	return entity.Judgement{
-		Id:            j.Id,
-		SubmissionId:  j.SubmissionId,
-		TestcaseId:    j.TestcaseId,
+		Id:            uint64(j.Id),
+		SubmissionId:  uint64(j.SubmissionId),
+		TestcaseId:    uint64(j.TestcaseId),
 		Time:          j.Time,
-		Memory:        j.Memory,
+		Memory:        uint64(j.Memory),
 		Stdout:        j.Stdout,
 		Stderr:        j.Stderr,
 		CompileOutput: j.CompileOutput,
@@ -55,11 +55,11 @@ func (j *Judgement) toEntity() entity.Judgement {
 }
 
 func (j *Judgement) fromEntity(judgement entity.Judgement) *Judgement {
-	j.Id = judgement.Id
-	j.SubmissionId = judgement.SubmissionId
-	j.TestcaseId = judgement.TestcaseId
+	j.Id = int64(judgement.Id)
+	j.SubmissionId = int64(judgement.SubmissionId)
+	j.TestcaseId = int64(judgement.TestcaseId)
 	j.Time = judgement.Time
-	j.Memory = judgement.Memory
+	j.Memory = int64(judgement.Memory)
 	j.Stdout = judgement.Stdout
 	j.Stderr = judgement.Stderr
 	j.CompileOutput = judgement.CompileOutput
@@ -74,7 +74,7 @@ func (j *Judgement) toOption() *option.QueryOptions {
 	return options
 }
 
-func (j *Judgement) Create() (uint64, error) {
+func (j *Judgement) Create() (int64, error) {
 	j.CreateTime = time.Now()
 	j.UpdateTime = time.Now()
 	if err := j.verify(); err != nil {
@@ -84,7 +84,7 @@ func (j *Judgement) Create() (uint64, error) {
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return judgement.Id, &errors.NoError
+	return int64(judgement.Id), &errors.NoError
 }
 
 func (j *Judgement) Update() error {
@@ -128,19 +128,19 @@ func NewJudgement(option ...Option) *Judgement {
 	return j
 }
 
-func WithId(id uint64) Option {
+func WithId(id int64) Option {
 	return func(j *Judgement) {
 		j.Id = id
 	}
 }
 
-func WithSubmissionId(submissionId uint64) Option {
+func WithSubmissionId(submissionId int64) Option {
 	return func(j *Judgement) {
 		j.SubmissionId = submissionId
 	}
 }
 
-func WithTestcaseId(testcaseId uint64) Option {
+func WithTestcaseId(testcaseId int64) Option {
 	return func(j *Judgement) {
 		j.TestcaseId = testcaseId
 	}
@@ -152,7 +152,7 @@ func WithTime(time float64) Option {
 	}
 }
 
-func WithMemory(memory uint64) Option {
+func WithMemory(memory int64) Option {
 	return func(j *Judgement) {
 		j.Memory = memory
 	}

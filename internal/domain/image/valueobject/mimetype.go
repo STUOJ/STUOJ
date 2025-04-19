@@ -2,7 +2,7 @@ package valueobject
 
 import "fmt"
 
-type MimeType uint64
+type MimeType int64
 
 const (
 	JPEG MimeType = 1

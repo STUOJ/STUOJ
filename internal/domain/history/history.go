@@ -16,14 +16,14 @@ import (
 )
 
 type History struct {
-	Id           uint64
-	UserId       uint64
-	ProblemId    uint64
+	Id           int64
+	UserId       int64
+	ProblemId    int64
 	Title        valueobject.Title
 	Source       valueobject.Source
 	Difficulty   entity.Difficulty
 	TimeLimit    float64
-	MemoryLimit  uint64
+	MemoryLimit  int64
 	Description  valueobject.Description
 	Input        valueobject.Input
 	Output       valueobject.Output
@@ -70,14 +70,14 @@ func (h *History) verify() error {
 
 func (h *History) toEntity() entity.History {
 	return entity.History{
-		Id:           h.Id,
-		UserId:       h.UserId,
-		ProblemId:    h.ProblemId,
+		Id:           uint64(h.Id),
+		UserId:       uint64(h.UserId),
+		ProblemId:    uint64(h.ProblemId),
 		Title:        h.Title.String(),
 		Source:       h.Source.String(),
 		Difficulty:   h.Difficulty,
 		TimeLimit:    h.TimeLimit,
-		MemoryLimit:  h.MemoryLimit,
+		MemoryLimit:  uint64(h.MemoryLimit),
 		Description:  h.Description.String(),
 		Input:        h.Input.String(),
 		Output:       h.Output.String(),
@@ -90,14 +90,14 @@ func (h *History) toEntity() entity.History {
 }
 
 func (h *History) fromEntity(history entity.History) *History {
-	h.Id = history.Id
-	h.UserId = history.UserId
-	h.ProblemId = history.ProblemId
+	h.Id = int64(history.Id)
+	h.UserId = int64(history.UserId)
+	h.ProblemId = int64(history.ProblemId)
 	h.Title = valueobject.NewTitle(history.Title)
 	h.Source = valueobject.NewSource(history.Source)
 	h.Difficulty = history.Difficulty
 	h.TimeLimit = history.TimeLimit
-	h.MemoryLimit = history.MemoryLimit
+	h.MemoryLimit = int64(history.MemoryLimit)
 	h.Description = valueobject.NewDescription(history.Description)
 	h.Input = valueobject.NewInput(history.Input)
 	h.Output = valueobject.NewOutput(history.Output)
@@ -115,7 +115,7 @@ func (h *History) toOption() *option.QueryOptions {
 	return options
 }
 
-func (h *History) Create() (uint64, error) {
+func (h *History) Create() (int64, error) {
 	h.CreateTime = time.Now()
 	if err := h.verify(); err != nil {
 		return 0, errors.ErrValidation.WithMessage(err.Error())
@@ -124,7 +124,7 @@ func (h *History) Create() (uint64, error) {
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return history.Id, &errors.NoError
+	return int64(history.Id), &errors.NoError
 }
 
 func (h *History) Update() error {
@@ -167,19 +167,19 @@ func NewHistory(option ...Option) *History {
 	return h
 }
 
-func WithId(id uint64) Option {
+func WithId(id int64) Option {
 	return func(h *History) {
 		h.Id = id
 	}
 }
 
-func WithUserId(userId uint64) Option {
+func WithUserId(userId int64) Option {
 	return func(h *History) {
 		h.UserId = userId
 	}
 }
 
-func WithProblemId(problemId uint64) Option {
+func WithProblemId(problemId int64) Option {
 	return func(h *History) {
 		h.ProblemId = problemId
 	}
@@ -209,7 +209,7 @@ func WithTimeLimit(timeLimit float64) Option {
 	}
 }
 
-func WithMemoryLimit(memoryLimit uint64) Option {
+func WithMemoryLimit(memoryLimit int64) Option {
 	return func(h *History) {
 		h.MemoryLimit = memoryLimit
 	}

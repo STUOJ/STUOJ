@@ -16,9 +16,9 @@ import (
 )
 
 type Comment struct {
-	Id         uint64
-	UserId     uint64
-	BlogId     uint64
+	Id         int64
+	UserId     int64
+	BlogId     int64
 	Content    valueobject.Content
 	Status     entity.CommentStatus
 	CreateTime time.Time
@@ -43,9 +43,9 @@ func (c *Comment) verify() error {
 
 func (c *Comment) toEntity() entity.Comment {
 	return entity.Comment{
-		Id:         c.Id,
-		UserId:     c.UserId,
-		BlogId:     c.BlogId,
+		Id:         uint64(c.Id),
+		UserId:     uint64(c.UserId),
+		BlogId:     uint64(c.BlogId),
 		Content:    c.Content.String(),
 		Status:     c.Status,
 		CreateTime: c.CreateTime,
@@ -54,9 +54,9 @@ func (c *Comment) toEntity() entity.Comment {
 }
 
 func (c *Comment) fromEntity(comment entity.Comment) *Comment {
-	c.Id = comment.Id
-	c.UserId = comment.UserId
-	c.BlogId = comment.BlogId
+	c.Id = int64(comment.Id)
+	c.UserId = int64(comment.UserId)
+	c.BlogId = int64(comment.BlogId)
 	c.Content = valueobject.NewContent(comment.Content)
 	c.Status = comment.Status
 	c.CreateTime = comment.CreateTime
@@ -70,7 +70,7 @@ func (c *Comment) toOption() *option.QueryOptions {
 	return options
 }
 
-func (c *Comment) Create() (uint64, error) {
+func (c *Comment) Create() (int64, error) {
 	c.CreateTime = time.Now()
 	c.UpdateTime = time.Now()
 	if err := c.verify(); err != nil {
@@ -80,7 +80,7 @@ func (c *Comment) Create() (uint64, error) {
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return comment.Id, &errors.NoError
+	return int64(comment.Id), &errors.NoError
 }
 
 func (c *Comment) Update() error {
@@ -126,19 +126,19 @@ func NewComment(option ...Option) *Comment {
 	return c
 }
 
-func WithId(id uint64) Option {
+func WithId(id int64) Option {
 	return func(c *Comment) {
 		c.Id = id
 	}
 }
 
-func WithUserId(userId uint64) Option {
+func WithUserId(userId int64) Option {
 	return func(c *Comment) {
 		c.UserId = userId
 	}
 }
 
-func WithBlogId(blogId uint64) Option {
+func WithBlogId(blogId int64) Option {
 	return func(c *Comment) {
 		c.BlogId = blogId
 	}

@@ -9,7 +9,7 @@ const (
 	hasSubmissionSQL = "EXISTS (SELECT 1 FROM tbl_submission WHERE tbl_submission.problem_id = tbl_problem.id AND tbl_submission.user_id = %d) AS has_user_submission"
 )
 
-func QueryMaxScore(userId uint64) option.QueryContextOption {
+func QueryMaxScore(userId int64) option.QueryContextOption {
 	return func(pqm option.QueryContext) option.QueryContext {
 		field := pqm.GetField()
 		if field == nil {

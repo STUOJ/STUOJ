@@ -13,8 +13,8 @@ import (
 )
 
 type Testcase struct {
-	Id         uint64
-	ProblemId  uint64
+	Id         int64
+	ProblemId  int64
 	Serial     uint16
 	TestInput  valueobject.TestInput
 	TestOutput valueobject.TestOutput
@@ -32,8 +32,8 @@ func (t *Testcase) verify() error {
 
 func (t *Testcase) toEntity() entity.Testcase {
 	return entity.Testcase{
-		Id:         t.Id,
-		ProblemId:  t.ProblemId,
+		Id:         uint64(t.Id),
+		ProblemId:  uint64(t.ProblemId),
 		Serial:     t.Serial,
 		TestInput:  t.TestInput.String(),
 		TestOutput: t.TestOutput.String(),
@@ -41,8 +41,8 @@ func (t *Testcase) toEntity() entity.Testcase {
 }
 
 func (t *Testcase) fromEntity(testcase entity.Testcase) *Testcase {
-	t.Id = testcase.Id
-	t.ProblemId = testcase.ProblemId
+	t.Id = int64(testcase.Id)
+	t.ProblemId = int64(testcase.ProblemId)
 	t.Serial = testcase.Serial
 	t.TestInput = valueobject.NewTestInput(testcase.TestInput)
 	t.TestOutput = valueobject.NewTestOutput(testcase.TestOutput)
@@ -55,7 +55,7 @@ func (t *Testcase) toOption() *option.QueryOptions {
 	return options
 }
 
-func (t *Testcase) Create() (uint64, error) {
+func (t *Testcase) Create() (int64, error) {
 	if err := t.verify(); err != nil {
 		return 0, errors.ErrValidation.WithMessage(err.Error())
 	}
@@ -63,7 +63,7 @@ func (t *Testcase) Create() (uint64, error) {
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return testcase.Id, &errors.NoError
+	return int64(testcase.Id), &errors.NoError
 }
 
 func (t *Testcase) Update() error {
@@ -106,13 +106,13 @@ func NewTestcase(option ...Option) *Testcase {
 	return t
 }
 
-func WithId(id uint64) Option {
+func WithId(id int64) Option {
 	return func(t *Testcase) {
 		t.Id = id
 	}
 }
 
-func WithProblemId(problemId uint64) Option {
+func WithProblemId(problemId int64) Option {
 	return func(t *Testcase) {
 		t.ProblemId = problemId
 	}

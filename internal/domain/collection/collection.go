@@ -16,8 +16,8 @@ import (
 )
 
 type Collection struct {
-	Id          uint64
-	UserId      uint64
+	Id          int64
+	UserId      int64
 	Title       valueobject.Title
 	Description valueobject.Description
 	Status      entity.CollectionStatus
@@ -43,8 +43,8 @@ func (c *Collection) verify() error {
 
 func (c *Collection) toEntity() entity.Collection {
 	return entity.Collection{
-		Id:          c.Id,
-		UserId:      c.UserId,
+		Id:          uint64(c.Id),
+		UserId:      uint64(c.UserId),
 		Title:       c.Title.String(),
 		Description: c.Description.String(),
 		Status:      c.Status,
@@ -54,8 +54,8 @@ func (c *Collection) toEntity() entity.Collection {
 }
 
 func (c *Collection) fromEntity(collection entity.Collection) *Collection {
-	c.Id = collection.Id
-	c.UserId = collection.UserId
+	c.Id = int64(collection.Id)
+	c.UserId = int64(collection.UserId)
 	c.Title = valueobject.NewTitle(collection.Title)
 	c.Description = valueobject.NewDescription(collection.Description)
 	c.Status = collection.Status
@@ -70,7 +70,7 @@ func (c *Collection) toOption() *option.QueryOptions {
 	return options
 }
 
-func (c *Collection) Create() (uint64, error) {
+func (c *Collection) Create() (int64, error) {
 	c.CreateTime = time.Now()
 	c.UpdateTime = time.Now()
 	if err := c.verify(); err != nil {
@@ -80,7 +80,7 @@ func (c *Collection) Create() (uint64, error) {
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return collection.Id, &errors.NoError
+	return int64(collection.Id), &errors.NoError
 }
 
 func (c *Collection) Update() error {
@@ -128,7 +128,7 @@ func (c *Collection) UpdateUser(userIds []int64) error {
 	var errs []error
 	for _, id := range userIds {
 		_, err = dao.CollectionUserStore.Insert(entity.CollectionUser{
-			CollectionId: c.Id,
+			CollectionId: uint64(c.Id),
 			UserId:       uint64(id),
 		})
 		if err != nil {
@@ -156,7 +156,7 @@ func (c *Collection) UpdateProblem(problemIds []int64) error {
 	var serial uint16 = 1
 	for _, id := range problemIds {
 		_, err = dao.CollectionProblemStore.Insert(entity.CollectionProblem{
-			CollectionId: c.Id,
+			CollectionId: uint64(c.Id),
 			ProblemId:    uint64(id),
 			Serial:       serial,
 		})
@@ -183,13 +183,13 @@ func NewCollection(option ...Option) *Collection {
 	return c
 }
 
-func WithId(id uint64) Option {
+func WithId(id int64) Option {
 	return func(c *Collection) {
 		c.Id = id
 	}
 }
 
-func WithUserId(userId uint64) Option {
+func WithUserId(userId int64) Option {
 	return func(c *Collection) {
 		c.UserId = userId
 	}

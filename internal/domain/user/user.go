@@ -15,7 +15,7 @@ import (
 )
 
 type User struct {
-	Id         uint64
+	Id         int64
 	Username   valueobject.Username
 	Password   valueobject.Password
 	Role       entity.Role
@@ -47,7 +47,7 @@ func (u *User) verify() error {
 
 func (u *User) toEntity() entity.User {
 	return entity.User{
-		Id:         u.Id,
+		Id:         uint64(u.Id),
 		Username:   u.Username.String(),
 		Password:   u.Password.String(),
 		Role:       u.Role,
@@ -60,7 +60,7 @@ func (u *User) toEntity() entity.User {
 }
 
 func (u *User) fromEntity(user entity.User) *User {
-	u.Id = user.Id
+	u.Id = int64(user.Id)
 	u.Username = valueobject.NewUsername(user.Username)
 	u.Password = valueobject.NewPassword(user.Password)
 	u.Role = user.Role
@@ -78,7 +78,7 @@ func (u *User) toOption() *option.QueryOptions {
 	return options
 }
 
-func (u *User) Create() (uint64, error) {
+func (u *User) Create() (int64, error) {
 	var err error
 
 	u.CreateTime = time.Now()
@@ -97,7 +97,7 @@ func (u *User) Create() (uint64, error) {
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return user.Id, &errors.NoError
+	return int64(user.Id), &errors.NoError
 }
 
 func (u *User) Update(hashPw bool) error {

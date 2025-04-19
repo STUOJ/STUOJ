@@ -15,12 +15,12 @@ import (
 )
 
 type Problem struct {
-	Id           uint64
+	Id           int64
 	Title        valueobject.Title
 	Source       valueobject.Source
 	Difficulty   entity.Difficulty
 	TimeLimit    float64
-	MemoryLimit  uint64
+	MemoryLimit  int64
 	Description  valueobject.Description
 	Input        valueobject.Input
 	Output       valueobject.Output
@@ -62,12 +62,12 @@ func (p *Problem) verify() error {
 
 func (p *Problem) toEntity() entity.Problem {
 	return entity.Problem{
-		Id:           p.Id,
+		Id:           uint64(p.Id),
 		Title:        p.Title.String(),
 		Source:       p.Source.String(),
 		Difficulty:   p.Difficulty,
 		TimeLimit:    p.TimeLimit,
-		MemoryLimit:  p.MemoryLimit,
+		MemoryLimit:  uint64(p.MemoryLimit),
 		Description:  p.Description.String(),
 		Input:        p.Input.String(),
 		Output:       p.Output.String(),
@@ -81,12 +81,12 @@ func (p *Problem) toEntity() entity.Problem {
 }
 
 func (p *Problem) fromEntity(problem entity.Problem) *Problem {
-	p.Id = problem.Id
+	p.Id = int64(problem.Id)
 	p.Title = valueobject.NewTitle(problem.Title)
 	p.Source = valueobject.NewSource(problem.Source)
 	p.Difficulty = problem.Difficulty
 	p.TimeLimit = problem.TimeLimit
-	p.MemoryLimit = problem.MemoryLimit
+	p.MemoryLimit = int64(problem.MemoryLimit)
 	p.Description = valueobject.NewDescription(problem.Description)
 	p.Input = valueobject.NewInput(problem.Input)
 	p.Output = valueobject.NewOutput(problem.Output)
@@ -105,7 +105,7 @@ func (p *Problem) toOption() *option.QueryOptions {
 	return options
 }
 
-func (p *Problem) Create() (uint64, error) {
+func (p *Problem) Create() (int64, error) {
 	p.CreateTime = time.Now()
 	p.UpdateTime = time.Now()
 	if err := p.verify(); err != nil {
@@ -115,7 +115,7 @@ func (p *Problem) Create() (uint64, error) {
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return problem.Id, &errors.NoError
+	return int64(problem.Id), &errors.NoError
 }
 
 func (p *Problem) Update() error {
@@ -149,7 +149,7 @@ func (p *Problem) Delete() error {
 	return &errors.NoError
 }
 
-func (p *Problem) UpdateTags(tagIds []uint64) error {
+func (p *Problem) UpdateTags(tagIds []int64) error {
 	var err error
 	options := p.toOption()
 	_, err = dao.ProblemStore.SelectOne(options)
@@ -163,8 +163,8 @@ func (p *Problem) UpdateTags(tagIds []uint64) error {
 	var errs []error
 	for _, id := range tagIds {
 		_, err = dao.ProblemTagStore.Insert(entity.ProblemTag{
-			ProblemId: p.Id,
-			TagId:     id,
+			ProblemId: uint64(p.Id),
+			TagId:     uint64(id),
 		})
 		if err != nil {
 			errs = append(errs, err)
@@ -188,7 +188,7 @@ func NewProblem(option ...Option) *Problem {
 	return p
 }
 
-func WithId(id uint64) Option {
+func WithId(id int64) Option {
 	return func(p *Problem) {
 		p.Id = id
 	}
@@ -218,7 +218,7 @@ func WithTimeLimit(timeLimit float64) Option {
 	}
 }
 
-func WithMemoryLimit(memoryLimit uint64) Option {
+func WithMemoryLimit(memoryLimit int64) Option {
 	return func(p *Problem) {
 		p.MemoryLimit = memoryLimit
 	}
