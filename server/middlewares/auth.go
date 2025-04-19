@@ -42,7 +42,7 @@ func TokenGetInfo() gin.HandlerFunc {
 			}
 		}
 
-		c.Set("req_user_id", uid)
+		c.Set("req_user_id", int64(uid))
 		c.Set("req_user_role", role)
 		c.Next()
 	}
@@ -119,7 +119,7 @@ func tokenAutoRefresh(c *gin.Context) error {
 	}
 
 	reqUser := model.NewReqUser(c)
-	uid := uint64(reqUser.ID)
+	uid := uint64(reqUser.Id)
 
 	// 生成新token
 	token, err := utils.GenerateToken(uid)
@@ -136,12 +136,12 @@ func tokenAutoRefresh(c *gin.Context) error {
 
 func getUserRole(uid uint64) (entity.Role, error) {
 	// 获取用户信息
-	u, err := user.SelectById(uid)
+	u, err := user.SelectById(int64(uid), model.ReqUser{})
 	if err != nil {
 		return 0, err
 	}
 
-	return u.Role, nil
+	return entity.Role(u.Role), nil
 }
 
 func tokenVerify(c *gin.Context) error {
