@@ -20,32 +20,32 @@ type BlogPage struct {
 
 // SelectById 根据Id查询博客
 func SelectById(id uint64, reqUser model.ReqUser) (response.BlogData, error) {
-	var res response.BlogData
+	var resp response.BlogData
 	blogQuery := querycontext.BlogQueryContext{}
 	blogQuery.Id.Add(id)
 	blogQuery.Field = *query.BlogAllField
 
 	domainBlog, _, err := blog.Query.SelectOne(blogQuery)
 	if err != nil {
-		return res, err
+		return resp, err
 	}
-	res = domain2Resp(domainBlog)
+	resp = domain2Resp(domainBlog)
 	userQuery := querycontext.UserQueryContext{}
 	userQuery.Id.Add(domainBlog.UserId)
 	userQuery.Field = *query.UserSimpleField
 	domainUser, _, err := user.Query.SelectOne(userQuery)
 	if err == nil {
-		res.User = response.Domain2UserSimpleData(domainUser)
+		resp.User = response.Domain2UserSimpleData(domainUser)
 	}
 	problemQuery := querycontext.ProblemQueryContext{}
 	problemQuery.Id.Add(domainBlog.ProblemId)
 	problemQuery.Field = *query.ProblemSimpleField
 	_, map_, err := problem.Query.SelectOne(problemQuery, problem.QueryMaxScore(reqUser.Id), problem.QueryTag())
 	if err == nil {
-		res.Problem.ProblemSimpleData = response.Map2ProblemSimpleData(map_)
-		res.Problem.ProblemUserScore = response.Map2ProblemUserScore(map_)
+		resp.Problem.ProblemSimpleData = response.Map2ProblemSimpleData(map_)
+		resp.Problem.ProblemUserScore = response.Map2ProblemUserScore(map_)
 	}
-	return res, nil
+	return resp, nil
 }
 
 func Select(params request.QueryBlogParams, reqUser model.ReqUser) (BlogPage, error) {

@@ -1,8 +1,10 @@
 package blog
 
 import (
+	"STUOJ/internal/db/entity"
 	"STUOJ/internal/db/querycontext"
 	"STUOJ/internal/domain/blog"
+	"STUOJ/internal/errors"
 	"STUOJ/internal/model"
 )
 
@@ -18,9 +20,8 @@ func Delete(id uint64, reqUser model.ReqUser) error {
 	}
 
 	// 检查权限
-	err = isPermission(b0, reqUser)
-	if err != nil {
-		return err
+	if b0.UserId != reqUser.Id && reqUser.Role < entity.RoleAdmin {
+		return &errors.ErrUnauthorized
 	}
 
 	return b0.Delete()
