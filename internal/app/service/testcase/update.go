@@ -2,6 +2,7 @@ package testcase
 
 import (
 	"STUOJ/internal/app/dto/request"
+	"STUOJ/internal/db/entity"
 	"STUOJ/internal/db/querycontext"
 	"STUOJ/internal/domain/problem"
 	"STUOJ/internal/domain/testcase"
@@ -13,14 +14,16 @@ import (
 
 // Update 根据ID更新评测点数据
 func Update(req request.UpdateTestcaseReq, reqUser model.ReqUser) error {
+	// 检查权限
+	if reqUser.Role < entity.RoleEditor {
+		return &errors.ErrUnauthorized
+	}
+
 	// 查询
 	qc := querycontext.TestcaseQueryContext{}
 	qc.Id.Add(req.Id)
 	qc.Field.SelectAll()
 	tc0, _, err := testcase.Query.SelectOne(qc)
-
-	// 检查权限
-	err = isPermission(reqUser)
 	if err != nil {
 		return err
 	}

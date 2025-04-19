@@ -2,7 +2,9 @@ package testcase
 
 import (
 	"STUOJ/internal/app/dto/request"
+	"STUOJ/internal/db/entity"
 	"STUOJ/internal/domain/testcase"
+	"STUOJ/internal/errors"
 	"STUOJ/internal/model"
 )
 
@@ -15,9 +17,8 @@ func Insert(req request.CreateTestcaseReq, reqUser model.ReqUser) (uint64, error
 	)
 
 	// 检查权限
-	err := isPermission(reqUser)
-	if err != nil {
-		return 0, err
+	if reqUser.Role < entity.RoleEditor {
+		return 0, &errors.ErrUnauthorized
 	}
 
 	return t.Create()
