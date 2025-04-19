@@ -8,11 +8,11 @@ import (
 
 //go:generate go run ../../../utils/gen/querycontext_gen.go LanguageQueryContext
 type LanguageQueryContext struct {
-	Id     model.FieldList[int64]
+	Id     model.FieldList[uint64]
 	Name   model.Field[string]
-	Serial model.FieldList[int16]
-	MapId  model.FieldList[int64]
-	Status model.FieldList[int8]
+	Serial model.FieldList[uint16]
+	MapId  model.FieldList[uint32]
+	Status model.FieldList[uint8]
 	option.QueryParams
 	Field field.LanguageField
 }
