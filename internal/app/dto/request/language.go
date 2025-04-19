@@ -3,7 +3,7 @@ package request
 type QueryLanguageParams struct {
 	Order   *string `form:"order,omitempty"`
 	OrderBy *string `form:"order_by,omitempty"`
-	Status  *int64  `form:"status,omitempty"`
+	Status  *string `form:"status,omitempty"`
 }
 
 type UpdateLanguageReq struct {
