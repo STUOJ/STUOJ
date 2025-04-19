@@ -11,7 +11,7 @@ import (
 )
 
 // Delete 根据ID删除评测点数据
-func Delete(id uint64, reqUser model.ReqUser) error {
+func Delete(id int64, reqUser model.ReqUser) error {
 	// 检查权限
 	if reqUser.Role < entity.RoleEditor {
 		return &errors.ErrUnauthorized

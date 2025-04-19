@@ -50,7 +50,7 @@ func SelectById(id int64, reqUser model.ReqUser) (response.CollectionData, error
 				response.ProblemSimpleData
 				response.ProblemUserScore
 			}{}
-			problem_.ProblemSimpleData = response.Map2ProblemSimpleData(problemMap[p])
+			problem_.ProblemSimpleData = response.Map2ProblemSimpleData(problemMap[int64(p)])
 			res.Problems = append(res.Problems, problem_)
 		}
 	}
@@ -58,13 +58,13 @@ func SelectById(id int64, reqUser model.ReqUser) (response.CollectionData, error
 	userQuery := querycontext.UserQueryContext{}
 	userQuery.Field = *query.UserSimpleField
 	collaboratorIds, _ := utils.StringToInt64Slice(collectionMap["collection_user_id"].(string))
-	userQuery.Id.Add(int64(collectionDomain.UserId))
+	userQuery.Id.Add(collectionDomain.UserId)
 	userQuery.Id.Add(collaboratorIds...)
 	userDomain, _, err := user.Query.SelectByIds(userQuery)
 
 	if err == nil {
 		for _, u := range collaboratorIds {
-			res.Collaborator = append(res.Collaborator, response.Domain2UserSimpleData(userDomain[u]))
+			res.Collaborator = append(res.Collaborator, response.Domain2UserSimpleData(userDomain[int64(u)]))
 		}
 		res.User = response.Domain2UserSimpleData(userDomain[int64(collectionDomain.UserId)])
 	}
@@ -79,14 +79,14 @@ func Select(params request.QueryCollectionParams, reqUser model.ReqUser) (Collec
 		query_.Status.Set([]int64{int64(entity.CollectionPublic)})
 	}
 	if slices.Contains(query_.Status.Value(), int64(entity.CollectionPrivate)) && reqUser.Role < entity.RoleAdmin {
-		query_.UserId.Set([]int64{reqUser.Id})
+		query_.UserId.Set([]int64{int64(reqUser.Id)})
 	}
 	query_.Field = *query.CollectionListItemField
 	collections, _, err := collection.Query.Select(query_)
 
 	userIds := make([]int64, len(collections))
 	for _, c := range collections {
-		userIds = append(userIds, int64(c.UserId))
+		userIds = append(userIds, c.UserId)
 	}
 
 	userQuery := querycontext.UserQueryContext{}
@@ -101,9 +101,9 @@ func Select(params request.QueryCollectionParams, reqUser model.ReqUser) (Collec
 		res.Collections = append(res.Collections, resCollection)
 	}
 
-	res.Page.Page = uint64(query_.Page.Page)
-	res.Page.Size = uint64(query_.Page.PageSize)
+	res.Page.Page = int64(query_.Page.Page)
+	res.Page.Size = int64(query_.Page.PageSize)
 	total, _ := GetStatistics(params)
-	res.Page.Total = uint64(total)
+	res.Page.Total = int64(total)
 	return res, err
 }

@@ -9,7 +9,7 @@ import (
 )
 
 // Register 用户注册
-func Register(req request.UserRegisterReq, reqUser model.ReqUser) (uint64, error) {
+func Register(req request.UserRegisterReq, reqUser model.ReqUser) (int64, error) {
 	u := user.NewUser(
 		user.WithUsername(req.Username),
 		user.WithPassword(req.Password),

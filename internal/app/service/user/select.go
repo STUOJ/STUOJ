@@ -17,7 +17,7 @@ type UserPage struct {
 }
 
 // SelectById 根据ID查询用户
-func SelectById(id uint64, reqUser model.ReqUser) (response.UserData, error) {
+func SelectById(id int64, reqUser model.ReqUser) (response.UserData, error) {
 	var resp response.UserData
 
 	// 查询
@@ -96,7 +96,7 @@ func LoginByEmail(req request.UserLoginReq, reqUser model.ReqUser) (string, erro
 	}
 
 	// 生成token
-	token, err := utils.GenerateToken(u0.Id)
+	token, err := utils.GenerateToken(uint64(u0.Id))
 	if err != nil {
 		log.Println(err)
 		return "", errors.ErrInternalServer.WithMessage("生成Token失败")

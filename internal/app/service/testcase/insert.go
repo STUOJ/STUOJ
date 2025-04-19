@@ -8,7 +8,7 @@ import (
 	"STUOJ/internal/model"
 )
 
-func Insert(req request.CreateTestcaseReq, reqUser model.ReqUser) (uint64, error) {
+func Insert(req request.CreateTestcaseReq, reqUser model.ReqUser) (int64, error) {
 	t := testcase.NewTestcase(
 		testcase.WithProblemId(req.ProblemId),
 		testcase.WithSerial(req.Serial),

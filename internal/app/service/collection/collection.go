@@ -11,7 +11,7 @@ import (
 )
 
 func isPermission(c collection.Collection, reqUser model.ReqUser) error {
-	if c.UserId != uint64(reqUser.Id) && reqUser.Role < entity.RoleAdmin {
+	if c.UserId != int64(reqUser.Id) && reqUser.Role < entity.RoleAdmin {
 		query := querycontext.CollectionQueryContext{}
 		query.Id.Add(int64(c.Id))
 		_, map_, err := collection.Query.SelectOne(query, collection.QueryUserId())
@@ -19,7 +19,7 @@ func isPermission(c collection.Collection, reqUser model.ReqUser) error {
 		if err != nil {
 			return err
 		}
-		if !slices.Contains(userIds, reqUser.Id) {
+		if !slices.Contains(userIds, int64(reqUser.Id)) {
 			return errors.ErrUnauthorized.WithMessage("没有权限操作该题单")
 		}
 	}

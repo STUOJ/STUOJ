@@ -13,7 +13,7 @@ import (
 )
 
 // Update 根据Id更新用户
-func Update(uid uint64, req request.UserUpdateReq, reqUser model.ReqUser) error {
+func Update(uid int64, req request.UserUpdateReq, reqUser model.ReqUser) error {
 	// 检查权限
 	if reqUser.Id != uid && reqUser.Role < entity.RoleAdmin {
 		return &errors.ErrUnauthorized
@@ -89,7 +89,7 @@ func UpdateRole(req request.UserUpdateRoleReq, reqUser model.ReqUser) error {
 }
 
 // UpdateAvatar 更新用户头像
-func UpdateAvatar(uid uint64, reader io.Reader, filename string, reqUser model.ReqUser) (string, error) {
+func UpdateAvatar(uid int64, reader io.Reader, filename string, reqUser model.ReqUser) (string, error) {
 	// 读取用户
 	qt := querycontext.UserQueryContext{}
 	qt.Id.Add(uid)

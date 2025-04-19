@@ -21,7 +21,7 @@ func TestRun(req request.TestRunReq, reqUser model.ReqUser) (response.TestRunRes
 	languageMapId := languageDomain.MapId
 	submission := runner.RunnerSubmission{
 		SourceCode: req.SourceCode,
-		LanguageId: uint64(languageMapId),
+		LanguageId: int64(languageMapId),
 	}
 	testcaseSubmission := runner.RunnerTestcaseSubmission{
 		Input: req.Stdin,

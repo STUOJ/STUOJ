@@ -39,7 +39,7 @@ func params2Model(params request.QueryCollectionParams) (query querycontext.Coll
 		}
 	}
 	if params.Page != nil && params.Size != nil {
-		query.Page = option.NewPagination(*params.Page, *params.Size)
+		query.Page = option.NewPagination(int64(*params.Page), int64(*params.Size))
 	}
 	if params.Order != nil && params.OrderBy != nil {
 		query.Sort = option.NewSortQuery(*params.Order, *params.OrderBy)

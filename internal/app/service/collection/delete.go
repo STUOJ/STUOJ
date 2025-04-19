@@ -7,7 +7,7 @@ import (
 )
 
 // 根据Id删除题单
-func Delete(id uint64, reqUser model.ReqUser) error {
+func Delete(id int64, reqUser model.ReqUser) error {
 	// 查询题单
 	queryContext := querycontext.CollectionQueryContext{}
 	queryContext.Id.Add(reqUser.Id)

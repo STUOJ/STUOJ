@@ -9,7 +9,7 @@ import (
 )
 
 // Delete 根据Id删除博客
-func Delete(id uint64, reqUser model.ReqUser) error {
+func Delete(id int64, reqUser model.ReqUser) error {
 	// 查询
 	qc := querycontext.BlogQueryContext{}
 	qc.Id.Add(id)

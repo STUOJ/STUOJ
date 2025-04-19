@@ -10,7 +10,7 @@ import (
 )
 
 // Delete 根据Id删除用户
-func Delete(id uint64, reqUser model.ReqUser) error {
+func Delete(id int64, reqUser model.ReqUser) error {
 	// 检查权限
 	if reqUser.Role < entity.RoleAdmin {
 		return &errors.ErrUnauthorized

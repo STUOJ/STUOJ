@@ -19,7 +19,7 @@ type BlogPage struct {
 }
 
 // SelectById 根据Id查询博客
-func SelectById(id uint64, reqUser model.ReqUser) (response.BlogData, error) {
+func SelectById(id int64, reqUser model.ReqUser) (response.BlogData, error) {
 	var resp response.BlogData
 	blogQuery := querycontext.BlogQueryContext{}
 	blogQuery.Id.Add(id)
@@ -55,18 +55,18 @@ func Select(params request.QueryBlogParams, reqUser model.ReqUser) (BlogPage, er
 		query_.Status.Set([]uint8{uint8(entity.BlogPublic)})
 	}
 	if (slices.Contains(query_.Status.Value(), uint8(entity.BlogBanned)) || slices.Contains(query_.Status.Value(), uint8(entity.BlogDraft))) && reqUser.Role < entity.RoleAdmin {
-		query_.UserId.Set([]uint64{reqUser.Id})
+		query_.UserId.Set([]int64{reqUser.Id})
 	}
 	query_.Field = *query.BlogAllField
 	blogs, _, err := blog.Query.Select(query_)
 	if err != nil {
 		return BlogPage{}, err
 	}
-	problemIds := make([]uint64, len(blogs))
+	problemIds := make([]int64, len(blogs))
 	for i, blog_ := range blogs {
 		problemIds[i] = blog_.ProblemId
 	}
-	userIds := make([]uint64, len(blogs))
+	userIds := make([]int64, len(blogs))
 	for i, blog_ := range blogs {
 		userIds[i] = blog_.UserId
 	}

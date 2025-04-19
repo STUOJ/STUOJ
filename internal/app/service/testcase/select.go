@@ -10,7 +10,7 @@ import (
 )
 
 // SelectById 根据ID查询评测点数据
-func SelectById(id uint64, reqUser model.ReqUser) (response.TestcaseData, error) {
+func SelectById(id int64, reqUser model.ReqUser) (response.TestcaseData, error) {
 	var resp response.TestcaseData
 
 	// 检查权限

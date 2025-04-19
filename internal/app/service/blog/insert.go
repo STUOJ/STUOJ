@@ -12,7 +12,7 @@ import (
 )
 
 // 插入博客
-func Insert(req request.CreateBlogReq, reqUser model.ReqUser) (uint64, error) {
+func Insert(req request.CreateBlogReq, reqUser model.ReqUser) (int64, error) {
 	blog := blog.NewBlog(blog.WithContent(req.Content),
 		blog.WithTitle(req.Title),
 		blog.WithUserId(reqUser.Id),

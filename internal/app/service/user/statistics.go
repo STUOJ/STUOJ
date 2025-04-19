@@ -6,12 +6,12 @@ import (
 )
 
 // Count 统计用户数量
-func Count(req request.QueryUserParams) (uint64, error) {
+func Count(req request.QueryUserParams) (int64, error) {
 	query := params2Query(req)
 	count, err := user.Query.Count(query)
 	if err != nil {
 		return 0, err
 	}
 
-	return uint64(count), nil
+	return int64(count), nil
 }
