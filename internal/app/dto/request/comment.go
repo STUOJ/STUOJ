@@ -4,7 +4,7 @@ type QueryCommentParams struct {
 	Blog      *int64  `form:"blog,omitempty"`
 	EndTime   *string `form:"end-time,omitempty"`
 	Order     *string `form:"order,omitempty"`
-	OrderBy   string  `form:"order_by"`
+	OrderBy   *string `form:"order_by"`
 	Page      *int64  `form:"page,omitempty"`
 	Size      *int64  `form:"size,omitempty"`
 	StartTime *string `form:"start-time,omitempty"`
