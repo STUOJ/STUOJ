@@ -2,11 +2,12 @@ package model
 
 import (
 	"STUOJ/internal/db/entity"
+
 	"github.com/gin-gonic/gin"
 )
 
 type ReqUser struct {
-	Id   uint64
+	Id   int64
 	Role entity.Role
 }
 
@@ -19,7 +20,7 @@ func (r *ReqUser) Parse(c *gin.Context) {
 	if !exist {
 		id = 0
 	}
-	r.Id = id.(uint64)
+	r.Id = id.(int64)
 	r.Role = role.(entity.Role)
 }
 

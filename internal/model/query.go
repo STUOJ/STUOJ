@@ -3,14 +3,15 @@ package model
 import (
 	"STUOJ/utils"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
 type Page struct {
-	Page  uint64 `json:"page,omitempty"`
-	Size  uint64 `json:"size,omitempty"`
-	Total uint64 `json:"total"`
+	Page  int64 `json:"page,omitempty"`
+	Size  int64 `json:"size,omitempty"`
+	Total int64 `json:"total"`
 }
 
 type Field[T any] struct {
