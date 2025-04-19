@@ -5,7 +5,6 @@ package judgement
 
 import (
 	"fmt"
-	"time"
 
 	"STUOJ/internal/db/dao"
 	"STUOJ/internal/db/entity"
@@ -25,8 +24,6 @@ type Judgement struct {
 	CompileOutput string
 	Message       string
 	Status        entity.JudgeStatus
-	CreateTime    time.Time
-	UpdateTime    time.Time
 }
 
 func (j *Judgement) verify() error {
@@ -75,8 +72,6 @@ func (j *Judgement) toOption() *option.QueryOptions {
 }
 
 func (j *Judgement) Create() (int64, error) {
-	j.CreateTime = time.Now()
-	j.UpdateTime = time.Now()
 	if err := j.verify(); err != nil {
 		return 0, errors.ErrValidation.WithMessage(err.Error())
 	}
@@ -94,7 +89,6 @@ func (j *Judgement) Update() error {
 	if err != nil {
 		return errors.ErrNotFound.WithMessage(err.Error())
 	}
-	j.UpdateTime = time.Now()
 	if err := j.verify(); err != nil {
 		return errors.ErrValidation.WithMessage(err.Error())
 	}
