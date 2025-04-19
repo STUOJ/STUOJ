@@ -18,7 +18,7 @@ type BlogPage struct {
 	model.Page
 }
 
-// 根据Id查询博客
+// SelectById 根据Id查询博客
 func SelectById(id uint64, reqUser model.ReqUser) (response.BlogData, error) {
 	var res response.BlogData
 	blogQuery := querycontext.BlogQueryContext{}

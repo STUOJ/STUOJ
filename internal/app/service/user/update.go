@@ -7,7 +7,6 @@ import (
 	"STUOJ/internal/domain/image"
 	imgval "STUOJ/internal/domain/image/valueobject"
 	"STUOJ/internal/domain/user"
-	"STUOJ/internal/domain/user/valueobject"
 	"STUOJ/internal/errors"
 	"STUOJ/internal/model"
 	"io"
@@ -25,10 +24,13 @@ func Update(uid uint64, req request.UserUpdateReq, reqUser model.ReqUser) error 
 	}
 
 	// 更新字段
-	u0.Username = valueobject.Username(req.Username)
-	u0.Signature = valueobject.Signature(req.Signature)
+	u1 := user.NewUser(
+		user.WithId(u0.Id),
+		user.WithUsername(req.Username),
+		user.WithSignature(req.Signature),
+	)
 
-	return u0.Update(false)
+	return u1.Update(false)
 }
 
 // UpdatePassword 根据Id更新用户密码
@@ -42,9 +44,12 @@ func UpdatePassword(req request.UserForgetPasswordReq, reqUser model.ReqUser) er
 		return err
 	}
 
-	u0.Password = valueobject.Password(req.Password)
+	u1 := user.NewUser(
+		user.WithId(u0.Id),
+		user.WithPassword(req.Password),
+	)
 
-	return u0.Update(true)
+	return u1.Update(true)
 }
 
 // UpdateRole 根据Id更新用户权限组
@@ -65,9 +70,12 @@ func UpdateRole(req request.UserUpdateRoleReq, reqUser model.ReqUser) error {
 		return errors.ErrUnauthorized.WithMessage("没有权限修改用户权限组")
 	}
 
-	u0.Role = newRole
+	u1 := user.NewUser(
+		user.WithId(u0.Id),
+		user.WithRole(newRole),
+	)
 
-	return u0.Update(false)
+	return u1.Update(false)
 }
 
 // UpdateAvatar 更新用户头像
@@ -106,8 +114,11 @@ func UpdateAvatar(uid uint64, reader io.Reader, filename string, reqUser model.R
 	}
 
 	// 更新头像
-	u0.Avatar = valueobject.Avatar(url)
-	err = u0.Update(false)
+	u1 := user.NewUser(
+		user.WithId(u0.Id),
+		user.WithAvatar(url),
+	)
+	err = u1.Update(false)
 	if err != nil {
 		return "", err
 	}
