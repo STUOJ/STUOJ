@@ -11,6 +11,7 @@ import (
 type UserQueryContext struct {
 	Id        model.FieldList[uint64]
 	Username  model.Field[string]
+	Email     model.Field[string]
 	Role      model.FieldList[uint8]
 	StartTime model.Field[time.Time]
 	EndTime   model.Field[time.Time]
@@ -25,6 +26,9 @@ func (query *UserQueryContext) GenerateOptions() *option.QueryOptions {
 	}
 	if query.Username.Exist() {
 		options.Filters.Add(field.UserUsername, option.OpLike, query.Username.Value())
+	}
+	if query.Email.Exist() {
+		options.Filters.Add(field.UserEmail, option.OpEqual, query.Email.Value())
 	}
 	if query.Role.Exist() {
 		options.Filters.Add(field.UserRole, option.OpIn, query.Role.Value())

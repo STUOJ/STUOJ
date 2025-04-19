@@ -5,10 +5,12 @@ type QueryUserParams struct {
 	Id        *string `form:"id,omitempty"`
 	Order     *string `form:"order,omitempty"`
 	OrderBy   *string `form:"order_by,omitempty"`
-	Page      *int64  `form:"page,omitempty"`
+	Page      *uint64 `form:"page,omitempty"`
 	Role      *string `form:"role,omitempty"`
-	Size      *int64  `form:"size,omitempty"`
+	Size      *uint64 `form:"size,omitempty"`
 	StartTime *string `form:"start-time,omitempty"`
+	Username  *string `form:"username,omitempty"`
+	Email     *string `form:"email,omitempty"`
 }
 
 type UserRegisterReq struct {

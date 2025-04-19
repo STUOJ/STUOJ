@@ -19,6 +19,7 @@ func (p Password) String() string {
 	return string(p)
 }
 
+// Hash 密码加密
 func (p Password) Hash() (Password, error) {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(p), bcrypt.DefaultCost)
 	if err != nil {
@@ -27,8 +28,9 @@ func (p Password) Hash() (Password, error) {
 	return Password(hashedPassword), nil
 }
 
-func (p Password) VerifyHash(hashedPassword string) error {
-	return bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(p))
+// VerifyHash 验证密码
+func (p Password) VerifyHash(pw string) error {
+	return bcrypt.CompareHashAndPassword([]byte(p), []byte(pw))
 }
 
 func NewPassword(pw string) Password {
