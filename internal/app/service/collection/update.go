@@ -12,10 +12,10 @@ import (
 	"sort"
 )
 
-// 根据ID更新题单
+// 根据Id更新题单
 func Update(req request.UpdateCollectionReq, reqUser model.ReqUser) error {
 	queryContext := querycontext.CollectionQueryContext{}
-	queryContext.Id.Add(req.ID)
+	queryContext.Id.Add(req.Id)
 	c0, _, err := collection.Query.SelectOne(queryContext)
 	if err != nil {
 		return err
@@ -24,7 +24,7 @@ func Update(req request.UpdateCollectionReq, reqUser model.ReqUser) error {
 	if err != nil {
 		return err
 	}
-	c := collection.NewCollection(collection.WithId(uint64(req.ID)),
+	c := collection.NewCollection(collection.WithId(uint64(req.Id)),
 		collection.WithTitle(req.Title),
 		collection.WithDescription(req.Description),
 		collection.WithStatus(entity.CollectionStatus(req.Status)),
@@ -36,7 +36,7 @@ func Update(req request.UpdateCollectionReq, reqUser model.ReqUser) error {
 func UpdateProblem(req request.UpdateCollectionProblemReq, reqUser model.ReqUser) error {
 	// 查询题单
 	queryContext := querycontext.CollectionQueryContext{}
-	queryContext.Id.Add(req.CollectionID)
+	queryContext.Id.Add(req.CollectionId)
 	c0, _, err := collection.Query.SelectOne(queryContext)
 	if err != nil {
 		return err
@@ -53,7 +53,7 @@ func UpdateProblem(req request.UpdateCollectionProblemReq, reqUser model.ReqUser
 
 	problemIds := make([]int64, len(req.Problem))
 	for _, i := range req.Problem {
-		problemIds = append(problemIds, i.ProblemID)
+		problemIds = append(problemIds, i.ProblemId)
 	}
 
 	// 查询题目
@@ -77,23 +77,23 @@ func UpdateProblem(req request.UpdateCollectionProblemReq, reqUser model.ReqUser
 func UpdateUser(req request.UpdateCollectionUserReq, reqUser model.ReqUser) error {
 	// 查询题单
 	queryContext := querycontext.CollectionQueryContext{}
-	queryContext.Id.Add(req.CollectionID)
+	queryContext.Id.Add(req.CollectionId)
 	c0, _, err := collection.Query.SelectOne(queryContext)
 	if err != nil {
 		return err
 	}
-	if c0.UserId != uint64(reqUser.ID) {
+	if c0.UserId != uint64(reqUser.Id) {
 		return errors.ErrUnauthorized.WithMessage("没有权限修改该题单的合作者")
 	}
 	// 查询用户
 	query := querycontext.UserQueryContext{}
-	query.Id.Set(req.UserIDS)
+	query.Id.Set(req.UserIdS)
 	count, err := user.Query.Count(query)
 	if err != nil {
 		return err
 	}
-	if count != int64(len(req.UserIDS)) {
+	if count != int64(len(req.UserIdS)) {
 		return errors.ErrUnauthorized.WithMessage("有用户不存在")
 	}
-	return c0.UpdateUser(req.UserIDS)
+	return c0.UpdateUser(req.UserIdS)
 }

@@ -9,9 +9,10 @@ import (
 
 //go:generate go run ../../../utils/gen/querycontext_gen.go UserQueryContext
 type UserQueryContext struct {
-	Id        model.FieldList[int64]
+	Id        model.FieldList[uint64]
 	Username  model.Field[string]
-	Role      model.FieldList[int8]
+	Email     model.Field[string]
+	Role      model.FieldList[uint8]
 	StartTime model.Field[time.Time]
 	EndTime   model.Field[time.Time]
 	option.QueryParams
@@ -25,6 +26,9 @@ func (query *UserQueryContext) GenerateOptions() *option.QueryOptions {
 	}
 	if query.Username.Exist() {
 		options.Filters.Add(field.UserUsername, option.OpLike, query.Username.Value())
+	}
+	if query.Email.Exist() {
+		options.Filters.Add(field.UserEmail, option.OpEqual, query.Email.Value())
 	}
 	if query.Role.Exist() {
 		options.Filters.Add(field.UserRole, option.OpIn, query.Role.Value())

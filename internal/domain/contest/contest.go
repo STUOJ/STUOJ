@@ -31,7 +31,7 @@ type Contest struct {
 
 func (c *Contest) verify() error {
 	if c.UserId == 0 {
-		return fmt.Errorf("用户ID不能为空")
+		return fmt.Errorf("用户Id不能为空")
 	}
 	if !entity.ContestStatus(c.Status).IsValid() {
 		return fmt.Errorf("比赛状态不合法")

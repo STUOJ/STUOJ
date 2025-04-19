@@ -3,6 +3,7 @@ package entity
 import "time"
 
 // CommentStatus 状态：1 屏蔽, 2 公开
+//
 //go:generate go run ../../../utils/gen/enum_valid.go CommentStatus
 type CommentStatus uint8
 
@@ -22,13 +23,14 @@ func (s CommentStatus) String() string {
 	}
 }
 
+// Comment 评论
+//
 //go:generate go run ../../../utils/gen/dao_store.go -struct=Comment
 //go:generate go run ../../../utils/gen/field_select.go -struct=Comment
-// Comment 评论
 type Comment struct {
-	Id         uint64        `gorm:"primaryKey;autoIncrement;comment:评论ID"`
-	UserId     uint64        `gorm:"not null;default:0;comment:用户ID"`
-	BlogId     uint64        `gorm:"not null;default:0;comment:博客ID"`
+	Id         uint64        `gorm:"primaryKey;autoIncrement;comment:评论Id"`
+	UserId     uint64        `gorm:"not null;default:0;comment:用户Id"`
+	BlogId     uint64        `gorm:"not null;default:0;comment:博客Id"`
 	Content    string        `gorm:"type:longtext;not null;comment:内容"`
 	Status     CommentStatus `gorm:"not null;default:1;comment:状态"`
 	CreateTime time.Time     `gorm:"type:timestamp;not null;default:CURRENT_TIMESTAMP;comment:创建时间"`

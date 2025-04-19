@@ -28,8 +28,8 @@ func (s CollectionStatus) String() string {
 //go:generate go run ../../../utils/gen/dao_store.go -struct=Collection
 //go:generate go run ../../../utils/gen/field_select.go -struct=Collection
 type Collection struct {
-	Id          uint64           `gorm:"primaryKey;autoIncrement;comment:题单ID"`
-	UserId      uint64           `gorm:"not null;default:0;comment:用户ID"`
+	Id          uint64           `gorm:"primaryKey;autoIncrement;comment:题单Id"`
+	UserId      uint64           `gorm:"not null;default:0;comment:用户Id"`
 	Title       string           `gorm:"type:text;not null;comment:标题"`
 	Description string           `gorm:"type:longtext;not null;comment:简介"`
 	Status      CollectionStatus `gorm:"not null;default:1;comment:状态"`
@@ -45,8 +45,8 @@ func (Collection) TableName() string {
 //go:generate go run ../../../utils/gen/dao_store.go -struct=CollectionUser
 //go:generate go run ../../../utils/gen/field_select.go -struct=CollectionUser
 type CollectionUser struct {
-	CollectionId uint64     `gorm:"not null;default:0;primaryKey;comment:题单ID"`
-	UserId       uint64     `gorm:"not null;default:0;primaryKey;comment:用户ID"`
+	CollectionId uint64     `gorm:"not null;default:0;primaryKey;comment:题单Id"`
+	UserId       uint64     `gorm:"not null;default:0;primaryKey;comment:用户Id"`
 	User         User       `gorm:"foreignKey:UserId;references:Id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Collection   Collection `gorm:"foreignKey:CollectionId;references:Id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
@@ -58,8 +58,8 @@ func (CollectionUser) TableName() string {
 //go:generate go run ../../../utils/gen/dao_store.go -struct=CollectionProblem
 //go:generate go run ../../../utils/gen/field_select.go -struct=CollectionProblem
 type CollectionProblem struct {
-	CollectionId uint64     `gorm:"not null;default:0;primaryKey;comment:题单ID"`
-	ProblemId    uint64     `gorm:"not null;default:0;primaryKey;comment:题目ID"`
+	CollectionId uint64     `gorm:"not null;default:0;primaryKey;comment:题单Id"`
+	ProblemId    uint64     `gorm:"not null;default:0;primaryKey;comment:题目Id"`
 	Serial       uint16     `gorm:"not null;default:0;comment:排序序号"`
 	Collection   Collection `gorm:"foreignKey:CollectionId;references:Id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Problem      Problem    `gorm:"foreignKey:ProblemId;references:Id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`

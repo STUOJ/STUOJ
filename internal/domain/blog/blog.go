@@ -16,9 +16,9 @@ import (
 )
 
 type Blog struct {
-	ID         uint64
-	UserID     uint64
-	ProblemID  uint64
+	Id         uint64
+	UserId     uint64
+	ProblemId  uint64
 	Title      valueobject.Title
 	Content    valueobject.Content
 	Status     entity.BlogStatus
@@ -27,8 +27,8 @@ type Blog struct {
 }
 
 func (b *Blog) verify() error {
-	if b.UserID == 0 {
-		return fmt.Errorf("用户ID不能为空")
+	if b.UserId == 0 {
+		return fmt.Errorf("用户Id不能为空")
 	}
 	if !entity.BlogStatus(b.Status).IsValid() {
 		return fmt.Errorf("博客状态不合法")
@@ -44,9 +44,9 @@ func (b *Blog) verify() error {
 
 func (b *Blog) toEntity() entity.Blog {
 	return entity.Blog{
-		Id:         b.ID,
-		UserId:     b.UserID,
-		ProblemId:  b.ProblemID,
+		Id:         b.Id,
+		UserId:     b.UserId,
+		ProblemId:  b.ProblemId,
 		Title:      b.Title.String(),
 		Content:    b.Content.String(),
 		Status:     b.Status,
@@ -56,9 +56,9 @@ func (b *Blog) toEntity() entity.Blog {
 }
 
 func (b *Blog) fromEntity(blog entity.Blog) *Blog {
-	b.ID = blog.Id
-	b.UserID = blog.UserId
-	b.ProblemID = blog.ProblemId
+	b.Id = blog.Id
+	b.UserId = blog.UserId
+	b.ProblemId = blog.ProblemId
 	b.Title = valueobject.NewTitle(blog.Title)
 	b.Content = valueobject.NewContent(blog.Content)
 	b.Status = blog.Status
@@ -69,7 +69,7 @@ func (b *Blog) fromEntity(blog entity.Blog) *Blog {
 
 func (b *Blog) toOption() *option.QueryOptions {
 	options := option.NewQueryOptions()
-	options.Filters.Add(field.BlogId, option.OpEqual, b.ID)
+	options.Filters.Add(field.BlogId, option.OpEqual, b.Id)
 	return options
 }
 
@@ -115,52 +115,4 @@ func (b *Blog) Delete() error {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
 	return &errors.NoError
-}
-
-type Option func(*Blog)
-
-func NewBlog(option ...Option) *Blog {
-	b := &Blog{
-		Status: entity.BlogDraft,
-	}
-	for _, opt := range option {
-		opt(b)
-	}
-	return b
-}
-
-func WithID(id uint64) Option {
-	return func(b *Blog) {
-		b.ID = id
-	}
-}
-
-func WithUserID(userID uint64) Option {
-	return func(b *Blog) {
-		b.UserID = userID
-	}
-}
-
-func WithProblemID(problemID uint64) Option {
-	return func(b *Blog) {
-		b.ProblemID = problemID
-	}
-}
-
-func WithTitle(title string) Option {
-	return func(b *Blog) {
-		b.Title = valueobject.NewTitle(title)
-	}
-}
-
-func WithContent(content string) Option {
-	return func(b *Blog) {
-		b.Content = valueobject.NewContent(content)
-	}
-}
-
-func WithStatus(status entity.BlogStatus) Option {
-	return func(b *Blog) {
-		b.Status = status
-	}
 }

@@ -1,6 +1,7 @@
 package valueobject
 
 import (
+	"STUOJ/utils"
 	"errors"
 )
 
@@ -17,6 +18,9 @@ func (s Signature) String() string {
 	return string(s)
 }
 
-func NewSignature(signature string) Signature {
-	return Signature(signature)
+func NewSignature(s string) Signature {
+	// 预处理
+	s = utils.Senitize(s)
+
+	return Signature(s)
 }

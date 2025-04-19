@@ -30,7 +30,7 @@ type CreateProblemReq struct {
 	SampleOutput string  `json:"sample_output,omitempty"`
 	Source       string  `json:"source,omitempty"`
 	Status       int64   `json:"status,omitempty"`
-	TagIDS       []int64 `json:"tag_ids"`
+	TagIdS       []int64 `json:"tag_ids"`
 	TimeLimit    int64   `json:"time_limit,omitempty"`
 	Title        string  `json:"title"`
 }
@@ -39,7 +39,7 @@ type UpdateProblemReq struct {
 	Description  string  `json:"description,omitempty"`
 	Difficulty   int64   `json:"difficulty"`
 	Hint         string  `json:"hint,omitempty"`
-	ID           int64   `json:"id"`
+	Id           int64   `json:"id"`
 	Input        string  `json:"input,omitempty"`
 	MemoryLimit  int64   `json:"memory_limit,omitempty"`
 	Output       string  `json:"output,omitempty"`
@@ -47,7 +47,7 @@ type UpdateProblemReq struct {
 	SampleOutput string  `json:"sample_output,omitempty"`
 	Source       string  `json:"source,omitempty"`
 	Status       int64   `json:"status,omitempty"`
-	TagIDS       []int64 `json:"tag_ids"`
+	TagIdS       []int64 `json:"tag_ids"`
 	TimeLimit    int64   `json:"time_limit,omitempty"`
 	Title        string  `json:"title"`
 }

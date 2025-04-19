@@ -27,10 +27,10 @@ type Comment struct {
 
 func (c *Comment) verify() error {
 	if c.UserId == 0 {
-		return fmt.Errorf("用户ID不能为空")
+		return fmt.Errorf("用户Id不能为空")
 	}
 	if c.BlogId == 0 {
-		return fmt.Errorf("博客ID不能为空")
+		return fmt.Errorf("博客Id不能为空")
 	}
 	if !entity.CommentStatus(c.Status).IsValid() {
 		return fmt.Errorf("评论状态不合法")

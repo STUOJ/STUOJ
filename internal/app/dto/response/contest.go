@@ -9,8 +9,8 @@ type ContestData struct {
 	EndTime string `json:"end_time"`
 	// 赛制
 	Format int64 `json:"format"`
-	// 比赛ID
-	ID      int64 `json:"id"`
+	// 比赛Id
+	Id      int64 `json:"id"`
 	Problem []struct {
 		ProblemSimpleData
 		ProblemUserScore
@@ -35,8 +35,8 @@ type ContestListItemData struct {
 	EndTime string `json:"end_time"`
 	// 赛制
 	Format int64 `json:"format"`
-	// 比赛ID
-	ID int64 `json:"id"`
+	// 比赛Id
+	Id int64 `json:"id"`
 	// 开始时间
 	StartTime string `json:"start_time"`
 	// 状态

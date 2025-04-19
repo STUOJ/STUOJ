@@ -31,8 +31,8 @@ type UpdateContestReq struct {
 	EndTime string `form:"end_time"`
 	// 赛制
 	Format int64 `form:"format"`
-	// 比赛ID
-	ID int64 `form:"id"`
+	// 比赛Id
+	Id int64 `form:"id"`
 	// 开始时间
 	StartTime string `form:"start_time"`
 	// 状态
