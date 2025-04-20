@@ -84,8 +84,8 @@ func Select(params request.QueryBlogParams, reqUser model.ReqUser) (BlogPage, er
 		var resBlog response.BlogData
 		resBlog = domain2Resp(blog_)
 		if blog_.ProblemId != 0 {
-			resBlog.Problem.ProblemSimpleData = response.Map2ProblemSimpleData(problemMap[int64(blog_.ProblemId)])
-			resBlog.Problem.ProblemUserScore = response.Map2ProblemUserScore(problemMap[int64(blog_.ProblemId)])
+			resBlog.Problem.ProblemSimpleData = response.Map2ProblemSimpleData(problemMap[blog_.ProblemId])
+			resBlog.Problem.ProblemUserScore = response.Map2ProblemUserScore(problemMap[blog_.ProblemId])
 		}
 		if blog_.UserId != 0 {
 			resBlog.User = response.Domain2UserSimpleData(users[blog_.UserId])

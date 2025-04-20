@@ -8,6 +8,7 @@ import (
 	"STUOJ/internal/model"
 )
 
+// Insert 插入评测点数据
 func Insert(req request.CreateTestcaseReq, reqUser model.ReqUser) (int64, error) {
 	t := testcase.NewTestcase(
 		testcase.WithProblemId(req.ProblemId),

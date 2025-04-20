@@ -19,10 +19,10 @@ type Submission struct {
 	UserId     int64
 	ProblemId  int64
 	Status     entity.JudgeStatus
-	Score      uint8
+	Score      int64
 	Memory     int64
 	Time       float64
-	Length     uint32
+	Length     int64
 	LanguageId int64
 	SourceCode valueobject.SourceCode
 	CreateTime time.Time
@@ -45,10 +45,10 @@ func (s *Submission) toEntity() entity.Submission {
 		UserId:     uint64(s.UserId),
 		ProblemId:  uint64(s.ProblemId),
 		Status:     s.Status,
-		Score:      s.Score,
+		Score:      uint8(s.Score),
 		Memory:     uint64(s.Memory),
 		Time:       s.Time,
-		Length:     s.Length,
+		Length:     uint32(s.Length),
 		LanguageId: uint64(s.LanguageId),
 		SourceCode: s.SourceCode.String(),
 		CreateTime: s.CreateTime,
@@ -61,10 +61,10 @@ func (s *Submission) fromEntity(submission entity.Submission) *Submission {
 	s.UserId = int64(submission.UserId)
 	s.ProblemId = int64(submission.ProblemId)
 	s.Status = submission.Status
-	s.Score = submission.Score
+	s.Score = int64(submission.Score)
 	s.Memory = int64(submission.Memory)
 	s.Time = submission.Time
-	s.Length = submission.Length
+	s.Length = int64(submission.Length)
 	s.LanguageId = int64(submission.LanguageId)
 	s.SourceCode = valueobject.NewSourceCode(submission.SourceCode)
 	s.CreateTime = submission.CreateTime
@@ -160,7 +160,7 @@ func WithStatus(status entity.JudgeStatus) Option {
 
 func WithScore(score uint8) Option {
 	return func(s *Submission) {
-		s.Score = score
+		s.Score = int64(score)
 	}
 }
 
@@ -178,7 +178,7 @@ func WithTime(time float64) Option {
 
 func WithLength(length uint32) Option {
 	return func(s *Submission) {
-		s.Length = length
+		s.Length = int64(length)
 	}
 }
 

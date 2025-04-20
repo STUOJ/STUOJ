@@ -50,16 +50,16 @@ func SelectByEmail(email string, reqUser model.ReqUser) (response.UserData, erro
 	return resp, nil
 }
 
-// 查询所有用户
+// Select 查询所有用户
 func Select(params request.QueryUserParams, reqUser model.ReqUser) (UserPage, error) {
 	var resp UserPage
-	qc := params2Query(params)
-	qc.Field.SelectId().SelectUsername().SelectRole().SelectEmail().SelectAvatar().SelectSignature().SelectCreateTime().SelectUpdateTime()
 
 	// 查询
+	qc := params2Query(params)
+	qc.Field.SelectId().SelectUsername().SelectRole().SelectEmail().SelectAvatar().SelectSignature().SelectCreateTime().SelectUpdateTime()
 	users, _, err := user.Query.Select(qc)
 	if err != nil {
-		return UserPage{}, err
+		return resp, err
 	}
 
 	for _, u := range users {
@@ -76,7 +76,7 @@ func Select(params request.QueryUserParams, reqUser model.ReqUser) (UserPage, er
 	return resp, nil
 }
 
-// 根据邮箱验证密码
+// LoginByEmail 根据邮箱验证密码
 func LoginByEmail(req request.UserLoginReq, reqUser model.ReqUser) (string, error) {
 	qc := querycontext.UserQueryContext{}
 	qc.Email.Set(req.Email)

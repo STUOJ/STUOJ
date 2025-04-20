@@ -13,5 +13,5 @@ func Count(req request.QueryUserParams) (int64, error) {
 		return 0, err
 	}
 
-	return int64(count), nil
+	return count, nil
 }
