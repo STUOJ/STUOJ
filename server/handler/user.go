@@ -166,7 +166,7 @@ func UserList(c *gin.Context) {
 
 func UserAdd(c *gin.Context) {
 	reqUser := model.NewReqUser(c)
-	var req request.AddUserReq
+	var req request.CreateUserReq
 
 	// 参数绑定
 	err := c.ShouldBindBodyWithJSON(&req)
