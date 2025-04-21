@@ -2,10 +2,8 @@ package testcase
 
 import (
 	"STUOJ/internal/app/dto/response"
-	"STUOJ/internal/db/entity"
 	"STUOJ/internal/db/querycontext"
 	"STUOJ/internal/domain/testcase"
-	"STUOJ/internal/errors"
 	"STUOJ/internal/model"
 )
 
@@ -14,8 +12,9 @@ func SelectById(id int64, reqUser model.ReqUser) (response.TestcaseData, error) 
 	var resp response.TestcaseData
 
 	// 检查权限
-	if reqUser.Role < entity.RoleEditor {
-		return resp, &errors.ErrUnauthorized
+	err := isPermission(reqUser)
+	if err != nil {
+		return resp, err
 	}
 
 	// 查询

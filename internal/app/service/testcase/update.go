@@ -2,19 +2,18 @@ package testcase
 
 import (
 	"STUOJ/internal/app/dto/request"
-	"STUOJ/internal/db/entity"
 	"STUOJ/internal/db/querycontext"
 	"STUOJ/internal/domain/testcase"
 	"STUOJ/internal/domain/testcase/valueobject"
-	"STUOJ/internal/errors"
 	"STUOJ/internal/model"
 )
 
 // Update 根据ID更新评测点数据
 func Update(req request.UpdateTestcaseReq, reqUser model.ReqUser) error {
 	// 检查权限
-	if reqUser.Role < entity.RoleEditor {
-		return &errors.ErrUnauthorized
+	err := isPermission(reqUser)
+	if err != nil {
+		return err
 	}
 
 	// 查询

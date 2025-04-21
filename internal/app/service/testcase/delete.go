@@ -1,18 +1,17 @@
 package testcase
 
 import (
-	"STUOJ/internal/db/entity"
 	"STUOJ/internal/db/querycontext"
 	"STUOJ/internal/domain/testcase"
-	"STUOJ/internal/errors"
 	"STUOJ/internal/model"
 )
 
 // Delete 根据ID删除评测点数据
 func Delete(id int64, reqUser model.ReqUser) error {
 	// 检查权限
-	if reqUser.Role < entity.RoleEditor {
-		return &errors.ErrUnauthorized
+	err := isPermission(reqUser)
+	if err != nil {
+		return err
 	}
 
 	// 查询
