@@ -27,7 +27,7 @@ type UserLoginReq struct {
 	Password string `json:"password"`
 }
 
-type AddUserReq struct {
+type CreateUserReq struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 	Username string `json:"username"`
