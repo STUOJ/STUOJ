@@ -4,8 +4,6 @@ import (
 	"errors"
 	"regexp"
 	"time"
-
-	"golang.org/x/crypto/bcrypt"
 )
 
 // Role 角色：0 访客，1 用户，2 编辑，3 管理，4 站长
@@ -71,24 +69,4 @@ type User struct {
 
 func (User) TableName() string {
 	return "tbl_user"
-}
-
-// 对密码进行哈希
-func (u *User) HashPassword() error {
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
-	if err != nil {
-		return err
-	}
-	u.Password = string(hashedPassword)
-	return nil
-}
-
-// 验证密码
-func (u *User) VerifyByPassword(pw string) error {
-	return bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(pw))
-}
-
-// 验证密码
-func (u *User) VerifyByHashedPassword(hpw string) error {
-	return bcrypt.CompareHashAndPassword([]byte(hpw), []byte(u.Password))
 }
