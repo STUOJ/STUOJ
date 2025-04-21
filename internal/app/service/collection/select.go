@@ -21,11 +21,12 @@ type CollectionPage struct {
 	model.Page
 }
 
-// 根据Id查询题单
+// SelectById 根据Id查询题单
 func SelectById(id int64, reqUser model.ReqUser) (response.CollectionData, error) {
 	var res response.CollectionData
 	// 获取题单信息
 	collectionQueryContext := querycontext.CollectionQueryContext{}
+	collectionQueryContext.Id.Add(id)
 	collectionQueryContext.Field = *query.CollectionAllField
 	collectionDomain, collectionMap, err := collection.Query.SelectOne(collectionQueryContext, collection.QueryProblemId(), collection.QueryUserId())
 	if err != nil {
@@ -71,7 +72,7 @@ func SelectById(id int64, reqUser model.ReqUser) (response.CollectionData, error
 	return res, err
 }
 
-// 查询题单
+// Select 查询题单
 func Select(params request.QueryCollectionParams, reqUser model.ReqUser) (CollectionPage, error) {
 	var res CollectionPage
 	query_ := params2Model(params)
@@ -101,9 +102,9 @@ func Select(params request.QueryCollectionParams, reqUser model.ReqUser) (Collec
 		res.Collections = append(res.Collections, resCollection)
 	}
 
-	res.Page.Page = int64(query_.Page.Page)
-	res.Page.Size = int64(query_.Page.PageSize)
+	res.Page.Page = query_.Page.Page
+	res.Page.Size = query_.Page.PageSize
 	total, _ := GetStatistics(params)
-	res.Page.Total = int64(total)
+	res.Page.Total = total
 	return res, err
 }

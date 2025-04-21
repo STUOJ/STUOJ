@@ -12,10 +12,10 @@ import (
 	"sort"
 )
 
-// 根据Id更新题单
+// Update 根据Id更新题单
 func Update(req request.UpdateCollectionReq, reqUser model.ReqUser) error {
 	queryContext := querycontext.CollectionQueryContext{}
-	queryContext.Id.Add(int64(req.Id))
+	queryContext.Id.Add(req.Id)
 	c0, _, err := collection.Query.SelectOne(queryContext)
 	if err != nil {
 		return err
@@ -32,7 +32,7 @@ func Update(req request.UpdateCollectionReq, reqUser model.ReqUser) error {
 	return c.Update()
 }
 
-// 给题单添加题目
+// UpdateProblem 给题单添加题目
 func UpdateProblem(req request.UpdateCollectionProblemReq, reqUser model.ReqUser) error {
 	// 查询题单
 	queryContext := querycontext.CollectionQueryContext{}
@@ -90,7 +90,7 @@ func UpdateUser(req request.UpdateCollectionUserReq, reqUser model.ReqUser) erro
 	// 将int64切片转换为uint64切片
 	userIds := make([]int64, len(req.UserIds))
 	for i, id := range req.UserIds {
-		userIds[i] = int64(id)
+		userIds[i] = id
 	}
 	query.Id.Add(userIds...)
 	count, err := user.Query.Count(query)
