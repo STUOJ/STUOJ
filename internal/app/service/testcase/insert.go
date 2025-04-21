@@ -22,5 +22,11 @@ func Insert(req request.CreateTestcaseReq, reqUser model.ReqUser) (int64, error)
 		return 0, &errors.ErrUnauthorized
 	}
 
+	// 更新题目更新时间
+	err := updateProblemUpdateTime(req.ProblemId)
+	if err != nil {
+		return 0, err
+	}
+
 	return t.Create()
 }
