@@ -4,7 +4,6 @@ import (
 	"STUOJ/internal/app/dto/request"
 	"STUOJ/internal/db/querycontext"
 	"STUOJ/internal/domain/testcase"
-	"STUOJ/internal/domain/testcase/valueobject"
 	"STUOJ/internal/model"
 )
 
@@ -24,10 +23,6 @@ func Update(req request.UpdateTestcaseReq, reqUser model.ReqUser) error {
 	if err != nil {
 		return err
 	}
-
-	tc0.Serial = req.Serial
-	tc0.TestInput = valueobject.NewTestInput(req.TestInput)
-	tc0.TestOutput = valueobject.NewTestOutput(req.TestOutput)
 
 	tc1 := testcase.NewTestcase(
 		testcase.WithId(tc0.Id),
