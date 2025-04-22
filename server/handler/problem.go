@@ -1,12 +1,13 @@
 package handler
 
 import (
-	"STUOJ/internal/entity"
+	"STUOJ/internal/app/dto/request"
+
+	"STUOJ/internal/app/service/history"
+	"STUOJ/internal/app/service/problem"
+	"STUOJ/internal/errors"
 	"STUOJ/internal/model"
-	"STUOJ/internal/service/history"
-	"STUOJ/internal/service/problem"
-	"STUOJ/utils"
-	"log"
+
 	"net/http"
 	"strconv"
 
@@ -15,20 +16,16 @@ import (
 
 // 获取题目信息
 func ProblemInfo(c *gin.Context) {
-	role, uid := utils.GetUserInfo(c)
+	reqUser := model.NewReqUser(c)
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		c.Error(&errors.ErrValidation)
 		return
 	}
 
-	pid := uint64(id)
-	where := model.ProblemWhere{}
-	where.Parse(c)
-	p, err := problem.SelectById(pid, uid, role, where)
+	p, err := problem.SelectById(int64(id), *reqUser)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		c.Error(err)
 		return
 	}
 
@@ -37,125 +34,64 @@ func ProblemInfo(c *gin.Context) {
 
 // 获取题目列表
 func ProblemList(c *gin.Context) {
-	role, userId := utils.GetUserInfo(c)
+	reqUser := model.NewReqUser(c)
+	params := request.QueryProblemParams{}
+	if err := c.ShouldBindQuery(&params); err != nil {
+		c.Error(&errors.ErrValidation)
+		return
+	}
 
-	condition := model.ProblemWhere{}
-	condition.Parse(c)
-
-	ps, err := problem.Select(condition, userId, role)
+	ps, err := problem.Select(params, *reqUser)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		c.Error(err)
 		return
 	}
 
 	c.JSON(http.StatusOK, model.RespOk("OK", ps))
 }
 
-// 解析题目查询条件
-
 // 添加题目
-type ReqProblemAdd struct {
-	Title        string               `json:"title" binding:"required"`
-	Source       string               `json:"source"`
-	Difficulty   entity.Difficulty    `json:"difficulty"`
-	TimeLimit    float64              `json:"time_limit" binding:"required"`
-	MemoryLimit  uint64               `json:"memory_limit" binding:"required"`
-	Description  string               `json:"description" binding:"required"`
-	Input        string               `json:"input" binding:"required"`
-	Output       string               `json:"output" binding:"required"`
-	SampleInput  string               `json:"sample_input" binding:"required"`
-	SampleOutput string               `json:"sample_output" binding:"required"`
-	Hint         string               `json:"hint"`
-	Status       entity.ProblemStatus `json:"status"`
-}
 
 func ProblemAdd(c *gin.Context) {
-	_, uid := utils.GetUserInfo(c)
-	var req ReqProblemAdd
+	reqUser := model.NewReqUser(c)
+	var req request.CreateProblemReq
 
 	// 参数绑定
 	err := c.ShouldBindBodyWithJSON(&req)
 	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", err.Error()))
+		c.Error(&errors.ErrValidation)
 		return
 	}
 
-	// 初始化题目
-	p := entity.Problem{
-		Title:        req.Title,
-		Source:       req.Source,
-		Difficulty:   req.Difficulty,
-		TimeLimit:    req.TimeLimit,
-		MemoryLimit:  req.MemoryLimit,
-		Description:  req.Description,
-		Input:        req.Input,
-		Output:       req.Output,
-		SampleInput:  req.SampleInput,
-		SampleOutput: req.SampleOutput,
-		Hint:         req.Hint,
-		Status:       req.Status,
-	}
-	p.Id, err = problem.Insert(p, uid)
+	// 插入题目
+	id, err := problem.Insert(req, *reqUser)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		c.Error(err)
 		return
 	}
 
 	// 返回结果
-	c.JSON(http.StatusOK, model.RespOk("添加成功，返回题目ID", p.Id))
+	c.JSON(http.StatusOK, model.RespOk("添加成功，返回题目ID", id))
 }
 
 // 修改题目
-type ReqProblemModify struct {
-	Id           uint64               `json:"id" binding:"required"`
-	Title        string               `json:"title" binding:"required"`
-	Source       string               `json:"source"`
-	Difficulty   entity.Difficulty    `json:"difficulty" binding:"required,statusRange"`
-	TimeLimit    float64              `json:"time_limit" binding:"required"`
-	MemoryLimit  uint64               `json:"memory_limit" binding:"required"`
-	Description  string               `json:"description" binding:"required"`
-	Input        string               `json:"input" binding:"required"`
-	Output       string               `json:"output" binding:"required"`
-	SampleInput  string               `json:"sample_input" binding:"required"`
-	SampleOutput string               `json:"sample_output" binding:"required"`
-	Hint         string               `json:"hint"`
-	Status       entity.ProblemStatus `json:"status" binding:"required,statusRange"`
-}
 
 // 修改题目
 func ProblemModify(c *gin.Context) {
-	role, uid := utils.GetUserInfo(c)
-	var req ReqProblemModify
+	reqUser := model.NewReqUser(c)
+	var req request.UpdateProblemReq
 
 	// 参数绑定
 	err := c.ShouldBindBodyWithJSON(&req)
 	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", err.Error()))
+		c.Error(&errors.ErrValidation)
 		return
 	}
 
-	// 初始化题目对象
-	p := entity.Problem{
-		Id:           req.Id,
-		Title:        req.Title,
-		Source:       req.Source,
-		Difficulty:   req.Difficulty,
-		TimeLimit:    req.TimeLimit,
-		MemoryLimit:  req.MemoryLimit,
-		Description:  req.Description,
-		Input:        req.Input,
-		Output:       req.Output,
-		SampleInput:  req.SampleInput,
-		SampleOutput: req.SampleOutput,
-		Hint:         req.Hint,
-		Status:       req.Status,
-	}
-
-	err = problem.Update(p, uid, role)
+	// 修改题目
+	err = problem.Update(req, *reqUser)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		c.Error(err)
 		return
 	}
 
@@ -163,41 +99,37 @@ func ProblemModify(c *gin.Context) {
 	c.JSON(http.StatusOK, model.RespOk("修改成功", nil))
 }
 
-// 删除题目
-func ProblemRemove(c *gin.Context) {
-	role, uid := utils.GetUserInfo(c)
+func HistoryInfo(c *gin.Context) {
+	reqUser := model.NewReqUser(c)
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		c.Error(&errors.ErrValidation)
 		return
 	}
 
-	pid := uint64(id)
-	err = problem.Delete(pid, uid, role)
+	h, err := history.SelectById(int64(id), *reqUser)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		c.Error(err)
 		return
 	}
 
-	c.JSON(http.StatusOK, model.RespOk("删除成功", nil))
+	c.JSON(http.StatusOK, model.RespOk("OK", h))
 }
 
 // 获取题目历史记录
 func HistoryListOfProblem(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+	reqUser := model.NewReqUser(c)
+	params := request.QueryHistoryParams{}
+	if err := c.ShouldBindQuery(&params); err != nil {
+		c.Error(&errors.ErrValidation)
 		return
 	}
 
-	pid := uint64(id)
-	histories, err := history.SelectByProblemId(pid)
+	hs, err := history.Select(params, *reqUser)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		c.Error(err)
 		return
 	}
 
-	c.JSON(http.StatusOK, model.RespOk("OK", histories))
+	c.JSON(http.StatusOK, model.RespOk("OK", hs))
 }
