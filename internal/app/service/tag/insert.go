@@ -8,6 +8,7 @@ import (
 
 // Insert 插入标签
 func Insert(req request.CreateTagReq, reqUser model.ReqUser) (int64, error) {
+	// 检查权限
 	err := isPermission(reqUser)
 	if err != nil {
 		return 0, err
