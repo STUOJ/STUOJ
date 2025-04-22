@@ -11,7 +11,7 @@ type QueryProblemParams struct {
 	Status     *string `form:"status,omitempty"`
 	Tag        *string `form:"tag,omitempty"`
 	Title      *string `form:"title,omitempty"`
-	User       *string `form:"user,omitempty"`
+	User       *int64  `form:"user,omitempty"`
 }
 
 type QueryOneProblemParams struct {
@@ -30,7 +30,7 @@ type CreateProblemReq struct {
 	SampleOutput string  `json:"sample_output,omitempty"`
 	Source       string  `json:"source,omitempty"`
 	Status       int64   `json:"status,omitempty"`
-	TagIdS       []int64 `json:"tag_ids"`
+	TagIds       []int64 `json:"tag_ids"`
 	TimeLimit    int64   `json:"time_limit,omitempty"`
 	Title        string  `json:"title"`
 }
@@ -47,7 +47,7 @@ type UpdateProblemReq struct {
 	SampleOutput string  `json:"sample_output,omitempty"`
 	Source       string  `json:"source,omitempty"`
 	Status       int64   `json:"status,omitempty"`
-	TagIdS       []int64 `json:"tag_ids"`
+	TagIds       []int64 `json:"tag_ids"`
 	TimeLimit    int64   `json:"time_limit,omitempty"`
 	Title        string  `json:"title"`
 }
