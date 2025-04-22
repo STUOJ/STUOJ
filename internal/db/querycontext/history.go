@@ -16,6 +16,7 @@ type HistoryQueryContext struct {
 	Difficulty model.FieldList[int64]
 	StartTime  model.Field[time.Time]
 	EndTime    model.Field[time.Time]
+	Operation  model.FieldList[int8]
 	option.QueryParams
 	Field field.HistoryField
 }
@@ -42,6 +43,9 @@ func (query *HistoryQueryContext) GenerateOptions() *option.QueryOptions {
 	}
 	if query.EndTime.Exist() {
 		options.Filters.Add(field.HistoryCreateTime, option.OpLessEq, query.EndTime.Value())
+	}
+	if query.Operation.Exist() {
+		options.Filters.Add(field.HistoryOperation, option.OpIn, query.Operation.Value())
 	}
 	options.Filters.AddFiter(query.ExtraFilters.Conditions...)
 	options.Page = query.Page
