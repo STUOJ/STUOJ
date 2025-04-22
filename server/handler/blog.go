@@ -49,7 +49,7 @@ type ReqBlogSave struct {
 	ProblemId uint64            `json:"problem_id,omitempty"`
 	Title     string            `json:"title" binding:"required"`
 	Content   string            `json:"content" binding:"required"`
-	Status    entity.BlogStatus `json:"status,omitempty" binding:"required,statusRange"`
+	Status    entity.BlogStatus `json:"status,omitempty" binding:"required"`
 }
 
 func BlogUpload(c *gin.Context) {
@@ -89,7 +89,7 @@ type ReqBlogEdit struct {
 	ProblemId uint64            `json:"problem_id,omitempty"`
 	Title     string            `json:"title,omitempty" binding:"required"`
 	Content   string            `json:"content,omitempty" binding:"required"`
-	Status    entity.BlogStatus `json:"status,omitempty" binding:"required,statusRange"`
+	Status    entity.BlogStatus `json:"status,omitempty" binding:"required"`
 }
 
 func BlogEdit(c *gin.Context) {

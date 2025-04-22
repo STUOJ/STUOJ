@@ -90,7 +90,7 @@ type ReqCommentModify struct {
 	UserId  uint64               `json:"user_id,omitempty" binding:"required"`
 	BlogId  uint64               `json:"blog_id,omitempty" binding:"required"`
 	Content string               `json:"content,omitempty" binding:"required"`
-	Status  entity.CommentStatus `json:"status,omitempty" binding:"required,statusRange"`
+	Status  entity.CommentStatus `json:"status,omitempty" binding:"required"`
 }
 
 func CommentModify(c *gin.Context) {

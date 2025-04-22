@@ -28,7 +28,7 @@ type ReqLanguageUpdate struct {
 	Id     uint64                `json:"id" binding:"required"`
 	Name   string                `json:"name"`
 	Serial uint16                `json:"serial" binding:"required"`
-	Status entity.LanguageStatus `json:"status" binding:"required,statusRange"`
+	Status entity.LanguageStatus `json:"status" binding:"required"`
 	MapId  uint32                `json:"map_id"`
 }
 

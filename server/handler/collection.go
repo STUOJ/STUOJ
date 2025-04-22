@@ -52,7 +52,7 @@ func CollectionList(c *gin.Context) {
 type ReqCollectionAdd struct {
 	Title       string                  `json:"title" binding:"required"`
 	Description string                  `json:"description" binding:"required"`
-	Status      entity.CollectionStatus `json:"status" binding:"required,statusRange"`
+	Status      entity.CollectionStatus `json:"status" binding:"required"`
 }
 
 func CollectionAdd(c *gin.Context) {
@@ -92,7 +92,7 @@ type ReqCollectionModify struct {
 	Id          uint64                  `json:"id" binding:"required"`
 	Title       string                  `json:"title" binding:"required"`
 	Description string                  `json:"description" binding:"required"`
-	Status      entity.CollectionStatus `json:"status" binding:"required,statusRange"`
+	Status      entity.CollectionStatus `json:"status" binding:"required"`
 }
 
 func CollectionModify(c *gin.Context) {

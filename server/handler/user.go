@@ -329,7 +329,7 @@ func UserRemove(c *gin.Context) {
 // 设置用户角色
 type ReqUserModifyRole struct {
 	Id   uint64      `json:"id" binding:"required"`
-	Role entity.Role `json:"role" binding:"required,statusRange"`
+	Role entity.Role `json:"role" binding:"required"`
 }
 
 func UserModifyRole(c *gin.Context) {
