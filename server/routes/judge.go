@@ -30,8 +30,6 @@ func InitRecordRoute(ginServer *gin.Engine) {
 	{
 		// 使用中间件
 		recordAdminRoute.Use(middlewares.TokenAuthAdmin())
-
-		recordAdminRoute.DELETE("/:id", handler.RecordRemove)
 	}
 }
 
