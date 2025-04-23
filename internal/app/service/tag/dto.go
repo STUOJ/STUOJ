@@ -1,0 +1,34 @@
+package tag
+
+import (
+	"STUOJ/internal/app/dto/request"
+	"STUOJ/internal/app/dto/response"
+	"STUOJ/internal/db/querycontext"
+	"STUOJ/internal/domain/tag"
+)
+
+// domain2Resp 将领域模型转换为响应模型
+func domain2Resp(t tag.Tag) response.TagData {
+	return response.TagData{
+		Id:   t.Id,
+		Name: t.Name.String(),
+	}
+}
+
+// params2Query 将请求参数转换为查询上下文
+func params2Query(params request.QueryTagParams) querycontext.TagQueryContext {
+	qc := querycontext.TagQueryContext{}
+
+	// 设置分页
+	if params.Page != nil && params.Size != nil {
+		qc.Page.Page = *params.Page
+		qc.Page.PageSize = *params.Size
+	}
+
+	// 设置名称查询
+	if params.Name != nil {
+		qc.Name.Add(*params.Name)
+	}
+
+	return qc
+}
