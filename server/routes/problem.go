@@ -21,11 +21,9 @@ func InitProblemRoute(ginServer *gin.Engine) {
 
 		problemEditorRoute.POST("/", handler.ProblemAdd)
 		problemEditorRoute.PUT("/", handler.ProblemModify)
-		problemEditorRoute.DELETE("/:id", handler.ProblemRemove)
 
-		problemEditorRoute.POST("/tag", handler.ProblemAddTag)
-		problemEditorRoute.DELETE("/tag", handler.ProblemRemoveTag)
-		problemEditorRoute.GET("/history/:id", handler.HistoryListOfProblem)
+		problemEditorRoute.GET("/history/", handler.HistoryListOfProblem)
+		problemEditorRoute.GET("/history/:id", handler.HistoryInfo)
 	}
 }
 
@@ -33,6 +31,7 @@ func InitTagRoute(ginServer *gin.Engine) {
 	tagPublicRoute := ginServer.Group("/tag")
 	{
 		tagPublicRoute.GET("/", handler.TagList)
+		tagPublicRoute.GET("/:id", handler.TagInfo)
 	}
 
 	tagEditorRoute := ginServer.Group("/tag")
