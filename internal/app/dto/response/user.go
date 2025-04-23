@@ -39,3 +39,12 @@ func Domain2UserSimpleData(u user.User) UserSimpleData {
 		Role:   uint8(u.Role),
 	}
 }
+
+func Map2UserSimpleData(u map[string]any) UserSimpleData {
+	return UserSimpleData{
+		Avatar: u["avatar"].(string),
+		Id:     u["id"].(int64),
+		Name:   u["name"].(string),
+		Role:   uint8(u["role"].(int64)),
+	}
+}
