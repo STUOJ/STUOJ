@@ -1,5 +1,7 @@
 package response
 
+import "STUOJ/internal/domain/blog"
+
 type BlogData struct {
 	Content    string `json:"content"`
 	CreateTime string `json:"create_time"`
@@ -16,7 +18,16 @@ type BlogData struct {
 
 type BlogSimpleData struct {
 	Id        int64  `json:"id"`
-	ProblemId *int64 `json:"problem_id,omitempty"`
+	ProblemId int64  `json:"problem_id,omitempty"`
 	Title     string `json:"title"`
 	UserId    int64  `json:"user_id"`
+}
+
+func Domain2BlogSimpleData(b blog.Blog) BlogSimpleData {
+	return BlogSimpleData{
+		Id:        b.Id,
+		ProblemId: b.ProblemId,
+		Title:     b.Title.String(),
+		UserId:    b.UserId,
+	}
 }
