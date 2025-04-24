@@ -45,7 +45,7 @@ func SelectById(id int64, reqUser model.ReqUser) (response.SolutionData, error) 
 	// 查询
 	qc := querycontext.SolutionQueryContext{}
 	qc.Id.Add(id)
-	qc.Field.SelectId()
+	qc.Field = *query.SolutionAllField
 	s0, _, err := solution.Query.SelectOne(qc)
 	if err != nil {
 		return resp, err
