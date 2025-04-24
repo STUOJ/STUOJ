@@ -1,5 +1,11 @@
 package request
 
+type QueryTestcaseParams struct {
+	Page    *int64  `json:"page,omitempty"`
+	Problem *string `json:"problem,omitempty"`
+	Size    *int64  `json:"size,omitempty"`
+}
+
 type CreateTestcaseReq struct {
 	ProblemId  int64  `json:"problem_id"`
 	Serial     uint16 `json:"serial"`
