@@ -1,7 +1,6 @@
 package solution
 
 import (
-	"STUOJ/internal/db/querycontext"
 	"STUOJ/internal/domain/solution"
 	"STUOJ/internal/model"
 )
@@ -14,20 +13,15 @@ func Delete(id int64, reqUser model.ReqUser) error {
 		return err
 	}
 
-	// 查询
-	qc := querycontext.SolutionQueryContext{}
-	qc.Id.Add(id)
-	qc.Field.SelectId()
-	s0, _, err := solution.Query.SelectOne(qc)
-	if err != nil {
-		return err
-	}
+	s1 := solution.NewSolution(
+		solution.WithId(id),
+	)
 
 	// 更新题目更新时间
-	err = updateProblemUpdateTime(s0.ProblemId)
+	err = updateProblemUpdateTime(id)
 	if err != nil {
 		return err
 	}
 
-	return s0.Delete()
+	return s1.Delete()
 }
