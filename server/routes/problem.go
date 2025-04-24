@@ -65,6 +65,7 @@ func InitSolutionRoute(ginServer *gin.Engine) {
 		// 使用中间件
 		solutionEditorRoute.Use(middlewares.TokenAuthEditor())
 
+		solutionEditorRoute.GET("/", handler.SolutionList)
 		solutionEditorRoute.GET("/:id", handler.SolutionInfo)
 		solutionEditorRoute.POST("/", handler.SolutionAdd)
 		solutionEditorRoute.PUT("/", handler.SolutionModify)
