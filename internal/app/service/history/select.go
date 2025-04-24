@@ -39,12 +39,7 @@ func SelectById(id int64, reqUser model.ReqUser) (response.HistoryData, error) {
 	return res, nil
 }
 
-/**
- * 查询历史记录列表
- * @param params 查询参数
- * @param reqUser 请求用户
- * @return 历史记录列表和分页信息
- */
+// Select 查询所有历史记录
 func Select(params request.QueryHistoryParams, reqUser model.ReqUser) (HistoryPage, error) {
 	var res HistoryPage
 	historyQueryContext := params2Query(params)
