@@ -1,7 +1,6 @@
 package testcase
 
 import (
-	"STUOJ/internal/db/querycontext"
 	"STUOJ/internal/domain/testcase"
 	"STUOJ/internal/model"
 )
@@ -14,20 +13,15 @@ func Delete(id int64, reqUser model.ReqUser) error {
 		return err
 	}
 
-	// 查询
-	qc := querycontext.TestcaseQueryContext{}
-	qc.Id.Add(id)
-	qc.Field.SelectId()
-	tc0, _, err := testcase.Query.SelectOne(qc)
-	if err != nil {
-		return err
-	}
+	tc1 := testcase.NewTestcase(
+		testcase.WithId(id),
+	)
 
 	// 更新题目更新时间
-	err = updateProblemUpdateTime(tc0.ProblemId)
+	err = updateProblemUpdateTime(id)
 	if err != nil {
 		return err
 	}
 
-	return tc0.Delete()
+	return tc1.Delete()
 }
