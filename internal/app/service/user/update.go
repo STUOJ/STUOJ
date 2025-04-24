@@ -11,25 +11,16 @@ import (
 	"STUOJ/internal/model"
 )
 
-// Update 根据Id更新用户
+// Update 根据Id更新用户基本信息
 func Update(req request.UserUpdateReq, reqUser model.ReqUser) error {
 	// 检查权限
 	if reqUser.Id != req.Id && reqUser.Role < entity.RoleAdmin {
 		return &errors.ErrUnauthorized
 	}
 
-	// 读取用户
-	qt := querycontext.UserQueryContext{}
-	qt.Id.Add(req.Id)
-	qt.Field.SelectId().SelectUsername().SelectSignature()
-	u0, _, err := user.Query.SelectOne(qt)
-	if err != nil {
-		return err
-	}
-
 	// 更新字段
 	u1 := user.NewUser(
-		user.WithId(u0.Id),
+		user.WithId(req.Id),
 		user.WithUsername(req.Username),
 		user.WithSignature(req.Signature),
 	)
@@ -37,11 +28,11 @@ func Update(req request.UserUpdateReq, reqUser model.ReqUser) error {
 	return u1.Update(false)
 }
 
-// UpdatePassword 根据Id更新用户密码
+// UpdatePassword 根据Email更新用户密码
 func UpdatePassword(req request.UserForgetPasswordReq, reqUser model.ReqUser) error {
 	// 读取用户
 	qt := querycontext.UserQueryContext{}
-	qt.Id.Add(reqUser.Id)
+	qt.Email.Set(req.Email)
 	qt.Field.SelectId().SelectPassword()
 	u0, _, err := user.Query.SelectOne(qt)
 	if err != nil {
