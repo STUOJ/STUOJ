@@ -16,7 +16,6 @@ func Update(req request.UpdateSolutionReq, reqUser model.ReqUser) error {
 
 	s1 := solution.NewSolution(
 		solution.WithId(req.Id),
-		solution.WithProblemId(req.ProblemId),
 		solution.WithLanguageId(req.LanguageId),
 		solution.WithSourceCode(req.SourceCode),
 	)
