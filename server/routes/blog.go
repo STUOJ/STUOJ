@@ -37,7 +37,6 @@ func InitCommentRoute(ginServer *gin.Engine) {
 		commentUserRoute.Use(middlewares.TokenAuthUser())
 
 		commentUserRoute.POST("/", handler.CommentAdd)
-		commentUserRoute.DELETE("/:id", handler.CommentRemove)
 	}
 
 	commentAdminRoute := ginServer.Group("/comment")
