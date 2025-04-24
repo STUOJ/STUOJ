@@ -1,6 +1,7 @@
 package request
 
 type QueryCommentParams struct {
+	User      *int64  `form:"user,omitempty"`
 	Blog      *int64  `form:"blog,omitempty"`
 	EndTime   *string `form:"end-time,omitempty"`
 	Order     *string `form:"order,omitempty"`
@@ -9,7 +10,6 @@ type QueryCommentParams struct {
 	Size      *int64  `form:"size,omitempty"`
 	StartTime *string `form:"start-time,omitempty"`
 	Status    *string `form:"status,omitempty"`
-	User      *string `form:"user,omitempty"`
 }
 
 type CreateCommentReq struct {

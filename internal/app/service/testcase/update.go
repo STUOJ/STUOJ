@@ -2,7 +2,6 @@ package testcase
 
 import (
 	"STUOJ/internal/app/dto/request"
-	"STUOJ/internal/db/querycontext"
 	"STUOJ/internal/domain/testcase"
 	"STUOJ/internal/model"
 )
@@ -15,24 +14,15 @@ func Update(req request.UpdateTestcaseReq, reqUser model.ReqUser) error {
 		return err
 	}
 
-	// 查询
-	qc := querycontext.TestcaseQueryContext{}
-	qc.Id.Add(req.Id)
-	qc.Field.SelectAll()
-	tc0, _, err := testcase.Query.SelectOne(qc)
-	if err != nil {
-		return err
-	}
-
 	tc1 := testcase.NewTestcase(
-		testcase.WithId(tc0.Id),
+		testcase.WithId(req.Id),
 		testcase.WithSerial(req.Serial),
 		testcase.WithTestInput(req.TestInput),
 		testcase.WithTestOutput(req.TestOutput),
 	)
 
 	// 更新题目更新时间
-	err = updateProblemUpdateTime(tc0.ProblemId)
+	err = updateProblemUpdateTime(req.ProblemId)
 	if err != nil {
 		return err
 	}

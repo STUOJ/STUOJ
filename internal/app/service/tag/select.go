@@ -9,7 +9,7 @@ import (
 )
 
 type TagPage struct {
-	TagList []response.TagData `json:"tags"`
+	Tags []response.TagData `json:"tags"`
 	model.Page
 }
 
@@ -30,9 +30,9 @@ func Select(params request.QueryTagParams, reqUser model.ReqUser) (TagPage, erro
 	}
 
 	// 转换结果
-	res.TagList = make([]response.TagData, len(tagDomain))
+	res.Tags = make([]response.TagData, len(tagDomain))
 	for i, v := range tagDomain {
-		res.TagList[i] = domain2Resp(v)
+		res.Tags[i] = domain2Resp(v)
 	}
 
 	// 设置分页信息

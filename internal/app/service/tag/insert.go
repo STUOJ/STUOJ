@@ -6,9 +6,17 @@ import (
 	"STUOJ/internal/model"
 )
 
+// Insert 插入标签
 func Insert(req request.CreateTagReq, reqUser model.ReqUser) (int64, error) {
-	tag := tag.NewTag(
+	// 检查权限
+	err := isPermission(reqUser)
+	if err != nil {
+		return 0, err
+	}
+
+	t1 := tag.NewTag(
 		tag.WithName(req.Name),
 	)
-	return tag.Create()
+
+	return t1.Create()
 }

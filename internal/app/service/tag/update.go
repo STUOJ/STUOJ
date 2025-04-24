@@ -7,9 +7,16 @@ import (
 )
 
 func Update(req request.UpdateTagReq, reqUser model.ReqUser) error {
-	tag := tag.NewTag(
+	// 检查权限
+	err := isPermission(reqUser)
+	if err != nil {
+		return err
+	}
+
+	t1 := tag.NewTag(
 		tag.WithId(req.Id),
 		tag.WithName(req.Name),
 	)
-	return tag.Update()
+
+	return t1.Update()
 }
