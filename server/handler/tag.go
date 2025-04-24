@@ -1,84 +1,101 @@
 package handler
 
 import (
-	"STUOJ/internal/entity"
+	"STUOJ/internal/app/dto/request"
+	"STUOJ/internal/errors"
 	"STUOJ/internal/model"
-	"STUOJ/internal/service/problem"
 	"STUOJ/internal/service/tag"
-	"STUOJ/utils"
-	"log"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
-// 获取标签列表
-func TagList(c *gin.Context) {
+// 获取标签信息
+func TagInfo(c *gin.Context) {
+	// 获取用户信息
+	reqUser := model.NewReqUser(c)
 
-	condition := model.TagWhere{}
-	condition.Parse(c)
-	users, err := tag.Select(condition)
+	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		c.Error(&errors.ErrValidation)
 		return
 	}
 
-	c.JSON(http.StatusOK, model.RespOk("OK", users))
+	// 获取标签数据
+	t, err := tag.SelectById(int64(id), *reqUser)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	c.JSON(http.StatusOK, model.RespOk("OK", t))
+}
+
+// 获取标签列表
+func TagList(c *gin.Context) {
+	// 获取用户信息
+	reqUser := model.NewReqUser(c)
+
+	// 解析查询参数
+	params := request.QueryTagParams{}
+	if err := c.ShouldBindQuery(&params); err != nil {
+		c.Error(&errors.ErrValidation)
+		return
+	}
+
+	// 查询标签列表
+	tags, err := tag.Select(params, *reqUser)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	c.JSON(http.StatusOK, model.RespOk("OK", tags))
 }
 
 // 添加标签
-type ReqTagAdd struct {
-	Name string `json:"name,omitempty" binding:"required"`
-}
-
 func TagAdd(c *gin.Context) {
-	var req ReqTagAdd
+	// 获取用户信息
+	reqUser := model.NewReqUser(c)
+
+	var req request.CreateTagReq
 
 	// 参数绑定
 	err := c.ShouldBindBodyWithJSON(&req)
 	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		c.Error(&errors.ErrValidation)
 		return
 	}
 
-	// 初始化标签
-	t := entity.Tag{
-		Name: req.Name,
-	}
-
 	// 插入标签
-	t.Id, err = tag.Insert(t)
+	id, err := tag.Insert(req, *reqUser)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		c.Error(err)
 		return
 	}
 
 	// 返回结果
-	c.JSON(http.StatusOK, model.RespOk("添加成功，返回标签ID", t.Id))
+	c.JSON(http.StatusOK, model.RespOk("添加成功，返回标签ID", id))
 }
 
 // 修改标签数据
-type ReqTagModify struct {
-	Id   uint64 `json:"id" binding:"required"`
-	Name string `json:"name" binding:"required"`
-}
-
 func TagModify(c *gin.Context) {
-	var req ReqTagModify
+	// 获取用户信息
+	reqUser := model.NewReqUser(c)
+
+	var req request.UpdateTagReq
 
 	// 参数绑定
 	err := c.ShouldBindBodyWithJSON(&req)
 	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		c.Error(&errors.ErrValidation)
 		return
 	}
 
-	err = tag.Update(req.Id, req.Name)
+	err = tag.Update(req, *reqUser)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		c.Error(err)
 		return
 	}
 
@@ -88,77 +105,19 @@ func TagModify(c *gin.Context) {
 
 // 删除标签
 func TagRemove(c *gin.Context) {
+	// 获取用户信息
+	reqUser := model.NewReqUser(c)
+
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		c.Error(&errors.ErrValidation)
 		return
 	}
 
 	// 删除标签
-	tid := uint64(id)
-	err = tag.Delete(tid)
+	err = tag.Delete(int64(id), *reqUser)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
-		return
-	}
-
-	// 返回结果
-	c.JSON(http.StatusOK, model.RespOk("删除成功", nil))
-}
-
-// 添加标签到题目
-type ReqProblemAddTag struct {
-	ProblemId uint64 `json:"problem_id" binding:"required"`
-	TagId     uint64 `json:"tag_id" binding:"required"`
-}
-
-func ProblemAddTag(c *gin.Context) {
-	role, uid := utils.GetUserInfo(c)
-	var req ReqProblemAddTag
-
-	// 参数绑定
-	err := c.ShouldBindBodyWithJSON(&req)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
-		return
-	}
-
-	// 添加标签
-	err = problem.InsertTag(req.ProblemId, req.TagId, uid, role)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
-		return
-	}
-
-	// 返回结果
-	c.JSON(http.StatusOK, model.RespOk("添加成功", nil))
-}
-
-// 删除题目的某个标签
-type ReqProblemRemoveTag struct {
-	ProblemId uint64 `json:"problem_id,omitempty" binding:"required"`
-	TagId     uint64 `json:"tag_id,omitempty" binding:"required"`
-}
-
-// 删除题目的某个标签
-func ProblemRemoveTag(c *gin.Context) {
-	role, uid := utils.GetUserInfo(c)
-	var req ReqProblemRemoveTag
-
-	// 参数绑定
-	err := c.ShouldBindBodyWithJSON(&req)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
-		return
-	}
-
-	// 删除标签
-	err = problem.DeleteTag(req.ProblemId, req.TagId, uid, role)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		c.Error(err)
 		return
 	}
 

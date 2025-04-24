@@ -1,10 +1,10 @@
 package handler
 
 import (
+	"STUOJ/internal/app/dto/request"
+	"STUOJ/internal/app/service/record"
+	"STUOJ/internal/errors"
 	"STUOJ/internal/model"
-	"STUOJ/internal/service/record"
-	"STUOJ/utils"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -13,18 +13,17 @@ import (
 
 // 获取提交记录信息（提交信息+评测结果）
 func RecordInfo(c *gin.Context) {
-	role, id_ := utils.GetUserInfo(c)
+	reqUser := model.NewReqUser(c)
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		c.Error(&errors.ErrValidation)
 		return
 	}
 
 	sid := uint64(id)
-	r, err := record.SelectBySubmissionId(id_, sid, role)
+	r, err := record.SelectById(int64(sid), *reqUser)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		c.Error(err)
 		return
 	}
 
@@ -33,58 +32,43 @@ func RecordInfo(c *gin.Context) {
 
 // 获取提交记录列表
 func RecordList(c *gin.Context) {
-	role, id_ := utils.GetUserInfo(c)
+	reqUser := model.NewReqUser(c)
+	params := request.QuerySubmissionParams{}
+	if err := c.ShouldBindQuery(&params); err != nil {
+		c.Error(&errors.ErrValidation)
+		return
+	}
 
-	condition := model.SubmissionWhere{}
-	condition.Parse(c)
-
-	records, err := record.Select(condition, id_, role)
+	records, err := record.Select(params, *reqUser)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		c.Error(err)
 		return
 	}
 
 	c.JSON(http.StatusOK, model.RespOk("OK", records))
 }
 
+// 获取通过用户列表
 func SelectACUsers(c *gin.Context) {
 	pidQuery := c.Query("problem")
 	pid, err := strconv.Atoi(pidQuery)
 	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		c.Error(&errors.ErrValidation)
 		return
 	}
+
 	sizeQuery := c.Query("size")
 	size, err := strconv.Atoi(sizeQuery)
 	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		c.Error(&errors.ErrValidation)
 		return
 	}
-	users, err := record.SelectACUsers(uint64(pid), uint64(size))
+
+	users, err := record.SelectAcUsers(int64(pid), int64(size))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		c.Error(err)
 		return
 	}
+
 	c.JSON(http.StatusOK, model.RespOk("OK", users))
-}
-
-// 删除提交记录（提交信息+评测结果）
-func RecordRemove(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
-		return
-	}
-
-	sid := uint64(id)
-	err = record.DeleteSubmission(sid)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
-		return
-	}
-
-	c.JSON(http.StatusOK, model.RespOk("删除成功", nil))
 }

@@ -43,6 +43,22 @@ func StringToUint64Slice(str string) ([]uint64, error) {
 	return result, nil
 }
 
+func StringToInt8Slice(str string) ([]int8, error) {
+	if str == "" {
+		return []int8{}, nil
+	}
+	strArr := strings.Split(str, ",")
+	result := make([]int8, 0, len(strArr))
+	for _, s := range strArr {
+		num, err := strconv.ParseInt(strings.TrimSpace(s), 10, 8)
+		if err != nil {
+			return nil, fmt.Errorf("failed to parse value %s to int8: %w", s, err)
+		}
+		result = append(result, int8(num))
+	}
+	return result, nil
+}
+
 // StringToUint8Slice 将逗号分隔的字符串转换为int64数组
 func StringToUint8Slice(str string) ([]uint8, error) {
 	if str == "" {

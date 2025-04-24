@@ -25,13 +25,13 @@ func params2Query(params request.QueryBlogParams) (query querycontext.BlogQueryC
 	}
 	if params.Problem != nil {
 		ids, err := utils.StringToInt64Slice(*params.Problem)
-		if err != nil {
+		if err == nil {
 			query.ProblemId.Set(ids)
 		}
 	}
 	if params.User != nil {
 		ids, err := utils.StringToInt64Slice(*params.User)
-		if err != nil {
+		if err == nil {
 			query.UserId.Set(ids)
 		}
 	}

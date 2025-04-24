@@ -114,34 +114,13 @@ func SelectAcUsers(pid int64, size int64) ([]response.UserSimpleData, error) {
 	var resp []response.UserSimpleData
 
 	// 查询
-	qc := querycontext.SubmissionQueryContext{}
-	qc.ProblemId.Add(pid)
-	qc.Status.Add(int64(entity.JudgeAC))
-	qc.Field.SelectUserId().SelectCreateTime()
-	qc.Page.PageSize = size
-	qc.Page.Page = 1
-	submissions, _, err := submission.Query.Select(qc)
+	map_, err := submission.Query.SelectACUsers(pid, size)
 	if err != nil {
 		return resp, err
 	}
 
-	userIds := make([]int64, len(submissions))
-	for i, s := range submissions {
-		userIds[i] = s.UserId
+	for _, m := range map_ {
+		resp = append(resp, response.Map2UserSimpleData(m))
 	}
-
-	uqc := querycontext.UserQueryContext{}
-	uqc.Id.Add(userIds...)
-	uqc.Field = *query.UserSimpleField
-	users, _, err := user.Query.Select(uqc)
-	if err != nil {
-		return resp, err
-	}
-
-	for _, s := range submissions {
-		respSubmission := response.Domain2UserSimpleData(users[s.UserId])
-		resp = append(resp, respSubmission)
-	}
-
 	return resp, nil
 }

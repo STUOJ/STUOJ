@@ -4,7 +4,6 @@ import (
 	"STUOJ/internal/app/dto/response"
 	"STUOJ/internal/db/querycontext"
 	"STUOJ/internal/domain/solution"
-	"STUOJ/internal/domain/testcase"
 	"STUOJ/internal/model"
 )
 
