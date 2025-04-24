@@ -12,8 +12,9 @@ func Delete(id int64, reqUser model.ReqUser) error {
 		return err
 	}
 
-	tag := tag.NewTag(
+	t1 := tag.NewTag(
 		tag.WithId(id),
 	)
-	return tag.Delete()
+
+	return t1.Delete()
 }
