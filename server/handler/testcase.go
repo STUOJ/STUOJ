@@ -1,10 +1,10 @@
 package handler
 
 import (
-	"STUOJ/internal/entity"
+	"STUOJ/internal/app/dto/request"
+	"STUOJ/internal/app/service/testcase"
+	"STUOJ/internal/errors"
 	"STUOJ/internal/model"
-	"STUOJ/internal/service/testcase"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -13,18 +13,16 @@ import (
 
 // 获取评测点数据
 func TestcaseInfo(c *gin.Context) {
+	reqUser := model.NewReqUser(c)
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		c.Error(&errors.ErrValidation)
 		return
 	}
 
-	// 获取评测点数据
-	tid := uint64(id)
-	t, err := testcase.SelectById(tid)
+	t, err := testcase.SelectById(int64(id), *reqUser)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		c.Error(err)
 		return
 	}
 
@@ -32,77 +30,60 @@ func TestcaseInfo(c *gin.Context) {
 	c.JSON(http.StatusOK, model.RespOk("OK", t))
 }
 
-// 添加评测点数据
-type ReqTestcaseAdd struct {
-	Serial     uint64 `json:"serial,omitempty" binding:"required"`
-	ProblemId  uint64 `json:"problem_id,omitempty" binding:"required"`
-	TestInput  string `json:"test_input,omitempty" binding:"required"`
-	TestOutput string `json:"test_output,omitempty" binding:"required"`
+func TestcaseList(c *gin.Context) {
+	reqUser := model.NewReqUser(c)
+	params := request.QueryTestcaseParams{}
+	if err := c.ShouldBindQuery(&params); err != nil {
+		c.Error(&errors.ErrValidation)
+		return
+	}
+	ts, err := testcase.Select(params, *reqUser)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	// 返回数据
+	c.JSON(http.StatusOK, model.RespOk("OK", ts))
 }
 
 func TestcaseAdd(c *gin.Context) {
-	var req ReqTestcaseAdd
+	reqUser := model.NewReqUser(c)
+	var req request.CreateTestcaseReq
 
 	// 参数绑定
 	err := c.ShouldBindBodyWithJSON(&req)
 	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		c.Error(&errors.ErrValidation)
 		return
 	}
 
-	// 初始化题目
-	t := entity.Testcase{
-		Serial:     uint16(req.Serial),
-		ProblemId:  req.ProblemId,
-		TestInput:  req.TestInput,
-		TestOutput: req.TestOutput,
-	}
-
 	// 插入评测点数据
-	t.Id, err = testcase.Insert(t)
+	id, err := testcase.Insert(req, *reqUser)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		c.Error(err)
 		return
 	}
 
 	// 返回结果
-	c.JSON(http.StatusOK, model.RespOk("添加成功，返回评测点ID", t.Id))
-}
-
-// 修改评测点数据
-type ReqTestcaseModify struct {
-	Id         uint64 `json:"id,omitempty" binding:"required"`
-	Serial     uint64 `json:"serial,omitempty" binding:"required"`
-	ProblemId  uint64 `json:"problem_id,omitempty" binding:"required"`
-	TestInput  string `json:"test_input,omitempty" binding:"required"`
-	TestOutput string `json:"test_output,omitempty" binding:"required"`
+	c.JSON(http.StatusOK, model.RespOk("添加成功，返回评测点ID", id))
 }
 
 func TestcaseModify(c *gin.Context) {
-	var req ReqTestcaseModify
+	reqUser := model.NewReqUser(c)
+	var req request.UpdateTestcaseReq
 
 	// 参数绑定
 	err := c.ShouldBindBodyWithJSON(&req)
 	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		c.Error(&errors.ErrValidation)
 		return
 	}
 
-	// 修改评测点数据
-	t := entity.Testcase{
-		Id:         req.Id,
-		Serial:     uint16(req.Serial),
-		ProblemId:  req.ProblemId,
-		TestInput:  req.TestInput,
-		TestOutput: req.TestOutput,
-	}
-
 	// 更新评测点数据
-	err = testcase.Update(t)
+	err = testcase.Update(req, *reqUser)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		c.Error(err)
 		return
 	}
 
@@ -112,18 +93,16 @@ func TestcaseModify(c *gin.Context) {
 
 // 删除评测点数据
 func TestcaseRemove(c *gin.Context) {
+	reqUser := model.NewReqUser(c)
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		c.Error(&errors.ErrValidation)
 		return
 	}
 
-	// 删除评测点
-	tid := uint64(id)
-	err = testcase.Delete(tid)
+	err = testcase.Delete(int64(id), *reqUser)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		c.Error(err)
 		return
 	}
 
@@ -135,14 +114,13 @@ func TestcaseRemove(c *gin.Context) {
 func TestcaseDataMake(c *gin.Context) {
 	var t model.CommonTestcaseInput
 	if err := c.ShouldBindJSON(&t); err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		c.Error(&errors.ErrValidation)
 		return
 	}
 
 	tc, err := t.Unfold()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		c.Error(errors.ErrInternalServer.WithMessage(err.Error()))
 		return
 	}
 

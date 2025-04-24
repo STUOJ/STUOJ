@@ -51,6 +51,7 @@ func InitTestcaseRoute(ginServer *gin.Engine) {
 		// 使用中间件
 		testcaseEditorRoute.Use(middlewares.TokenAuthEditor())
 
+		testcaseEditorRoute.GET("/", handler.TestcaseList)
 		testcaseEditorRoute.GET("/:id", handler.TestcaseInfo)
 		testcaseEditorRoute.POST("/", handler.TestcaseAdd)
 		testcaseEditorRoute.PUT("/", handler.TestcaseModify)
