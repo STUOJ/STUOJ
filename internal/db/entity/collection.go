@@ -4,18 +4,21 @@ import (
 	"time"
 )
 
-// CollectionStatus 题单状态: 1 私有, 2 公开
+// CollectionStatus 题单状态: 1 删除, 2 私有, 3 公开
 //
 //go:generate go run ../../../utils/gen/enum_valid.go CollectionStatus
 type CollectionStatus uint8
 
 const (
-	CollectionPrivate CollectionStatus = 1
-	CollectionPublic  CollectionStatus = 2
+	CollectionDeleted CollectionStatus = 1
+	CollectionPrivate CollectionStatus = 2
+	CollectionPublic  CollectionStatus = 3
 )
 
 func (s CollectionStatus) String() string {
 	switch s {
+	case CollectionDeleted:
+		return "删除"
 	case CollectionPrivate:
 		return "私有"
 	case CollectionPublic:
