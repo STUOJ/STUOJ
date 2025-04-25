@@ -101,7 +101,7 @@ func BlogRemove(c *gin.Context) {
 	}
 
 	// 删除博客
-	err = blog.Delete(int64(id), *reqUser)
+	err = blog.DeleteLogic(int64(id), *reqUser)
 	if err != nil {
 		c.Error(err)
 		return

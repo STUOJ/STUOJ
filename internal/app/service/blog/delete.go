@@ -8,12 +8,37 @@ import (
 	"STUOJ/internal/model"
 )
 
+// DeleteLogic 逻辑删除博客
+func DeleteLogic(id int64, reqUser model.ReqUser) error {
+	// 查询
+	qc := querycontext.BlogQueryContext{}
+	qc.Id.Add(id)
+	qc.Field.SelectId().SelectUserId()
+	b0, _, err := blog.Query.SelectOne(qc)
+	if err != nil {
+		return err
+	}
+
+	// 检查权限
+	if b0.UserId != reqUser.Id && reqUser.Role < entity.RoleAdmin {
+		return &errors.ErrUnauthorized
+	}
+
+	// 逻辑删除
+	b1 := blog.NewBlog(
+		blog.WithId(id),
+		blog.WithStatus(entity.BlogBanned),
+	)
+
+	return b1.Update()
+}
+
 // Delete 根据Id删除博客
 func Delete(id int64, reqUser model.ReqUser) error {
 	// 查询
 	qc := querycontext.BlogQueryContext{}
 	qc.Id.Add(id)
-	qc.Field.SelectId()
+	qc.Field.SelectId().SelectUserId()
 	b0, _, err := blog.Query.SelectOne(qc)
 	if err != nil {
 		return err
