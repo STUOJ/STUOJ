@@ -14,8 +14,9 @@ import (
 // Update 根据Id更新用户基本信息
 func Update(req request.UserUpdateReq, reqUser model.ReqUser) error {
 	// 检查权限
-	if reqUser.Id != req.Id && reqUser.Role < entity.RoleAdmin {
-		return &errors.ErrUnauthorized
+	err := isPermission(req.Id, reqUser)
+	if err != nil {
+		return err
 	}
 
 	// 更新字段
@@ -40,8 +41,9 @@ func UpdatePassword(req request.UserForgetPasswordReq, reqUser model.ReqUser) er
 	}
 
 	// 检查权限
-	if reqUser.Id != u0.Id && reqUser.Role < entity.RoleAdmin {
-		return &errors.ErrUnauthorized
+	err = isPermission(u0.Id, reqUser)
+	if err != nil {
+		return err
 	}
 
 	u1 := user.NewUser(
@@ -66,8 +68,9 @@ func UpdateRole(req request.UserUpdateRoleReq, reqUser model.ReqUser) error {
 	newRole := entity.Role(req.Role)
 
 	// 检查权限
-	if u0.Role >= reqUser.Role || newRole >= reqUser.Role {
-		return &errors.ErrUnauthorized
+	err = isPermission(u0.Id, reqUser)
+	if err != nil {
+		return err
 	}
 
 	u1 := user.NewUser(
@@ -80,9 +83,12 @@ func UpdateRole(req request.UserUpdateRoleReq, reqUser model.ReqUser) error {
 
 // UpdateAvatar 更新用户头像
 func UpdateAvatar(req request.UserChangeAvatarReq, reqUser model.ReqUser) (string, error) {
-	if req.Id != reqUser.Id && reqUser.Role < entity.RoleAdmin {
-		return "", &errors.ErrUnauthorized
+	// 检查权限
+	err := isPermission(req.Id, reqUser)
+	if err != nil {
+		return "", err
 	}
+
 	// 读取用户
 	qt := querycontext.UserQueryContext{}
 	qt.Id.Add(req.Id)

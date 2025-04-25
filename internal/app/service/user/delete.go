@@ -1,17 +1,16 @@
 package user
 
 import (
-	"STUOJ/internal/db/entity"
 	"STUOJ/internal/domain/user"
-	"STUOJ/internal/errors"
 	"STUOJ/internal/model"
 )
 
 // Delete 根据Id删除用户
 func Delete(id int64, reqUser model.ReqUser) error {
 	// 检查权限
-	if reqUser.Role < entity.RoleAdmin {
-		return &errors.ErrUnauthorized
+	err := isAdminPermission(reqUser)
+	if err != nil {
+		return err
 	}
 
 	u1 := user.NewUser(
