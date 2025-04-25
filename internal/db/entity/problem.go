@@ -40,11 +40,11 @@ func (d Difficulty) String() string {
 	}
 }
 
-// ProblemStatus 题目状态: 1 作废, 2 出题, 3 调试, 4 隐藏, 5 公开
+// ProblemStatus 题目状态: 1 删除, 2 出题, 3 调试, 4 隐藏, 5 公开
 type ProblemStatus uint64
 
 const (
-	ProblemInvalid   ProblemStatus = 1
+	ProblemDeleted   ProblemStatus = 1
 	ProblemEditing   ProblemStatus = 2
 	ProblemDebugging ProblemStatus = 3
 	ProblemHidden    ProblemStatus = 4
@@ -53,8 +53,8 @@ const (
 
 func (s ProblemStatus) String() string {
 	switch s {
-	case ProblemInvalid:
-		return "作废"
+	case ProblemDeleted:
+		return "删除"
 	case ProblemEditing:
 		return "出题"
 	case ProblemDebugging:

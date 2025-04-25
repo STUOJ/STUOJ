@@ -13,7 +13,7 @@ func Update(req request.UpdateLanguageReq, reqUser model.ReqUser) error {
 		return &errors.ErrUnauthorized
 	}
 	languageDomain := language.NewLanguage(
-		language.WithId(int64(req.Id)),
+		language.WithId(req.Id),
 		language.WithStatus(entity.LanguageStatus(req.Status)),
 		language.WithMapId(uint32(req.MapId)),
 		language.WithSerial(uint16(req.Serial)),
