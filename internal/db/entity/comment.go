@@ -2,20 +2,20 @@ package entity
 
 import "time"
 
-// CommentStatus 状态：1 屏蔽, 2 公开
+// CommentStatus 状态：1 删除, 2 公开
 //
 //go:generate go run ../../../utils/gen/enum_valid.go CommentStatus
 type CommentStatus uint8
 
 const (
-	CommentBanned CommentStatus = 1
-	CommentPublic CommentStatus = 2
+	CommentDeleted CommentStatus = 1
+	CommentPublic  CommentStatus = 2
 )
 
 func (s CommentStatus) String() string {
 	switch s {
-	case CommentBanned:
-		return "屏蔽"
+	case CommentDeleted:
+		return "删除"
 	case CommentPublic:
 		return "公开"
 	default:

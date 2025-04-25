@@ -7,8 +7,8 @@ import (
 	"STUOJ/internal/model"
 )
 
+// 检查权限
 func isPermission(b blog.Blog, reqUser model.ReqUser) error {
-	// 检查权限
 	if b.UserId != reqUser.Id && reqUser.Role < entity.RoleAdmin {
 		return &errors.ErrUnauthorized
 	}

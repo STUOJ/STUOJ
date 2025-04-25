@@ -27,7 +27,7 @@ func Select(params request.QueryCommentParams, reqUser model.ReqUser) (CommentPa
 	qc.Field.SelectId().SelectUserId().SelectBlogId().SelectStatus().SelectCreateTime().SelectUpdateTime()
 	if !qc.Status.Exist() {
 		qc.Status.Add(int64(entity.CommentPublic))
-	} else if slices.Contains(qc.Status.Value(), int64(entity.CommentBanned)) && reqUser.Role < entity.RoleAdmin {
+	} else if slices.Contains(qc.Status.Value(), int64(entity.CommentDeleted)) && reqUser.Role < entity.RoleAdmin {
 		qc.UserId.Set([]int64{reqUser.Id})
 	}
 	comments, _, err := comment.Query.Select(qc)
