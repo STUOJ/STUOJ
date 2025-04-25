@@ -21,7 +21,7 @@ func Insert(req request.CreateBlogReq, reqUser model.ReqUser) (int64, error) {
 	)
 
 	// 检查权限
-	if (blog.Status == entity.BlogBanned || blog.Status == entity.BlogNotice) && reqUser.Role < entity.RoleAdmin {
+	if (blog.Status == entity.BlogDeleted || blog.Status == entity.BlogNotice) && reqUser.Role < entity.RoleAdmin {
 		return 0, errors.ErrUnauthorized.WithMessage("没有权限创建被封禁或公告的博客")
 	}
 

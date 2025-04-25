@@ -19,10 +19,11 @@ func Update(req request.UpdateBlogReq, reqUser model.ReqUser) error {
 	}
 
 	// 检查权限
-	if b0.UserId != reqUser.Id && reqUser.Role < entity.RoleAdmin {
-		return &errors.ErrUnauthorized
+	err = isPermission(b0, reqUser)
+	if err != nil {
+		return err
 	}
-	if (req.Status == uint8(entity.BlogBanned) || req.Status == uint8(entity.BlogNotice)) && reqUser.Role < entity.RoleAdmin {
+	if (req.Status == uint8(entity.BlogDeleted) || req.Status == uint8(entity.BlogNotice)) && reqUser.Role < entity.RoleAdmin {
 		return errors.ErrUnauthorized.WithMessage("没有权限将博客封禁或设为公告")
 	}
 

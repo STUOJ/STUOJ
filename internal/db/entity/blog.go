@@ -2,22 +2,22 @@ package entity
 
 import "time"
 
-// BlogStatus 状态：1 屏蔽, 2 草稿, 3 公开, 4 公告
+// BlogStatus 状态：1 删除, 2 草稿, 3 公开, 4 公告
 //
 //go:generate go run ../../../utils/gen/enum_valid.go BlogStatus
 type BlogStatus uint8
 
 const (
-	BlogBanned BlogStatus = 1
-	BlogDraft  BlogStatus = 2
-	BlogPublic BlogStatus = 3
-	BlogNotice BlogStatus = 4
+	BlogDeleted BlogStatus = 1
+	BlogDraft   BlogStatus = 2
+	BlogPublic  BlogStatus = 3
+	BlogNotice  BlogStatus = 4
 )
 
 func (s BlogStatus) String() string {
 	switch s {
-	case BlogBanned:
-		return "屏蔽"
+	case BlogDeleted:
+		return "删除"
 	case BlogPublic:
 		return "公开"
 	case BlogDraft:

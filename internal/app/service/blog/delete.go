@@ -4,7 +4,6 @@ import (
 	"STUOJ/internal/db/entity"
 	"STUOJ/internal/db/querycontext"
 	"STUOJ/internal/domain/blog"
-	"STUOJ/internal/errors"
 	"STUOJ/internal/model"
 )
 
@@ -20,14 +19,15 @@ func DeleteLogic(id int64, reqUser model.ReqUser) error {
 	}
 
 	// 检查权限
-	if b0.UserId != reqUser.Id && reqUser.Role < entity.RoleAdmin {
-		return &errors.ErrUnauthorized
+	err = isPermission(b0, reqUser)
+	if err != nil {
+		return err
 	}
 
 	// 逻辑删除
 	b1 := blog.NewBlog(
 		blog.WithId(id),
-		blog.WithStatus(entity.BlogBanned),
+		blog.WithStatus(entity.BlogDeleted),
 	)
 
 	return b1.Update()
@@ -45,8 +45,9 @@ func Delete(id int64, reqUser model.ReqUser) error {
 	}
 
 	// 检查权限
-	if b0.UserId != reqUser.Id && reqUser.Role < entity.RoleAdmin {
-		return &errors.ErrUnauthorized
+	err = isPermission(b0, reqUser)
+	if err != nil {
+		return err
 	}
 
 	return b0.Delete()

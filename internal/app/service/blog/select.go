@@ -54,7 +54,7 @@ func Select(params request.QueryBlogParams, reqUser model.ReqUser) (BlogPage, er
 	if !query_.Status.Exist() {
 		query_.Status.Set([]uint8{uint8(entity.BlogPublic)})
 	}
-	if (slices.Contains(query_.Status.Value(), uint8(entity.BlogBanned)) || slices.Contains(query_.Status.Value(), uint8(entity.BlogDraft))) && reqUser.Role < entity.RoleAdmin {
+	if (slices.Contains(query_.Status.Value(), uint8(entity.BlogDeleted)) || slices.Contains(query_.Status.Value(), uint8(entity.BlogDraft))) && reqUser.Role < entity.RoleAdmin {
 		query_.UserId.Set([]int64{reqUser.Id})
 	}
 	query_.Field = *query.BlogAllField
