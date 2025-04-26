@@ -3,9 +3,9 @@ package testcase
 import (
 	"STUOJ/internal/app/dto/request"
 	"STUOJ/internal/app/dto/response"
-	"STUOJ/internal/db/query/option"
 	"STUOJ/internal/db/querycontext"
 	"STUOJ/internal/domain/testcase"
+	"STUOJ/internal/model/option"
 	"STUOJ/utils"
 )
 

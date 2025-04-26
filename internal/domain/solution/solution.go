@@ -7,9 +7,9 @@ import (
 	"STUOJ/internal/db/dao"
 	"STUOJ/internal/db/entity"
 	"STUOJ/internal/db/entity/field"
-	"STUOJ/internal/db/query/option"
 	"STUOJ/internal/domain/solution/valueobject"
 	"STUOJ/internal/errors"
+	"STUOJ/internal/model/option"
 )
 
 type Solution struct {

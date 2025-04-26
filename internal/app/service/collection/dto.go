@@ -3,9 +3,9 @@ package collection
 import (
 	"STUOJ/internal/app/dto/request"
 	"STUOJ/internal/app/dto/response"
-	"STUOJ/internal/db/query/option"
 	"STUOJ/internal/db/querycontext"
 	"STUOJ/internal/domain/collection"
+	"STUOJ/internal/model/option"
 	"STUOJ/utils"
 	"time"
 )

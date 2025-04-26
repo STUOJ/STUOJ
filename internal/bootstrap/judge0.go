@@ -4,9 +4,9 @@ import (
 	"STUOJ/external/judge0"
 	"STUOJ/internal/conf"
 	"STUOJ/internal/db/dao"
-	"STUOJ/internal/db/query/option"
 	"STUOJ/internal/domain/language"
 	"STUOJ/internal/domain/runner"
+	"STUOJ/internal/model/option"
 	"STUOJ/utils"
 	"log"
 )

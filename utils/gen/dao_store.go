@@ -25,8 +25,9 @@ package dao
 import (
 	"STUOJ/internal/db"
 	"STUOJ/internal/db/entity"
-	"STUOJ/internal/db/query/option"
+	"STUOJ/internal/model/option"
 	"gorm.io/gorm"
+	"fmt"
 	{{- range.Imports}}
 	"{{.}}"
 	{{- end}}
@@ -102,6 +103,20 @@ func (store *_{{.StructName}}Store) Count(options *option.QueryOptions) (int64, 
 		return tx.Count(&count).Error
 	})
 	return count, err
+}
+
+func (store *_{{.StructName}}Store) GroupCount(options *option.GroupCountOptions)([]option.GroupCountResult, error){
+	var res []option.GroupCountResult
+	if ok := options.Verify();!ok {
+		return nil,fmt.Errorf("分组字段验证失败")
+	}
+	where := options.GenerateQuery()
+	err := db.Db.Transaction(func(tx *gorm.DB) error {
+		tx = tx.Model(&entity.{{.StructName}}{})
+		tx = where(tx)
+		return tx.Scan(&res).Error
+	})
+	return res, err
 }
 
 func (store *_{{.StructName}}Store) Dto(data map[string]any) entity.{{.StructName}} {

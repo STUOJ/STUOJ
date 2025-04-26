@@ -4,7 +4,6 @@ import (
 	"STUOJ/internal/app/dto/request"
 	"STUOJ/internal/db/entity"
 	"STUOJ/internal/db/query"
-	"STUOJ/internal/db/query/option"
 	"STUOJ/internal/db/querycontext"
 	"STUOJ/internal/domain/judgement"
 	"STUOJ/internal/domain/language"
@@ -14,6 +13,7 @@ import (
 	"STUOJ/internal/domain/testcase"
 	"STUOJ/internal/errors"
 	"STUOJ/internal/model"
+	"STUOJ/internal/model/option"
 	"STUOJ/utils"
 	"slices"
 )

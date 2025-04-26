@@ -2,8 +2,8 @@ package history
 
 import (
 	"STUOJ/internal/app/dto/request"
-	"STUOJ/internal/db/query/option"
 	"STUOJ/internal/db/querycontext"
+	"STUOJ/internal/model/option"
 	"STUOJ/utils"
 )
 

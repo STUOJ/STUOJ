@@ -2,8 +2,8 @@ package querycontext
 
 import (
 	"STUOJ/internal/db/entity/field"
-	"STUOJ/internal/db/query/option"
 	"STUOJ/internal/model"
+	"STUOJ/internal/model/option"
 	"time"
 )
 

@@ -1,6 +1,6 @@
 package collection
 
-import "STUOJ/internal/db/query/option"
+import "STUOJ/internal/model/option"
 
 const (
 	QueryCollectionProblem = "(SELECT GROUP_CONCAT(DISTINCT tbl_collection_problem.problem_id ORDER BY serial ASC) FROM tbl_collection_problem WHERE tbl_collection_problem.collection_id = tbl_collection.id) AS collection_problem_id"

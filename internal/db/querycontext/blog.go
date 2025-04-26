@@ -2,8 +2,8 @@ package querycontext
 
 import (
 	"STUOJ/internal/db/entity/field"
-	"STUOJ/internal/db/query/option"
 	"STUOJ/internal/model"
+	"STUOJ/internal/model/option"
 	"time"
 )
 
@@ -20,32 +20,45 @@ type BlogQueryContext struct {
 	Field field.BlogField
 }
 
-func (query *BlogQueryContext) GenerateOptions() *option.QueryOptions {
-	options := option.NewQueryOptions()
+func (query *BlogQueryContext) applyFilter(options option.Options) option.Options {
+	filters := options.GetFilters()
 	if query.Id.Exist() {
-		options.Filters.Add(field.BlogId, option.OpIn, query.Id.Value())
+		filters.Add(field.BlogId, option.OpIn, query.Id.Value())
 	}
 	if query.UserId.Exist() {
-		options.Filters.Add(field.BlogUserId, option.OpIn, query.UserId.Value())
+		filters.Add(field.BlogUserId, option.OpIn, query.UserId.Value())
 	}
 	if query.ProblemId.Exist() {
-		options.Filters.Add(field.BlogProblemId, option.OpIn, query.ProblemId.Value())
+		filters.Add(field.BlogProblemId, option.OpIn, query.ProblemId.Value())
 	}
 	if query.Title.Exist() {
-		options.Filters.Add(field.BlogTitle, option.OpLike, query.Title.Value())
+		filters.Add(field.BlogTitle, option.OpLike, query.Title.Value())
 	}
 	if query.Status.Exist() {
-		options.Filters.Add(field.BlogStatus, option.OpIn, query.Status.Value())
+		filters.Add(field.BlogStatus, option.OpIn, query.Status.Value())
 	}
 	if query.StartTime.Exist() {
-		options.Filters.Add(field.BlogCreateTime, option.OpGreaterEq, query.StartTime.Value())
+		filters.Add(field.BlogCreateTime, option.OpGreaterEq, query.StartTime.Value())
 	}
 	if query.EndTime.Exist() {
-		options.Filters.Add(field.BlogCreateTime, option.OpLessEq, query.EndTime.Value())
+		filters.Add(field.BlogCreateTime, option.OpLessEq, query.EndTime.Value())
 	}
-	options.Filters.AddFiter(query.ExtraFilters.Conditions...)
+	filters.AddFiter(query.ExtraFilters.Conditions...)
+	return options
+}
+
+func (query *BlogQueryContext) GenerateOptions() *option.QueryOptions {
+	options := option.NewQueryOptions()
+	query.applyFilter(options)
 	options.Page = query.Page
 	options.Sort = query.Sort
 	options.Field = &query.Field
+	return options
+}
+
+func (query *BlogQueryContext) GenerateGroupCountOptions() *option.GroupCountOptions {
+	options := option.NewGroupCountOptions()
+	query.applyFilter(options)
+	options.GroupBy = query.GroupBy
 	return options
 }

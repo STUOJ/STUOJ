@@ -3,10 +3,10 @@ package record
 import (
 	"STUOJ/internal/app/dto/request"
 	"STUOJ/internal/app/dto/response"
-	"STUOJ/internal/db/query/option"
 	"STUOJ/internal/db/querycontext"
 	"STUOJ/internal/domain/judgement"
 	"STUOJ/internal/domain/submission"
+	"STUOJ/internal/model/option"
 	"time"
 )
 

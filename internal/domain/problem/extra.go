@@ -1,7 +1,7 @@
 package problem
 
 import (
-	"STUOJ/internal/db/query/option"
+	"STUOJ/internal/model/option"
 )
 
 const (
