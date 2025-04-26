@@ -35,6 +35,21 @@ func (query *{{.StructName}}) GetExtraFilters() *option.Filters {
 	return &query.ExtraFilters
 }
 
+func (query *{{.StructName}}) GenerateOptions() *option.QueryOptions {
+	options := option.NewQueryOptions()
+	query.applyFilter(options)
+	options.Page = query.Page
+	options.Sort = query.Sort
+	options.Field = &query.Field
+	return options
+}
+
+func (query *{{.StructName}}) GenerateGroupCountOptions() *option.GroupCountOptions {
+	options := option.NewGroupCountOptions()
+	query.applyFilter(options)
+	options.GroupBy = query.GroupBy
+	return options
+}
 `
 
 type FieldInfo struct {
