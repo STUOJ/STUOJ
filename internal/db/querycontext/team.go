@@ -17,26 +17,24 @@ type TeamQueryContext struct {
 	Field field.TeamField
 }
 
-func (query *TeamQueryContext) GenerateOptions() *option.QueryOptions {
-	options := option.NewQueryOptions()
+// applyFilter 应用团队查询过滤器
+func (query *TeamQueryContext) applyFilter(options option.Options) option.Options {
+	filters := options.GetFilters()
 	if query.Id.Exist() {
-		options.Filters.Add(field.TeamId, option.OpIn, query.Id.Value())
+		filters.Add(field.TeamId, option.OpIn, query.Id.Value())
 	}
 	if query.UserId.Exist() {
-		options.Filters.Add(field.TeamUserId, option.OpIn, query.UserId.Value())
+		filters.Add(field.TeamUserId, option.OpIn, query.UserId.Value())
 	}
 	if query.ContestId.Exist() {
-		options.Filters.Add(field.TeamContestId, option.OpIn, query.ContestId.Value())
+		filters.Add(field.TeamContestId, option.OpIn, query.ContestId.Value())
 	}
 	if query.Name.Exist() {
-		options.Filters.Add(field.TeamName, option.OpLike, query.Name.Value())
+		filters.Add(field.TeamName, option.OpLike, query.Name.Value())
 	}
 	if query.Status.Exist() {
-		options.Filters.Add(field.TeamStatus, option.OpIn, query.Status.Value())
+		filters.Add(field.TeamStatus, option.OpIn, query.Status.Value())
 	}
-	options.Filters.AddFiter(query.ExtraFilters.Conditions...)
-	options.Page = query.Page
-	options.Sort = query.Sort
-	options.Field = &query.Field
+	filters.AddFiter(query.ExtraFilters.Conditions...)
 	return options
 }

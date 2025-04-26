@@ -16,23 +16,22 @@ type JudgementQueryContext struct {
 	Field field.JudgementField
 }
 
-func (query *JudgementQueryContext) GenerateOptions() *option.QueryOptions {
-	options := option.NewQueryOptions()
+// applyFilter 应用评测记录查询过滤条件
+// 根据查询参数设置过滤条件，并返回更新后的options对象
+func (query *JudgementQueryContext) applyFilter(options option.Options) option.Options {
+	filters := options.GetFilters()
 	if query.Id.Exist() {
-		options.Filters.Add(field.JudgementId, option.OpIn, query.Id.Value())
+		filters.Add(field.JudgementId, option.OpIn, query.Id.Value())
 	}
 	if query.SubmissionId.Exist() {
-		options.Filters.Add(field.JudgementSubmissionId, option.OpIn, query.SubmissionId.Value())
+		filters.Add(field.JudgementSubmissionId, option.OpIn, query.SubmissionId.Value())
 	}
 	if query.TestcaseId.Exist() {
-		options.Filters.Add(field.JudgementTestcaseId, option.OpIn, query.TestcaseId.Value())
+		filters.Add(field.JudgementTestcaseId, option.OpIn, query.TestcaseId.Value())
 	}
 	if query.Status.Exist() {
-		options.Filters.Add(field.JudgementStatus, option.OpIn, query.Status.Value())
+		filters.Add(field.JudgementStatus, option.OpIn, query.Status.Value())
 	}
-	options.Filters.AddFiter(query.ExtraFilters.Conditions...)
-	options.Page = query.Page
-	options.Sort = query.Sort
-	options.Field = &query.Field
+	filters.AddFiter(query.ExtraFilters.Conditions...)
 	return options
 }

@@ -14,17 +14,14 @@ type CollectionProblemQueryContext struct {
 	Field field.CollectionProblemField
 }
 
-func (query *CollectionProblemQueryContext) GenerateOptions() *option.QueryOptions {
-	options := option.NewQueryOptions()
+func (query *CollectionProblemQueryContext) applyFilter(options option.Options) option.Options {
+	filters := options.GetFilters()
 	if query.CollectionId.Exist() {
-		options.Filters.Add(field.CollectionProblemCollectionId, option.OpIn, query.CollectionId.Value())
+		filters.Add(field.CollectionProblemCollectionId, option.OpIn, query.CollectionId.Value())
 	}
 	if query.ProblemId.Exist() {
-		options.Filters.Add(field.CollectionProblemProblemId, option.OpIn, query.ProblemId.Value())
+		filters.Add(field.CollectionProblemProblemId, option.OpIn, query.ProblemId.Value())
 	}
-	options.Filters.AddFiter(query.ExtraFilters.Conditions...)
-	options.Page = query.Page
-	options.Sort = query.Sort
-	options.Field = &query.Field
+	filters.AddFiter(query.ExtraFilters.Conditions...)
 	return options
 }

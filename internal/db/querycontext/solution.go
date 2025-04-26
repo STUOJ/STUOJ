@@ -15,20 +15,15 @@ type SolutionQueryContext struct {
 	Field field.SolutionField
 }
 
-func (query *SolutionQueryContext) GenerateOptions() *option.QueryOptions {
-	options := option.NewQueryOptions()
+// applyFilter 应用查询过滤器到options
+func (query *SolutionQueryContext) applyFilter(options option.Options) option.Options {
+	filters := options.GetFilters()
 	if query.Id.Exist() {
-		options.Filters.Add(field.SolutionId, option.OpIn, query.Id.Value())
+		filters.Add(field.SolutionId, option.OpIn, query.Id.Value())
 	}
 	if query.ProblemId.Exist() {
-		options.Filters.Add(field.SolutionProblemId, option.OpIn, query.ProblemId.Value())
+		filters.Add(field.SolutionProblemId, option.OpIn, query.ProblemId.Value())
 	}
-	if query.LanguageId.Exist() {
-		options.Filters.Add(field.SolutionLanguageId, option.OpIn, query.LanguageId.Value())
-	}
-	options.Filters.AddFiter(query.ExtraFilters.Conditions...)
-	options.Page = query.Page
-	options.Sort = query.Sort
-	options.Field = &query.Field
+	filters.AddFiter(query.ExtraFilters.Conditions...)
 	return options
 }

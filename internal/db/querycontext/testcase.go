@@ -14,17 +14,15 @@ type TestcaseQueryContext struct {
 	Field field.TestcaseField
 }
 
-func (query *TestcaseQueryContext) GenerateOptions() *option.QueryOptions {
-	options := option.NewQueryOptions()
+// applyFilter 应用查询过滤器到options
+func (query *TestcaseQueryContext) applyFilter(options option.Options) option.Options {
+	filters := options.GetFilters()
 	if query.Id.Exist() {
-		options.Filters.Add(field.TestcaseId, option.OpIn, query.Id.Value())
+		filters.Add(field.TestcaseId, option.OpIn, query.Id.Value())
 	}
 	if query.ProblemId.Exist() {
-		options.Filters.Add(field.TestcaseProblemId, option.OpIn, query.ProblemId.Value())
+		filters.Add(field.TestcaseProblemId, option.OpIn, query.ProblemId.Value())
 	}
-	options.Filters.AddFiter(query.ExtraFilters.Conditions...)
-	options.Page = query.Page
-	options.Sort = query.Sort
-	options.Field = &query.Field
+	filters.AddFiter(query.ExtraFilters.Conditions...)
 	return options
 }

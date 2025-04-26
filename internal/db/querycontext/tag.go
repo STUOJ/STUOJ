@@ -14,17 +14,16 @@ type TagQueryContext struct {
 	Field field.TagField
 }
 
-func (query *TagQueryContext) GenerateOptions() *option.QueryOptions {
-	options := option.NewQueryOptions()
+// applyFilter 应用标签查询过滤条件
+// 根据查询参数设置过滤条件，并返回更新后的options对象
+func (query *TagQueryContext) applyFilter(options option.Options) option.Options {
+	filters := options.GetFilters()
 	if query.Id.Exist() {
-		options.Filters.Add(field.TagId, option.OpIn, query.Id.Value())
+		filters.Add(field.TagId, option.OpIn, query.Id.Value())
 	}
 	if query.Name.Exist() {
-		options.Filters.Add(field.TagName, option.OpLike, query.Name.Value())
+		filters.Add(field.TagName, option.OpLike, query.Name.Value())
 	}
-	options.Filters.AddFiter(query.ExtraFilters.Conditions...)
-	options.Page = query.Page
-	options.Sort = query.Sort
-	options.Field = &query.Field
+	filters.AddFiter(query.ExtraFilters.Conditions...)
 	return options
 }

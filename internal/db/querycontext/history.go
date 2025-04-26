@@ -21,35 +21,34 @@ type HistoryQueryContext struct {
 	Field field.HistoryField
 }
 
-func (query *HistoryQueryContext) GenerateOptions() *option.QueryOptions {
-	options := option.NewQueryOptions()
+// applyFilter 应用历史记录查询过滤条件
+// 根据查询参数设置过滤条件，并返回更新后的options对象
+func (query *HistoryQueryContext) applyFilter(options option.Options) option.Options {
+	filters := options.GetFilters()
 	if query.Id.Exist() {
-		options.Filters.Add(field.HistoryId, option.OpIn, query.Id.Value())
+		filters.Add(field.HistoryId, option.OpIn, query.Id.Value())
 	}
 	if query.UserId.Exist() {
-		options.Filters.Add(field.HistoryUserId, option.OpIn, query.UserId.Value())
+		filters.Add(field.HistoryUserId, option.OpIn, query.UserId.Value())
 	}
 	if query.ProblemId.Exist() {
-		options.Filters.Add(field.HistoryProblemId, option.OpIn, query.ProblemId.Value())
+		filters.Add(field.HistoryProblemId, option.OpIn, query.ProblemId.Value())
 	}
 	if query.Title.Exist() {
-		options.Filters.Add(field.HistoryTitle, option.OpLike, query.Title.Value())
+		filters.Add(field.HistoryTitle, option.OpLike, query.Title.Value())
 	}
 	if query.Difficulty.Exist() {
-		options.Filters.Add(field.HistoryDifficulty, option.OpIn, query.Difficulty.Value())
+		filters.Add(field.HistoryDifficulty, option.OpIn, query.Difficulty.Value())
 	}
 	if query.StartTime.Exist() {
-		options.Filters.Add(field.HistoryCreateTime, option.OpGreaterEq, query.StartTime.Value())
+		filters.Add(field.HistoryCreateTime, option.OpGreaterEq, query.StartTime.Value())
 	}
 	if query.EndTime.Exist() {
-		options.Filters.Add(field.HistoryCreateTime, option.OpLessEq, query.EndTime.Value())
+		filters.Add(field.HistoryCreateTime, option.OpLessEq, query.EndTime.Value())
 	}
 	if query.Operation.Exist() {
-		options.Filters.Add(field.HistoryOperation, option.OpIn, query.Operation.Value())
+		filters.Add(field.HistoryOperation, option.OpIn, query.Operation.Value())
 	}
-	options.Filters.AddFiter(query.ExtraFilters.Conditions...)
-	options.Page = query.Page
-	options.Sort = query.Sort
-	options.Field = &query.Field
+	filters.AddFiter(query.ExtraFilters.Conditions...)
 	return options
 }

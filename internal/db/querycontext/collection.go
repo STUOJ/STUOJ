@@ -19,29 +19,27 @@ type CollectionQueryContext struct {
 	Field field.CollectionField
 }
 
-func (query *CollectionQueryContext) GenerateOptions() *option.QueryOptions {
-	options := option.NewQueryOptions()
+// applyFilter 应用收藏查询过滤器
+func (query *CollectionQueryContext) applyFilter(options option.Options) option.Options {
+	filters := options.GetFilters()
 	if query.Id.Exist() {
-		options.Filters.Add(field.CollectionId, option.OpIn, query.Id.Value())
+		filters.Add(field.CollectionId, option.OpIn, query.Id.Value())
 	}
 	if query.Title.Exist() {
-		options.Filters.Add(field.CollectionTitle, option.OpLike, query.Title.Value())
+		filters.Add(field.CollectionTitle, option.OpLike, query.Title.Value())
 	}
 	if query.UserId.Exist() {
-		options.Filters.Add(field.CollectionUserId, option.OpIn, query.UserId.Value())
+		filters.Add(field.CollectionUserId, option.OpIn, query.UserId.Value())
 	}
 	if query.Status.Exist() {
-		options.Filters.Add(field.CollectionStatus, option.OpIn, query.Status.Value())
+		filters.Add(field.CollectionStatus, option.OpIn, query.Status.Value())
 	}
 	if query.StartTime.Exist() {
-		options.Filters.Add(field.CollectionCreateTime, option.OpGreaterEq, query.StartTime.Value())
+		filters.Add(field.CollectionCreateTime, option.OpGreaterEq, query.StartTime.Value())
 	}
 	if query.EndTime.Exist() {
-		options.Filters.Add(field.CollectionCreateTime, option.OpLessEq, query.EndTime.Value())
+		filters.Add(field.CollectionCreateTime, option.OpLessEq, query.EndTime.Value())
 	}
-	options.Filters.AddFiter(query.ExtraFilters.Conditions...)
-	options.Page = query.Page
-	options.Sort = query.Sort
-	options.Field = &query.Field
+	filters.AddFiter(query.ExtraFilters.Conditions...)
 	return options
 }

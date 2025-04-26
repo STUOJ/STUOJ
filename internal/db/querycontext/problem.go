@@ -20,29 +20,27 @@ type ProblemQueryContext struct {
 	Field field.ProblemField
 }
 
-func (query *ProblemQueryContext) GenerateOptions() *option.QueryOptions {
-	options := option.NewQueryOptions()
+// applyFilter 应用查询过滤器到options
+func (query *ProblemQueryContext) applyFilter(options option.Options) option.Options {
+	filters := options.GetFilters()
 	if query.Id.Exist() {
-		options.Filters.Add(field.ProblemId, option.OpIn, query.Id.Value())
+		filters.Add(field.ProblemId, option.OpIn, query.Id.Value())
 	}
 	if query.Title.Exist() {
-		options.Filters.Add(field.ProblemTitle, option.OpLike, query.Title.Value())
+		filters.Add(field.ProblemTitle, option.OpLike, query.Title.Value())
 	}
 	if query.Source.Exist() {
-		options.Filters.Add(field.ProblemSource, option.OpLike, query.Source.Value())
+		filters.Add(field.ProblemSource, option.OpLike, query.Source.Value())
 	}
 	if query.Status.Exist() {
-		options.Filters.Add(field.ProblemStatus, option.OpIn, query.Status.Value())
+		filters.Add(field.ProblemStatus, option.OpIn, query.Status.Value())
 	}
 	if query.StartTime.Exist() {
-		options.Filters.Add(field.ProblemCreateTime, option.OpGreaterEq, query.StartTime.Value())
+		filters.Add(field.ProblemCreateTime, option.OpGreaterEq, query.StartTime.Value())
 	}
 	if query.EndTime.Exist() {
-		options.Filters.Add(field.ProblemCreateTime, option.OpLessEq, query.EndTime.Value())
+		filters.Add(field.ProblemCreateTime, option.OpLessEq, query.EndTime.Value())
 	}
-	options.Filters.AddFiter(query.ExtraFilters.Conditions...)
-	options.Page = query.Page
-	options.Sort = query.Sort
-	options.Field = &query.Field
+	filters.AddFiter(query.ExtraFilters.Conditions...)
 	return options
 }

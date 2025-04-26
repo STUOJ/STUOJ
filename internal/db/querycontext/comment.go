@@ -19,29 +19,27 @@ type CommentQueryContext struct {
 	Field field.CommentField
 }
 
-func (query *CommentQueryContext) GenerateOptions() *option.QueryOptions {
-	options := option.NewQueryOptions()
+// applyFilter 应用查询过滤器到options
+func (query *CommentQueryContext) applyFilter(options option.Options) option.Options {
+	filters := options.GetFilters()
 	if query.Id.Exist() {
-		options.Filters.Add(field.CommentId, option.OpIn, query.Id.Value())
+		filters.Add(field.CommentId, option.OpIn, query.Id.Value())
 	}
 	if query.UserId.Exist() {
-		options.Filters.Add(field.CommentUserId, option.OpIn, query.UserId.Value())
+		filters.Add(field.CommentUserId, option.OpIn, query.UserId.Value())
 	}
 	if query.BlogId.Exist() {
-		options.Filters.Add(field.CommentBlogId, option.OpEqual, query.BlogId.Value())
+		filters.Add(field.CommentBlogId, option.OpEqual, query.BlogId.Value())
 	}
 	if query.Status.Exist() {
-		options.Filters.Add(field.CommentStatus, option.OpIn, query.Status.Value())
+		filters.Add(field.CommentStatus, option.OpIn, query.Status.Value())
 	}
 	if query.StartTime.Exist() {
-		options.Filters.Add(field.CommentCreateTime, option.OpGreaterEq, query.StartTime.Value())
+		filters.Add(field.CommentCreateTime, option.OpGreaterEq, query.StartTime.Value())
 	}
 	if query.EndTime.Exist() {
-		options.Filters.Add(field.CommentCreateTime, option.OpLessEq, query.EndTime.Value())
+		filters.Add(field.CommentCreateTime, option.OpLessEq, query.EndTime.Value())
 	}
-	options.Filters.AddFiter(query.ExtraFilters.Conditions...)
-	options.Page = query.Page
-	options.Sort = query.Sort
-	options.Field = &query.Field
+	filters.AddFiter(query.ExtraFilters.Conditions...)
 	return options
 }

@@ -46,19 +46,3 @@ func (query *BlogQueryContext) applyFilter(options option.Options) option.Option
 	filters.AddFiter(query.ExtraFilters.Conditions...)
 	return options
 }
-
-func (query *BlogQueryContext) GenerateOptions() *option.QueryOptions {
-	options := option.NewQueryOptions()
-	query.applyFilter(options)
-	options.Page = query.Page
-	options.Sort = query.Sort
-	options.Field = &query.Field
-	return options
-}
-
-func (query *BlogQueryContext) GenerateGroupCountOptions() *option.GroupCountOptions {
-	options := option.NewGroupCountOptions()
-	query.applyFilter(options)
-	options.GroupBy = query.GroupBy
-	return options
-}

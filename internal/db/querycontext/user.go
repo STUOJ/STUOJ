@@ -19,29 +19,27 @@ type UserQueryContext struct {
 	Field field.UserField
 }
 
-func (query *UserQueryContext) GenerateOptions() *option.QueryOptions {
-	options := option.NewQueryOptions()
+// applyFilter 应用查询过滤器到options
+func (query *UserQueryContext) applyFilter(options option.Options) option.Options {
+	filters := options.GetFilters()
 	if query.Id.Exist() {
-		options.Filters.Add(field.UserId, option.OpIn, query.Id.Value())
+		filters.Add(field.UserId, option.OpIn, query.Id.Value())
 	}
 	if query.Username.Exist() {
-		options.Filters.Add(field.UserUsername, option.OpLike, query.Username.Value())
+		filters.Add(field.UserUsername, option.OpLike, query.Username.Value())
 	}
 	if query.Email.Exist() {
-		options.Filters.Add(field.UserEmail, option.OpEqual, query.Email.Value())
+		filters.Add(field.UserEmail, option.OpEqual, query.Email.Value())
 	}
 	if query.Role.Exist() {
-		options.Filters.Add(field.UserRole, option.OpIn, query.Role.Value())
+		filters.Add(field.UserRole, option.OpIn, query.Role.Value())
 	}
 	if query.StartTime.Exist() {
-		options.Filters.Add(field.UserCreateTime, option.OpGreaterEq, query.StartTime.Value())
+		filters.Add(field.UserCreateTime, option.OpGreaterEq, query.StartTime.Value())
 	}
 	if query.EndTime.Exist() {
-		options.Filters.Add(field.UserCreateTime, option.OpLessEq, query.EndTime.Value())
+		filters.Add(field.UserCreateTime, option.OpLessEq, query.EndTime.Value())
 	}
-	options.Filters.AddFiter(query.ExtraFilters.Conditions...)
-	options.Page = query.Page
-	options.Sort = query.Sort
-	options.Field = &query.Field
+	filters.AddFiter(query.ExtraFilters.Conditions...)
 	return options
 }

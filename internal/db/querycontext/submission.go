@@ -20,32 +20,30 @@ type SubmissionQueryContext struct {
 	Field field.SubmissionField
 }
 
-func (query *SubmissionQueryContext) GenerateOptions() *option.QueryOptions {
-	options := option.NewQueryOptions()
+// applyFilter 应用查询过滤器到options
+func (query *SubmissionQueryContext) applyFilter(options option.Options) option.Options {
+	filters := options.GetFilters()
 	if query.Id.Exist() {
-		options.Filters.Add(field.SubmissionId, option.OpIn, query.Id.Value())
+		filters.Add(field.SubmissionId, option.OpIn, query.Id.Value())
 	}
 	if query.UserId.Exist() {
-		options.Filters.Add(field.SubmissionUserId, option.OpIn, query.UserId.Value())
+		filters.Add(field.SubmissionUserId, option.OpIn, query.UserId.Value())
 	}
 	if query.ProblemId.Exist() {
-		options.Filters.Add(field.SubmissionProblemId, option.OpIn, query.ProblemId.Value())
+		filters.Add(field.SubmissionProblemId, option.OpIn, query.ProblemId.Value())
 	}
 	if query.Status.Exist() {
-		options.Filters.Add(field.SubmissionStatus, option.OpIn, query.Status.Value())
+		filters.Add(field.SubmissionStatus, option.OpIn, query.Status.Value())
 	}
 	if query.Language.Exist() {
-		options.Filters.Add(field.SubmissionLanguageId, option.OpIn, query.Language.Value())
+		filters.Add(field.SubmissionLanguageId, option.OpIn, query.Language.Value())
 	}
 	if query.StartTime.Exist() {
-		options.Filters.Add(field.SubmissionCreateTime, option.OpGreaterEq, query.StartTime.Value())
+		filters.Add(field.SubmissionCreateTime, option.OpGreaterEq, query.StartTime.Value())
 	}
 	if query.EndTime.Exist() {
-		options.Filters.Add(field.SubmissionCreateTime, option.OpLessEq, query.EndTime.Value())
+		filters.Add(field.SubmissionCreateTime, option.OpLessEq, query.EndTime.Value())
 	}
-	options.Filters.AddFiter(query.ExtraFilters.Conditions...)
-	options.Page = query.Page
-	options.Sort = query.Sort
-	options.Field = &query.Field
+	filters.AddFiter(query.ExtraFilters.Conditions...)
 	return options
 }

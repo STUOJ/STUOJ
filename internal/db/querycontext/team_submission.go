@@ -14,17 +14,16 @@ type TeamSubmissionQuery struct {
 	Field field.TeamSubmissionField
 }
 
-func (query *TeamSubmissionQuery) GenerateOptions() *option.QueryOptions {
-	options := option.NewQueryOptions()
+// applyFilter 应用团队提交记录查询过滤条件
+// 根据查询参数设置过滤条件，并返回更新后的options对象
+func (query *TeamSubmissionQuery) applyFilter(options option.Options) option.Options {
+	filters := options.GetFilters()
 	if query.TeamId.Exist() {
-		options.Filters.Add(field.TeamId, option.OpIn, query.TeamId.Value())
+		filters.Add(field.TeamId, option.OpIn, query.TeamId.Value())
 	}
 	if query.SubmissionId.Exist() {
-		options.Filters.Add(field.SubmissionId, option.OpIn, query.SubmissionId.Value())
+		filters.Add(field.SubmissionId, option.OpIn, query.SubmissionId.Value())
 	}
-	options.Filters.AddFiter(query.ExtraFilters.Conditions...)
-	options.Page = query.Page
-	options.Sort = query.Sort
-	options.Field = &query.Field
+	filters.AddFiter(query.ExtraFilters.Conditions...)
 	return options
 }

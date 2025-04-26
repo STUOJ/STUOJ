@@ -14,17 +14,15 @@ type TeamUserQuery struct {
 	Field field.TeamUserField
 }
 
-func (query *TeamUserQuery) GenerateOptions() *option.QueryOptions {
-	options := option.NewQueryOptions()
+// applyFilter 应用团队成员查询过滤器
+func (query *TeamUserQuery) applyFilter(options option.Options) option.Options {
+	filters := options.GetFilters()
 	if query.TeamId.Exist() {
-		options.Filters.Add(field.TeamId, option.OpIn, query.TeamId.Value())
+		filters.Add(field.TeamId, option.OpIn, query.TeamId.Value())
 	}
 	if query.UserId.Exist() {
-		options.Filters.Add(field.UserId, option.OpIn, query.UserId.Value())
+		filters.Add(field.UserId, option.OpIn, query.UserId.Value())
 	}
-	options.Filters.AddFiter(query.ExtraFilters.Conditions...)
-	options.Page = query.Page
-	options.Sort = query.Sort
-	options.Field = &query.Field
+	filters.AddFiter(query.ExtraFilters.Conditions...)
 	return options
 }
