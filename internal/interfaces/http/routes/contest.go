@@ -24,6 +24,7 @@ func InitContestRoute(ginServer *gin.Engine) {
 	}
 }
 
+/*
 func InitTeamRoute(ginServer *gin.Engine) {
 	teamPublicRoute := ginServer.Group("/team")
 	{
@@ -41,3 +42,4 @@ func InitTeamRoute(ginServer *gin.Engine) {
 		teamUserRoute.DELETE("/:id", handler.TeamRemove)
 	}
 }
+*/

@@ -6,7 +6,7 @@ import (
 	"log"
 )
 
-func initNeko() {
+func InitNeko() {
 	err := neko.InitNekoAcm(config.Conf.NekoAcm.Host, config.Conf.NekoAcm.Port, config.Conf.NekoAcm.Token)
 	if err != nil {
 		log.Println(err)

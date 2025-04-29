@@ -43,7 +43,7 @@ func InitRoute() error {
 
 	// routes/contest.go
 	routes2.InitContestRoute(ginServer)
-	routes2.InitTeamRoute(ginServer)
+	//routes2.InitTeamRoute(ginServer)
 
 	// routes/blog.go
 	routes2.InitBlogRoute(ginServer)

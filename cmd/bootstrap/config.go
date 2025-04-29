@@ -5,7 +5,7 @@ import (
 	"log"
 )
 
-func initConfig() {
+func InitConfig() {
 	err := config.InitConfig()
 	if err != nil {
 		log.Println("初始化配置失败！")

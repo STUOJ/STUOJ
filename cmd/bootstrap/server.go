@@ -5,7 +5,7 @@ import (
 	"log"
 )
 
-func initServer() {
+func InitServer() {
 	err := http.InitServer()
 	if err != nil {
 		log.Println("初始化服务器失败！")

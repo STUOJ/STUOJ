@@ -5,7 +5,7 @@ import (
 	"log"
 )
 
-func initDatabase() {
+func InitDatabase() {
 	err := repository.InitDatabase()
 	if err != nil {
 		log.Println("初始化数据库失败！")

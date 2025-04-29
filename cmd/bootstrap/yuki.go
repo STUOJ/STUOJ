@@ -6,7 +6,7 @@ import (
 	"log"
 )
 
-func initYuki() {
+func InitYuki() {
 	err := yuki.InitYukiImage(config.Conf.YukiImage.Host, config.Conf.YukiImage.Port, config.Conf.YukiImage.Token)
 	if err != nil {
 		log.Println(err)

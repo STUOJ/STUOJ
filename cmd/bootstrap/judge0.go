@@ -11,7 +11,7 @@ import (
 	"log"
 )
 
-func initJudge0() {
+func InitJudge0() {
 	var err error
 	err = judge1.InitJudge(config.Conf.Judge.Host, config.Conf.Judge.Port, config.Conf.Judge.Token)
 	if err != nil {
