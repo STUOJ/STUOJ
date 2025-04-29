@@ -1,8 +1,8 @@
 package blog
 
 import (
-	"STUOJ/internal/db/entity"
 	"STUOJ/internal/domain/blog/valueobject"
+	"STUOJ/internal/infrastructure/repository/entity"
 )
 
 type Option func(*Blog)

@@ -1,7 +1,7 @@
 package model
 
 import (
-	"STUOJ/utils"
+	"STUOJ/pkg/utils"
 	"errors"
 	"github.com/gin-gonic/gin"
 	"log"

@@ -4,15 +4,15 @@ package comment
 //go:generate go run ../../../utils/gen/query_gen.go comment
 
 import (
+	"STUOJ/internal/infrastructure/repository/dao"
+	"STUOJ/internal/infrastructure/repository/entity"
+	"STUOJ/internal/infrastructure/repository/entity/field"
+	"STUOJ/internal/model/option"
+	"STUOJ/pkg/errors"
 	"fmt"
 	"time"
 
-	"STUOJ/internal/db/dao"
-	"STUOJ/internal/db/entity"
-	"STUOJ/internal/db/entity/field"
 	"STUOJ/internal/domain/comment/valueobject"
-	"STUOJ/internal/errors"
-	"STUOJ/internal/model/option"
 )
 
 type Comment struct {

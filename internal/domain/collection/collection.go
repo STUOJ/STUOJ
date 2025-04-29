@@ -4,15 +4,15 @@ package collection
 //go:generate go run ../../../utils/gen/query_gen.go collection
 
 import (
+	dao2 "STUOJ/internal/infrastructure/repository/dao"
+	"STUOJ/internal/infrastructure/repository/entity"
+	"STUOJ/internal/infrastructure/repository/entity/field"
+	"STUOJ/internal/model/option"
+	"STUOJ/pkg/errors"
 	"fmt"
 	"time"
 
-	"STUOJ/internal/db/dao"
-	"STUOJ/internal/db/entity"
-	"STUOJ/internal/db/entity/field"
 	"STUOJ/internal/domain/collection/valueobject"
-	"STUOJ/internal/errors"
-	"STUOJ/internal/model/option"
 )
 
 type Collection struct {
@@ -76,7 +76,7 @@ func (c *Collection) Create() (int64, error) {
 	if err := c.verify(); err != nil {
 		return 0, errors.ErrValidation.WithMessage(err.Error())
 	}
-	collection, err := dao.CollectionStore.Insert(c.toEntity())
+	collection, err := dao2.CollectionStore.Insert(c.toEntity())
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
 	}
@@ -86,7 +86,7 @@ func (c *Collection) Create() (int64, error) {
 func (c *Collection) Update() error {
 	var err error
 	options := c.toOption()
-	_, err = dao.CollectionStore.SelectOne(options)
+	_, err = dao2.CollectionStore.SelectOne(options)
 	if err != nil {
 		return errors.ErrNotFound.WithMessage(err.Error())
 	}
@@ -94,7 +94,7 @@ func (c *Collection) Update() error {
 	if err := c.verify(); err != nil {
 		return errors.ErrValidation.WithMessage(err.Error())
 	}
-	_, err = dao.CollectionStore.Updates(c.toEntity(), options)
+	_, err = dao2.CollectionStore.Updates(c.toEntity(), options)
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
@@ -103,11 +103,11 @@ func (c *Collection) Update() error {
 
 func (c *Collection) Delete() error {
 	options := c.toOption()
-	_, err := dao.CollectionStore.SelectOne(options)
+	_, err := dao2.CollectionStore.SelectOne(options)
 	if err != nil {
 		return errors.ErrNotFound.WithMessage(err.Error())
 	}
-	err = dao.CollectionStore.Delete(options)
+	err = dao2.CollectionStore.Delete(options)
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
@@ -117,17 +117,17 @@ func (c *Collection) Delete() error {
 func (c *Collection) UpdateUser(userIds []int64) error {
 	var err error
 	options := c.toOption()
-	_, err = dao.CollectionStore.SelectOne(options)
+	_, err = dao2.CollectionStore.SelectOne(options)
 	if err != nil {
 		return errors.ErrNotFound.WithMessage(err.Error())
 	}
-	err = dao.CollectionUserStore.Delete(options)
+	err = dao2.CollectionUserStore.Delete(options)
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
 	var errs []error
 	for _, id := range userIds {
-		_, err = dao.CollectionUserStore.Insert(entity.CollectionUser{
+		_, err = dao2.CollectionUserStore.Insert(entity.CollectionUser{
 			CollectionId: uint64(c.Id),
 			UserId:       uint64(id),
 		})
@@ -144,18 +144,18 @@ func (c *Collection) UpdateUser(userIds []int64) error {
 func (c *Collection) UpdateProblem(problemIds []int64) error {
 	var err error
 	options := c.toOption()
-	_, err = dao.CollectionStore.SelectOne(options)
+	_, err = dao2.CollectionStore.SelectOne(options)
 	if err != nil {
 		return errors.ErrNotFound.WithMessage(err.Error())
 	}
-	err = dao.CollectionProblemStore.Delete(options)
+	err = dao2.CollectionProblemStore.Delete(options)
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
 	var errs []error
 	var serial uint16 = 1
 	for _, id := range problemIds {
-		_, err = dao.CollectionProblemStore.Insert(entity.CollectionProblem{
+		_, err = dao2.CollectionProblemStore.Insert(entity.CollectionProblem{
 			CollectionId: uint64(c.Id),
 			ProblemId:    uint64(id),
 			Serial:       serial,

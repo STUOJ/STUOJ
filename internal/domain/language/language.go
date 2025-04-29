@@ -4,12 +4,12 @@ package language
 //go:generate go run ../../../utils/gen/query_gen.go language
 
 import (
-	"STUOJ/internal/db/dao"
-	"STUOJ/internal/db/entity"
-	"STUOJ/internal/db/entity/field"
 	"STUOJ/internal/domain/language/valueobject"
-	"STUOJ/internal/errors"
+	"STUOJ/internal/infrastructure/repository/dao"
+	"STUOJ/internal/infrastructure/repository/entity"
+	"STUOJ/internal/infrastructure/repository/entity/field"
 	"STUOJ/internal/model/option"
+	"STUOJ/pkg/errors"
 )
 
 type Language struct {

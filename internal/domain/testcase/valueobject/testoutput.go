@@ -1,7 +1,7 @@
 package valueobject
 
 import (
-	"STUOJ/internal/errors"
+	"STUOJ/pkg/errors"
 )
 
 type TestOutput struct {

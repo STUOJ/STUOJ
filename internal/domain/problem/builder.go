@@ -1,8 +1,8 @@
 package problem
 
 import (
-	"STUOJ/internal/db/entity"
 	"STUOJ/internal/domain/problem/valueobject"
+	"STUOJ/internal/infrastructure/repository/entity"
 )
 
 type Option func(*Problem)

@@ -1,8 +1,8 @@
 package runner
 
 import (
-	"STUOJ/external/judge0"
-	"STUOJ/internal/db/entity"
+	judge1 "STUOJ/internal/infrastructure/judge0"
+	"STUOJ/internal/infrastructure/repository/entity"
 	"strconv"
 
 	"sync"
@@ -15,7 +15,7 @@ type Judge0 struct{}
 func (j *Judge0) CodeRun(runnerSubmission RunnerSubmission) RunnerResult {
 	judgeSubmissions := runnerSubmissionToJudgeSubmission(runnerSubmission)
 	runNum := len(judgeSubmissions)
-	chJudgement := make(chan judge0.JudgeResult, runNum)
+	chJudgement := make(chan judge1.JudgeResult, runNum)
 
 	var eg errgroup.Group
 	var mu sync.Mutex // 用于保护错误信息的互斥锁
@@ -24,7 +24,7 @@ func (j *Judge0) CodeRun(runnerSubmission RunnerSubmission) RunnerResult {
 	for i := range judgeSubmissions {
 		submission := judgeSubmissions[i] // 避免闭包陷阱
 		eg.Go(func() error {
-			result, err := judge0.Submit(submission)
+			result, err := judge1.Submit(submission)
 			if err != nil {
 				result.Status.Id = uint64(entity.JudgeIE)
 				result.Status.Description = entity.JudgeIE.String()
@@ -42,7 +42,7 @@ func (j *Judge0) CodeRun(runnerSubmission RunnerSubmission) RunnerResult {
 	close(chJudgement)
 
 	// 收集结果
-	judgeResult := make([]judge0.JudgeResult, 0, runNum)
+	judgeResult := make([]judge1.JudgeResult, 0, runNum)
 	for result := range chJudgement {
 		judgeResult = append(judgeResult, result)
 	}
@@ -51,7 +51,7 @@ func (j *Judge0) CodeRun(runnerSubmission RunnerSubmission) RunnerResult {
 }
 
 func (j *Judge0) GetLanguage() ([]RunnerLanguage, error) {
-	languages, err := judge0.GetLanguage()
+	languages, err := judge1.GetLanguage()
 	if err != nil {
 		return nil, err
 	}
@@ -65,10 +65,10 @@ func (j *Judge0) GetLanguage() ([]RunnerLanguage, error) {
 	return runnerLanguages, nil
 }
 
-func runnerSubmissionToJudgeSubmission(submission RunnerSubmission) []judge0.JudgeSubmission {
-	var judgeSubmissions = make([]judge0.JudgeSubmission, len(submission.Testcase))
+func runnerSubmissionToJudgeSubmission(submission RunnerSubmission) []judge1.JudgeSubmission {
+	var judgeSubmissions = make([]judge1.JudgeSubmission, len(submission.Testcase))
 	for _, testCase := range submission.Testcase {
-		judgeSubmissions = append(judgeSubmissions, judge0.JudgeSubmission{
+		judgeSubmissions = append(judgeSubmissions, judge1.JudgeSubmission{
 			SourceCode:     submission.SourceCode,
 			LanguageId:     uint64(submission.LanguageId),
 			Stdin:          testCase.Input,
@@ -80,7 +80,7 @@ func runnerSubmissionToJudgeSubmission(submission RunnerSubmission) []judge0.Jud
 	return judgeSubmissions
 }
 
-func judgeResultToRunnerResult(judgeResult []judge0.JudgeResult) RunnerResult {
+func judgeResultToRunnerResult(judgeResult []judge1.JudgeResult) RunnerResult {
 	var runnerResult RunnerResult
 	for _, result := range judgeResult {
 		status := RunnerStatus{

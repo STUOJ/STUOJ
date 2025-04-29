@@ -1,8 +1,8 @@
 package user
 
 import (
-	"STUOJ/internal/db/entity"
 	"STUOJ/internal/domain/user/valueobject"
+	"STUOJ/internal/infrastructure/repository/entity"
 	"time"
 )
 

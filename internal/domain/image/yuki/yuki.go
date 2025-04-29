@@ -1,8 +1,8 @@
 package yuki
 
 import (
-	"STUOJ/external/yuki"
 	"STUOJ/internal/domain/image/valueobject"
+	"STUOJ/internal/infrastructure/yuki"
 	"io"
 )
 

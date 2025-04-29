@@ -1,8 +1,8 @@
 package submission
 
 import (
-	"STUOJ/internal/db/dao"
-	"STUOJ/internal/errors"
+	"STUOJ/internal/infrastructure/repository/dao"
+	"STUOJ/pkg/errors"
 )
 
 func (_Query) SelectACUsers(pid, size int64) ([]map[string]any, error) {

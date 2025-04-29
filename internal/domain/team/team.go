@@ -4,12 +4,12 @@ package team
 //go:generate go run ../../../utils/gen/query_gen.go team
 
 import (
-	"STUOJ/internal/db/dao"
-	"STUOJ/internal/db/entity"
-	"STUOJ/internal/db/entity/field"
 	"STUOJ/internal/domain/team/valueobject"
-	"STUOJ/internal/errors"
+	dao2 "STUOJ/internal/infrastructure/repository/dao"
+	"STUOJ/internal/infrastructure/repository/entity"
+	field2 "STUOJ/internal/infrastructure/repository/entity/field"
 	"STUOJ/internal/model/option"
+	"STUOJ/pkg/errors"
 	"fmt"
 )
 
@@ -61,7 +61,7 @@ func (t *Team) fromEntity(team entity.Team) *Team {
 
 func (t *Team) toOption() *option.QueryOptions {
 	options := option.NewQueryOptions()
-	options.Filters.Add(field.TeamId, option.OpEqual, t.Id)
+	options.Filters.Add(field2.TeamId, option.OpEqual, t.Id)
 	return options
 }
 
@@ -69,7 +69,7 @@ func (t *Team) Create() (int64, error) {
 	if err := t.verify(); err != nil {
 		return 0, errors.ErrValidation.WithMessage(err.Error())
 	}
-	team, err := dao.TeamStore.Insert(t.toEntity())
+	team, err := dao2.TeamStore.Insert(t.toEntity())
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
 	}
@@ -79,14 +79,14 @@ func (t *Team) Create() (int64, error) {
 func (t *Team) Update() error {
 	var err error
 	options := t.toOption()
-	_, err = dao.TeamStore.SelectOne(options)
+	_, err = dao2.TeamStore.SelectOne(options)
 	if err != nil {
 		return errors.ErrNotFound.WithMessage(err.Error())
 	}
 	if err := t.verify(); err != nil {
 		return errors.ErrValidation.WithMessage(err.Error())
 	}
-	_, err = dao.TeamStore.Updates(t.toEntity(), options)
+	_, err = dao2.TeamStore.Updates(t.toEntity(), options)
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
@@ -95,17 +95,17 @@ func (t *Team) Update() error {
 
 func (t *Team) Delete() error {
 	options := t.toOption()
-	_, err := dao.TeamStore.SelectOne(options)
+	_, err := dao2.TeamStore.SelectOne(options)
 	if err != nil {
 		return errors.ErrNotFound.WithMessage(err.Error())
 	}
 	deleteTeamUserOptions := option.NewQueryOptions()
-	deleteTeamUserOptions.Filters.Add(field.TeamId, option.OpEqual, t.Id)
-	err = dao.TeamUserStore.Delete(deleteTeamUserOptions)
+	deleteTeamUserOptions.Filters.Add(field2.TeamId, option.OpEqual, t.Id)
+	err = dao2.TeamUserStore.Delete(deleteTeamUserOptions)
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	err = dao.TeamStore.Delete(options)
+	err = dao2.TeamStore.Delete(options)
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
@@ -115,11 +115,11 @@ func (t *Team) Delete() error {
 
 func (t *Team) JoinTeam(userId int64) error {
 	options := t.toOption()
-	_, err := dao.TeamStore.SelectOne(options)
+	_, err := dao2.TeamStore.SelectOne(options)
 	if err != nil {
 		return errors.ErrNotFound.WithMessage(err.Error())
 	}
-	_, err = dao.TeamUserStore.Insert(entity.TeamUser{
+	_, err = dao2.TeamUserStore.Insert(entity.TeamUser{
 		TeamId: uint64(t.Id),
 		UserId: uint64(userId),
 	})
@@ -131,14 +131,14 @@ func (t *Team) JoinTeam(userId int64) error {
 
 func (t *Team) QuitTeam(userId int64) error {
 	options := t.toOption()
-	_, err := dao.TeamStore.SelectOne(options)
+	_, err := dao2.TeamStore.SelectOne(options)
 	if err != nil {
 		return errors.ErrNotFound.WithMessage(err.Error())
 	}
 	deleteOptions := option.NewQueryOptions()
-	deleteOptions.Filters.Add(field.TeamId, option.OpEqual, t.Id)
-	deleteOptions.Filters.Add(field.UserId, option.OpEqual, userId)
-	err = dao.TeamStore.Delete(deleteOptions)
+	deleteOptions.Filters.Add(field2.TeamId, option.OpEqual, t.Id)
+	deleteOptions.Filters.Add(field2.UserId, option.OpEqual, userId)
+	err = dao2.TeamStore.Delete(deleteOptions)
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}

@@ -1,7 +1,7 @@
 package valueobject
 
 import (
-	"STUOJ/utils"
+	"STUOJ/pkg/utils"
 	"errors"
 )
 

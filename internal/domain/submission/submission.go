@@ -4,21 +4,21 @@ package submission
 //go:generate go run ../../../utils/gen/query_gen.go submission
 
 import (
+	"STUOJ/internal/infrastructure/repository/dao"
+	entity2 "STUOJ/internal/infrastructure/repository/entity"
+	"STUOJ/internal/infrastructure/repository/entity/field"
+	"STUOJ/internal/model/option"
+	"STUOJ/pkg/errors"
 	"time"
 
-	"STUOJ/internal/db/dao"
-	"STUOJ/internal/db/entity"
-	"STUOJ/internal/db/entity/field"
 	"STUOJ/internal/domain/submission/valueobject"
-	"STUOJ/internal/errors"
-	"STUOJ/internal/model/option"
 )
 
 type Submission struct {
 	Id         int64
 	UserId     int64
 	ProblemId  int64
-	Status     entity.JudgeStatus
+	Status     entity2.JudgeStatus
 	Score      int64
 	Memory     int64
 	Time       float64
@@ -33,14 +33,14 @@ func (s *Submission) verify() error {
 	if err := s.SourceCode.Verify(); err != nil {
 		return errors.ErrValidation.WithMessage(err.Error())
 	}
-	if !entity.JudgeStatus(s.Status).IsValid() {
+	if !entity2.JudgeStatus(s.Status).IsValid() {
 		return errors.ErrValidation.WithMessage("状态码无效")
 	}
 	return &errors.NoError
 }
 
-func (s *Submission) toEntity() entity.Submission {
-	return entity.Submission{
+func (s *Submission) toEntity() entity2.Submission {
+	return entity2.Submission{
 		Id:         uint64(s.Id),
 		UserId:     uint64(s.UserId),
 		ProblemId:  uint64(s.ProblemId),
@@ -56,7 +56,7 @@ func (s *Submission) toEntity() entity.Submission {
 	}
 }
 
-func (s *Submission) fromEntity(submission entity.Submission) *Submission {
+func (s *Submission) fromEntity(submission entity2.Submission) *Submission {
 	s.Id = int64(submission.Id)
 	s.UserId = int64(submission.UserId)
 	s.ProblemId = int64(submission.ProblemId)
@@ -126,7 +126,7 @@ type Option func(*Submission)
 
 func NewSubmission(option ...Option) *Submission {
 	s := &Submission{
-		Status: entity.JudgeIE,
+		Status: entity2.JudgeIE,
 	}
 	for _, opt := range option {
 		opt(s)
@@ -152,7 +152,7 @@ func WithProblemId(problemId int64) Option {
 	}
 }
 
-func WithStatus(status entity.JudgeStatus) Option {
+func WithStatus(status entity2.JudgeStatus) Option {
 	return func(s *Submission) {
 		s.Status = status
 	}

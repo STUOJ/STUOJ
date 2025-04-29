@@ -4,14 +4,14 @@ package user
 //go:generate go run ../../../utils/gen/query_gen.go user
 
 import (
+	"STUOJ/internal/infrastructure/repository/dao"
+	"STUOJ/internal/infrastructure/repository/entity"
+	"STUOJ/internal/infrastructure/repository/entity/field"
+	"STUOJ/internal/model/option"
+	"STUOJ/pkg/errors"
 	"time"
 
-	"STUOJ/internal/db/dao"
-	"STUOJ/internal/db/entity"
-	"STUOJ/internal/db/entity/field"
 	"STUOJ/internal/domain/user/valueobject"
-	"STUOJ/internal/errors"
-	"STUOJ/internal/model/option"
 )
 
 type User struct {

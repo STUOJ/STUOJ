@@ -1,8 +1,7 @@
 package model
 
 import (
-	"STUOJ/internal/db/entity"
-
+	"STUOJ/internal/infrastructure/repository/entity"
 	"github.com/gin-gonic/gin"
 )
 

@@ -4,15 +4,15 @@ package history
 //go:generate go run ../../../utils/gen/query_gen.go history
 
 import (
+	"STUOJ/internal/infrastructure/repository/dao"
+	entity2 "STUOJ/internal/infrastructure/repository/entity"
+	"STUOJ/internal/infrastructure/repository/entity/field"
+	"STUOJ/internal/model/option"
+	"STUOJ/pkg/errors"
 	"fmt"
 	"time"
 
-	"STUOJ/internal/db/dao"
-	"STUOJ/internal/db/entity"
-	"STUOJ/internal/db/entity/field"
 	"STUOJ/internal/domain/history/valueobject"
-	"STUOJ/internal/errors"
-	"STUOJ/internal/model/option"
 )
 
 type History struct {
@@ -21,7 +21,7 @@ type History struct {
 	ProblemId    int64
 	Title        valueobject.Title
 	Source       valueobject.Source
-	Difficulty   entity.Difficulty
+	Difficulty   entity2.Difficulty
 	TimeLimit    float64
 	MemoryLimit  int64
 	Description  valueobject.Description
@@ -30,7 +30,7 @@ type History struct {
 	SampleInput  valueobject.Input
 	SampleOutput valueobject.Output
 	Hint         valueobject.Description
-	Operation    entity.Operation
+	Operation    entity2.Operation
 	CreateTime   time.Time
 }
 
@@ -38,7 +38,7 @@ func (h *History) verify() error {
 	if h.UserId == 0 {
 		return fmt.Errorf("用户Id不能为空")
 	}
-	if !entity.Operation(h.Operation).IsValid() {
+	if !entity2.Operation(h.Operation).IsValid() {
 		return fmt.Errorf("操作类型不合法")
 	}
 	if err := h.Title.Verify(); err != nil {
@@ -68,8 +68,8 @@ func (h *History) verify() error {
 	return nil
 }
 
-func (h *History) toEntity() entity.History {
-	return entity.History{
+func (h *History) toEntity() entity2.History {
+	return entity2.History{
 		Id:           uint64(h.Id),
 		UserId:       uint64(h.UserId),
 		ProblemId:    uint64(h.ProblemId),
@@ -89,7 +89,7 @@ func (h *History) toEntity() entity.History {
 	}
 }
 
-func (h *History) fromEntity(history entity.History) *History {
+func (h *History) fromEntity(history entity2.History) *History {
 	h.Id = int64(history.Id)
 	h.UserId = int64(history.UserId)
 	h.ProblemId = int64(history.ProblemId)
@@ -197,7 +197,7 @@ func WithSource(source string) Option {
 	}
 }
 
-func WithDifficulty(difficulty entity.Difficulty) Option {
+func WithDifficulty(difficulty entity2.Difficulty) Option {
 	return func(h *History) {
 		h.Difficulty = difficulty
 	}
@@ -251,7 +251,7 @@ func WithHint(hint string) Option {
 	}
 }
 
-func WithOperation(operation entity.Operation) Option {
+func WithOperation(operation entity2.Operation) Option {
 	return func(h *History) {
 		h.Operation = operation
 	}

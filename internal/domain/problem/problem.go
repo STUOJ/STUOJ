@@ -4,14 +4,14 @@ package problem
 //go:generate go run ../../../utils/gen/query_gen.go problem
 
 import (
+	dao2 "STUOJ/internal/infrastructure/repository/dao"
+	"STUOJ/internal/infrastructure/repository/entity"
+	"STUOJ/internal/infrastructure/repository/entity/field"
+	"STUOJ/internal/model/option"
+	"STUOJ/pkg/errors"
 	"time"
 
-	"STUOJ/internal/db/dao"
-	"STUOJ/internal/db/entity"
-	"STUOJ/internal/db/entity/field"
 	"STUOJ/internal/domain/problem/valueobject"
-	"STUOJ/internal/errors"
-	"STUOJ/internal/model/option"
 )
 
 type Problem struct {
@@ -111,7 +111,7 @@ func (p *Problem) Create() (int64, error) {
 	if err := p.verify(); err != nil {
 		return 0, errors.ErrValidation.WithMessage(err.Error())
 	}
-	problem, err := dao.ProblemStore.Insert(p.toEntity())
+	problem, err := dao2.ProblemStore.Insert(p.toEntity())
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
 	}
@@ -121,7 +121,7 @@ func (p *Problem) Create() (int64, error) {
 func (p *Problem) Update() error {
 	var err error
 	options := p.toOption()
-	_, err = dao.ProblemStore.SelectOne(options)
+	_, err = dao2.ProblemStore.SelectOne(options)
 	if err != nil {
 		return errors.ErrNotFound.WithMessage(err.Error())
 	}
@@ -129,7 +129,7 @@ func (p *Problem) Update() error {
 	if err := p.verify(); err != nil {
 		return errors.ErrValidation.WithMessage(err.Error())
 	}
-	_, err = dao.ProblemStore.Updates(p.toEntity(), options)
+	_, err = dao2.ProblemStore.Updates(p.toEntity(), options)
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
@@ -138,11 +138,11 @@ func (p *Problem) Update() error {
 
 func (p *Problem) Delete() error {
 	options := p.toOption()
-	_, err := dao.ProblemStore.SelectOne(options)
+	_, err := dao2.ProblemStore.SelectOne(options)
 	if err != nil {
 		return errors.ErrNotFound.WithMessage(err.Error())
 	}
-	err = dao.ProblemStore.Delete(options)
+	err = dao2.ProblemStore.Delete(options)
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
@@ -152,17 +152,17 @@ func (p *Problem) Delete() error {
 func (p *Problem) UpdateTags(tagIds []int64) error {
 	var err error
 	options := p.toOption()
-	_, err = dao.ProblemStore.SelectOne(options)
+	_, err = dao2.ProblemStore.SelectOne(options)
 	if err != nil {
 		return errors.ErrNotFound.WithMessage(err.Error())
 	}
-	err = dao.ProblemTagStore.Delete(options)
+	err = dao2.ProblemTagStore.Delete(options)
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
 	var errs []error
 	for _, id := range tagIds {
-		_, err = dao.ProblemTagStore.Insert(entity.ProblemTag{
+		_, err = dao2.ProblemTagStore.Insert(entity.ProblemTag{
 			ProblemId: uint64(p.Id),
 			TagId:     uint64(id),
 		})

@@ -3,7 +3,7 @@ package image
 import (
 	"STUOJ/internal/domain/image/valueobject"
 	"STUOJ/internal/domain/image/yuki"
-	"STUOJ/internal/errors"
+	"STUOJ/pkg/errors"
 	"fmt"
 	"io"
 	"time"

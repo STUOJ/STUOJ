@@ -4,15 +4,15 @@ package contest
 //go:generate go run ../../../utils/gen/query_gen.go contest
 
 import (
+	dao2 "STUOJ/internal/infrastructure/repository/dao"
+	"STUOJ/internal/infrastructure/repository/entity"
+	"STUOJ/internal/infrastructure/repository/entity/field"
+	"STUOJ/internal/model/option"
+	"STUOJ/pkg/errors"
 	"fmt"
 	"time"
 
-	"STUOJ/internal/db/dao"
-	"STUOJ/internal/db/entity"
-	"STUOJ/internal/db/entity/field"
 	"STUOJ/internal/domain/contest/valueobject"
-	"STUOJ/internal/errors"
-	"STUOJ/internal/model/option"
 )
 
 type Contest struct {
@@ -96,7 +96,7 @@ func (c *Contest) Create() (int64, error) {
 	if err := c.verify(); err != nil {
 		return 0, errors.ErrValidation.WithMessage(err.Error())
 	}
-	contest, err := dao.ContestStore.Insert(c.toEntity())
+	contest, err := dao2.ContestStore.Insert(c.toEntity())
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
 	}
@@ -106,7 +106,7 @@ func (c *Contest) Create() (int64, error) {
 func (c *Contest) Update() error {
 	var err error
 	options := c.toOption()
-	_, err = dao.ContestStore.SelectOne(options)
+	_, err = dao2.ContestStore.SelectOne(options)
 	if err != nil {
 		return errors.ErrNotFound.WithMessage(err.Error())
 	}
@@ -114,7 +114,7 @@ func (c *Contest) Update() error {
 	if err := c.verify(); err != nil {
 		return errors.ErrValidation.WithMessage(err.Error())
 	}
-	_, err = dao.ContestStore.Updates(c.toEntity(), options)
+	_, err = dao2.ContestStore.Updates(c.toEntity(), options)
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
@@ -123,11 +123,11 @@ func (c *Contest) Update() error {
 
 func (c *Contest) Delete() error {
 	options := c.toOption()
-	_, err := dao.ContestStore.SelectOne(options)
+	_, err := dao2.ContestStore.SelectOne(options)
 	if err != nil {
 		return errors.ErrNotFound.WithMessage(err.Error())
 	}
-	err = dao.ContestStore.Delete(options)
+	err = dao2.ContestStore.Delete(options)
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
@@ -137,17 +137,17 @@ func (c *Contest) Delete() error {
 func (c *Contest) UpdateUser(userIds []int64) error {
 	var err error
 	options := c.toOption()
-	_, err = dao.ContestStore.SelectOne(options)
+	_, err = dao2.ContestStore.SelectOne(options)
 	if err != nil {
 		return errors.ErrNotFound.WithMessage(err.Error())
 	}
-	err = dao.ContestUserStore.Delete(options)
+	err = dao2.ContestUserStore.Delete(options)
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
 	var errs []error
 	for _, id := range userIds {
-		_, err = dao.ContestUserStore.Insert(entity.ContestUser{
+		_, err = dao2.ContestUserStore.Insert(entity.ContestUser{
 			ContestId: uint64(c.Id),
 			UserId:    uint64(id),
 		})
@@ -164,18 +164,18 @@ func (c *Contest) UpdateUser(userIds []int64) error {
 func (c *Contest) UpdateProblem(problemIds []int64) error {
 	var err error
 	options := c.toOption()
-	_, err = dao.ContestStore.SelectOne(options)
+	_, err = dao2.ContestStore.SelectOne(options)
 	if err != nil {
 		return errors.ErrNotFound.WithMessage(err.Error())
 	}
-	err = dao.ContestProblemStore.Delete(options)
+	err = dao2.ContestProblemStore.Delete(options)
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
 	var errs []error
 	var serial uint16 = 1
 	for _, id := range problemIds {
-		_, err = dao.ContestProblemStore.Insert(entity.ContestProblem{
+		_, err = dao2.ContestProblemStore.Insert(entity.ContestProblem{
 			ContestId: uint64(c.Id),
 			ProblemId: uint64(id),
 			Serial:    serial,
