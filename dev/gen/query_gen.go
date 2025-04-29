@@ -26,7 +26,7 @@ package {{.PackageName}}
 import (
 	"STUOJ/internal/infrastructure/repository/dao"
 	"STUOJ/internal/model/option"
-	"STUOJ/internal/errors"
+	"STUOJ/pkg/errors"
 	"STUOJ/internal/infrastructure/repository/querycontext"
 )
 

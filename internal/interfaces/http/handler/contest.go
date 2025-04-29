@@ -1,10 +1,9 @@
 package handler
 
 import (
-	"STUOJ/internal/entity"
+	"STUOJ/internal/application/service/contest"
 	"STUOJ/internal/model"
-	"STUOJ/internal/service/contest"
-	"STUOJ/utils"
+	"STUOJ/pkg/utils"
 	"log"
 	"net/http"
 	"strconv"
