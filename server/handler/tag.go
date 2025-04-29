@@ -2,9 +2,9 @@ package handler
 
 import (
 	"STUOJ/internal/app/dto/request"
+	"STUOJ/internal/app/service/tag"
 	"STUOJ/internal/errors"
 	"STUOJ/internal/model"
-	"STUOJ/internal/service/tag"
 	"net/http"
 	"strconv"
 
