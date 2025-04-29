@@ -1,7 +1,7 @@
 //go:build ignore
 
 // 为domain目录下的实体结构体生成generated_query.go文件
-// 例如：go run ../../../utils/gen/query_gen.go blog
+// 例如：go run ../../../dev/gen/query_gen.go blog
 
 package main
 

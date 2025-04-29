@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-//go:generate go run ../../../utils/gen/querycontext_gen.go CommentQueryContext
+//go:generate go run ../../../../dev/gen/querycontext_gen.go CommentQueryContext
 type CommentQueryContext struct {
 	Id        model.FieldList[int64]
 	UserId    model.FieldList[int64]

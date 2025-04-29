@@ -2,7 +2,7 @@ package entity
 
 // LanguageStatus 语言状态：1 弃用，2 禁用，3 启用
 //
-//go:generate go run ../../../utils/gen/enum_valid.go LanguageStatus
+//go:generate go run ../../../../dev/gen/enum_valid.go LanguageStatus
 type LanguageStatus uint8
 
 const (
@@ -26,8 +26,8 @@ func (s LanguageStatus) String() string {
 
 // Language 编程语言
 //
-//go:generate go run ../../../utils/gen/dao_store.go -struct=Language
-//go:generate go run ../../../utils/gen/field_select.go -struct=Language
+//go:generate go run ../../../../dev/gen/dao_store.go -struct=Language
+//go:generate go run ../../../../dev/gen/field_select.go -struct=Language
 type Language struct {
 	Id     uint64         `gorm:"primaryKey;autoIncrement;comment:语言Id"`
 	Name   string         `gorm:"type:varchar(255);not null;comment:语言名"`

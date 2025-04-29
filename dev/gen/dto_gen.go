@@ -1,7 +1,7 @@
 //go:build ignore
 
 // 为domain目录下的实体结构体生成dto.go文件
-// 例如：go run ../../../utils/gen/dto_gen.go blog
+// 例如：go run ../../../dev/gen/dto_gen.go blog
 
 package main
 
@@ -96,7 +96,7 @@ func processEntity(dir string, entityName string) error {
 	}
 
 	// 查找对应的entity包中的实体定义
-	entityDefFile := filepath.Join("../../../internal/db/entity", entityName+".go")
+	entityDefFile := filepath.Join("../../../internal/infrastructure/repository/entity", entityName+".go")
 	if _, err := os.Stat(entityDefFile); os.IsNotExist(err) {
 		return fmt.Errorf("实体定义文件 %s 不存在", entityDefFile)
 	}

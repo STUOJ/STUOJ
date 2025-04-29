@@ -1,8 +1,7 @@
 package routes
 
 import (
-	"STUOJ/http/handler"
-	handler2 "STUOJ/internal/interfaces/http/handler"
+	"STUOJ/internal/interfaces/http/handler"
 	"STUOJ/internal/interfaces/http/middlewares"
 	"github.com/gin-gonic/gin"
 )
@@ -10,8 +9,8 @@ import (
 func InitContestRoute(ginServer *gin.Engine) {
 	contestPublicRoute := ginServer.Group("/contest")
 	{
-		contestPublicRoute.GET("/:id", handler2.ContestInfo)
-		contestPublicRoute.GET("/", handler2.ContestList)
+		contestPublicRoute.GET("/:id", handler.ContestInfo)
+		contestPublicRoute.GET("/", handler.ContestList)
 	}
 
 	contestAdminRoute := ginServer.Group("/contest")
@@ -19,9 +18,9 @@ func InitContestRoute(ginServer *gin.Engine) {
 		// 使用中间件
 		contestAdminRoute.Use(middlewares.TokenAuthAdmin())
 
-		contestAdminRoute.POST("/", handler2.ContestAdd)
-		contestAdminRoute.PUT("/", handler2.ContestModify)
-		contestAdminRoute.DELETE("/:id", handler2.ContestRemove)
+		contestAdminRoute.POST("/", handler.ContestAdd)
+		contestAdminRoute.PUT("/", handler.ContestModify)
+		contestAdminRoute.DELETE("/:id", handler.ContestRemove)
 	}
 }
 

@@ -60,8 +60,8 @@ func (s JudgeStatus) String() string {
 
 // Judgement 评测点结果
 //
-//go:generate go run ../../../utils/gen/dao_store.go -struct=Judgement
-//go:generate go run ../../../utils/gen/field_select.go -struct=Judgement
+//go:generate go run ../../../../dev/gen/dao_store.go -struct=Judgement
+//go:generate go run ../../../../dev/gen/field_select.go -struct=Judgement
 type Judgement struct {
 	Id            uint64      `gorm:"primaryKey;autoIncrement;comment:评测点Id"`
 	SubmissionId  uint64      `gorm:"not null;default:0;comment:提交记录Id"`

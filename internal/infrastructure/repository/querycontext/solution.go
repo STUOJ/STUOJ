@@ -6,7 +6,7 @@ import (
 	"STUOJ/internal/model/option"
 )
 
-//go:generate go run ../../../utils/gen/querycontext_gen.go SolutionQueryContext
+//go:generate go run ../../../../dev/gen/querycontext_gen.go SolutionQueryContext
 type SolutionQueryContext struct {
 	Id         model.FieldList[int64]
 	ProblemId  model.FieldList[int64]

@@ -5,9 +5,9 @@ import (
 	"STUOJ/internal/application/dto/response"
 	"STUOJ/internal/domain/problem"
 	"STUOJ/internal/domain/user"
-	entity2 "STUOJ/internal/infrastructure/repository/entity"
-	query2 "STUOJ/internal/infrastructure/repository/query"
-	querycontext2 "STUOJ/internal/infrastructure/repository/querycontext"
+	entity "STUOJ/internal/infrastructure/repository/entity"
+	query "STUOJ/internal/infrastructure/repository/query"
+	querycontext "STUOJ/internal/infrastructure/repository/querycontext"
 	"STUOJ/internal/model"
 	"STUOJ/pkg/errors"
 	"STUOJ/pkg/utils"
@@ -21,9 +21,9 @@ type ProblemPage struct {
 
 func SelectById(id int64, reqUser model.ReqUser) (response.ProblemQueryData, error) {
 	var res response.ProblemQueryData
-	problemQueryContext := querycontext2.ProblemQueryContext{}
+	problemQueryContext := querycontext.ProblemQueryContext{}
 	problemQueryContext.Id.Add(id)
-	problemQueryContext.Field = *query2.ProblemAllField
+	problemQueryContext.Field = *query.ProblemAllField
 	problemDomain, problemMap, err := problem.Query.SelectOne(problemQueryContext, problem.QueryMaxScore(reqUser.Id), problem.QueryTag(), problem.QueryUser())
 	if err != nil {
 		return response.ProblemQueryData{}, err
@@ -37,13 +37,13 @@ func SelectById(id int64, reqUser model.ReqUser) (response.ProblemQueryData, err
 		return response.ProblemQueryData{}, errors.ErrInternalServer.WithMessage("获取题目修改者id失败")
 	}
 
-	if problemDomain.Status < entity2.ProblemPublic && reqUser.Role < entity2.RoleAdmin && !slices.Contains(userIds, reqUser.Id) {
+	if problemDomain.Status < entity.ProblemPublic && reqUser.Role < entity.RoleAdmin && !slices.Contains(userIds, reqUser.Id) {
 		return response.ProblemQueryData{}, errors.ErrUnauthorized.WithMessage("无权限查看")
 	}
 
-	userQueryContext := querycontext2.UserQueryContext{}
+	userQueryContext := querycontext.UserQueryContext{}
 	userQueryContext.Id.Set(userIds)
-	userQueryContext.Field = *query2.UserSimpleField
+	userQueryContext.Field = *query.UserSimpleField
 	userDomain, _, err := user.Query.Select(userQueryContext)
 	if err != nil {
 		return response.ProblemQueryData{}, err
@@ -59,12 +59,12 @@ func Select(params request.QueryProblemParams, reqUser model.ReqUser) (ProblemPa
 	problemQueryContext := params2Query(params)
 
 	if !problemQueryContext.Status.Exist() {
-		problemQueryContext.Status.Add(uint8(entity2.ProblemPublic))
-	} else if len(slices.DeleteFunc(problemQueryContext.Status.Value(), func(s uint8) bool { return s == uint8(entity2.ProblemPublic) })) > 0 && reqUser.Role < entity2.RoleAdmin {
+		problemQueryContext.Status.Add(uint8(entity.ProblemPublic))
+	} else if len(slices.DeleteFunc(problemQueryContext.Status.Value(), func(s uint8) bool { return s == uint8(entity.ProblemPublic) })) > 0 && reqUser.Role < entity.RoleAdmin {
 		problem.WhereUser(reqUser.Id)(&problemQueryContext)
 	}
 
-	problemQueryContext.Field = *query2.ProblemListItemField
+	problemQueryContext.Field = *query.ProblemListItemField
 
 	problemDomain, problemMap, err := problem.Query.Select(problemQueryContext, problem.QueryMaxScore(reqUser.Id), problem.QueryTag(), problem.QueryUser())
 	if err != nil {

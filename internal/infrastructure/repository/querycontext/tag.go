@@ -6,7 +6,7 @@ import (
 	"STUOJ/internal/model/option"
 )
 
-//go:generate go run ../../../utils/gen/querycontext_gen.go TagQueryContext
+//go:generate go run ../../../../dev/gen/querycontext_gen.go TagQueryContext
 type TagQueryContext struct {
 	Id   model.FieldList[int64]
 	Name model.FieldList[string]

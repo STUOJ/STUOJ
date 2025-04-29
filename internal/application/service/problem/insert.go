@@ -4,7 +4,7 @@ import (
 	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/domain/history"
 	"STUOJ/internal/domain/problem"
-	entity2 "STUOJ/internal/infrastructure/repository/entity"
+	entity "STUOJ/internal/infrastructure/repository/entity"
 	"STUOJ/internal/model"
 )
 
@@ -15,7 +15,7 @@ func Insert(req request.CreateProblemReq, reqUser model.ReqUser) (int64, error) 
 	p := problem.NewProblem(
 		problem.WithTitle(req.Title),
 		problem.WithSource(req.Source),
-		problem.WithDifficulty(entity2.Difficulty(req.Difficulty)),
+		problem.WithDifficulty(entity.Difficulty(req.Difficulty)),
 		problem.WithTimeLimit(float64(req.TimeLimit)),
 		problem.WithMemoryLimit(req.MemoryLimit),
 		problem.WithDescription(req.Description),
@@ -24,7 +24,7 @@ func Insert(req request.CreateProblemReq, reqUser model.ReqUser) (int64, error) 
 		problem.WithSampleInput(req.SampleInput),
 		problem.WithSampleOutput(req.SampleOutput),
 		problem.WithHint(req.Hint),
-		problem.WithStatus(entity2.ProblemStatus(req.Status)),
+		problem.WithStatus(entity.ProblemStatus(req.Status)),
 	)
 
 	// 创建题目
@@ -46,7 +46,7 @@ func Insert(req request.CreateProblemReq, reqUser model.ReqUser) (int64, error) 
 		history.WithProblemId(id),
 		history.WithTitle(req.Title),
 		history.WithSource(req.Source),
-		history.WithDifficulty(entity2.Difficulty(req.Difficulty)),
+		history.WithDifficulty(entity.Difficulty(req.Difficulty)),
 		history.WithTimeLimit(float64(req.TimeLimit)),
 		history.WithMemoryLimit(req.MemoryLimit),
 		history.WithDescription(req.Description),
@@ -55,7 +55,7 @@ func Insert(req request.CreateProblemReq, reqUser model.ReqUser) (int64, error) 
 		history.WithSampleInput(req.SampleInput),
 		history.WithSampleOutput(req.SampleOutput),
 		history.WithHint(req.Hint),
-		history.WithOperation(entity2.OperationInsert),
+		history.WithOperation(entity.OperationInsert),
 	)
 	_, err = h.Create()
 	if err != nil {

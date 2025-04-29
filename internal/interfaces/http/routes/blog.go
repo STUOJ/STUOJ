@@ -1,7 +1,7 @@
 package routes
 
 import (
-	handler2 "STUOJ/internal/interfaces/http/handler"
+	handler "STUOJ/internal/interfaces/http/handler"
 	"STUOJ/internal/interfaces/http/middlewares"
 
 	"github.com/gin-gonic/gin"
@@ -10,8 +10,8 @@ import (
 func InitBlogRoute(ginServer *gin.Engine) {
 	blogPublicRoute := ginServer.Group("/blog")
 	{
-		blogPublicRoute.GET("/", handler2.BlogList)
-		blogPublicRoute.GET("/:id", handler2.BlogInfo)
+		blogPublicRoute.GET("/", handler.BlogList)
+		blogPublicRoute.GET("/:id", handler.BlogInfo)
 	}
 
 	blogUserRoute := ginServer.Group("/blog")
@@ -19,16 +19,16 @@ func InitBlogRoute(ginServer *gin.Engine) {
 		// 使用中间件
 		blogUserRoute.Use(middlewares.TokenAuthUser())
 
-		blogUserRoute.POST("/", handler2.BlogUpload)
-		blogUserRoute.PUT("/", handler2.BlogEdit)
-		blogUserRoute.DELETE("/:id", handler2.BlogRemove)
+		blogUserRoute.POST("/", handler.BlogUpload)
+		blogUserRoute.PUT("/", handler.BlogEdit)
+		blogUserRoute.DELETE("/:id", handler.BlogRemove)
 	}
 }
 
 func InitCommentRoute(ginServer *gin.Engine) {
 	commentPublicRoute := ginServer.Group("/comment")
 	{
-		commentPublicRoute.GET("/", handler2.CommentList)
+		commentPublicRoute.GET("/", handler.CommentList)
 	}
 
 	commentUserRoute := ginServer.Group("/comment")
@@ -36,7 +36,7 @@ func InitCommentRoute(ginServer *gin.Engine) {
 		// 使用中间件
 		commentUserRoute.Use(middlewares.TokenAuthUser())
 
-		commentUserRoute.POST("/", handler2.CommentAdd)
+		commentUserRoute.POST("/", handler.CommentAdd)
 	}
 
 	commentAdminRoute := ginServer.Group("/comment")
@@ -44,6 +44,6 @@ func InitCommentRoute(ginServer *gin.Engine) {
 		// 使用中间件
 		commentAdminRoute.Use(middlewares.TokenAuthAdmin())
 
-		commentAdminRoute.PUT("/", handler2.CommentModify)
+		commentAdminRoute.PUT("/", handler.CommentModify)
 	}
 }

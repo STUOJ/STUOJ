@@ -5,8 +5,8 @@ import (
 	"STUOJ/internal/application/dto/response"
 	"STUOJ/internal/domain/history"
 	"STUOJ/internal/domain/user"
-	query2 "STUOJ/internal/infrastructure/repository/query"
-	querycontext2 "STUOJ/internal/infrastructure/repository/querycontext"
+	query "STUOJ/internal/infrastructure/repository/query"
+	querycontext "STUOJ/internal/infrastructure/repository/querycontext"
 	"STUOJ/internal/model"
 )
 
@@ -19,9 +19,9 @@ func SelectById(id int64, reqUser model.ReqUser) (response.HistoryData, error) {
 
 	var res response.HistoryData
 	// 创建查询选项
-	historyQuery := querycontext2.HistoryQueryContext{}
+	historyQuery := querycontext.HistoryQueryContext{}
 	historyQuery.Id.Add(id)
-	historyQuery.Field = *query2.HistoryAllField
+	historyQuery.Field = *query.HistoryAllField
 
 	historyDomain, _, err := history.Query.SelectOne(historyQuery)
 	if err != nil {
@@ -29,9 +29,9 @@ func SelectById(id int64, reqUser model.ReqUser) (response.HistoryData, error) {
 	}
 	res = response.Domain2HistoryData(historyDomain)
 
-	userQuery := querycontext2.UserQueryContext{}
+	userQuery := querycontext.UserQueryContext{}
 	userQuery.Id.Add(historyDomain.UserId)
-	userQuery.Field = *query2.UserSimpleField
+	userQuery.Field = *query.UserSimpleField
 	userDomain, _, err := user.Query.SelectOne(userQuery)
 	if err == nil {
 		res.User = response.Domain2UserSimpleData(userDomain)
@@ -43,7 +43,7 @@ func SelectById(id int64, reqUser model.ReqUser) (response.HistoryData, error) {
 func Select(params request.QueryHistoryParams, reqUser model.ReqUser) (HistoryPage, error) {
 	var res HistoryPage
 	historyQueryContext := params2Query(params)
-	historyQueryContext.Field = *query2.HistorySimpleField
+	historyQueryContext.Field = *query.HistorySimpleField
 
 	historyDomains, _, err := history.Query.Select(historyQueryContext)
 	if err != nil {
@@ -56,9 +56,9 @@ func Select(params request.QueryHistoryParams, reqUser model.ReqUser) (HistoryPa
 		res.Historys[i] = response.Domain2HistoryListItem(v)
 
 		// 获取用户信息
-		userQuery := querycontext2.UserQueryContext{}
+		userQuery := querycontext.UserQueryContext{}
 		userQuery.Id.Add(v.UserId)
-		userQuery.Field = *query2.UserSimpleField
+		userQuery.Field = *query.UserSimpleField
 		userDomain, _, err := user.Query.SelectOne(userQuery)
 		if err == nil {
 			res.Historys[i].User = response.Domain2UserSimpleData(userDomain)

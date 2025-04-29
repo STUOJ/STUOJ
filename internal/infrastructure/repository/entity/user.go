@@ -8,7 +8,7 @@ import (
 
 // Role 角色：0 访客，1 用户，2 编辑，3 管理，4 站长
 //
-//go:generate go run ../../../utils/gen/enum_valid.go Role
+//go:generate go run ../../../../dev/gen/enum_valid.go Role
 type Role uint8
 
 const (
@@ -53,8 +53,8 @@ func (e Email) String() string {
 
 // User 用户
 //
-//go:generate go run ../../../utils/gen/dao_store.go -struct=User
-//go:generate go run ../../../utils/gen/field_select.go -struct=User
+//go:generate go run ../../../../dev/gen/dao_store.go -struct=User
+//go:generate go run ../../../../dev/gen/field_select.go -struct=User
 type User struct {
 	Id         uint64    `gorm:"primaryKey;autoIncrement;comment:用户Id"`
 	Username   string    `gorm:"type:varchar(255);not null;comment:用户名;unique"`

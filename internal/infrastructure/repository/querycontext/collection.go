@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-//go:generate go run ../../../utils/gen/querycontext_gen.go CollectionQueryContext
+//go:generate go run ../../../../dev/gen/querycontext_gen.go CollectionQueryContext
 type CollectionQueryContext struct {
 	Id        model.FieldList[int64]
 	Title     model.Field[string]

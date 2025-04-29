@@ -3,7 +3,7 @@ package blog
 import (
 	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/domain/blog"
-	entity2 "STUOJ/internal/infrastructure/repository/entity"
+	entity "STUOJ/internal/infrastructure/repository/entity"
 	"STUOJ/internal/infrastructure/repository/querycontext"
 	"STUOJ/internal/model"
 	"STUOJ/pkg/errors"
@@ -23,14 +23,14 @@ func Update(req request.UpdateBlogReq, reqUser model.ReqUser) error {
 	if err != nil {
 		return err
 	}
-	if (req.Status == uint8(entity2.BlogDeleted) || req.Status == uint8(entity2.BlogNotice)) && reqUser.Role < entity2.RoleAdmin {
+	if (req.Status == uint8(entity.BlogDeleted) || req.Status == uint8(entity.BlogNotice)) && reqUser.Role < entity.RoleAdmin {
 		return errors.ErrUnauthorized.WithMessage("没有权限将博客封禁或设为公告")
 	}
 
 	b1 := blog.NewBlog(blog.WithId(req.Id),
 		blog.WithContent(req.Content),
 		blog.WithTitle(req.Title),
-		blog.WithStatus(entity2.BlogStatus(req.Status)),
+		blog.WithStatus(entity.BlogStatus(req.Status)),
 		blog.WithProblemId(req.ProblemId))
 
 	return b1.Update()

@@ -39,6 +39,6 @@ dist/
 
 tmp/
 
-*_generated.go
+generated_*.go
 
 

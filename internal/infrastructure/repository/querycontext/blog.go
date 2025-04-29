@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-//go:generate go run ../../../utils/gen/querycontext_gen.go BlogQueryContext
+//go:generate go run ../../../../dev/gen/querycontext_gen.go BlogQueryContext
 type BlogQueryContext struct {
 	Id        model.FieldList[int64]
 	UserId    model.FieldList[int64]

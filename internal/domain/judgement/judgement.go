@@ -1,7 +1,7 @@
 package judgement
 
-//go:generate go run ../../../utils/gen/dto_gen.go judgement
-//go:generate go run ../../../utils/gen/query_gen.go judgement
+//go:generate go run ../../../dev/gen/dto_gen.go judgement
+//go:generate go run ../../../dev/gen/query_gen.go judgement
 
 import (
 	"STUOJ/internal/infrastructure/repository/dao"

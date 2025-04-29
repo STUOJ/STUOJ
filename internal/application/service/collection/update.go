@@ -5,8 +5,8 @@ import (
 	"STUOJ/internal/domain/collection"
 	"STUOJ/internal/domain/problem"
 	"STUOJ/internal/domain/user"
-	entity2 "STUOJ/internal/infrastructure/repository/entity"
-	querycontext2 "STUOJ/internal/infrastructure/repository/querycontext"
+	entity "STUOJ/internal/infrastructure/repository/entity"
+	querycontext "STUOJ/internal/infrastructure/repository/querycontext"
 	"STUOJ/internal/model"
 	"STUOJ/pkg/errors"
 	"sort"
@@ -14,7 +14,7 @@ import (
 
 // Update 根据Id更新题单
 func Update(req request.UpdateCollectionReq, reqUser model.ReqUser) error {
-	queryContext := querycontext2.CollectionQueryContext{}
+	queryContext := querycontext.CollectionQueryContext{}
 	queryContext.Id.Add(req.Id)
 	c0, _, err := collection.Query.SelectOne(queryContext)
 	if err != nil {
@@ -27,7 +27,7 @@ func Update(req request.UpdateCollectionReq, reqUser model.ReqUser) error {
 	c := collection.NewCollection(collection.WithId(int64(req.Id)),
 		collection.WithTitle(req.Title),
 		collection.WithDescription(req.Description),
-		collection.WithStatus(entity2.CollectionStatus(req.Status)),
+		collection.WithStatus(entity.CollectionStatus(req.Status)),
 	)
 	return c.Update()
 }
@@ -35,7 +35,7 @@ func Update(req request.UpdateCollectionReq, reqUser model.ReqUser) error {
 // UpdateProblem 给题单添加题目
 func UpdateProblem(req request.UpdateCollectionProblemReq, reqUser model.ReqUser) error {
 	// 查询题单
-	queryContext := querycontext2.CollectionQueryContext{}
+	queryContext := querycontext.CollectionQueryContext{}
 	queryContext.Id.Add(int64(req.CollectionId))
 	c0, _, err := collection.Query.SelectOne(queryContext)
 	if err != nil {
@@ -57,7 +57,7 @@ func UpdateProblem(req request.UpdateCollectionProblemReq, reqUser model.ReqUser
 	}
 
 	// 查询题目
-	query := querycontext2.ProblemQueryContext{}
+	query := querycontext.ProblemQueryContext{}
 	query.Id.Set(problemIds)
 	problems, _, err := problem.Query.Select(query)
 	if err != nil {
@@ -67,7 +67,7 @@ func UpdateProblem(req request.UpdateCollectionProblemReq, reqUser model.ReqUser
 		return errors.ErrUnauthorized.WithMessage("有题目不存在")
 	}
 	for _, i := range problems {
-		if i.Status != entity2.ProblemPublic {
+		if i.Status != entity.ProblemPublic {
 			return errors.ErrUnauthorized.WithMessage("有题目不是公开状态")
 		}
 	}
@@ -76,7 +76,7 @@ func UpdateProblem(req request.UpdateCollectionProblemReq, reqUser model.ReqUser
 
 func UpdateUser(req request.UpdateCollectionUserReq, reqUser model.ReqUser) error {
 	// 查询题单
-	queryContext := querycontext2.CollectionQueryContext{}
+	queryContext := querycontext.CollectionQueryContext{}
 	queryContext.Id.Add(int64(req.CollectionId))
 	c0, _, err := collection.Query.SelectOne(queryContext)
 	if err != nil {
@@ -86,7 +86,7 @@ func UpdateUser(req request.UpdateCollectionUserReq, reqUser model.ReqUser) erro
 		return errors.ErrUnauthorized.WithMessage("没有权限修改该题单的合作者")
 	}
 	// 查询用户
-	query := querycontext2.UserQueryContext{}
+	query := querycontext.UserQueryContext{}
 	// 将int64切片转换为uint64切片
 	userIds := make([]int64, len(req.UserIds))
 	for i, id := range req.UserIds {

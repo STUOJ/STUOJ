@@ -6,9 +6,9 @@ import (
 	"STUOJ/internal/domain/blog"
 	"STUOJ/internal/domain/comment"
 	"STUOJ/internal/domain/user"
-	entity2 "STUOJ/internal/infrastructure/repository/entity"
-	query2 "STUOJ/internal/infrastructure/repository/query"
-	querycontext2 "STUOJ/internal/infrastructure/repository/querycontext"
+	entity "STUOJ/internal/infrastructure/repository/entity"
+	query "STUOJ/internal/infrastructure/repository/query"
+	querycontext "STUOJ/internal/infrastructure/repository/querycontext"
 	model2 "STUOJ/internal/model"
 	"slices"
 )
@@ -26,8 +26,8 @@ func Select(params request.QueryCommentParams, reqUser model2.ReqUser) (CommentP
 	qc := params2Query(params)
 	qc.Field.SelectId().SelectUserId().SelectBlogId().SelectStatus().SelectCreateTime().SelectUpdateTime()
 	if !qc.Status.Exist() {
-		qc.Status.Add(int64(entity2.CommentPublic))
-	} else if slices.Contains(qc.Status.Value(), int64(entity2.CommentDeleted)) && reqUser.Role < entity2.RoleAdmin {
+		qc.Status.Add(int64(entity.CommentPublic))
+	} else if slices.Contains(qc.Status.Value(), int64(entity.CommentDeleted)) && reqUser.Role < entity.RoleAdmin {
 		qc.UserId.Set([]int64{reqUser.Id})
 	}
 	comments, _, err := comment.Query.Select(qc)
@@ -39,18 +39,18 @@ func Select(params request.QueryCommentParams, reqUser model2.ReqUser) (CommentP
 	for i, c := range comments {
 		userIds[i] = c.UserId
 	}
-	uqc := querycontext2.UserQueryContext{}
+	uqc := querycontext.UserQueryContext{}
 	uqc.Id.Add(userIds...)
-	uqc.Field = *query2.UserSimpleField
+	uqc.Field = *query.UserSimpleField
 	users, _, err := user.Query.Select(uqc)
 
 	blogIds := make([]int64, len(comments))
 	for i, c := range comments {
 		blogIds[i] = c.BlogId
 	}
-	bqc := querycontext2.BlogQueryContext{}
+	bqc := querycontext.BlogQueryContext{}
 	bqc.Id.Add(blogIds...)
-	bqc.Field = *query2.BlogSimpleField
+	bqc.Field = *query.BlogSimpleField
 	blogs, _, err := blog.Query.Select(bqc)
 
 	for _, u := range comments {

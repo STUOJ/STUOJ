@@ -2,8 +2,8 @@ package entity
 
 // Testcase 测试用例
 //
-//go:generate go run ../../../utils/gen/dao_store.go -struct=Testcase
-//go:generate go run ../../../utils/gen/field_select.go -struct=Testcase
+//go:generate go run ../../../../dev/gen/dao_store.go -struct=Testcase
+//go:generate go run ../../../../dev/gen/field_select.go -struct=Testcase
 type Testcase struct {
 	Id         uint64  `gorm:"primaryKey;autoIncrement;comment:评测点Id"`
 	ProblemId  uint64  `gorm:"not null;default:0;comment:题目Id"`

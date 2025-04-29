@@ -6,7 +6,7 @@ import (
 
 // Difficulty 难度：0 未知，1 入门，2 简单，3 中等，4 较难，5 困难，6 超难
 //
-//go:generate go run ../../../utils/gen/enum_valid.go Difficulty
+//go:generate go run ../../../../dev/gen/enum_valid.go Difficulty
 type Difficulty uint8
 
 const (
@@ -70,8 +70,8 @@ func (s ProblemStatus) String() string {
 
 // Problem 题目
 //
-//go:generate go run ../../../utils/gen/dao_store.go -struct=Problem
-//go:generate go run ../../../utils/gen/field_select.go -struct=Problem
+//go:generate go run ../../../../dev/gen/dao_store.go -struct=Problem
+//go:generate go run ../../../../dev/gen/field_select.go -struct=Problem
 type Problem struct {
 	Id           uint64        `gorm:"primaryKey;autoIncrement;comment:题目Id"`
 	Title        string        `gorm:"type:text;not null;comment:标题"`
@@ -96,8 +96,8 @@ func (Problem) TableName() string {
 
 // 题目标签关系
 //
-//go:generate go run ../../../utils/gen/dao_store.go -struct=ProblemTag
-//go:generate go run ../../../utils/gen/field_select.go -struct=ProblemTag
+//go:generate go run ../../../../dev/gen/dao_store.go -struct=ProblemTag
+//go:generate go run ../../../../dev/gen/field_select.go -struct=ProblemTag
 type ProblemTag struct {
 	ProblemId uint64  `gorm:"primaryKey;not null;default:0;comment:题目Id"`
 	TagId     uint64  `gorm:"primaryKey;not null;default:0;comment:标签Id"`

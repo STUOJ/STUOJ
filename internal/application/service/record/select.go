@@ -8,8 +8,8 @@ import (
 	"STUOJ/internal/domain/submission"
 	"STUOJ/internal/domain/user"
 	"STUOJ/internal/infrastructure/repository/entity"
-	query2 "STUOJ/internal/infrastructure/repository/query"
-	querycontext2 "STUOJ/internal/infrastructure/repository/querycontext"
+	query "STUOJ/internal/infrastructure/repository/query"
+	querycontext "STUOJ/internal/infrastructure/repository/querycontext"
 	model2 "STUOJ/internal/model"
 )
 
@@ -39,14 +39,14 @@ func Select(params request.QuerySubmissionParams, reqUser model2.ReqUser) (Submi
 		problemIds[i] = s.ProblemId
 	}
 
-	uqc := querycontext2.UserQueryContext{}
+	uqc := querycontext.UserQueryContext{}
 	uqc.Id.Add(userIds...)
-	uqc.Field = *query2.UserSimpleField
+	uqc.Field = *query.UserSimpleField
 	users, _, err := user.Query.Select(uqc)
 
-	pqc := querycontext2.ProblemQueryContext{}
+	pqc := querycontext.ProblemQueryContext{}
 	pqc.Id.Add(problemIds...)
-	pqc.Field = *query2.ProblemSimpleField
+	pqc.Field = *query.ProblemSimpleField
 	problems, _, err := problem.Query.SelectByIds(pqc)
 
 	for _, s := range submissions {
@@ -79,7 +79,7 @@ func SelectById(sid int64, reqUser model2.ReqUser) (response.RecordData, error) 
 	var resp response.RecordData
 
 	// 查询
-	qc := querycontext2.SubmissionQueryContext{}
+	qc := querycontext.SubmissionQueryContext{}
 	qc.Id.Add(sid)
 	qc.Field.SelectAll()
 	s0, _, err := submission.Query.SelectOne(qc)
@@ -93,7 +93,7 @@ func SelectById(sid int64, reqUser model2.ReqUser) (response.RecordData, error) 
 	}
 
 	// 获取评测结果
-	jqc := querycontext2.JudgementQueryContext{}
+	jqc := querycontext.JudgementQueryContext{}
 	jqc.SubmissionId.Add(sid)
 	jqc.Field.SelectAll()
 	judgements, _, err := judgement.Query.Select(jqc)

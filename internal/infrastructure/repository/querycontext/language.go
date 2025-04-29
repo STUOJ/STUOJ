@@ -6,7 +6,7 @@ import (
 	"STUOJ/internal/model/option"
 )
 
-//go:generate go run ../../../utils/gen/querycontext_gen.go LanguageQueryContext
+//go:generate go run ../../../../dev/gen/querycontext_gen.go LanguageQueryContext
 type LanguageQueryContext struct {
 	Id     model.FieldList[int64]
 	Name   model.Field[string]

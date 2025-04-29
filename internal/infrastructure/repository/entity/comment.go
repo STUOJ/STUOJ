@@ -4,7 +4,7 @@ import "time"
 
 // CommentStatus 状态：1 删除, 2 公开
 //
-//go:generate go run ../../../utils/gen/enum_valid.go CommentStatus
+//go:generate go run ../../../../dev/gen/enum_valid.go CommentStatus
 type CommentStatus uint8
 
 const (
@@ -25,8 +25,8 @@ func (s CommentStatus) String() string {
 
 // Comment 评论
 //
-//go:generate go run ../../../utils/gen/dao_store.go -struct=Comment
-//go:generate go run ../../../utils/gen/field_select.go -struct=Comment
+//go:generate go run ../../../../dev/gen/dao_store.go -struct=Comment
+//go:generate go run ../../../../dev/gen/field_select.go -struct=Comment
 type Comment struct {
 	Id         uint64        `gorm:"primaryKey;autoIncrement;comment:评论Id"`
 	UserId     uint64        `gorm:"not null;default:0;comment:用户Id"`

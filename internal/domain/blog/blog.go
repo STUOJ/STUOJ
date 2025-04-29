@@ -1,7 +1,7 @@
 package blog
 
-//go:generate go run ../../../utils/gen/dto_gen.go blog
-//go:generate go run ../../../utils/gen/query_gen.go blog
+//go:generate go run ../../../dev/gen/dto_gen.go blog
+//go:generate go run ../../../dev/gen/query_gen.go blog
 
 import (
 	"STUOJ/internal/infrastructure/repository/dao"

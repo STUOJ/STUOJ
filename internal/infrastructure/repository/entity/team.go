@@ -2,7 +2,7 @@ package entity
 
 // TeamStatus 团队状态: 1 禁止, 2 无效, 3 有效
 //
-//go:generate go run ../../../utils/gen/enum_valid.go TeamStatus
+//go:generate go run ../../../../dev/gen/enum_valid.go TeamStatus
 type TeamStatus uint8
 
 const (
@@ -26,8 +26,8 @@ func (s TeamStatus) String() string {
 
 // Team 团队
 //
-//go:generate go run ../../../utils/gen/dao_store.go -struct=Team
-//go:generate go run ../../../utils/gen/field_select.go -struct=Team
+//go:generate go run ../../../../dev/gen/dao_store.go -struct=Team
+//go:generate go run ../../../../dev/gen/field_select.go -struct=Team
 type Team struct {
 	Id          uint64     `gorm:"primaryKey;autoIncrement;comment:团队Id"`
 	UserId      uint64     `gorm:"not null;default:0;comment:用户Id"`
@@ -45,8 +45,8 @@ func (Team) TableName() string {
 
 // TeamUser 团队用户关联
 //
-//go:generate go run ../../../utils/gen/dao_store.go -struct=TeamUser
-//go:generate go run ../../../utils/gen/field_select.go -struct=TeamUser
+//go:generate go run ../../../../dev/gen/dao_store.go -struct=TeamUser
+//go:generate go run ../../../../dev/gen/field_select.go -struct=TeamUser
 type TeamUser struct {
 	TeamId uint64 `gorm:"primaryKey;not null;default:0;comment:团队Id"`
 	UserId uint64 `gorm:"primaryKey;not null;default:0;comment:用户Id"`
@@ -60,8 +60,8 @@ func (TeamUser) TableName() string {
 
 // TeamSubmission 团队提交关联
 //
-//go:generate go run ../../../utils/gen/dao_store.go -struct=TeamSubmission
-//go:generate go run ../../../utils/gen/field_select.go -struct=TeamSubmission
+//go:generate go run ../../../../dev/gen/dao_store.go -struct=TeamSubmission
+//go:generate go run ../../../../dev/gen/field_select.go -struct=TeamSubmission
 type TeamSubmission struct {
 	TeamId       uint64     `gorm:"primaryKey;not null;default:0;comment:团队Id"`
 	SubmissionId uint64     `gorm:"primaryKey;not null;default:0;comment:提交Id"`

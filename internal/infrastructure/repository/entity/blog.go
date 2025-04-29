@@ -4,7 +4,7 @@ import "time"
 
 // BlogStatus 状态：1 删除, 2 草稿, 3 公开, 4 公告
 //
-//go:generate go run ../../../utils/gen/enum_valid.go BlogStatus
+//go:generate go run ../../../../dev/gen/enum_valid.go BlogStatus
 type BlogStatus uint8
 
 const (
@@ -31,8 +31,8 @@ func (s BlogStatus) String() string {
 
 // Blog 博客
 //
-//go:generate go run ../../../utils/gen/dao_store.go -struct=Blog
-//go:generate go run ../../../utils/gen/field_select.go -struct=Blog
+//go:generate go run ../../../../dev/gen/dao_store.go -struct=Blog
+//go:generate go run ../../../../dev/gen/field_select.go -struct=Blog
 type Blog struct {
 	Id         uint64     `gorm:"primaryKey;autoIncrement;comment:博客Id"`
 	UserId     uint64     `gorm:"not null;default:0;comment:用户Id"`

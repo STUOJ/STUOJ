@@ -6,7 +6,7 @@ import (
 	"STUOJ/internal/model/option"
 )
 
-//go:generate go run ../../../utils/gen/querycontext_gen.go JudgementQueryContext
+//go:generate go run ../../../../dev/gen/querycontext_gen.go JudgementQueryContext
 type JudgementQueryContext struct {
 	Id           model.FieldList[int64]
 	SubmissionId model.FieldList[int64]

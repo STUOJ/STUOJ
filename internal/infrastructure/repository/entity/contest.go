@@ -6,7 +6,7 @@ import (
 
 // ContestStatus 比赛状态: 1 作废, 2 隐藏, 3 公开
 //
-//go:generate go run ../../../utils/gen/enum_valid.go ContestStatus
+//go:generate go run ../../../../dev/gen/enum_valid.go ContestStatus
 type ContestStatus uint8
 
 const (
@@ -30,7 +30,7 @@ func (s ContestStatus) String() string {
 
 // ContestFormat 比赛赛制: 1 ACM, 2 OI, 3 IOI
 //
-//go:generate go run ../../../utils/gen/enum_valid.go ContestFormat
+//go:generate go run ../../../../dev/gen/enum_valid.go ContestFormat
 type ContestFormat uint8
 
 const (
@@ -54,8 +54,8 @@ func (f ContestFormat) String() string {
 
 // Contest 比赛
 //
-//go:generate go run ../../../utils/gen/dao_store.go -struct=Contest
-//go:generate go run ../../../utils/gen/field_select.go -struct=Contest
+//go:generate go run ../../../../dev/gen/dao_store.go -struct=Contest
+//go:generate go run ../../../../dev/gen/field_select.go -struct=Contest
 type Contest struct {
 	Id          uint64        `gorm:"primaryKey;autoIncrement;comment:比赛Id"`
 	Title       string        `gorm:"type:varchar(255);not null;comment:比赛标题"`
@@ -77,8 +77,8 @@ func (Contest) TableName() string {
 
 // ContestUser 比赛用户关联
 //
-//go:generate go run ../../../utils/gen/dao_store.go -struct=ContestUser
-//go:generate go run ../../../utils/gen/field_select.go -struct=ContestUser
+//go:generate go run ../../../../dev/gen/dao_store.go -struct=ContestUser
+//go:generate go run ../../../../dev/gen/field_select.go -struct=ContestUser
 type ContestUser struct {
 	ContestId uint64  `gorm:"not null;default:0;primaryKey;comment:比赛Id"`
 	UserId    uint64  `gorm:"not null;default:0;primaryKey;comment:用户Id"`
@@ -92,8 +92,8 @@ func (ContestUser) TableName() string {
 
 // ContestProblem 比赛题目关联
 //
-//go:generate go run ../../../utils/gen/dao_store.go -struct=ContestProblem
-//go:generate go run ../../../utils/gen/field_select.go -struct=ContestProblem
+//go:generate go run ../../../../dev/gen/dao_store.go -struct=ContestProblem
+//go:generate go run ../../../../dev/gen/field_select.go -struct=ContestProblem
 type ContestProblem struct {
 	ContestId uint64  `gorm:"not null;default:0;primaryKey;comment:比赛Id"`
 	ProblemId uint64  `gorm:"not null;default:0;primaryKey;comment:题目Id"`

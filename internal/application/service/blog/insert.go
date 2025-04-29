@@ -4,7 +4,7 @@ import (
 	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/domain/blog"
 	"STUOJ/internal/domain/problem"
-	entity2 "STUOJ/internal/infrastructure/repository/entity"
+	entity "STUOJ/internal/infrastructure/repository/entity"
 	"STUOJ/internal/infrastructure/repository/querycontext"
 	"STUOJ/internal/model"
 	"STUOJ/pkg/errors"
@@ -15,12 +15,12 @@ func Insert(req request.CreateBlogReq, reqUser model.ReqUser) (int64, error) {
 	blog := blog.NewBlog(blog.WithContent(req.Content),
 		blog.WithTitle(req.Title),
 		blog.WithUserId(reqUser.Id),
-		blog.WithStatus(entity2.BlogStatus(req.Status)),
+		blog.WithStatus(entity.BlogStatus(req.Status)),
 		blog.WithProblemId(req.ProblemId),
 	)
 
 	// 检查权限
-	if (blog.Status == entity2.BlogDeleted || blog.Status == entity2.BlogNotice) && reqUser.Role < entity2.RoleAdmin {
+	if (blog.Status == entity.BlogDeleted || blog.Status == entity.BlogNotice) && reqUser.Role < entity.RoleAdmin {
 		return 0, errors.ErrUnauthorized.WithMessage("没有权限创建被封禁或公告的博客")
 	}
 
@@ -32,7 +32,7 @@ func Insert(req request.CreateBlogReq, reqUser model.ReqUser) (int64, error) {
 		if err != nil {
 			return 0, errors.ErrNotFound.WithMessage("找不到对应的题目")
 		}
-		if problem.Status < entity2.ProblemPublic {
+		if problem.Status < entity.ProblemPublic {
 			return 0, errors.ErrUnauthorized.WithMessage("没有权限创建对应题目未公开的博客")
 		}
 	}

@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-//go:generate go run ../../../utils/gen/querycontext_gen.go ContestQueryContext
+//go:generate go run ../../../../dev/gen/querycontext_gen.go ContestQueryContext
 type ContestQueryContext struct {
 	Id          model.FieldList[int64]
 	UserId      model.FieldList[int64]
