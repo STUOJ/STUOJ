@@ -99,7 +99,46 @@ func (t *Team) Delete() error {
 	if err != nil {
 		return errors.ErrNotFound.WithMessage(err.Error())
 	}
+	deleteTeamUserOptions := option.NewQueryOptions()
+	deleteTeamUserOptions.Filters.Add(field.TeamId, option.OpEqual, t.Id)
+	err = dao.TeamUserStore.Delete(deleteTeamUserOptions)
+	if err != nil {
+		return errors.ErrInternalServer.WithMessage(err.Error())
+	}
 	err = dao.TeamStore.Delete(options)
+	if err != nil {
+		return errors.ErrInternalServer.WithMessage(err.Error())
+	}
+
+	return &errors.NoError
+}
+
+func (t *Team) JoinTeam(userId int64) error {
+	options := t.toOption()
+	_, err := dao.TeamStore.SelectOne(options)
+	if err != nil {
+		return errors.ErrNotFound.WithMessage(err.Error())
+	}
+	_, err = dao.TeamUserStore.Insert(entity.TeamUser{
+		TeamId: uint64(t.Id),
+		UserId: uint64(userId),
+	})
+	if err != nil {
+		return errors.ErrInternalServer.WithMessage(err.Error())
+	}
+	return &errors.NoError
+}
+
+func (t *Team) QuitTeam(userId int64) error {
+	options := t.toOption()
+	_, err := dao.TeamStore.SelectOne(options)
+	if err != nil {
+		return errors.ErrNotFound.WithMessage(err.Error())
+	}
+	deleteOptions := option.NewQueryOptions()
+	deleteOptions.Filters.Add(field.TeamId, option.OpEqual, t.Id)
+	deleteOptions.Filters.Add(field.UserId, option.OpEqual, userId)
+	err = dao.TeamStore.Delete(deleteOptions)
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
