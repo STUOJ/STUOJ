@@ -189,7 +189,7 @@ func (f *{{.StructName}}Field) SelectedColumns() []string {
         columns = append(columns, "{{ $.TableName }}.{{ .Name | toSnake }}")
     }
 {{- end }}
-    columns =append(columns, f.Extra.String())
+    columns = append(columns, f.Extra.SelectedColumns()...)
     return columns
 }
 
