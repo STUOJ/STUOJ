@@ -42,7 +42,7 @@ func InitRoute() error {
 	routes2.InitLanguageRoute(ginServer)
 
 	// routes/contest.go
-	routes2.InitContestRoute(ginServer)
+	//routes2.InitContestRoute(ginServer)
 	//routes2.InitTeamRoute(ginServer)
 
 	// routes/blog.go

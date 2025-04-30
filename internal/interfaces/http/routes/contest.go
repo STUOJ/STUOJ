@@ -1,11 +1,6 @@
 package routes
 
-import (
-	"STUOJ/internal/interfaces/http/handler"
-	"STUOJ/internal/interfaces/http/middlewares"
-	"github.com/gin-gonic/gin"
-)
-
+/*
 func InitContestRoute(ginServer *gin.Engine) {
 	contestPublicRoute := ginServer.Group("/contest")
 	{
@@ -24,7 +19,6 @@ func InitContestRoute(ginServer *gin.Engine) {
 	}
 }
 
-/*
 func InitTeamRoute(ginServer *gin.Engine) {
 	teamPublicRoute := ginServer.Group("/team")
 	{
