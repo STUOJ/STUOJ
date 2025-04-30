@@ -80,7 +80,7 @@ func (c *Collection) Create() (int64, error) {
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return int64(collection.Id), &errors.NoError
+	return int64(collection.Id), nil
 }
 
 func (c *Collection) Update() error {
@@ -98,7 +98,7 @@ func (c *Collection) Update() error {
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return &errors.NoError
+	return nil
 }
 
 func (c *Collection) Delete() error {
@@ -111,7 +111,7 @@ func (c *Collection) Delete() error {
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return &errors.NoError
+	return nil
 }
 
 func (c *Collection) UpdateUser(userIds []int64) error {
@@ -138,7 +138,7 @@ func (c *Collection) UpdateUser(userIds []int64) error {
 	if len(errs) > 0 {
 		return errors.ErrInternalServer.WithErrors(errs)
 	}
-	return &errors.NoError
+	return nil
 }
 
 func (c *Collection) UpdateProblem(problemIds []int64) error {
@@ -168,7 +168,7 @@ func (c *Collection) UpdateProblem(problemIds []int64) error {
 	if len(errs) > 0 {
 		return errors.ErrInternalServer.WithErrors(errs)
 	}
-	return &errors.NoError
+	return nil
 }
 
 type Option func(*Collection)

@@ -90,7 +90,6 @@ func (e *Error) IsOK() bool {
 }
 
 var (
-	NoError           = Error{HttpStatus: http.StatusOK, Code: 0, Message: ""}
 	ErrInternalServer = Error{
 		HttpStatus: http.StatusInternalServerError,
 		Code:       1000,

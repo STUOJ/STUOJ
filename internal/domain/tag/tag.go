@@ -51,7 +51,7 @@ func (t *Tag) Create() (int64, error) {
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return int64(tag.Id), &errors.NoError
+	return int64(tag.Id), nil
 }
 
 func (t *Tag) Update() error {
@@ -67,7 +67,7 @@ func (t *Tag) Update() error {
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return &errors.NoError
+	return nil
 }
 
 func (t *Tag) Delete() error {
@@ -80,5 +80,5 @@ func (t *Tag) Delete() error {
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return &errors.NoError
+	return nil
 }

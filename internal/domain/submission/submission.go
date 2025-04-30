@@ -36,7 +36,7 @@ func (s *Submission) verify() error {
 	if !entity.JudgeStatus(s.Status).IsValid() {
 		return errors.ErrValidation.WithMessage("状态码无效")
 	}
-	return &errors.NoError
+	return nil
 }
 
 func (s *Submission) toEntity() entity.Submission {
@@ -88,7 +88,7 @@ func (s *Submission) Create() (int64, error) {
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return int64(submission.Id), &errors.NoError
+	return int64(submission.Id), nil
 }
 
 func (s *Submission) Update() error {
@@ -106,7 +106,7 @@ func (s *Submission) Update() error {
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return &errors.NoError
+	return nil
 }
 
 func (s *Submission) Delete() error {
@@ -119,7 +119,7 @@ func (s *Submission) Delete() error {
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return &errors.NoError
+	return nil
 }
 
 type Option func(*Submission)

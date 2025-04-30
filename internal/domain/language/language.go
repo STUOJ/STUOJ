@@ -60,7 +60,7 @@ func (l *Language) Create() (int64, error) {
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return int64(language.Id), &errors.NoError
+	return int64(language.Id), nil
 }
 
 func (l *Language) Update() error {
@@ -77,7 +77,7 @@ func (l *Language) Update() error {
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return &errors.NoError
+	return nil
 }
 
 func (l *Language) Delete() error {
@@ -90,7 +90,7 @@ func (l *Language) Delete() error {
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return &errors.NoError
+	return nil
 }
 
 type Option func(*Language)

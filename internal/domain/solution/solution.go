@@ -57,7 +57,7 @@ func (s *Solution) Create() (int64, error) {
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return int64(solution.Id), &errors.NoError
+	return int64(solution.Id), nil
 }
 
 func (s *Solution) Update() error {
@@ -74,7 +74,7 @@ func (s *Solution) Update() error {
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return &errors.NoError
+	return nil
 }
 
 func (s *Solution) Delete() error {
@@ -87,7 +87,7 @@ func (s *Solution) Delete() error {
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return &errors.NoError
+	return nil
 }
 
 type Option func(*Solution)

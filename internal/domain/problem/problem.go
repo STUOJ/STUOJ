@@ -115,7 +115,7 @@ func (p *Problem) Create() (int64, error) {
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return int64(problem.Id), &errors.NoError
+	return int64(problem.Id), nil
 }
 
 func (p *Problem) Update() error {
@@ -133,7 +133,7 @@ func (p *Problem) Update() error {
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return &errors.NoError
+	return nil
 }
 
 func (p *Problem) Delete() error {
@@ -146,7 +146,7 @@ func (p *Problem) Delete() error {
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return &errors.NoError
+	return nil
 }
 
 func (p *Problem) UpdateTags(tagIds []int64) error {
@@ -173,5 +173,5 @@ func (p *Problem) UpdateTags(tagIds []int64) error {
 	if len(errs) > 0 {
 		return errors.ErrInternalServer.WithErrors(errs)
 	}
-	return &errors.NoError
+	return nil
 }
