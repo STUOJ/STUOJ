@@ -2,6 +2,7 @@ package model
 
 import (
 	"STUOJ/internal/infrastructure/repository/entity"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -11,13 +12,14 @@ type ReqUser struct {
 }
 
 func (r *ReqUser) Parse(c *gin.Context) {
-	role, exist := c.Get("req_user_id")
-	if !exist {
-		role = entity.RoleVisitor
-	}
-	id, exist := c.Get("req_user_role")
+	id, exist := c.Get("req_user_id")
 	if !exist {
 		id = 0
+
+	}
+	role, exist := c.Get("req_user_role")
+	if !exist {
+		role = entity.RoleVisitor
 	}
 	r.Id = id.(int64)
 	r.Role = role.(entity.Role)
