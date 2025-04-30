@@ -107,7 +107,7 @@ func (store *_{{.StructName}}Store) Count(options *option.QueryOptions) (int64, 
 
 func (store *_{{.StructName}}Store) GroupCount(options *option.GroupCountOptions)([]option.GroupCountResult, error){
 	var res []option.GroupCountResult
-	if ok := options.Verify();!ok {
+	if ok := options.verify();!ok {
 		return nil,fmt.Errorf("分组字段验证失败")
 	}
 	where := options.GenerateQuery()
