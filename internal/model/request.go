@@ -15,7 +15,6 @@ func (r *ReqUser) Parse(c *gin.Context) {
 	id, exist := c.Get("req_user_id")
 	if !exist {
 		id = 0
-
 	}
 	role, exist := c.Get("req_user_role")
 	if !exist {
