@@ -41,5 +41,8 @@ func (s *Selectors) String() string {
 	for _, selector := range *s {
 		str += selector.String() + ","
 	}
+	if len(str) == 0 {
+		return ""
+	}
 	return str[:len(str)-1]
 }
