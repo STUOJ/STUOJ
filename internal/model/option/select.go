@@ -38,11 +38,19 @@ func (s *Selectors) AddSelector(selector ...Selector) {
 
 func (s *Selectors) String() string {
 	var str string
+	for i, selector := range *s {
+		if i > 0 {
+			str += ","
+		}
+		str += selector.String()
+	}
+	return str
+}
+
+func (s *Selectors) SelectedColumns() []string {
+	var columns []string
 	for _, selector := range *s {
-		str += selector.String() + ","
+		columns = append(columns, selector.String())
 	}
-	if len(str) == 0 {
-		return ""
-	}
-	return str[:len(str)-1]
+	return columns
 }
