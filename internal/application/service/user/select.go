@@ -80,7 +80,7 @@ func Select(params request.QueryUserParams, reqUser model.ReqUser) (UserPage, er
 func LoginByEmail(req request.UserLoginReq, reqUser model.ReqUser) (string, error) {
 	qc := querycontext.UserQueryContext{}
 	qc.Email.Set(req.Email)
-	qc.Field.SelectId().SelectUsername().SelectRole().SelectEmail().SelectAvatar().SelectSignature().SelectCreateTime().SelectUpdateTime()
+	qc.Field.SelectId().SelectPassword()
 
 	// 查询
 	u0, _, err := user.Query.SelectOne(qc)
