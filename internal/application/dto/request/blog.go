@@ -18,7 +18,6 @@ type CreateBlogReq struct {
 	ProblemId int64  `json:"problem_id,omitempty"`
 	Status    uint8  `json:"status"`
 	Title     string `json:"title"`
-	UserId    int64  `json:"user_id"`
 }
 
 type UpdateBlogReq struct {
