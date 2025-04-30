@@ -39,7 +39,7 @@ var {{.StructName}}Store = new(_{{.StructName}}Store)
 
 // 插入记录
 func (store *_{{.StructName}}Store) Insert(entity_ entity.{{.StructName}}) (entity.{{.StructName}}, error) {
-	err := db.Db.Transaction(func(tx *gorm.DB) error {
+	err := repository.Db.Transaction(func(tx *gorm.DB) error {
 		return tx.Create(&entity_).Error
 	})
 	return entity_, err
@@ -49,7 +49,7 @@ func (store *_{{.StructName}}Store) Insert(entity_ entity.{{.StructName}}) (enti
 func (store *_{{.StructName}}Store) Select(options *option.QueryOptions) ([]map[string]any, error) {
 	var entities []map[string]any
 	where := options.GenerateQuery()
-	err := db.Db.Transaction(func(tx *gorm.DB) error {
+	err := repository.Db.Transaction(func(tx *gorm.DB) error {
 		tx = tx.Model(&entity.{{.StructName}}{})
 		tx = where(tx)
 		return tx.Find(&entities).Error
@@ -61,7 +61,7 @@ func (store *_{{.StructName}}Store) Select(options *option.QueryOptions) ([]map[
 func (store *_{{.StructName}}Store) SelectOne(options *option.QueryOptions) (map[string]any, error) {
 	var entity_ map[string]any
 	where := options.GenerateQuery()
-	err := db.Db.Transaction(func(tx *gorm.DB) error {
+	err := repository.Db.Transaction(func(tx *gorm.DB) error {
 		tx = tx.Model(&entity.{{.StructName}}{})
 		tx = where(tx)
 		return tx.First(&entity_).Error
@@ -73,7 +73,7 @@ func (store *_{{.StructName}}Store) SelectOne(options *option.QueryOptions) (map
 func (store *_{{.StructName}}Store) Updates(entity_ entity.{{.StructName}}, options *option.QueryOptions) (int64, error) {
 	var affected int64
 	where := options.GenerateQuery()
-	err := db.Db.Transaction(func(tx *gorm.DB) error {
+	err := repository.Db.Transaction(func(tx *gorm.DB) error {
 		tx = tx.Model(&entity.{{.StructName}}{})
 		tx = where(tx)
 		res := tx.Updates(entity_)
@@ -86,7 +86,7 @@ func (store *_{{.StructName}}Store) Updates(entity_ entity.{{.StructName}}, opti
 // 删除记录
 func (store *_{{.StructName}}Store) Delete(options *option.QueryOptions) error {
 	where := options.GenerateQuery()
-	return db.Db.Transaction(func(tx *gorm.DB) error {
+	return repository.Db.Transaction(func(tx *gorm.DB) error {
 		tx = tx.Model(&entity.{{.StructName}}{})
 		tx = where(tx)
 		return tx.Delete(&entity.{{.StructName}}{}).Error
@@ -97,7 +97,7 @@ func (store *_{{.StructName}}Store) Delete(options *option.QueryOptions) error {
 func (store *_{{.StructName}}Store) Count(options *option.QueryOptions) (int64, error) {
 	var count int64
 	where := options.GenerateQuery()
-	err := db.Db.Transaction(func(tx *gorm.DB) error {
+	err := repository.Db.Transaction(func(tx *gorm.DB) error {
 		tx = tx.Model(&entity.{{.StructName}}{})
 		tx = where(tx)
 		return tx.Count(&count).Error
@@ -111,7 +111,7 @@ func (store *_{{.StructName}}Store) GroupCount(options *option.GroupCountOptions
 		return nil,fmt.Errorf("分组字段验证失败")
 	}
 	where := options.GenerateQuery()
-	err := db.Db.Transaction(func(tx *gorm.DB) error {
+	err := repository.Db.Transaction(func(tx *gorm.DB) error {
 		tx = tx.Model(&entity.{{.StructName}}{})
 		tx = where(tx)
 		return tx.Scan(&res).Error
