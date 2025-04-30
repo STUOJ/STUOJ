@@ -1,7 +1,9 @@
 package handler
 
+/*
 import (
 	"STUOJ/internal/application/service/contest"
+	"STUOJ/internal/infrastructure/repository/entity"
 	"STUOJ/internal/model"
 	"STUOJ/pkg/utils"
 	"log"
@@ -11,7 +13,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
-
 // 获取比赛数据
 func ContestInfo(c *gin.Context) {
 	role, uid := utils.GetUserInfo(c)
@@ -180,3 +181,4 @@ func ContestRemove(c *gin.Context) {
 
 	c.JSON(http.StatusOK, model.RespOk("删除成功", nil))
 }
+*/
