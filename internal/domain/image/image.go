@@ -43,7 +43,7 @@ func (i Image) Upload() (string, error) {
 		return "", errors.ErrInternalServer.WithError(err)
 	}
 	i.Url = url
-	return url, &errors.NoError
+	return url, nil
 }
 
 func (i Image) Delete() error {
@@ -51,5 +51,5 @@ func (i Image) Delete() error {
 	if err != nil {
 		return errors.ErrInternalServer.WithError(err)
 	}
-	return &errors.NoError
+	return nil
 }

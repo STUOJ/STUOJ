@@ -83,7 +83,7 @@ func (b *Blog) Create() (int64, error) {
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return int64(blog.Id), &errors.NoError
+	return int64(blog.Id), nil
 }
 
 func (b *Blog) Update() error {
@@ -101,7 +101,7 @@ func (b *Blog) Update() error {
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return &errors.NoError
+	return nil
 }
 
 func (b *Blog) Delete() error {
@@ -114,5 +114,5 @@ func (b *Blog) Delete() error {
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return &errors.NoError
+	return nil
 }

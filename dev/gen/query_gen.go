@@ -42,7 +42,7 @@ func (*_Query) Select(context querycontext.{{.EntityName}}QueryContext, optionFu
 	if err != nil {
 		return nil, nil, errors.ErrInternalServer.WithMessage("查询失败")
 	}
-	return Dtos(map_), map_, &errors.NoError
+	return Dtos(map_), map_, nil
 }
 
 func (*_Query) SelectOne(context querycontext.{{.EntityName}}QueryContext, optionFunc ...option.QueryContextOption) ({{.EntityName}}, map[string]any, error) {
@@ -54,7 +54,7 @@ func (*_Query) SelectOne(context querycontext.{{.EntityName}}QueryContext, optio
 	if err != nil {
 		return {{.EntityName}}{}, nil, errors.ErrNotFound.WithMessage("未查询到该{{.VarName}}")
 	}
-	return Dto(map_), map_, &errors.NoError
+	return Dto(map_), map_, nil
 }
 
 func (*_Query) Count(context querycontext.{{.EntityName}}QueryContext) (int64, error) {
@@ -62,7 +62,7 @@ func (*_Query) Count(context querycontext.{{.EntityName}}QueryContext) (int64, e
 	if err != nil {
 		return res, errors.ErrInternalServer.WithMessage("查询失败")
 	}
-	return res, &errors.NoError
+	return res, nil
 }
 
 {{if .HaveId}}
@@ -81,7 +81,7 @@ func (*_Query) SelectByIds(context querycontext.{{.EntityName}}QueryContext, opt
 		res{{.EntityName}}s[v["id"].(int64)] = Dto(v)
 		resMaps[v["id"].(int64)] = v
 	}
-	return res{{.EntityName}}s, resMaps, &errors.NoError
+	return res{{.EntityName}}s, resMaps, nil
 }
 {{end}}
 `

@@ -80,7 +80,7 @@ func (c *Comment) Create() (int64, error) {
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return int64(comment.Id), &errors.NoError
+	return int64(comment.Id), nil
 }
 
 func (c *Comment) Update() error {
@@ -98,7 +98,7 @@ func (c *Comment) Update() error {
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return &errors.NoError
+	return nil
 }
 
 func (c *Comment) Delete() error {
@@ -111,7 +111,7 @@ func (c *Comment) Delete() error {
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return &errors.NoError
+	return nil
 }
 
 type Option func(*Comment)

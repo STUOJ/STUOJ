@@ -97,7 +97,7 @@ func (u *User) Create() (int64, error) {
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return int64(user.Id), &errors.NoError
+	return int64(user.Id), nil
 }
 
 func (u *User) Update(hashPw bool) error {
@@ -125,7 +125,7 @@ func (u *User) Update(hashPw bool) error {
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return &errors.NoError
+	return nil
 }
 
 func (u *User) Delete() error {
@@ -138,5 +138,5 @@ func (u *User) Delete() error {
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return &errors.NoError
+	return nil
 }

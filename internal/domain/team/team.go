@@ -73,7 +73,7 @@ func (t *Team) Create() (int64, error) {
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return int64(team.Id), &errors.NoError
+	return int64(team.Id), nil
 }
 
 func (t *Team) Update() error {
@@ -90,7 +90,7 @@ func (t *Team) Update() error {
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return &errors.NoError
+	return nil
 }
 
 func (t *Team) Delete() error {
@@ -110,7 +110,7 @@ func (t *Team) Delete() error {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
 
-	return &errors.NoError
+	return nil
 }
 
 func (t *Team) JoinTeam(userId int64) error {
@@ -126,7 +126,7 @@ func (t *Team) JoinTeam(userId int64) error {
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return &errors.NoError
+	return nil
 }
 
 func (t *Team) QuitTeam(userId int64) error {
@@ -142,7 +142,7 @@ func (t *Team) QuitTeam(userId int64) error {
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return &errors.NoError
+	return nil
 }
 
 type Option func(*Team)

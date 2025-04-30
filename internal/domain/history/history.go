@@ -124,7 +124,7 @@ func (h *History) Create() (int64, error) {
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return int64(history.Id), &errors.NoError
+	return int64(history.Id), nil
 }
 
 func (h *History) Update() error {
@@ -141,7 +141,7 @@ func (h *History) Update() error {
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return &errors.NoError
+	return nil
 }
 
 func (h *History) Delete() error {
@@ -154,7 +154,7 @@ func (h *History) Delete() error {
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return &errors.NoError
+	return nil
 }
 
 type Option func(*History)

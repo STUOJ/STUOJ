@@ -100,7 +100,7 @@ func (c *Contest) Create() (int64, error) {
 	if err != nil {
 		return 0, errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return int64(contest.Id), &errors.NoError
+	return int64(contest.Id), nil
 }
 
 func (c *Contest) Update() error {
@@ -118,7 +118,7 @@ func (c *Contest) Update() error {
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return &errors.NoError
+	return nil
 }
 
 func (c *Contest) Delete() error {
@@ -131,7 +131,7 @@ func (c *Contest) Delete() error {
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
-	return &errors.NoError
+	return nil
 }
 
 func (c *Contest) UpdateUser(userIds []int64) error {
@@ -158,7 +158,7 @@ func (c *Contest) UpdateUser(userIds []int64) error {
 	if len(errs) > 0 {
 		return errors.ErrInternalServer.WithErrors(errs)
 	}
-	return &errors.NoError
+	return nil
 }
 
 func (c *Contest) UpdateProblem(problemIds []int64) error {
@@ -188,7 +188,7 @@ func (c *Contest) UpdateProblem(problemIds []int64) error {
 	if len(errs) > 0 {
 		return errors.ErrInternalServer.WithErrors(errs)
 	}
-	return &errors.NoError
+	return nil
 }
 
 type Option func(*Contest)
