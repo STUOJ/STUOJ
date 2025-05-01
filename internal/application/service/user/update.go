@@ -26,7 +26,7 @@ func Update(req request.UserUpdateReq, reqUser model.ReqUser) error {
 		user.WithSignature(req.Signature),
 	)
 
-	return u1.Update(false)
+	return u1.Update()
 }
 
 // UpdatePassword 根据Email更新用户密码
@@ -51,7 +51,7 @@ func UpdatePassword(req request.UserForgetPasswordReq, reqUser model.ReqUser) er
 		user.WithPassword(req.Password),
 	)
 
-	return u1.Update(true)
+	return u1.Update()
 }
 
 // UpdateRole 根据Id更新用户权限组
@@ -78,7 +78,7 @@ func UpdateRole(req request.UserUpdateRoleReq, reqUser model.ReqUser) error {
 		user.WithRole(newRole),
 	)
 
-	return u1.Update(false)
+	return u1.Update()
 }
 
 // UpdateAvatar 更新用户头像
@@ -127,7 +127,7 @@ func UpdateAvatar(req request.UserChangeAvatarReq, reqUser model.ReqUser) (strin
 		user.WithId(u0.Id),
 		user.WithAvatar(url),
 	)
-	err = u1.Update(false)
+	err = u1.Update()
 	if err != nil {
 		return "", err
 	}
