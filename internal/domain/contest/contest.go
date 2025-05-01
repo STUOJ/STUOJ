@@ -2,6 +2,7 @@ package contest
 
 //go:generate go run ../../../dev/gen/dto_gen.go contest
 //go:generate go run ../../../dev/gen/query_gen.go contest
+//go:generate go run ../../../dev/gen/builder.go contest
 
 import (
 	dao2 "STUOJ/internal/infrastructure/repository/dao"
@@ -189,68 +190,4 @@ func (c *Contest) UpdateProblem(problemIds []int64) error {
 		return errors.ErrInternalServer.WithErrors(errs)
 	}
 	return nil
-}
-
-type Option func(*Contest)
-
-func NewContest(option ...Option) *Contest {
-	c := &Contest{}
-	for _, opt := range option {
-		opt(c)
-	}
-	return c
-}
-
-func WithId(id int64) Option {
-	return func(c *Contest) {
-		c.Id = id
-	}
-}
-
-func WithUserId(userId int64) Option {
-	return func(c *Contest) {
-		c.UserId = userId
-	}
-}
-
-func WithTitle(title string) Option {
-	return func(c *Contest) {
-		c.Title = valueobject.NewTitle(title)
-	}
-}
-
-func WithDescription(description string) Option {
-	return func(c *Contest) {
-		c.Description = valueobject.NewDescription(description)
-	}
-}
-
-func WithStatus(status entity.ContestStatus) Option {
-	return func(c *Contest) {
-		c.Status = status
-	}
-}
-
-func WithFormat(format entity.ContestFormat) Option {
-	return func(c *Contest) {
-		c.Format = format
-	}
-}
-
-func WithTeamSize(teamSize uint8) Option {
-	return func(c *Contest) {
-		c.TeamSize = teamSize
-	}
-}
-
-func WithStartTime(startTime time.Time) Option {
-	return func(c *Contest) {
-		c.StartTime = startTime
-	}
-}
-
-func WithEndTime(endTime time.Time) Option {
-	return func(c *Contest) {
-		c.EndTime = endTime
-	}
 }

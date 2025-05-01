@@ -2,6 +2,7 @@ package collection
 
 //go:generate go run ../../../dev/gen/dto_gen.go collection
 //go:generate go run ../../../dev/gen/query_gen.go collection
+//go:generate go run ../../../dev/gen/builder.go collection
 
 import (
 	dao2 "STUOJ/internal/infrastructure/repository/dao"
@@ -169,46 +170,4 @@ func (c *Collection) UpdateProblem(problemIds []int64) error {
 		return errors.ErrInternalServer.WithErrors(errs)
 	}
 	return nil
-}
-
-type Option func(*Collection)
-
-func NewCollection(option ...Option) *Collection {
-	c := &Collection{
-		Status: entity.CollectionPrivate,
-	}
-	for _, opt := range option {
-		opt(c)
-	}
-	return c
-}
-
-func WithId(id int64) Option {
-	return func(c *Collection) {
-		c.Id = id
-	}
-}
-
-func WithUserId(userId int64) Option {
-	return func(c *Collection) {
-		c.UserId = userId
-	}
-}
-
-func WithTitle(title string) Option {
-	return func(c *Collection) {
-		c.Title = valueobject.NewTitle(title)
-	}
-}
-
-func WithDescription(description string) Option {
-	return func(c *Collection) {
-		c.Description = valueobject.NewDescription(description)
-	}
-}
-
-func WithStatus(status entity.CollectionStatus) Option {
-	return func(c *Collection) {
-		c.Status = status
-	}
 }

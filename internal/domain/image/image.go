@@ -1,5 +1,7 @@
 package image
 
+//go:generate go run ../../../dev/gen/builder.go image
+
 import (
 	"STUOJ/internal/domain/image/valueobject"
 	"STUOJ/internal/domain/image/yuki"

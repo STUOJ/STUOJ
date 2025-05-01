@@ -2,6 +2,7 @@ package comment
 
 //go:generate go run ../../../dev/gen/dto_gen.go comment
 //go:generate go run ../../../dev/gen/query_gen.go comment
+//go:generate go run ../../../dev/gen/builder.go comment
 
 import (
 	"STUOJ/internal/infrastructure/repository/dao"
@@ -112,46 +113,4 @@ func (c *Comment) Delete() error {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
 	return nil
-}
-
-type Option func(*Comment)
-
-func NewComment(option ...Option) *Comment {
-	c := &Comment{
-		Status: entity.CommentPublic,
-	}
-	for _, opt := range option {
-		opt(c)
-	}
-	return c
-}
-
-func WithId(id int64) Option {
-	return func(c *Comment) {
-		c.Id = id
-	}
-}
-
-func WithUserId(userId int64) Option {
-	return func(c *Comment) {
-		c.UserId = userId
-	}
-}
-
-func WithBlogId(blogId int64) Option {
-	return func(c *Comment) {
-		c.BlogId = blogId
-	}
-}
-
-func WithContent(content string) Option {
-	return func(c *Comment) {
-		c.Content = valueobject.NewContent(content)
-	}
-}
-
-func WithStatus(status entity.CommentStatus) Option {
-	return func(c *Comment) {
-		c.Status = status
-	}
 }

@@ -32,6 +32,10 @@ func (a Album) Verify() error {
 	}
 }
 
+func NewAlbum(album uint8) Album {
+	return Album(album)
+}
+
 var (
 	ErrInvalidAlbum = fmt.Errorf("invalid album")
 )

@@ -2,6 +2,7 @@ package user
 
 //go:generate go run ../../../dev/gen/dto_gen.go user
 //go:generate go run ../../../dev/gen/query_gen.go user
+//go:generate go run ../../../dev/gen/builder.go user
 
 import (
 	"STUOJ/internal/infrastructure/repository/dao"

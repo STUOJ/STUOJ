@@ -2,6 +2,7 @@ package solution
 
 //go:generate go run ../../../dev/gen/dto_gen.go solution
 //go:generate go run ../../../dev/gen/query_gen.go solution
+//go:generate go run ../../../dev/gen/builder.go solution
 
 import (
 	"STUOJ/internal/domain/solution/valueobject"
@@ -88,38 +89,4 @@ func (s *Solution) Delete() error {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
 	return nil
-}
-
-type Option func(*Solution)
-
-func NewSolution(option ...Option) *Solution {
-	s := &Solution{}
-	for _, opt := range option {
-		opt(s)
-	}
-	return s
-}
-
-func WithId(id int64) Option {
-	return func(s *Solution) {
-		s.Id = id
-	}
-}
-
-func WithLanguageId(languageId int64) Option {
-	return func(s *Solution) {
-		s.LanguageId = languageId
-	}
-}
-
-func WithProblemId(problemId int64) Option {
-	return func(s *Solution) {
-		s.ProblemId = problemId
-	}
-}
-
-func WithSourceCode(sourceCode string) Option {
-	return func(s *Solution) {
-		s.SourceCode = valueobject.NewSourceCode(sourceCode)
-	}
 }

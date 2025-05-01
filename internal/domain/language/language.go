@@ -2,6 +2,7 @@ package language
 
 //go:generate go run ../../../dev/gen/dto_gen.go language
 //go:generate go run ../../../dev/gen/query_gen.go language
+//go:generate go run ../../../dev/gen/builder.go language
 
 import (
 	"STUOJ/internal/domain/language/valueobject"
@@ -91,44 +92,4 @@ func (l *Language) Delete() error {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
 	return nil
-}
-
-type Option func(*Language)
-
-func NewLanguage(option ...Option) *Language {
-	l := &Language{}
-	for _, opt := range option {
-		opt(l)
-	}
-	return l
-}
-
-func WithId(id int64) Option {
-	return func(l *Language) {
-		l.Id = id
-	}
-}
-
-func WithName(name string) Option {
-	return func(l *Language) {
-		l.Name = valueobject.NewName(name)
-	}
-}
-
-func WithSerial(serial uint16) Option {
-	return func(l *Language) {
-		l.Serial = serial
-	}
-}
-
-func WithMapId(mapId uint32) Option {
-	return func(l *Language) {
-		l.MapId = mapId
-	}
-}
-
-func WithStatus(status entity.LanguageStatus) Option {
-	return func(l *Language) {
-		l.Status = status
-	}
 }

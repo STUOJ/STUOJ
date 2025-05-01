@@ -2,6 +2,7 @@ package history
 
 //go:generate go run ../../../dev/gen/dto_gen.go history
 //go:generate go run ../../../dev/gen/query_gen.go history
+//go:generate go run ../../../dev/gen/builder.go history
 
 import (
 	"STUOJ/internal/infrastructure/repository/dao"
@@ -155,104 +156,4 @@ func (h *History) Delete() error {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
 	return nil
-}
-
-type Option func(*History)
-
-func NewHistory(option ...Option) *History {
-	h := &History{}
-	for _, opt := range option {
-		opt(h)
-	}
-	return h
-}
-
-func WithId(id int64) Option {
-	return func(h *History) {
-		h.Id = id
-	}
-}
-
-func WithUserId(userId int64) Option {
-	return func(h *History) {
-		h.UserId = userId
-	}
-}
-
-func WithProblemId(problemId int64) Option {
-	return func(h *History) {
-		h.ProblemId = problemId
-	}
-}
-
-func WithTitle(title string) Option {
-	return func(h *History) {
-		h.Title = valueobject.NewTitle(title)
-	}
-}
-
-func WithSource(source string) Option {
-	return func(h *History) {
-		h.Source = valueobject.NewSource(source)
-	}
-}
-
-func WithDifficulty(difficulty entity.Difficulty) Option {
-	return func(h *History) {
-		h.Difficulty = difficulty
-	}
-}
-
-func WithTimeLimit(timeLimit float64) Option {
-	return func(h *History) {
-		h.TimeLimit = timeLimit
-	}
-}
-
-func WithMemoryLimit(memoryLimit int64) Option {
-	return func(h *History) {
-		h.MemoryLimit = memoryLimit
-	}
-}
-
-func WithDescription(description string) Option {
-	return func(h *History) {
-		h.Description = valueobject.NewDescription(description)
-	}
-}
-
-func WithInput(input string) Option {
-	return func(h *History) {
-		h.Input = valueobject.NewInput(input)
-	}
-}
-
-func WithOutput(output string) Option {
-	return func(h *History) {
-		h.Output = valueobject.NewOutput(output)
-	}
-}
-
-func WithSampleInput(sampleInput string) Option {
-	return func(h *History) {
-		h.SampleInput = valueobject.NewInput(sampleInput)
-	}
-}
-
-func WithSampleOutput(sampleOutput string) Option {
-	return func(h *History) {
-		h.SampleOutput = valueobject.NewOutput(sampleOutput)
-	}
-}
-
-func WithHint(hint string) Option {
-	return func(h *History) {
-		h.Hint = valueobject.NewDescription(hint)
-	}
-}
-
-func WithOperation(operation entity.Operation) Option {
-	return func(h *History) {
-		h.Operation = operation
-	}
 }

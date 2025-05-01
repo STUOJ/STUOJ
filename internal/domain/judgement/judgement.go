@@ -2,6 +2,7 @@ package judgement
 
 //go:generate go run ../../../dev/gen/dto_gen.go judgement
 //go:generate go run ../../../dev/gen/query_gen.go judgement
+//go:generate go run ../../../dev/gen/builder.go judgement
 
 import (
 	"STUOJ/internal/infrastructure/repository/dao"
@@ -109,74 +110,4 @@ func (j *Judgement) Delete() error {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
 	return nil
-}
-
-type Option func(*Judgement)
-
-func NewJudgement(option ...Option) *Judgement {
-	j := &Judgement{}
-	for _, opt := range option {
-		opt(j)
-	}
-	return j
-}
-
-func WithId(id int64) Option {
-	return func(j *Judgement) {
-		j.Id = id
-	}
-}
-
-func WithSubmissionId(submissionId int64) Option {
-	return func(j *Judgement) {
-		j.SubmissionId = submissionId
-	}
-}
-
-func WithTestcaseId(testcaseId int64) Option {
-	return func(j *Judgement) {
-		j.TestcaseId = testcaseId
-	}
-}
-
-func WithTime(time float64) Option {
-	return func(j *Judgement) {
-		j.Time = time
-	}
-}
-
-func WithMemory(memory int64) Option {
-	return func(j *Judgement) {
-		j.Memory = memory
-	}
-}
-
-func WithStdout(stdout string) Option {
-	return func(j *Judgement) {
-		j.Stdout = stdout
-	}
-}
-
-func WithStderr(stderr string) Option {
-	return func(j *Judgement) {
-		j.Stderr = stderr
-	}
-}
-
-func WithCompileOutput(compileOutput string) Option {
-	return func(j *Judgement) {
-		j.CompileOutput = compileOutput
-	}
-}
-
-func WithMessage(message string) Option {
-	return func(j *Judgement) {
-		j.Message = message
-	}
-}
-
-func WithStatus(status entity.JudgeStatus) Option {
-	return func(j *Judgement) {
-		j.Status = status
-	}
 }

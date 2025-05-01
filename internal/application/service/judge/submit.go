@@ -49,7 +49,7 @@ func Submit(req request.JudgeReq, reqUser model.ReqUser) (int64, error) {
 		submission.WithUserId(int64(reqUser.Id)),
 		submission.WithProblemId(int64(req.ProblemId)),
 		submission.WithStatus(entity.JudgeIE), // 设置为IE状态,保证在错误导致中断的情况下显示为IE
-		submission.WithLength(uint32(len(req.SourceCode))),
+		submission.WithLength(int64(len(req.SourceCode))),
 		submission.WithLanguageId(int64(languageDomain.Id)),
 		submission.WithSourceCode(req.SourceCode),
 	)
@@ -126,7 +126,7 @@ func Submit(req request.JudgeReq, reqUser model.ReqUser) (int64, error) {
 	submissionDomain = submission.NewSubmission(
 		submission.WithId(submissionId),
 		submission.WithStatus(entity.JudgeStatus(runnerResult.Status.Id)),
-		submission.WithScore(score),
+		submission.WithScore(int64(score)),
 		submission.WithMemory(int64(runnerResult.Memory)),
 		submission.WithTime(runnerResult.Time),
 	)

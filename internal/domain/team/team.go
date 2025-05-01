@@ -2,6 +2,7 @@ package team
 
 //go:generate go run ../../../dev/gen/dto_gen.go team
 //go:generate go run ../../../dev/gen/query_gen.go team
+//go:generate go run ../../../dev/gen/builder.go team
 
 import (
 	"STUOJ/internal/domain/team/valueobject"
@@ -143,50 +144,4 @@ func (t *Team) QuitTeam(userId int64) error {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
 	return nil
-}
-
-type Option func(*Team)
-
-func NewTeam(options ...Option) *Team {
-	team := &Team{}
-	for _, option := range options {
-		option(team)
-	}
-	return team
-}
-
-func WithId(id int64) Option {
-	return func(t *Team) {
-		t.Id = id
-	}
-}
-
-func WithUserId(userId int64) Option {
-	return func(t *Team) {
-		t.UserId = userId
-	}
-}
-
-func WithContestId(contestId int64) Option {
-	return func(t *Team) {
-		t.ContestId = contestId
-	}
-}
-
-func WithName(name string) Option {
-	return func(t *Team) {
-		t.Name = valueobject.NewName(name)
-	}
-}
-
-func WithDescription(description string) Option {
-	return func(t *Team) {
-		t.Description = valueobject.NewDescription(description)
-	}
-}
-
-func WithStatus(status entity.TeamStatus) Option {
-	return func(t *Team) {
-		t.Status = status
-	}
 }

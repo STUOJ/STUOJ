@@ -9,7 +9,7 @@ type Avatar string
 
 func (a Avatar) Verify() error {
 	if len(a) == 0 {
-		return errors.New("头像URL不能为空！")
+		return nil
 	}
 	if !strings.HasPrefix(string(a), "http://") && !strings.HasPrefix(string(a), "https://") {
 		return errors.New("头像URL必须以http://或https://开头！")

@@ -2,6 +2,7 @@ package submission
 
 //go:generate go run ../../../dev/gen/dto_gen.go submission
 //go:generate go run ../../../dev/gen/query_gen.go submission
+//go:generate go run ../../../dev/gen/builder.go submission
 
 import (
 	"STUOJ/internal/infrastructure/repository/dao"
@@ -120,76 +121,4 @@ func (s *Submission) Delete() error {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
 	return nil
-}
-
-type Option func(*Submission)
-
-func NewSubmission(option ...Option) *Submission {
-	s := &Submission{
-		Status: entity.JudgeIE,
-	}
-	for _, opt := range option {
-		opt(s)
-	}
-	return s
-}
-
-func WithId(id int64) Option {
-	return func(s *Submission) {
-		s.Id = id
-	}
-}
-
-func WithUserId(userId int64) Option {
-	return func(s *Submission) {
-		s.UserId = userId
-	}
-}
-
-func WithProblemId(problemId int64) Option {
-	return func(s *Submission) {
-		s.ProblemId = problemId
-	}
-}
-
-func WithStatus(status entity.JudgeStatus) Option {
-	return func(s *Submission) {
-		s.Status = status
-	}
-}
-
-func WithScore(score uint8) Option {
-	return func(s *Submission) {
-		s.Score = int64(score)
-	}
-}
-
-func WithMemory(memory int64) Option {
-	return func(s *Submission) {
-		s.Memory = memory
-	}
-}
-
-func WithTime(time float64) Option {
-	return func(s *Submission) {
-		s.Time = time
-	}
-}
-
-func WithLength(length uint32) Option {
-	return func(s *Submission) {
-		s.Length = int64(length)
-	}
-}
-
-func WithLanguageId(languageId int64) Option {
-	return func(s *Submission) {
-		s.LanguageId = languageId
-	}
-}
-
-func WithSourceCode(sourceCode string) Option {
-	return func(s *Submission) {
-		s.SourceCode = valueobject.NewSourceCode(sourceCode)
-	}
 }

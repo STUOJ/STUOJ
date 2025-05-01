@@ -2,6 +2,7 @@ package testcase
 
 //go:generate go run ../../../dev/gen/dto_gen.go testcase
 //go:generate go run ../../../dev/gen/query_gen.go testcase
+//go:generate go run ../../../dev/gen/builder.go testcase
 
 import (
 	"STUOJ/internal/domain/testcase/valueobject"
@@ -94,44 +95,4 @@ func (t *Testcase) Delete() error {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
 	return nil
-}
-
-type Option func(*Testcase)
-
-func NewTestcase(option ...Option) *Testcase {
-	t := &Testcase{}
-	for _, opt := range option {
-		opt(t)
-	}
-	return t
-}
-
-func WithId(id int64) Option {
-	return func(t *Testcase) {
-		t.Id = id
-	}
-}
-
-func WithProblemId(problemId int64) Option {
-	return func(t *Testcase) {
-		t.ProblemId = problemId
-	}
-}
-
-func WithSerial(serial uint16) Option {
-	return func(t *Testcase) {
-		t.Serial = serial
-	}
-}
-
-func WithTestInput(testInput string) Option {
-	return func(t *Testcase) {
-		t.TestInput = valueobject.NewTestInput(testInput)
-	}
-}
-
-func WithTestOutput(testOutput string) Option {
-	return func(t *Testcase) {
-		t.TestOutput = valueobject.NewTestOutput(testOutput)
-	}
 }
