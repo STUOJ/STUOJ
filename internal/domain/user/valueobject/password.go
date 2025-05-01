@@ -11,13 +11,13 @@ type Password struct {
 	ciphertext string // 存数据库或从数据库读出
 }
 
-// NewPassword 创建新密码（明文），用于注册/修改密码
-func NewPassword(plaintext string) Password {
+// NewPasswordPlaintext 创建新密码（明文），用于注册/修改密码
+func NewPasswordPlaintext(plaintext string) Password {
 	return Password{plaintext: plaintext}
 }
 
-// NewHashedPassword 用于数据库读出（只含密文）
-func NewHashedPassword(ciphertext string) Password {
+// NewPassword 用于数据库读出（只含密文）
+func NewPassword(ciphertext string) Password {
 	return Password{ciphertext: ciphertext}
 }
 
@@ -35,7 +35,7 @@ func (p Password) Hash() (Password, error) {
 
 // Verify 校验明文密码格式
 func (p Password) Verify() error {
-	if len(p.plaintext) < 6 || len(p.plaintext) > 20 {
+	if p.ciphertext == "" && (len(p.plaintext) < 6 || len(p.plaintext) > 20) {
 		return errors.New("密码长度必须在6-20个字符之间！")
 	}
 	return nil

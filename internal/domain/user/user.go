@@ -139,3 +139,9 @@ func (u *User) Delete() error {
 	}
 	return nil
 }
+
+func WithPasswordPlaintext(password string) Option {
+	return func(user *User) {
+		user.Password = valueobject.NewPasswordPlaintext(password)
+	}
+}
