@@ -27,7 +27,9 @@ import (
 	{{if .NeedValueObject}}"STUOJ/internal/domain/{{.PackageName}}/valueobject"{{end}}
 	{{if .NeedEntity}}"STUOJ/internal/infrastructure/repository/entity"{{end}}
 
-	{{range $import, $_ := .ExtraImports}}"{{$import}}"{{end}}
+	{{range $import, $_ := .ExtraImports}}
+	"{{$import}}"
+	{{end}}
 )
 
 type Option func(*{{.StructName}})
