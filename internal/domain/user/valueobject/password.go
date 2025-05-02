@@ -40,7 +40,7 @@ func (p Password) Hash() (Password, error) {
 
 // Verify 校验明文密码格式
 func (p Password) Verify() error {
-	if p.Value() == "" && (len(p.plaintext) < 6 || len(p.plaintext) > 20) {
+	if len(p.plaintext) < 6 || len(p.plaintext) > 20 {
 		return errors.New("密码长度必须在6-20个字符之间！")
 	}
 	return nil
@@ -49,9 +49,4 @@ func (p Password) Verify() error {
 // VerifyHash 校验输入密码是否与密文匹配
 func (p Password) VerifyHash(plaintext string) error {
 	return bcrypt.CompareHashAndPassword([]byte(p.Value()), []byte(plaintext))
-}
-
-// String 返回密文（用于写入数据库）
-func (p Password) String() string {
-	return p.Value()
 }

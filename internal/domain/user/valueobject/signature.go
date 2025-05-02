@@ -17,10 +17,6 @@ func (s Signature) Verify() error {
 	return nil
 }
 
-func (s Signature) String() string {
-	return s.Value()
-}
-
 func NewSignature(str string) Signature {
 	str = utils.Senitize(str)
 	var s Signature

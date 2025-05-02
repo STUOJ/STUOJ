@@ -20,10 +20,6 @@ func (a Avatar) Verify() error {
 	return nil
 }
 
-func (a Avatar) String() string {
-	return a.Value()
-}
-
 func NewAvatar(avatar string) Avatar {
 	var a Avatar
 	a.Set(avatar)

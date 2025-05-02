@@ -19,10 +19,6 @@ func (e Email) Verify() error {
 	return nil
 }
 
-func (e Email) String() string {
-	return e.Value()
-}
-
 func NewEmail(email string) Email {
 	var e Email
 	e.Set(email)

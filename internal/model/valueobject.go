@@ -1,5 +1,7 @@
 package model
 
+import "fmt"
+
 type Valueobject[T any] struct {
 	exist bool
 	value T
@@ -18,12 +20,20 @@ func (v *Valueobject[T]) Set(value T) {
 	v.value = value
 }
 
-// Verify 验证值对象的值是否合法，需要在子类中实现
+// Verify 验证值对象的值是否合法
 func (v *Valueobject[T]) Verify() error {
 	return nil
 }
 
-// String 返回值的字符串表示，需要在子类中实现
+// String 返回值的字符串表示
 func (v *Valueobject[T]) String() string {
+	if v.Exist() {
+		switch val := any(v.value).(type) {
+		case string:
+			return val
+		default:
+			return fmt.Sprintf("%v", val)
+		}
+	}
 	return ""
 }

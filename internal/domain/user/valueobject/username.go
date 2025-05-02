@@ -22,10 +22,6 @@ func (u Username) Verify() error {
 	return nil
 }
 
-func (u Username) String() string {
-	return u.Value()
-}
-
 func NewUsername(un string) Username {
 	un = utils.Senitize(un)
 	var u Username
