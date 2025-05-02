@@ -1,25 +1,30 @@
 package valueobject
 
 import (
+	"STUOJ/internal/model"
 	"errors"
 	"regexp"
 )
 
-type Email string
+type Email struct {
+	model.Valueobject[string]
+}
 
 func (e Email) Verify() error {
 	emailRegex := `^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$`
 	re := regexp.MustCompile(emailRegex)
-	if !re.MatchString(string(e)) {
+	if !re.MatchString(e.Value()) {
 		return errors.New("邮箱格式不正确！")
 	}
 	return nil
 }
 
 func (e Email) String() string {
-	return string(e)
+	return e.Value()
 }
 
 func NewEmail(email string) Email {
-	return Email(email)
+	var e Email
+	e.Set(email)
+	return e
 }

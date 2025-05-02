@@ -1,26 +1,31 @@
 package valueobject
 
 import (
+	"STUOJ/internal/model"
 	"errors"
 	"strings"
 )
 
-type Avatar string
+type Avatar struct {
+	model.Valueobject[string]
+}
 
 func (a Avatar) Verify() error {
-	if len(a) == 0 {
+	if !a.Exist() || len(a.Value()) == 0 {
 		return nil
 	}
-	if !strings.HasPrefix(string(a), "http://") && !strings.HasPrefix(string(a), "https://") {
+	if !strings.HasPrefix(a.Value(), "http://") && !strings.HasPrefix(a.Value(), "https://") {
 		return errors.New("头像URL必须以http://或https://开头！")
 	}
 	return nil
 }
 
 func (a Avatar) String() string {
-	return string(a)
+	return a.Value()
 }
 
 func NewAvatar(avatar string) Avatar {
-	return Avatar(avatar)
+	var a Avatar
+	a.Set(avatar)
+	return a
 }
