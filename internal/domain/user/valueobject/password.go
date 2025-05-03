@@ -40,7 +40,7 @@ func (p Password) Hash() (Password, error) {
 
 // Verify 校验明文密码格式
 func (p Password) Verify() error {
-	if len(p.plaintext) < 6 || len(p.plaintext) > 20 {
+	if p.plaintext != "" && len(p.plaintext) < 6 || len(p.plaintext) > 20 {
 		return errors.New("密码长度必须在6-20个字符之间！")
 	}
 	return nil

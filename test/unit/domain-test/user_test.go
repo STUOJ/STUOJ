@@ -86,7 +86,6 @@ func TestUserUpdate_Success(t *testing.T) {
 	}
 	u.Id = id
 	u.Signature = valueobject.NewSignature("新签名")
-	t.Logf("更新用户: %v", u)
 	err = u.Update()
 	if err != nil {
 		t.Fatalf("更新用户失败: %v", err)
