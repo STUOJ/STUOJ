@@ -1,27 +1,26 @@
 package valueobject
 
 import (
+	"STUOJ/internal/model"
 	"fmt"
 )
 
 type Content struct {
-	value string
+	model.Valueobject[string]
 }
 
 func NewContent(value string) Content {
-	return Content{value: value}
-}
-
-func (c Content) String() string {
-	return c.value
+	var c Content
+	c.Set(value)
+	return c
 }
 
 func (c Content) Equals(other Content) bool {
-	return c.value == other.value
+	return c.Value() == other.Value()
 }
 
 func (c Content) Verify() error {
-	if len(c.value) > 100000 || len(c.value) == 0 {
+	if len(c.Value()) > 100000 || len(c.Value()) == 0 {
 		return ErrContent
 	}
 	return nil

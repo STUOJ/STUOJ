@@ -1,27 +1,26 @@
 package valueobject
 
 import (
+	"STUOJ/internal/model"
 	"fmt"
 )
 
 type Title struct {
-	value string
+	model.Valueobject[string]
 }
 
 func NewTitle(value string) Title {
-	return Title{value: value}
-}
-
-func (t Title) String() string {
-	return t.value
+	var t Title
+	t.Set(value)
+	return t
 }
 
 func (t Title) Equals(other Title) bool {
-	return t.value == other.value
+	return t.Value() == other.Value()
 }
 
 func (t Title) Verify() error {
-	if len(t.value) > 50 || len(t.value) == 0 {
+	if len(t.Value()) > 50 || len(t.Value()) == 0 {
 		return ErrTitle
 	}
 	return nil
