@@ -1,24 +1,23 @@
 package valueobject
 
 import (
+	"STUOJ/internal/model"
 	"STUOJ/pkg/errors"
 )
 
 type TestOutput struct {
-	value string
+	model.Valueobject[string]
 }
 
 func (t TestOutput) Verify() error {
-	if len(t.value) > 100000 {
+	if len(t.Value()) > 100000 {
 		return errors.ErrValidation.WithMessage("测试输出不能超过100000个字符")
 	}
 	return nil
 }
 
-func (t TestOutput) String() string {
-	return t.value
-}
-
 func NewTestOutput(value string) TestOutput {
-	return TestOutput{value: value}
+	var t TestOutput
+	t.Set(value)
+	return t
 }
