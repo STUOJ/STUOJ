@@ -9,7 +9,7 @@ import (
 type YukiImage struct{}
 
 func (YukiImage) UploadImage(reader io.Reader, filename string, album valueobject.Album) (string, error) {
-	image, err := yuki.UploadImage(reader, filename, uint8(album))
+	image, err := yuki.UploadImage(reader, filename, album.Value())
 	return image.Url, err
 }
 
