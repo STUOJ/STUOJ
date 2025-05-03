@@ -146,3 +146,27 @@ func TestUserDelete_NotFound(t *testing.T) {
 		t.Fatalf("删除不存在的用户应失败")
 	}
 }
+
+// 测试用户修改密码成功
+func TestUserUpdatePassword_Success(t *testing.T) {
+	u := user.NewUser(
+		user.WithUsername(randomUsername()),
+		user.WithPasswordPlaintext("OldPassword123!"),
+		user.WithRole(entity.RoleUser),
+		user.WithEmail(randomEmail()),
+		user.WithAvatar("https://avatar.com/1.png"),
+		user.WithSignature("签名"),
+	)
+	id, err := u.Create()
+	if err != nil {
+		t.Fatalf("创建用户失败: %v", err)
+	}
+	u.Id = id
+
+	// 修改密码
+	u.Password = valueobject.NewPasswordPlaintext("NewPassword456!")
+	err = u.Update()
+	if err != nil {
+		t.Fatalf("修改密码失败: %v", err)
+	}
+}
