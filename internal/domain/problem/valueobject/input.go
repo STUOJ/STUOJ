@@ -1,27 +1,26 @@
 package valueobject
 
 import (
+	"STUOJ/internal/model"
 	"fmt"
 )
 
 type Input struct {
-	value string
+	model.Valueobject[string]
 }
 
 func NewInput(value string) Input {
-	return Input{value: value}
-}
-
-func (i Input) String() string {
-	return i.value
+	var i Input
+	i.Set(value)
+	return i
 }
 
 func (i Input) Equals(other Input) bool {
-	return i.value == other.value
+	return i.Value() == other.Value()
 }
 
 func (i Input) Verify() error {
-	if len(i.value) > 100000 || len(i.value) == 0 {
+	if len(i.Value()) > 100000 || len(i.Value()) == 0 {
 		return ErrInput
 	}
 	return nil

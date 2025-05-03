@@ -1,27 +1,26 @@
 package valueobject
 
 import (
+	"STUOJ/internal/model"
 	"fmt"
 )
 
 type Source struct {
-	value string
+	model.Valueobject[string]
 }
 
 func NewSource(value string) Source {
-	return Source{value: value}
-}
-
-func (s Source) String() string {
-	return s.value
+	var s Source
+	s.Set(value)
+	return s
 }
 
 func (s Source) Equals(other Source) bool {
-	return s.value == other.value
+	return s.Value() == other.Value()
 }
 
 func (s Source) Verify() error {
-	if len(s.value) > 100 || len(s.value) == 0 {
+	if len(s.Value()) > 100 || len(s.Value()) == 0 {
 		return ErrSource
 	}
 	return nil
