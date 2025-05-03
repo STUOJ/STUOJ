@@ -16,7 +16,10 @@ func NewInput(value string) Input {
 }
 
 func (i Input) Equals(other Input) bool {
-	return i.Value() == other.Value()
+	if i.Exist() && other.Exist() {
+		return i.Value() == other.Value()
+	}
+	return false
 }
 
 func (i Input) Verify() error {

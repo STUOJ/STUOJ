@@ -37,3 +37,13 @@ func (v *Valueobject[T]) String() string {
 	}
 	return ""
 }
+
+/*
+// Equals 判断两个值对象是否相等（必须为comparable的类型）
+func (v *Valueobject[T]) Equals(u *Valueobject[T]) bool {
+	if v.Exist() && u.Exist() {
+		return v.Value() == u.Value()
+	}
+	return false
+}
+*/

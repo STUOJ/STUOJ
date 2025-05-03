@@ -16,7 +16,10 @@ func NewTitle(value string) Title {
 }
 
 func (t Title) Equals(other Title) bool {
-	return t.Value() == other.Value()
+	if t.Exist() && other.Exist() {
+		return t.Value() == other.Value()
+	}
+	return false
 }
 
 func (t Title) Verify() error {

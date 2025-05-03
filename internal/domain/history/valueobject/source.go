@@ -16,7 +16,10 @@ func NewSource(value string) Source {
 }
 
 func (s Source) Equals(other Source) bool {
-	return s.Value() == other.Value()
+	if s.Exist() && other.Exist() {
+		return s.Value() == other.Value()
+	}
+	return false
 }
 
 func (s Source) Verify() error {

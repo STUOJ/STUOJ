@@ -16,7 +16,10 @@ func NewOutput(value string) Output {
 }
 
 func (o Output) Equals(other Output) bool {
-	return o.Value() == other.Value()
+	if o.Exist() && other.Exist() {
+		return o.Value() == other.Value()
+	}
+	return false
 }
 
 func (o Output) Verify() error {

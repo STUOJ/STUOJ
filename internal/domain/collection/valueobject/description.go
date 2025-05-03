@@ -16,7 +16,10 @@ func NewDescription(value string) Description {
 }
 
 func (c Description) Equals(other Description) bool {
-	return c.Value() == other.Value()
+	if c.Exist() && other.Exist() {
+		return c.Value() == other.Value()
+	}
+	return false
 }
 
 func (c Description) Verify() error {
