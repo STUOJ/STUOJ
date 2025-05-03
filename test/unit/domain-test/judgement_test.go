@@ -15,7 +15,7 @@ func randomId() int64 {
 // 测试评测记录创建成功
 func TestJudgementCreate_Success(t *testing.T) {
 	j := judgement.NewJudgement(
-		judgement.WithSubmissionId(randomId()),
+		judgement.WithSubmissionId(1),
 		judgement.WithTestcaseId(randomId()),
 		judgement.WithTime(1.23),
 		judgement.WithMemory(128),
@@ -52,7 +52,7 @@ func TestJudgementCreate_EmptySubmissionId(t *testing.T) {
 // 测试评测记录更新成功
 func TestJudgementUpdate_Success(t *testing.T) {
 	j := judgement.NewJudgement(
-		judgement.WithSubmissionId(randomId()),
+		judgement.WithSubmissionId(1),
 		judgement.WithTestcaseId(randomId()),
 		judgement.WithTime(1.23),
 		judgement.WithMemory(128),
@@ -75,7 +75,7 @@ func TestJudgementUpdate_Success(t *testing.T) {
 func TestJudgementUpdate_NotFound(t *testing.T) {
 	j := judgement.NewJudgement(
 		judgement.WithId(99999999),
-		judgement.WithSubmissionId(randomId()),
+		judgement.WithSubmissionId(1),
 		judgement.WithTestcaseId(randomId()),
 		judgement.WithTime(1.23),
 		judgement.WithMemory(128),
@@ -90,7 +90,7 @@ func TestJudgementUpdate_NotFound(t *testing.T) {
 // 测试评测记录删除成功
 func TestJudgementDelete_Success(t *testing.T) {
 	j := judgement.NewJudgement(
-		judgement.WithSubmissionId(randomId()),
+		judgement.WithSubmissionId(1),
 		judgement.WithTestcaseId(randomId()),
 		judgement.WithTime(1.23),
 		judgement.WithMemory(128),
@@ -111,7 +111,7 @@ func TestJudgementDelete_Success(t *testing.T) {
 func TestJudgementDelete_NotFound(t *testing.T) {
 	j := judgement.NewJudgement(
 		judgement.WithId(99999999),
-		judgement.WithSubmissionId(randomId()),
+		judgement.WithSubmissionId(1),
 		judgement.WithTestcaseId(randomId()),
 		judgement.WithTime(1.23),
 		judgement.WithMemory(128),

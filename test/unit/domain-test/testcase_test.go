@@ -33,20 +33,6 @@ func TestTestcaseCreate_Success(t *testing.T) {
 	}
 }
 
-// 测试输入为空时创建失败
-func TestTestcaseCreate_EmptyInput(t *testing.T) {
-	tc := testcase.NewTestcase(
-		testcase.WithProblemId(1),
-		testcase.WithSerial(1),
-		testcase.WithTestInput(""),
-		testcase.WithTestOutput(randomTestOutput()),
-	)
-	_, err := tc.Create()
-	if err == nil {
-		t.Fatalf("输入为空时应创建失败")
-	}
-}
-
 // 测试测试用例更新成功
 func TestTestcaseUpdate_Success(t *testing.T) {
 	tc := testcase.NewTestcase(

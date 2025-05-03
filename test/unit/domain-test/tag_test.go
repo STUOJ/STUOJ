@@ -48,7 +48,7 @@ func TestTagUpdate_Success(t *testing.T) {
 		t.Fatalf("创建标签失败: %v", err)
 	}
 	tg.Id = id
-	tg.Name = valueobject.NewName("更新后的标签")
+	tg.Name = valueobject.NewName(randomTagName())
 	err = tg.Update()
 	if err != nil {
 		t.Fatalf("更新标签失败: %v", err)
