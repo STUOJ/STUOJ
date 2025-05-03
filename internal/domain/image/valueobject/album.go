@@ -1,17 +1,22 @@
 package valueobject
 
-import "fmt"
+import (
+	"STUOJ/internal/model"
+	"fmt"
+)
 
-type Album uint8
+type Album struct {
+	model.Valueobject[uint8]
+}
 
 const (
-	Avatar  Album = 1
-	Problem Album = 2
-	Blog    Album = 3
+	Avatar  uint8 = 1
+	Problem uint8 = 2
+	Blog    uint8 = 3
 )
 
 func (a Album) String() string {
-	switch a {
+	switch a.Value() {
 	case Avatar:
 		return "avatar"
 	case Problem:
@@ -24,7 +29,7 @@ func (a Album) String() string {
 }
 
 func (a Album) Verify() error {
-	switch a {
+	switch a.Value() {
 	case Avatar, Problem, Blog:
 		return nil
 	default:
@@ -33,7 +38,9 @@ func (a Album) Verify() error {
 }
 
 func NewAlbum(album uint8) Album {
-	return Album(album)
+	var a Album
+	a.Set(album)
+	return a
 }
 
 var (

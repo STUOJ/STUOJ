@@ -1,17 +1,22 @@
 package valueobject
 
-import "fmt"
+import (
+	"STUOJ/internal/model"
+	"fmt"
+)
 
-type MimeType int64
+type MimeType struct {
+	model.Valueobject[int64]
+}
 
 const (
-	JPEG MimeType = 1
-	PNG  MimeType = 2
-	GIF  MimeType = 3
+	JPEG int64 = 1
+	PNG  int64 = 2
+	GIF  int64 = 3
 )
 
 func (m MimeType) String() string {
-	switch m {
+	switch m.Value() {
 	case JPEG:
 		return "image/jpeg"
 	case PNG:
@@ -24,12 +29,18 @@ func (m MimeType) String() string {
 }
 
 func (m MimeType) Verify() error {
-	switch m {
+	switch m.Value() {
 	case JPEG, PNG, GIF:
 		return nil
 	default:
 		return ErrInvalidMimeType
 	}
+}
+
+func NewMimeType(mimetype int64) MimeType {
+	var m MimeType
+	m.Set(mimetype)
+	return m
 }
 
 var (
