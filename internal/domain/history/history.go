@@ -6,7 +6,7 @@ package history
 
 import (
 	"STUOJ/internal/infrastructure/repository/dao"
-	entity "STUOJ/internal/infrastructure/repository/entity"
+	"STUOJ/internal/infrastructure/repository/entity"
 	"STUOJ/internal/infrastructure/repository/entity/field"
 	"STUOJ/internal/model/option"
 	"STUOJ/pkg/errors"
