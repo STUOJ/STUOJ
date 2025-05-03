@@ -1,27 +1,26 @@
 package valueobject
 
 import (
+	"STUOJ/internal/model"
 	"fmt"
 )
 
 type Output struct {
-	value string
+	model.Valueobject[string]
 }
 
 func NewOutput(value string) Output {
-	return Output{value: value}
-}
-
-func (o Output) String() string {
-	return o.value
+	var o Output
+	o.Set(value)
+	return o
 }
 
 func (o Output) Equals(other Output) bool {
-	return o.value == other.value
+	return o.Value() == other.Value()
 }
 
 func (o Output) Verify() error {
-	if len(o.value) > 100000 || len(o.value) == 0 {
+	if len(o.Value()) > 100000 || len(o.Value()) == 0 {
 		return ErrOutput
 	}
 	return nil

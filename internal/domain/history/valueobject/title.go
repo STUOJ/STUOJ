@@ -1,25 +1,26 @@
 package valueobject
 
 import (
+	"STUOJ/internal/model"
 	"errors"
 )
 
-type Title string
+type Title struct {
+	model.Valueobject[string]
+}
 
 func (t Title) Verify() error {
-	if len(t) == 0 {
+	if len(t.Value()) == 0 {
 		return errors.New("标题不能为空！")
 	}
-	if len(t) > 255 {
+	if len(t.Value()) > 255 {
 		return errors.New("标题长度不能超过255个字符！")
 	}
 	return nil
 }
 
-func (t Title) String() string {
-	return string(t)
-}
-
 func NewTitle(title string) Title {
-	return Title(title)
+	var t Title
+	t.Set(title)
+	return t
 }

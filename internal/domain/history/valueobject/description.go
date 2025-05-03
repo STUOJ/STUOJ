@@ -1,27 +1,26 @@
 package valueobject
 
 import (
+	"STUOJ/internal/model"
 	"fmt"
 )
 
 type Description struct {
-	value string
+	model.Valueobject[string]
 }
 
 func NewDescription(value string) Description {
-	return Description{value: value}
-}
-
-func (d Description) String() string {
-	return d.value
+	var d Description
+	d.Set(value)
+	return d
 }
 
 func (d Description) Equals(other Description) bool {
-	return d.value == other.value
+	return d.Value() == other.Value()
 }
 
 func (d Description) Verify() error {
-	if len(d.value) > 100000 || len(d.value) == 0 {
+	if len(d.Value()) > 100000 || len(d.Value()) == 0 {
 		return ErrDescription
 	}
 	return nil
