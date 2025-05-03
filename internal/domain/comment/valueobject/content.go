@@ -1,28 +1,27 @@
 package valueobject
 
 import (
+	"STUOJ/internal/model"
 	"STUOJ/pkg/errors"
 	"strings"
 )
 
 type Content struct {
-	value string
+	model.Valueobject[string]
 }
 
 func (c Content) Verify() error {
-	if strings.TrimSpace(c.value) == "" {
+	if strings.TrimSpace(c.Value()) == "" {
 		return errors.ErrValidation.WithMessage("评论内容不能为空")
 	}
-	if len(c.value) > 10000 {
+	if len(c.Value()) > 10000 {
 		return errors.ErrValidation.WithMessage("评论内容不能超过10000个字符")
 	}
 	return nil
 }
 
-func (c Content) String() string {
-	return c.value
-}
-
 func NewContent(value string) Content {
-	return Content{value: value}
+	var c Content
+	c.Set(value)
+	return c
 }
