@@ -9,21 +9,21 @@ import (
 )
 
 // 生成随机输入输出
-func randomTestInput() valueobject.TestInput {
-	return valueobject.NewTestInput("输入" + strconv.Itoa(rand.Intn(100000)))
+func randomTestInput() string {
+	return "输入" + strconv.Itoa(rand.Intn(100000))
 }
-func randomTestOutput() valueobject.TestOutput {
-	return valueobject.NewTestOutput("输出" + strconv.Itoa(rand.Intn(100000)))
+func randomTestOutput() string {
+	return "输出" + strconv.Itoa(rand.Intn(100000))
 }
 
 // 测试测试用例创建成功
 func TestTestcaseCreate_Success(t *testing.T) {
-	tc := &testcase.Testcase{
-		ProblemId:  1,
-		Serial:     uint16(rand.Intn(100)),
-		TestInput:  randomTestInput(),
-		TestOutput: randomTestOutput(),
-	}
+	tc := testcase.NewTestcase(
+		testcase.WithProblemId(1),
+		testcase.WithSerial(uint16(rand.Intn(100))),
+		testcase.WithTestInput(randomTestInput()),
+		testcase.WithTestOutput(randomTestOutput()),
+	)
 	id, err := tc.Create()
 	if err != nil {
 		t.Fatalf("创建测试用例失败: %v", err)
@@ -35,12 +35,12 @@ func TestTestcaseCreate_Success(t *testing.T) {
 
 // 测试输入为空时创建失败
 func TestTestcaseCreate_EmptyInput(t *testing.T) {
-	tc := &testcase.Testcase{
-		ProblemId:  1,
-		Serial:     1,
-		TestInput:  valueobject.NewTestInput(""),
-		TestOutput: randomTestOutput(),
-	}
+	tc := testcase.NewTestcase(
+		testcase.WithProblemId(1),
+		testcase.WithSerial(1),
+		testcase.WithTestInput(""),
+		testcase.WithTestOutput(randomTestOutput()),
+	)
 	_, err := tc.Create()
 	if err == nil {
 		t.Fatalf("输入为空时应创建失败")
@@ -49,12 +49,12 @@ func TestTestcaseCreate_EmptyInput(t *testing.T) {
 
 // 测试测试用例更新成功
 func TestTestcaseUpdate_Success(t *testing.T) {
-	tc := &testcase.Testcase{
-		ProblemId:  1,
-		Serial:     uint16(rand.Intn(100)),
-		TestInput:  randomTestInput(),
-		TestOutput: randomTestOutput(),
-	}
+	tc := testcase.NewTestcase(
+		testcase.WithProblemId(1),
+		testcase.WithSerial(uint16(rand.Intn(100))),
+		testcase.WithTestInput(randomTestInput()),
+		testcase.WithTestOutput(randomTestOutput()),
+	)
 	id, err := tc.Create()
 	if err != nil {
 		t.Fatalf("创建测试用例失败: %v", err)
@@ -69,13 +69,13 @@ func TestTestcaseUpdate_Success(t *testing.T) {
 
 // 测试更新不存在的测试用例
 func TestTestcaseUpdate_NotFound(t *testing.T) {
-	tc := &testcase.Testcase{
-		Id:         99999999,
-		ProblemId:  1,
-		Serial:     1,
-		TestInput:  randomTestInput(),
-		TestOutput: randomTestOutput(),
-	}
+	tc := testcase.NewTestcase(
+		testcase.WithId(99999999),
+		testcase.WithProblemId(1),
+		testcase.WithSerial(1),
+		testcase.WithTestInput(randomTestInput()),
+		testcase.WithTestOutput(randomTestOutput()),
+	)
 	err := tc.Update()
 	if err == nil {
 		t.Fatalf("更新不存在的测试用例应失败")
@@ -84,12 +84,12 @@ func TestTestcaseUpdate_NotFound(t *testing.T) {
 
 // 测试测试用例删除成功
 func TestTestcaseDelete_Success(t *testing.T) {
-	tc := &testcase.Testcase{
-		ProblemId:  1,
-		Serial:     uint16(rand.Intn(100)),
-		TestInput:  randomTestInput(),
-		TestOutput: randomTestOutput(),
-	}
+	tc := testcase.NewTestcase(
+		testcase.WithProblemId(1),
+		testcase.WithSerial(uint16(rand.Intn(100))),
+		testcase.WithTestInput(randomTestInput()),
+		testcase.WithTestOutput(randomTestOutput()),
+	)
 	id, err := tc.Create()
 	if err != nil {
 		t.Fatalf("创建测试用例失败: %v", err)
@@ -103,13 +103,13 @@ func TestTestcaseDelete_Success(t *testing.T) {
 
 // 测试删除不存在的测试用例
 func TestTestcaseDelete_NotFound(t *testing.T) {
-	tc := &testcase.Testcase{
-		Id:         99999999,
-		ProblemId:  1,
-		Serial:     1,
-		TestInput:  randomTestInput(),
-		TestOutput: randomTestOutput(),
-	}
+	tc := testcase.NewTestcase(
+		testcase.WithId(99999999),
+		testcase.WithProblemId(1),
+		testcase.WithSerial(1),
+		testcase.WithTestInput(randomTestInput()),
+		testcase.WithTestOutput(randomTestOutput()),
+	)
 	err := tc.Delete()
 	if err == nil {
 		t.Fatalf("删除不存在的测试用例应失败")

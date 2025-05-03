@@ -9,38 +9,38 @@ import (
 )
 
 // 生成随机题目标题
-func randomProblemTitle() valueobject.Title {
-	return valueobject.NewTitle("题目" + time.Now().Format("150405.000"))
+func randomProblemTitle() string {
+	return "题目" + time.Now().Format("150405.000")
 }
-func randomProblemSource() valueobject.Source {
-	return valueobject.NewSource("来源" + time.Now().Format("150405.000"))
+func randomProblemSource() string {
+	return "来源" + time.Now().Format("150405.000")
 }
-func randomProblemDesc() valueobject.Description {
-	return valueobject.NewDescription("描述" + time.Now().Format("150405.000"))
+func randomProblemDesc() string {
+	return "描述" + time.Now().Format("150405.000")
 }
-func randomProblemInput() valueobject.Input {
-	return valueobject.NewInput("输入" + time.Now().Format("150405.000"))
+func randomProblemInput() string {
+	return "输入" + time.Now().Format("150405.000")
 }
-func randomProblemOutput() valueobject.Output {
-	return valueobject.NewOutput("输出" + time.Now().Format("150405.000"))
+func randomProblemOutput() string {
+	return "输出" + time.Now().Format("150405.000")
 }
 
 // 测试题目创建成功
 func TestProblemCreate_Success(t *testing.T) {
-	p := &problem.Problem{
-		Title:        randomProblemTitle(),
-		Source:       randomProblemSource(),
-		Difficulty:   entity.DifficultyE,
-		TimeLimit:    1.0,
-		MemoryLimit:  128,
-		Description:  randomProblemDesc(),
-		Input:        randomProblemInput(),
-		Output:       randomProblemOutput(),
-		SampleInput:  randomProblemInput(),
-		SampleOutput: randomProblemOutput(),
-		Hint:         randomProblemDesc(),
-		Status:       entity.ProblemPublic,
-	}
+	p := problem.NewProblem(
+		problem.WithTitle(randomProblemTitle()),
+		problem.WithSource(randomProblemSource()),
+		problem.WithDifficulty(entity.DifficultyE),
+		problem.WithTimeLimit(1.0),
+		problem.WithMemoryLimit(128),
+		problem.WithDescription(randomProblemDesc()),
+		problem.WithInput(randomProblemInput()),
+		problem.WithOutput(randomProblemOutput()),
+		problem.WithSampleInput(randomProblemInput()),
+		problem.WithSampleOutput(randomProblemOutput()),
+		problem.WithHint(randomProblemDesc()),
+		problem.WithStatus(entity.ProblemPublic),
+	)
 	id, err := p.Create()
 	if err != nil {
 		t.Fatalf("创建题目失败: %v", err)
@@ -52,20 +52,20 @@ func TestProblemCreate_Success(t *testing.T) {
 
 // 测试题目标题为空时创建失败
 func TestProblemCreate_EmptyTitle(t *testing.T) {
-	p := &problem.Problem{
-		Title:        valueobject.NewTitle(""),
-		Source:       randomProblemSource(),
-		Difficulty:   entity.DifficultyE,
-		TimeLimit:    1.0,
-		MemoryLimit:  128,
-		Description:  randomProblemDesc(),
-		Input:        randomProblemInput(),
-		Output:       randomProblemOutput(),
-		SampleInput:  randomProblemInput(),
-		SampleOutput: randomProblemOutput(),
-		Hint:         randomProblemDesc(),
-		Status:       entity.ProblemPublic,
-	}
+	p := problem.NewProblem(
+		problem.WithTitle(""),
+		problem.WithSource(randomProblemSource()),
+		problem.WithDifficulty(entity.DifficultyE),
+		problem.WithTimeLimit(1.0),
+		problem.WithMemoryLimit(128),
+		problem.WithDescription(randomProblemDesc()),
+		problem.WithInput(randomProblemInput()),
+		problem.WithOutput(randomProblemOutput()),
+		problem.WithSampleInput(randomProblemInput()),
+		problem.WithSampleOutput(randomProblemOutput()),
+		problem.WithHint(randomProblemDesc()),
+		problem.WithStatus(entity.ProblemPublic),
+	)
 	_, err := p.Create()
 	if err == nil {
 		t.Fatalf("题目标题为空时应创建失败")
@@ -74,20 +74,20 @@ func TestProblemCreate_EmptyTitle(t *testing.T) {
 
 // 测试题目更新成功
 func TestProblemUpdate_Success(t *testing.T) {
-	p := &problem.Problem{
-		Title:        randomProblemTitle(),
-		Source:       randomProblemSource(),
-		Difficulty:   entity.DifficultyE,
-		TimeLimit:    1.0,
-		MemoryLimit:  128,
-		Description:  randomProblemDesc(),
-		Input:        randomProblemInput(),
-		Output:       randomProblemOutput(),
-		SampleInput:  randomProblemInput(),
-		SampleOutput: randomProblemOutput(),
-		Hint:         randomProblemDesc(),
-		Status:       entity.ProblemPublic,
-	}
+	p := problem.NewProblem(
+		problem.WithTitle(randomProblemTitle()),
+		problem.WithSource(randomProblemSource()),
+		problem.WithDifficulty(entity.DifficultyE),
+		problem.WithTimeLimit(1.0),
+		problem.WithMemoryLimit(128),
+		problem.WithDescription(randomProblemDesc()),
+		problem.WithInput(randomProblemInput()),
+		problem.WithOutput(randomProblemOutput()),
+		problem.WithSampleInput(randomProblemInput()),
+		problem.WithSampleOutput(randomProblemOutput()),
+		problem.WithHint(randomProblemDesc()),
+		problem.WithStatus(entity.ProblemPublic),
+	)
 	id, err := p.Create()
 	if err != nil {
 		t.Fatalf("创建题目失败: %v", err)
@@ -102,21 +102,21 @@ func TestProblemUpdate_Success(t *testing.T) {
 
 // 测试更新不存在的题目
 func TestProblemUpdate_NotFound(t *testing.T) {
-	p := &problem.Problem{
-		Id:           99999999,
-		Title:        randomProblemTitle(),
-		Source:       randomProblemSource(),
-		Difficulty:   entity.DifficultyE,
-		TimeLimit:    1.0,
-		MemoryLimit:  128,
-		Description:  randomProblemDesc(),
-		Input:        randomProblemInput(),
-		Output:       randomProblemOutput(),
-		SampleInput:  randomProblemInput(),
-		SampleOutput: randomProblemOutput(),
-		Hint:         randomProblemDesc(),
-		Status:       entity.ProblemPublic,
-	}
+	p := problem.NewProblem(
+		problem.WithId(99999999),
+		problem.WithTitle(randomProblemTitle()),
+		problem.WithSource(randomProblemSource()),
+		problem.WithDifficulty(entity.DifficultyE),
+		problem.WithTimeLimit(1.0),
+		problem.WithMemoryLimit(128),
+		problem.WithDescription(randomProblemDesc()),
+		problem.WithInput(randomProblemInput()),
+		problem.WithOutput(randomProblemOutput()),
+		problem.WithSampleInput(randomProblemInput()),
+		problem.WithSampleOutput(randomProblemOutput()),
+		problem.WithHint(randomProblemDesc()),
+		problem.WithStatus(entity.ProblemPublic),
+	)
 	err := p.Update()
 	if err == nil {
 		t.Fatalf("更新不存在的题目应失败")
@@ -125,20 +125,20 @@ func TestProblemUpdate_NotFound(t *testing.T) {
 
 // 测试题目删除成功
 func TestProblemDelete_Success(t *testing.T) {
-	p := &problem.Problem{
-		Title:        randomProblemTitle(),
-		Source:       randomProblemSource(),
-		Difficulty:   entity.DifficultyE,
-		TimeLimit:    1.0,
-		MemoryLimit:  128,
-		Description:  randomProblemDesc(),
-		Input:        randomProblemInput(),
-		Output:       randomProblemOutput(),
-		SampleInput:  randomProblemInput(),
-		SampleOutput: randomProblemOutput(),
-		Hint:         randomProblemDesc(),
-		Status:       entity.ProblemPublic,
-	}
+	p := problem.NewProblem(
+		problem.WithTitle(randomProblemTitle()),
+		problem.WithSource(randomProblemSource()),
+		problem.WithDifficulty(entity.DifficultyE),
+		problem.WithTimeLimit(1.0),
+		problem.WithMemoryLimit(128),
+		problem.WithDescription(randomProblemDesc()),
+		problem.WithInput(randomProblemInput()),
+		problem.WithOutput(randomProblemOutput()),
+		problem.WithSampleInput(randomProblemInput()),
+		problem.WithSampleOutput(randomProblemOutput()),
+		problem.WithHint(randomProblemDesc()),
+		problem.WithStatus(entity.ProblemPublic),
+	)
 	id, err := p.Create()
 	if err != nil {
 		t.Fatalf("创建题目失败: %v", err)
@@ -152,21 +152,21 @@ func TestProblemDelete_Success(t *testing.T) {
 
 // 测试删除不存在的题目
 func TestProblemDelete_NotFound(t *testing.T) {
-	p := &problem.Problem{
-		Id:           99999999,
-		Title:        randomProblemTitle(),
-		Source:       randomProblemSource(),
-		Difficulty:   entity.DifficultyE,
-		TimeLimit:    1.0,
-		MemoryLimit:  128,
-		Description:  randomProblemDesc(),
-		Input:        randomProblemInput(),
-		Output:       randomProblemOutput(),
-		SampleInput:  randomProblemInput(),
-		SampleOutput: randomProblemOutput(),
-		Hint:         randomProblemDesc(),
-		Status:       entity.ProblemPublic,
-	}
+	p := problem.NewProblem(
+		problem.WithId(99999999),
+		problem.WithTitle(randomProblemTitle()),
+		problem.WithSource(randomProblemSource()),
+		problem.WithDifficulty(entity.DifficultyE),
+		problem.WithTimeLimit(1.0),
+		problem.WithMemoryLimit(128),
+		problem.WithDescription(randomProblemDesc()),
+		problem.WithInput(randomProblemInput()),
+		problem.WithOutput(randomProblemOutput()),
+		problem.WithSampleInput(randomProblemInput()),
+		problem.WithSampleOutput(randomProblemOutput()),
+		problem.WithHint(randomProblemDesc()),
+		problem.WithStatus(entity.ProblemPublic),
+	)
 	err := p.Delete()
 	if err == nil {
 		t.Fatalf("删除不存在的题目应失败")

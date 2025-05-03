@@ -14,17 +14,17 @@ func randomId() int64 {
 
 // 测试评测记录创建成功
 func TestJudgementCreate_Success(t *testing.T) {
-	j := &judgement.Judgement{
-		SubmissionId:  randomId(),
-		TestcaseId:    randomId(),
-		Time:          1.23,
-		Memory:        128,
-		Stdout:        "stdout",
-		Stderr:        "",
-		CompileOutput: "",
-		Message:       "ok",
-		Status:        entity.JudgeAC,
-	}
+	j := judgement.NewJudgement(
+		judgement.WithSubmissionId(randomId()),
+		judgement.WithTestcaseId(randomId()),
+		judgement.WithTime(1.23),
+		judgement.WithMemory(128),
+		judgement.WithStdout("stdout"),
+		judgement.WithStderr(""),
+		judgement.WithCompileOutput(""),
+		judgement.WithMessage("ok"),
+		judgement.WithStatus(entity.JudgeAC),
+	)
 	id, err := j.Create()
 	if err != nil {
 		t.Fatalf("创建评测记录失败: %v", err)
@@ -36,13 +36,13 @@ func TestJudgementCreate_Success(t *testing.T) {
 
 // 测试SubmissionId为空时创建失败
 func TestJudgementCreate_EmptySubmissionId(t *testing.T) {
-	j := &judgement.Judgement{
-		SubmissionId: 0,
-		TestcaseId:   randomId(),
-		Time:         1.23,
-		Memory:       128,
-		Status:       entity.JudgeAC,
-	}
+	j := judgement.NewJudgement(
+		judgement.WithSubmissionId(0),
+		judgement.WithTestcaseId(randomId()),
+		judgement.WithTime(1.23),
+		judgement.WithMemory(128),
+		judgement.WithStatus(entity.JudgeAC),
+	)
 	_, err := j.Create()
 	if err == nil {
 		t.Fatalf("SubmissionId为空时应创建失败")
@@ -51,14 +51,14 @@ func TestJudgementCreate_EmptySubmissionId(t *testing.T) {
 
 // 测试评测记录更新成功
 func TestJudgementUpdate_Success(t *testing.T) {
-	j := &judgement.Judgement{
-		SubmissionId: randomId(),
-		TestcaseId:   randomId(),
-		Time:         1.23,
-		Memory:       128,
-		Stdout:       "stdout",
-		Status:       entity.JudgeAC,
-	}
+	j := judgement.NewJudgement(
+		judgement.WithSubmissionId(randomId()),
+		judgement.WithTestcaseId(randomId()),
+		judgement.WithTime(1.23),
+		judgement.WithMemory(128),
+		judgement.WithStdout("stdout"),
+		judgement.WithStatus(entity.JudgeAC),
+	)
 	id, err := j.Create()
 	if err != nil {
 		t.Fatalf("创建评测记录失败: %v", err)
@@ -73,14 +73,14 @@ func TestJudgementUpdate_Success(t *testing.T) {
 
 // 测试更新不存在的评测记录
 func TestJudgementUpdate_NotFound(t *testing.T) {
-	j := &judgement.Judgement{
-		Id:           99999999,
-		SubmissionId: randomId(),
-		TestcaseId:   randomId(),
-		Time:         1.23,
-		Memory:       128,
-		Status:       entity.JudgeAC,
-	}
+	j := judgement.NewJudgement(
+		judgement.WithId(99999999),
+		judgement.WithSubmissionId(randomId()),
+		judgement.WithTestcaseId(randomId()),
+		judgement.WithTime(1.23),
+		judgement.WithMemory(128),
+		judgement.WithStatus(entity.JudgeAC),
+	)
 	err := j.Update()
 	if err == nil {
 		t.Fatalf("更新不存在的评测记录应失败")
@@ -89,13 +89,13 @@ func TestJudgementUpdate_NotFound(t *testing.T) {
 
 // 测试评测记录删除成功
 func TestJudgementDelete_Success(t *testing.T) {
-	j := &judgement.Judgement{
-		SubmissionId: randomId(),
-		TestcaseId:   randomId(),
-		Time:         1.23,
-		Memory:       128,
-		Status:       entity.JudgeAC,
-	}
+	j := judgement.NewJudgement(
+		judgement.WithSubmissionId(randomId()),
+		judgement.WithTestcaseId(randomId()),
+		judgement.WithTime(1.23),
+		judgement.WithMemory(128),
+		judgement.WithStatus(entity.JudgeAC),
+	)
 	id, err := j.Create()
 	if err != nil {
 		t.Fatalf("创建评测记录失败: %v", err)
@@ -109,14 +109,14 @@ func TestJudgementDelete_Success(t *testing.T) {
 
 // 测试删除不存在的评测记录
 func TestJudgementDelete_NotFound(t *testing.T) {
-	j := &judgement.Judgement{
-		Id:           99999999,
-		SubmissionId: randomId(),
-		TestcaseId:   randomId(),
-		Time:         1.23,
-		Memory:       128,
-		Status:       entity.JudgeAC,
-	}
+	j := judgement.NewJudgement(
+		judgement.WithId(99999999),
+		judgement.WithSubmissionId(randomId()),
+		judgement.WithTestcaseId(randomId()),
+		judgement.WithTime(1.23),
+		judgement.WithMemory(128),
+		judgement.WithStatus(entity.JudgeAC),
+	)
 	err := j.Delete()
 	if err == nil {
 		t.Fatalf("删除不存在的评测记录应失败")

@@ -3,15 +3,8 @@ package domain_test
 import (
 	"STUOJ/internal/domain/submission"
 	"STUOJ/internal/infrastructure/repository/entity"
-	"math/rand"
-	"strconv"
 	"testing"
 )
-
-// 生成随机源代码
-func randomSourceCode() string {
-	return "print(\"Hello, World " + strconv.Itoa(rand.Intn(100000)) + "\")"
-}
 
 // 测试提交创建成功
 func TestSubmissionCreate_Success(t *testing.T) {

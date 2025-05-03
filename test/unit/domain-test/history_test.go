@@ -9,44 +9,44 @@ import (
 )
 
 // 生成随机标题
-func randomHistoryTitle() valueobject.Title {
-	return valueobject.NewTitle("历史标题" + time.Now().Format("150405.000"))
+func randomHistoryTitle() string {
+	return "历史标题" + time.Now().Format("150405.000")
 }
 
 // 生成随机描述
-func randomHistoryDescription() valueobject.Description {
-	return valueobject.NewDescription("历史描述" + time.Now().Format("150405.000"))
+func randomHistoryDescription() string {
+	return "历史描述" + time.Now().Format("150405.000")
 }
 
 // 生成随机输入输出
-func randomInput() valueobject.Input {
-	return valueobject.NewInput("输入" + time.Now().Format("150405.000"))
+func randomInput() string {
+	return "输入" + time.Now().Format("150405.000")
 }
-func randomOutput() valueobject.Output {
-	return valueobject.NewOutput("输出" + time.Now().Format("150405.000"))
+func randomOutput() string {
+	return "输出" + time.Now().Format("150405.000")
 }
-func randomSource() valueobject.Source {
-	return valueobject.NewSource("来源" + time.Now().Format("150405.000"))
+func randomSource() string {
+	return "来源" + time.Now().Format("150405.000")
 }
 
 // 测试历史记录创建成功
 func TestHistoryCreate_Success(t *testing.T) {
-	h := &history.History{
-		UserId:       1,
-		ProblemId:    1,
-		Title:        randomHistoryTitle(),
-		Source:       randomSource(),
-		Difficulty:   entity.DifficultyE,
-		TimeLimit:    1.0,
-		MemoryLimit:  128,
-		Description:  randomHistoryDescription(),
-		Input:        randomInput(),
-		Output:       randomOutput(),
-		SampleInput:  randomInput(),
-		SampleOutput: randomOutput(),
-		Hint:         randomHistoryDescription(),
-		Operation:    entity.OperationInsert,
-	}
+	h := history.NewHistory(
+		history.WithUserId(1),
+		history.WithProblemId(1),
+		history.WithTitle(randomHistoryTitle()),
+		history.WithSource(randomSource()),
+		history.WithDifficulty(entity.DifficultyE),
+		history.WithTimeLimit(1.0),
+		history.WithMemoryLimit(128),
+		history.WithDescription(randomHistoryDescription()),
+		history.WithInput(randomInput()),
+		history.WithOutput(randomOutput()),
+		history.WithSampleInput(randomInput()),
+		history.WithSampleOutput(randomOutput()),
+		history.WithHint(randomHistoryDescription()),
+		history.WithOperation(entity.OperationInsert),
+	)
 	id, err := h.Create()
 	if err != nil {
 		t.Fatalf("创建历史记录失败: %v", err)
@@ -58,22 +58,22 @@ func TestHistoryCreate_Success(t *testing.T) {
 
 // 测试用户ID为空时创建失败
 func TestHistoryCreate_EmptyUserId(t *testing.T) {
-	h := &history.History{
-		UserId:       0,
-		ProblemId:    1,
-		Title:        randomHistoryTitle(),
-		Source:       randomSource(),
-		Difficulty:   entity.DifficultyE,
-		TimeLimit:    1.0,
-		MemoryLimit:  128,
-		Description:  randomHistoryDescription(),
-		Input:        randomInput(),
-		Output:       randomOutput(),
-		SampleInput:  randomInput(),
-		SampleOutput: randomOutput(),
-		Hint:         randomHistoryDescription(),
-		Operation:    entity.OperationInsert,
-	}
+	h := history.NewHistory(
+		history.WithUserId(0),
+		history.WithProblemId(1),
+		history.WithTitle(randomHistoryTitle()),
+		history.WithSource(randomSource()),
+		history.WithDifficulty(entity.DifficultyE),
+		history.WithTimeLimit(1.0),
+		history.WithMemoryLimit(128),
+		history.WithDescription(randomHistoryDescription()),
+		history.WithInput(randomInput()),
+		history.WithOutput(randomOutput()),
+		history.WithSampleInput(randomInput()),
+		history.WithSampleOutput(randomOutput()),
+		history.WithHint(randomHistoryDescription()),
+		history.WithOperation(entity.OperationInsert),
+	)
 	_, err := h.Create()
 	if err == nil {
 		t.Fatalf("用户ID为空时应创建失败")
@@ -82,22 +82,22 @@ func TestHistoryCreate_EmptyUserId(t *testing.T) {
 
 // 测试历史记录更新成功
 func TestHistoryUpdate_Success(t *testing.T) {
-	h := &history.History{
-		UserId:       1,
-		ProblemId:    1,
-		Title:        randomHistoryTitle(),
-		Source:       randomSource(),
-		Difficulty:   entity.DifficultyE,
-		TimeLimit:    1.0,
-		MemoryLimit:  128,
-		Description:  randomHistoryDescription(),
-		Input:        randomInput(),
-		Output:       randomOutput(),
-		SampleInput:  randomInput(),
-		SampleOutput: randomOutput(),
-		Hint:         randomHistoryDescription(),
-		Operation:    entity.OperationInsert,
-	}
+	h := history.NewHistory(
+		history.WithUserId(1),
+		history.WithProblemId(1),
+		history.WithTitle(randomHistoryTitle()),
+		history.WithSource(randomSource()),
+		history.WithDifficulty(entity.DifficultyE),
+		history.WithTimeLimit(1.0),
+		history.WithMemoryLimit(128),
+		history.WithDescription(randomHistoryDescription()),
+		history.WithInput(randomInput()),
+		history.WithOutput(randomOutput()),
+		history.WithSampleInput(randomInput()),
+		history.WithSampleOutput(randomOutput()),
+		history.WithHint(randomHistoryDescription()),
+		history.WithOperation(entity.OperationInsert),
+	)
 	id, err := h.Create()
 	if err != nil {
 		t.Fatalf("创建历史记录失败: %v", err)
@@ -112,23 +112,23 @@ func TestHistoryUpdate_Success(t *testing.T) {
 
 // 测试更新不存在的历史记录
 func TestHistoryUpdate_NotFound(t *testing.T) {
-	h := &history.History{
-		Id:           99999999,
-		UserId:       1,
-		ProblemId:    1,
-		Title:        randomHistoryTitle(),
-		Source:       randomSource(),
-		Difficulty:   entity.DifficultyE,
-		TimeLimit:    1.0,
-		MemoryLimit:  128,
-		Description:  randomHistoryDescription(),
-		Input:        randomInput(),
-		Output:       randomOutput(),
-		SampleInput:  randomInput(),
-		SampleOutput: randomOutput(),
-		Hint:         randomHistoryDescription(),
-		Operation:    entity.OperationInsert,
-	}
+	h := history.NewHistory(
+		history.WithId(99999999),
+		history.WithUserId(1),
+		history.WithProblemId(1),
+		history.WithTitle(randomHistoryTitle()),
+		history.WithSource(randomSource()),
+		history.WithDifficulty(entity.DifficultyE),
+		history.WithTimeLimit(1.0),
+		history.WithMemoryLimit(128),
+		history.WithDescription(randomHistoryDescription()),
+		history.WithInput(randomInput()),
+		history.WithOutput(randomOutput()),
+		history.WithSampleInput(randomInput()),
+		history.WithSampleOutput(randomOutput()),
+		history.WithHint(randomHistoryDescription()),
+		history.WithOperation(entity.OperationInsert),
+	)
 	err := h.Update()
 	if err == nil {
 		t.Fatalf("更新不存在的历史记录应失败")
@@ -137,22 +137,22 @@ func TestHistoryUpdate_NotFound(t *testing.T) {
 
 // 测试历史记录删除成功
 func TestHistoryDelete_Success(t *testing.T) {
-	h := &history.History{
-		UserId:       1,
-		ProblemId:    1,
-		Title:        randomHistoryTitle(),
-		Source:       randomSource(),
-		Difficulty:   entity.DifficultyE,
-		TimeLimit:    1.0,
-		MemoryLimit:  128,
-		Description:  randomHistoryDescription(),
-		Input:        randomInput(),
-		Output:       randomOutput(),
-		SampleInput:  randomInput(),
-		SampleOutput: randomOutput(),
-		Hint:         randomHistoryDescription(),
-		Operation:    entity.OperationInsert,
-	}
+	h := history.NewHistory(
+		history.WithUserId(1),
+		history.WithProblemId(1),
+		history.WithTitle(randomHistoryTitle()),
+		history.WithSource(randomSource()),
+		history.WithDifficulty(entity.DifficultyE),
+		history.WithTimeLimit(1.0),
+		history.WithMemoryLimit(128),
+		history.WithDescription(randomHistoryDescription()),
+		history.WithInput(randomInput()),
+		history.WithOutput(randomOutput()),
+		history.WithSampleInput(randomInput()),
+		history.WithSampleOutput(randomOutput()),
+		history.WithHint(randomHistoryDescription()),
+		history.WithOperation(entity.OperationInsert),
+	)
 	id, err := h.Create()
 	if err != nil {
 		t.Fatalf("创建历史记录失败: %v", err)
@@ -166,23 +166,23 @@ func TestHistoryDelete_Success(t *testing.T) {
 
 // 测试删除不存在的历史记录
 func TestHistoryDelete_NotFound(t *testing.T) {
-	h := &history.History{
-		Id:           99999999,
-		UserId:       1,
-		ProblemId:    1,
-		Title:        randomHistoryTitle(),
-		Source:       randomSource(),
-		Difficulty:   entity.DifficultyE,
-		TimeLimit:    1.0,
-		MemoryLimit:  128,
-		Description:  randomHistoryDescription(),
-		Input:        randomInput(),
-		Output:       randomOutput(),
-		SampleInput:  randomInput(),
-		SampleOutput: randomOutput(),
-		Hint:         randomHistoryDescription(),
-		Operation:    entity.OperationInsert,
-	}
+	h := history.NewHistory(
+		history.WithId(99999999),
+		history.WithUserId(1),
+		history.WithProblemId(1),
+		history.WithTitle(randomHistoryTitle()),
+		history.WithSource(randomSource()),
+		history.WithDifficulty(entity.DifficultyE),
+		history.WithTimeLimit(1.0),
+		history.WithMemoryLimit(128),
+		history.WithDescription(randomHistoryDescription()),
+		history.WithInput(randomInput()),
+		history.WithOutput(randomOutput()),
+		history.WithSampleInput(randomInput()),
+		history.WithSampleOutput(randomOutput()),
+		history.WithHint(randomHistoryDescription()),
+		history.WithOperation(entity.OperationInsert),
+	)
 	err := h.Delete()
 	if err == nil {
 		t.Fatalf("删除不存在的历史记录应失败")
