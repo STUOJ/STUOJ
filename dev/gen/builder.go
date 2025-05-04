@@ -27,7 +27,10 @@ package {{.PackageName}}
 import (
 	{{if .NeedValueObject}}"STUOJ/internal/domain/{{.PackageName}}/valueobject"{{end}}
 	{{if .NeedEntity}}"STUOJ/internal/infrastructure/repository/entity"{{end}}
-
+	{{if .HaveEntity}}
+	"STUOJ/internal/model/option"
+	"STUOJ/internal/infrastructure/repository/entity/field"
+	{{end}}
 	{{range $import, $_ := .ExtraImports}}
 	"{{$import}}"
 	{{end}}
@@ -63,16 +66,16 @@ func ({{.VarName}} *{{.StructName}}) verify() error {
 }
 
 {{if .HaveEntity}}
-func ({{.VarName}} *{{.StructName}}) existField() []string{
-	fields := []string{}
+func ({{.VarName}} *{{.StructName}}) existField() option.FieldSelector{
+	field := &field.{{.StructName}}Field{}
 	{{range.Fields}}
 	{{if .IsValueObject}}
 	if {{.VarName}}.{{.Name}}.Exist() {
-		fields = append(fields, "{{.Name | toSnake}}")
+		field.Select{{.Name}}()
 	}
 	{{end}}
 	{{end}}
-	return fields
+	return field
 }
 
 // toEntity converts domain model to entity
