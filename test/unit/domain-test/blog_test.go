@@ -64,7 +64,7 @@ func TestBlogUpdate_Success(t *testing.T) {
 	if err != nil {
 		t.Fatalf("创建博客失败: %v", err)
 	}
-	b.Id = id
+	b.Id = valueobject.NewId(id)
 	b.Title = valueobject.NewTitle("更新后的标题")
 	err = b.Update()
 	if err != nil {
@@ -101,7 +101,7 @@ func TestBlogDelete_Success(t *testing.T) {
 	if err != nil {
 		t.Fatalf("创建博客失败: %v", err)
 	}
-	b.Id = id
+	b.Id = valueobject.NewId(id)
 	err = b.Delete()
 	if err != nil {
 		t.Fatalf("删除博客失败: %v", err)
