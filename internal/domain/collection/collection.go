@@ -1,6 +1,5 @@
 package collection
 
-//go:generate go run ../../../dev/gen/dto_gen.go collection
 //go:generate go run ../../../dev/gen/query_gen.go collection
 //go:generate go run ../../../dev/gen/builder.go collection
 
@@ -40,29 +39,6 @@ func (c *Collection) verify() error {
 		return err
 	}
 	return nil
-}
-
-func (c *Collection) toEntity() entity.Collection {
-	return entity.Collection{
-		Id:          uint64(c.Id),
-		UserId:      uint64(c.UserId),
-		Title:       c.Title.String(),
-		Description: c.Description.String(),
-		Status:      c.Status,
-		CreateTime:  c.CreateTime,
-		UpdateTime:  c.UpdateTime,
-	}
-}
-
-func (c *Collection) fromEntity(collection entity.Collection) *Collection {
-	c.Id = int64(collection.Id)
-	c.UserId = int64(collection.UserId)
-	c.Title = valueobject.NewTitle(collection.Title)
-	c.Description = valueobject.NewDescription(collection.Description)
-	c.Status = collection.Status
-	c.CreateTime = collection.CreateTime
-	c.UpdateTime = collection.UpdateTime
-	return c
 }
 
 func (c *Collection) toOption() *option.QueryOptions {

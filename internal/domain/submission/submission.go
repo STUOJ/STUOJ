@@ -1,6 +1,5 @@
 package submission
 
-//go:generate go run ../../../dev/gen/dto_gen.go submission
 //go:generate go run ../../../dev/gen/query_gen.go submission
 //go:generate go run ../../../dev/gen/builder.go submission
 

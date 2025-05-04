@@ -6,6 +6,7 @@
 package main
 
 import (
+	"STUOJ/pkg/utils"
 	"bytes"
 	"fmt"
 	"go/ast"
@@ -49,6 +50,48 @@ func With{{.Name}}({{.ParamName}} {{.ParamType}}) Option {
 	}
 }
 {{end}}
+
+func ({{.VarName}} *{{.StructName}}) verify() error {
+	{{range.Fields}}
+	{{if .IsValueObject}}
+	if err := {{.VarName}}.{{.Name}}.Verify(); err != nil {
+		return err
+	}
+	{{end}}
+	{{end}}
+	return nil
+}
+
+{{if .HaveEntity}}
+// toEntity converts domain model to entity
+func ({{.VarName}} *{{.StructName}}) toEntity() entity.{{.StructName}} {
+	return entity.{{.StructName}}{
+		{{range .ToEntityFields}} {{.}}
+		{{end}}
+	}
+}
+
+// fromEntity converts entity to domain model
+func ({{.VarName}} *{{.StructName}}) fromEntity(entity entity.{{.StructName}}) *{{.StructName}} {
+	{{range .FromEntityFields}} {{.}}
+	{{end}}
+	return {{.VarName}}
+}
+
+func Dto(data map[string]any) {{.StructName}} {
+	var entity_ {{.StructName}}
+{{range .MapFields}}	{{.}}
+{{end}}	return entity_
+}
+
+func Dtos(datas []map[string]any) []{{.StructName}} {
+	var entitys = make([]{{.StructName}}, len(datas))
+	for _, e := range datas {
+		entitys = append(entitys, Dto(e))
+	}
+	return entitys
+}
+{{end}}
 `
 
 type Field struct {
@@ -61,16 +104,29 @@ type Field struct {
 	ValueObjectType string
 }
 
-type TemplateData struct {
-	PackageName     string
-	StructName      string
+type FieldInfo struct {
+	Name            string
+	Type            string
+	EntityType      string
+	IsValueObject   bool
+	ValueObjectType string
 	VarName         string
-	Fields          []Field
-	NeedEntity      bool
-	NeedValueObject bool
-	NeedTime        bool
-	NeedIO          bool
-	ExtraImports    map[string]bool
+}
+
+type TemplateData struct {
+	PackageName      string
+	StructName       string
+	VarName          string
+	Fields           []Field
+	MapFields        []string
+	ToEntityFields   []string
+	FromEntityFields []string
+	NeedEntity       bool
+	NeedValueObject  bool
+	NeedTime         bool
+	NeedIO           bool
+	HaveEntity       bool
+	ExtraImports     map[string]bool
 }
 
 // main 函数是程序的入口点
@@ -90,14 +146,14 @@ func main() {
 	}
 
 	// 处理单个实体
-	err = processEntity(cwd, entityName)
+	err = processDomain(cwd, entityName)
 	if err != nil {
 		log.Fatalf("处理实体失败: %v\n", err)
 	}
 }
 
-// processEntity 处理单个实体的builder生成
-func processEntity(dir string, entityName string) error {
+// processDomain 处理单个实体的builder生成
+func processDomain(dir string, entityName string) error {
 	// 获取包名
 	pkgName := filepath.Base(dir)
 
@@ -117,6 +173,10 @@ func processEntity(dir string, entityName string) error {
 	// 查找结构体定义
 	var structName string
 	var fields []Field
+	var mapFields []string
+	var toEntityFields []string
+	var fromEntityFields []string
+	var haveEntity bool
 	var needEntity bool
 	var needValueObject bool
 	var needTime bool
@@ -154,6 +214,9 @@ func processEntity(dir string, entityName string) error {
 				// 值对象类型，需要查找对应的构造函数参数类型
 				paramType = getValueObjectParamType(pkgName, valueObjectType)
 				needValueObject = true
+				if strings.HasPrefix(paramType, "entity.") {
+					needEntity = true
+				}
 			} else if strings.HasPrefix(fieldType, "entity.") {
 				// 实体类型
 				paramType = fieldType
@@ -186,6 +249,11 @@ func processEntity(dir string, entityName string) error {
 		return false
 	})
 
+	mapFields, toEntityFields, fromEntityFields, err = processEntity(dir, entityName, fields)
+	if err == nil {
+		haveEntity = true
+	}
+
 	if structName == "" {
 		return fmt.Errorf("在文件 %s 中未找到结构体定义", entityFile)
 	}
@@ -195,15 +263,19 @@ func processEntity(dir string, entityName string) error {
 
 	// 准备模板数据
 	templateData := TemplateData{
-		PackageName:     pkgName,
-		StructName:      structName,
-		VarName:         strings.ToLower(structName[:1]) + structName[1:],
-		Fields:          fields,
-		NeedEntity:      needEntity,
-		NeedValueObject: needValueObject,
-		NeedTime:        needTime,
-		NeedIO:          needIO,
-		ExtraImports:    extraImports,
+		PackageName:      pkgName,
+		StructName:       structName,
+		VarName:          strings.ToLower(structName[:1]) + structName[1:],
+		MapFields:        mapFields,
+		ToEntityFields:   toEntityFields,
+		FromEntityFields: fromEntityFields,
+		HaveEntity:       haveEntity,
+		Fields:           fields,
+		NeedEntity:       needEntity,
+		NeedValueObject:  needValueObject,
+		NeedTime:         needTime,
+		NeedIO:           needIO,
+		ExtraImports:     extraImports,
 	}
 
 	// 渲染模板
@@ -231,6 +303,85 @@ func processEntity(dir string, entityName string) error {
 
 	fmt.Printf("生成成功: %s %s\n", structName, builderFile)
 	return nil
+}
+
+func processEntity(dir, entityName string, domainField []Field) ([]string, []string, []string, error) {
+	entityDefFile := filepath.Join("../../../internal/infrastructure/repository/entity", entityName+".go")
+	if _, err := os.Stat(entityDefFile); os.IsNotExist(err) {
+		return nil, nil, nil, fmt.Errorf("实体文件 %s 不存在", entityDefFile)
+	}
+	// 解析entity包中的实体定义，获取原始类型
+	entityTypes := make(map[string]string)
+	fset := token.NewFileSet()
+	entityNode, err := parser.ParseFile(fset, entityDefFile, nil, parser.ParseComments)
+	if err != nil {
+		return nil, nil, nil, fmt.Errorf("解析文件 %s 失败: %v", entityDefFile, err)
+	}
+
+	// 查找entity中的结构体定义
+	var entityStructName string
+	ast.Inspect(entityNode, func(n ast.Node) bool {
+		typeSpec, ok := n.(*ast.TypeSpec)
+		if !ok || typeSpec.Type == nil {
+			return true
+		}
+
+		structType, ok := typeSpec.Type.(*ast.StructType)
+		if !ok {
+			return true
+		}
+
+		// 找到结构体定义
+		entityStructName = typeSpec.Name.Name
+		if strings.EqualFold(entityStructName, strings.Title(entityName)) {
+			// 解析结构体字段
+			for _, field := range structType.Fields.List {
+				if len(field.Names) == 0 {
+					continue
+				}
+
+				fieldName := field.Names[0].Name
+				fieldType := getFieldType(field.Type)
+				entityTypes[fieldName] = fieldType
+			}
+			return false
+		}
+
+		return true
+	})
+
+	if entityStructName == "" {
+		return nil, nil, nil, fmt.Errorf("在文件 %s 中未找到实体结构体定义", entityDefFile)
+	}
+
+	var fields []FieldInfo
+
+	for _, field := range domainField {
+		fieldType, ok := entityTypes[field.Name]
+		if !ok {
+			continue
+		}
+		fields = append(fields, FieldInfo{
+			Name:            field.Name,
+			Type:            field.ParamType,
+			EntityType:      fieldType,
+			IsValueObject:   field.IsValueObject,
+			ValueObjectType: field.ValueObjectType,
+			VarName:         field.VarName,
+		})
+	}
+
+	// 生成mapFields
+	mapFields := generateMapFieldStrings(fields)
+
+	// 生成toEntityFields
+	toEntityFields := generateToEntityFields(fields)
+
+	// 生成fromEntityFields
+	fromEntityFields := generateFromEntityFields(fields)
+
+	return mapFields, toEntityFields, fromEntityFields, nil
+
 }
 
 // getFieldType 获取字段类型的字符串表示
@@ -315,9 +466,10 @@ func processExternalPackage(fieldType string, extraImports map[string]bool) {
 }
 
 // getValueObjectParamType 获取值对象构造函数的参数类型
+// 通过解析AST获取New函数的返回值类型中的泛型参数类型
 func getValueObjectParamType(pkgName, valueObjectType string) string {
 	// 尝试查找值对象的构造函数文件
-	voFilePath := filepath.Join("../../../internal/domain", pkgName, "valueobject", strings.ToLower(valueObjectType)+".go")
+	voFilePath := filepath.Join("../../../internal/domain", pkgName, "valueobject", utils.ToSnakeCase(valueObjectType)+".go")
 	if _, err := os.Stat(voFilePath); os.IsNotExist(err) {
 		// 如果文件不存在，默认使用string类型
 		return "string"
@@ -331,20 +483,35 @@ func getValueObjectParamType(pkgName, valueObjectType string) string {
 		return "string"
 	}
 
-	// 查找New+ValueObjectType函数的参数类型
+	// 查找New+ValueObjectType函数的参数类型或model.Valueobject泛型类型
 	var paramType string
 	ast.Inspect(node, func(n ast.Node) bool {
+		// 检查是否为New函数
 		funcDecl, ok := n.(*ast.FuncDecl)
-		if !ok || funcDecl.Name == nil || funcDecl.Type == nil || funcDecl.Type.Params == nil {
+		if ok && funcDecl.Name != nil && funcDecl.Name.Name == "New"+valueObjectType {
+			// 获取函数的第一个参数类型
+			if funcDecl.Type.Params != nil && len(funcDecl.Type.Params.List) > 0 {
+				paramType = getFieldType(funcDecl.Type.Params.List[0].Type)
+				return false
+			}
 			return true
 		}
 
-		// 检查是否是New+ValueObjectType函数
-		if funcDecl.Name.Name == "New"+valueObjectType {
-			// 获取第一个参数的类型
-			if len(funcDecl.Type.Params.List) > 0 && len(funcDecl.Type.Params.List[0].Names) > 0 {
-				paramType = getFieldType(funcDecl.Type.Params.List[0].Type)
-				return false
+		// 检查是否为model.Valueobject泛型类型
+		typeSpec, ok := n.(*ast.TypeSpec)
+		if ok && typeSpec.Name.Name == valueObjectType {
+			if structType, ok := typeSpec.Type.(*ast.StructType); ok {
+				for _, field := range structType.Fields.List {
+					if selector, ok := field.Type.(*ast.SelectorExpr); ok {
+						if ident, ok := selector.X.(*ast.Ident); ok && ident.Name == "model" && selector.Sel.Name == "Valueobject" {
+							// 获取泛型参数类型
+							if len(field.Names) > 0 {
+								paramType = getFieldType(field.Type)
+								return false
+							}
+						}
+					}
+				}
 			}
 		}
 		return true
@@ -355,4 +522,98 @@ func getValueObjectParamType(pkgName, valueObjectType string) string {
 		return "string"
 	}
 	return paramType
+}
+
+// 生成字段处理代码
+func generateMapFieldStrings(fields []FieldInfo) []string {
+	var result []string
+
+	for _, field := range fields {
+		var fieldStr string
+		jsonKey := utils.ToSnakeCase(field.Name)
+
+		// 根据字段类型生成不同的处理代码
+		if field.IsValueObject {
+			if field.Type == field.EntityType {
+				fieldStr = fmt.Sprintf(`if v, ok := data["%s"].(%s); ok {
+					entity_.%s = valueobject.New%s(v)
+				}`, jsonKey, field.EntityType, field.Name, field.ValueObjectType)
+			} else if strings.Contains(field.Type, "int") && strings.Contains(field.EntityType, "int") {
+				fieldStr = fmt.Sprintf(`if v, ok := data["%s"].(%s); ok {
+					entity_.%s = valueobject.New%s(%s(v))
+				}`, jsonKey, field.EntityType, field.Name, field.ValueObjectType, field.Type)
+			} else if strings.TrimPrefix(field.Type, "entity.") == field.EntityType {
+				fieldStr = fmt.Sprintf(`if v, ok := data["%s"].(%s); ok {
+					entity_.%s = valueobject.New%s(v)
+				}`, jsonKey, field.Type, field.Name, field.ValueObjectType)
+			}
+		} else {
+			if field.Type == field.EntityType {
+				fieldStr = fmt.Sprintf(`if v, ok := data["%s"].(%s); ok {
+					entity_.%s = v
+				}`, jsonKey, field.EntityType, field.Name)
+			} else if strings.Contains(field.Type, "int") && strings.Contains(field.EntityType, "int") {
+				fieldStr = fmt.Sprintf(`if v, ok := data["%s"].(%s); ok {
+					entity_.%s = %s(v)
+				}`, jsonKey, field.EntityType, field.Name, field.Type)
+			} else if strings.TrimPrefix(field.Type, "entity.") == field.EntityType {
+				fieldStr = fmt.Sprintf(`if v, ok := data["%s"].(%s); ok {
+					entity_.%s = v
+				}`, jsonKey, field.Type, field.Name)
+			}
+		}
+		result = append(result, fieldStr)
+	}
+
+	return result
+}
+
+func generateToEntityFields(fields []FieldInfo) []string {
+	var result []string
+
+	for _, field := range fields {
+		var fieldStr string
+
+		// 根据字段类型生成不同的处理代码
+		if field.IsValueObject {
+			if field.Type == field.EntityType || strings.TrimPrefix(field.Type, "entity.") == field.EntityType {
+				fieldStr = fmt.Sprintf(`%s: %s.%s.Value(),`, field.Name, field.VarName, field.Name)
+			} else if strings.Contains(field.Type, "int") && strings.Contains(field.EntityType, "int") {
+				fieldStr = fmt.Sprintf(`%s: %s(%s.%s.Value()),`, field.Name, field.EntityType, field.VarName, field.Name)
+			}
+		} else {
+			if field.Type == field.EntityType || strings.TrimPrefix(field.Type, "entity.") == field.EntityType {
+				fieldStr = fmt.Sprintf(`%s: %s.%s,`, field.Name, field.VarName, field.Name)
+			} else if strings.Contains(field.Type, "int") && strings.Contains(field.EntityType, "int") {
+				fieldStr = fmt.Sprintf(`%s: %s(%s.%s),`, field.Name, field.EntityType, field.VarName, field.Name)
+			}
+		}
+		result = append(result, fieldStr)
+	}
+	return result
+}
+
+func generateFromEntityFields(fields []FieldInfo) []string {
+	var result []string
+
+	for _, field := range fields {
+		var fieldStr string
+
+		// 根据字段类型生成不同的处理代码
+		if field.IsValueObject {
+			if field.Type == field.EntityType || strings.TrimPrefix(field.Type, "entity.") == field.EntityType {
+				fieldStr = fmt.Sprintf(`%s.%s = valueobject.New%s(entity.%s)`, field.VarName, field.Name, field.ValueObjectType, field.Name)
+			} else if strings.Contains(field.Type, "int") && strings.Contains(field.EntityType, "int") {
+				fieldStr = fmt.Sprintf(`%s.%s = valueobject.New%s(%s(entity.%s))`, field.VarName, field.Name, field.ValueObjectType, field.Type, field.Name)
+			}
+		} else {
+			if field.Type == field.EntityType || strings.TrimPrefix(field.Type, "entity.") == field.EntityType {
+				fieldStr = fmt.Sprintf(`%s.%s = entity.%s`, field.VarName, field.Name, field.Name)
+			} else if strings.Contains(field.Type, "int") && strings.Contains(field.EntityType, "int") {
+				fieldStr = fmt.Sprintf(`%s.%s = %s(entity.%s)`, field.VarName, field.Name, field.Type, field.Name)
+			}
+		}
+		result = append(result, fieldStr)
+	}
+	return result
 }

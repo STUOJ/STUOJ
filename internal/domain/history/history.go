@@ -1,6 +1,5 @@
 package history
 
-//go:generate go run ../../../dev/gen/dto_gen.go history
 //go:generate go run ../../../dev/gen/query_gen.go history
 //go:generate go run ../../../dev/gen/builder.go history
 

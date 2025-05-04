@@ -1,6 +1,5 @@
 package language
 
-//go:generate go run ../../../dev/gen/dto_gen.go language
 //go:generate go run ../../../dev/gen/query_gen.go language
 //go:generate go run ../../../dev/gen/builder.go language
 

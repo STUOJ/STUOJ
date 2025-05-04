@@ -1,6 +1,5 @@
 package contest
 
-//go:generate go run ../../../dev/gen/dto_gen.go contest
 //go:generate go run ../../../dev/gen/query_gen.go contest
 //go:generate go run ../../../dev/gen/builder.go contest
 

@@ -1,6 +1,5 @@
 package solution
 
-//go:generate go run ../../../dev/gen/dto_gen.go solution
 //go:generate go run ../../../dev/gen/query_gen.go solution
 //go:generate go run ../../../dev/gen/builder.go solution
 
