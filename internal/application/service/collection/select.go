@@ -9,7 +9,7 @@ import (
 	entity "STUOJ/internal/infrastructure/repository/entity"
 	query "STUOJ/internal/infrastructure/repository/query"
 	querycontext "STUOJ/internal/infrastructure/repository/querycontext"
-	model2 "STUOJ/internal/model"
+	model "STUOJ/internal/model"
 	"STUOJ/pkg/errors"
 	"STUOJ/pkg/utils"
 	"slices"
@@ -17,11 +17,11 @@ import (
 
 type CollectionPage struct {
 	Collections []response.CollectionListItem `json:"collections"`
-	model2.Page
+	model.Page
 }
 
 // SelectById 根据Id查询题单
-func SelectById(id int64, reqUser model2.ReqUser) (response.CollectionData, error) {
+func SelectById(id int64, reqUser model.ReqUser) (response.CollectionData, error) {
 	var res response.CollectionData
 	// 获取题单信息
 	collectionQueryContext := querycontext.CollectionQueryContext{}
@@ -72,7 +72,7 @@ func SelectById(id int64, reqUser model2.ReqUser) (response.CollectionData, erro
 }
 
 // Select 查询题单
-func Select(params request.QueryCollectionParams, reqUser model2.ReqUser) (CollectionPage, error) {
+func Select(params request.QueryCollectionParams, reqUser model.ReqUser) (CollectionPage, error) {
 	var res CollectionPage
 	query_ := params2Model(params)
 	if !query_.Status.Exist() {

@@ -10,16 +10,16 @@ import (
 	"STUOJ/internal/infrastructure/repository/entity"
 	query "STUOJ/internal/infrastructure/repository/query"
 	querycontext "STUOJ/internal/infrastructure/repository/querycontext"
-	model2 "STUOJ/internal/model"
+	model "STUOJ/internal/model"
 )
 
 type SubmissionPage struct {
 	Submissions []response.SubmissionData `json:"submissions"`
-	model2.Page
+	model.Page
 }
 
 // Select 查询所有提交记录
-func Select(params request.QuerySubmissionParams, reqUser model2.ReqUser) (SubmissionPage, error) {
+func Select(params request.QuerySubmissionParams, reqUser model.ReqUser) (SubmissionPage, error) {
 	var resp SubmissionPage
 
 	// 查询
@@ -75,7 +75,7 @@ func Select(params request.QuerySubmissionParams, reqUser model2.ReqUser) (Submi
 }
 
 // SelectById 根据提交ID查询提交记录
-func SelectById(sid int64, reqUser model2.ReqUser) (response.RecordData, error) {
+func SelectById(sid int64, reqUser model.ReqUser) (response.RecordData, error) {
 	var resp response.RecordData
 
 	// 查询

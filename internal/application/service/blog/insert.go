@@ -4,7 +4,7 @@ import (
 	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/domain/blog"
 	"STUOJ/internal/domain/problem"
-	entity "STUOJ/internal/infrastructure/repository/entity"
+	"STUOJ/internal/infrastructure/repository/entity"
 	"STUOJ/internal/infrastructure/repository/querycontext"
 	"STUOJ/internal/model"
 	"STUOJ/pkg/errors"

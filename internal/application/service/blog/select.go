@@ -6,20 +6,20 @@ import (
 	"STUOJ/internal/domain/blog"
 	"STUOJ/internal/domain/problem"
 	"STUOJ/internal/domain/user"
-	entity "STUOJ/internal/infrastructure/repository/entity"
-	query "STUOJ/internal/infrastructure/repository/query"
-	querycontext "STUOJ/internal/infrastructure/repository/querycontext"
-	model2 "STUOJ/internal/model"
+	"STUOJ/internal/infrastructure/repository/entity"
+	"STUOJ/internal/infrastructure/repository/query"
+	"STUOJ/internal/infrastructure/repository/querycontext"
+	"STUOJ/internal/model"
 	"slices"
 )
 
 type BlogPage struct {
 	Blogs []response.BlogData `json:"blogs"`
-	model2.Page
+	model.Page
 }
 
 // SelectById 根据Id查询博客
-func SelectById(id int64, reqUser model2.ReqUser) (response.BlogData, error) {
+func SelectById(id int64, reqUser model.ReqUser) (response.BlogData, error) {
 	var resp response.BlogData
 	blogQuery := querycontext.BlogQueryContext{}
 	blogQuery.Id.Add(id)
@@ -48,7 +48,7 @@ func SelectById(id int64, reqUser model2.ReqUser) (response.BlogData, error) {
 	return resp, nil
 }
 
-func Select(params request.QueryBlogParams, reqUser model2.ReqUser) (BlogPage, error) {
+func Select(params request.QueryBlogParams, reqUser model.ReqUser) (BlogPage, error) {
 	var resp BlogPage
 	query_ := params2Query(params)
 	if !query_.Status.Exist() {

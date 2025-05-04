@@ -9,17 +9,17 @@ import (
 	entity "STUOJ/internal/infrastructure/repository/entity"
 	query "STUOJ/internal/infrastructure/repository/query"
 	querycontext "STUOJ/internal/infrastructure/repository/querycontext"
-	model2 "STUOJ/internal/model"
+	model "STUOJ/internal/model"
 	"slices"
 )
 
 type CommentPage struct {
 	Comments []response.CommentData `json:"comments"`
-	model2.Page
+	model.Page
 }
 
 // Select 查询所有评论
-func Select(params request.QueryCommentParams, reqUser model2.ReqUser) (CommentPage, error) {
+func Select(params request.QueryCommentParams, reqUser model.ReqUser) (CommentPage, error) {
 	var resp CommentPage
 
 	// 查询
