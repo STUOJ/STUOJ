@@ -15,13 +15,6 @@ func NewContent(value string) Content {
 	return c
 }
 
-func (c Content) Equals(other Content) bool {
-	if c.Exist() && other.Exist() {
-		return c.Value() == other.Value()
-	}
-	return false
-}
-
 func (c Content) Verify() error {
 	if len(c.Value()) > 100000 || len(c.Value()) == 0 {
 		return ErrContent
