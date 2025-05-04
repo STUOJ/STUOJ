@@ -27,6 +27,7 @@ type Blog struct {
 func (b *Blog) toOption() *option.QueryOptions {
 	options := option.NewQueryOptions()
 	options.Filters.Add(field.BlogId, option.OpEqual, b.Id)
+	options.Field = b.existField()
 	return options
 }
 
