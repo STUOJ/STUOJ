@@ -63,6 +63,18 @@ func ({{.VarName}} *{{.StructName}}) verify() error {
 }
 
 {{if .HaveEntity}}
+func ({{.VarName}} *{{.StructName}}) existField() []string{
+	fields := []string{}
+	{{range.Fields}}
+	{{if .IsValueObject}}
+	if {{.VarName}}.{{.Name}}.Exist() {
+		fields = append(fields, "{{.Name | toSnake}}")
+	}
+	{{end}}
+	{{end}}
+	return fields
+}
+
 // toEntity converts domain model to entity
 func ({{.VarName}} *{{.StructName}}) toEntity() entity.{{.StructName}} {
 	return entity.{{.StructName}}{
@@ -279,7 +291,7 @@ func processDomain(dir string, entityName string) error {
 	}
 
 	// 渲染模板
-	tmpl, err := template.New("builder").Parse(tmpl)
+	tmpl, err := template.New("builder").Funcs(template.FuncMap{"toSnake": utils.ToSnakeCase}).Parse(tmpl)
 	if err != nil {
 		return fmt.Errorf("解析模板失败: %v", err)
 	}
