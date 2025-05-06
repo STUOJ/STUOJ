@@ -66,6 +66,13 @@ func ({{.VarName}} *{{.StructName}}) verify() error {
 }
 
 {{if .HaveEntity}}
+func ({{.VarName}} *{{.StructName}}) toOption() *option.QueryOptions {
+	options := option.NewQueryOptions()
+	options.Filters.Add(field.{{.StructName}}Id, option.OpEqual, {{.VarName}}.Id)
+	options.Field = {{.VarName}}.existField()
+	return options
+}
+
 func ({{.VarName}} *{{.StructName}}) existField() option.FieldSelector{
 	field := &field.{{.StructName}}Field{}
 	{{range.Fields}}
