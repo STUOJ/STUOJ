@@ -10,7 +10,7 @@ type Role struct {
 	model.Valueobject[entity.Role]
 }
 
-func NewStatus(value entity.Role) Role {
+func NewRole(value entity.Role) Role {
 	var s Role
 	s.Set(value)
 	return s
