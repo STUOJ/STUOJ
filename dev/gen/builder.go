@@ -30,6 +30,10 @@ import (
 	{{if .HaveEntity}}
 	"STUOJ/internal/model/option"
 	"STUOJ/internal/infrastructure/repository/entity/field"
+	{{if or .NeedCreate .NeedUpdate .NeedDelete}}
+	"STUOJ/internal/infrastructure/repository/dao"
+	"STUOJ/pkg/errors"
+	{{end}}
 	{{end}}
 	{{range $import, $_ := .ExtraImports}}
 	"{{$import}}"
@@ -113,6 +117,42 @@ func Dtos(datas []map[string]any) []{{.StructName}} {
 	}
 	return entitys
 }
+
+{{if .NeedCreate}}
+func ({{.VarName}} *{{.StructName}}) Create() (int64, error) {
+	if err := {{.VarName}}.verify(); err != nil {
+		return 0, errors.ErrValidation.WithMessage(err.Error())
+	}
+	{{.VarName}}_, err := dao.{{.StructName}}Store.Insert({{.VarName}}.toEntity())
+	if err != nil {
+		return 0, errors.ErrInternalServer.WithMessage(err.Error())
+	}
+	return int64({{.VarName}}_.Id), nil
+}
+{{end}}
+
+{{if .NeedUpdate}}
+func ({{.VarName}} *{{.StructName}}) Update() error {
+	if err := {{.VarName}}.verify(); err!= nil {
+		return errors.ErrValidation.WithMessage(err.Error())
+	}
+	_, err := dao.{{.StructName}}Store.Updates({{.VarName}}.toEntity(), {{.VarName}}.toOption())
+	if err!= nil {
+		return errors.ErrInternalServer.WithMessage(err.Error())
+	}
+	return nil
+}
+{{end}}
+
+{{if .NeedDelete}}
+func ({{.VarName}} *{{.StructName}}) Delete() error {
+	err := dao.{{.StructName}}Store.Delete({{.VarName}}.toOption())
+	if err!= nil {
+		return errors.ErrInternalServer.WithMessage(err.Error())
+	}
+	return nil
+}
+{{end}}
 {{end}}
 `
 
@@ -146,8 +186,9 @@ type TemplateData struct {
 	FromEntityFields []string
 	NeedEntity       bool
 	NeedValueObject  bool
-	NeedTime         bool
-	NeedIO           bool
+	NeedCreate       bool
+	NeedUpdate       bool
+	NeedDelete       bool
 	HaveEntity       bool
 	ExtraImports     map[string]bool
 }
@@ -202,11 +243,27 @@ func processDomain(dir string, entityName string) error {
 	var haveEntity bool
 	var needEntity bool
 	var needValueObject bool
-	var needTime bool
-	var needIO bool
+	var needCreate = true
+	var needUpdate = true
+	var needDelete = true
 	extraImports := make(map[string]bool)
 
 	ast.Inspect(node, func(n ast.Node) bool {
+
+		funcDecl, ok := n.(*ast.FuncDecl)
+		if ok {
+			if funcDecl.Name.Name == "Create" {
+				needCreate = false
+			}
+			if funcDecl.Name.Name == "Update" {
+				needUpdate = false
+			}
+			if funcDecl.Name.Name == "Delete" {
+				needDelete = false
+			}
+			return true
+		}
+
 		typeSpec, ok := n.(*ast.TypeSpec)
 		if !ok || typeSpec.Type == nil {
 			return true
@@ -271,7 +328,7 @@ func processDomain(dir string, entityName string) error {
 			})
 		}
 
-		return false
+		return true
 	})
 
 	mapFields, toEntityFields, fromEntityFields, err = processEntity(entityName, fields)
@@ -298,8 +355,9 @@ func processDomain(dir string, entityName string) error {
 		Fields:           fields,
 		NeedEntity:       needEntity,
 		NeedValueObject:  needValueObject,
-		NeedTime:         needTime,
-		NeedIO:           needIO,
+		NeedCreate:       needCreate,
+		NeedUpdate:       needUpdate,
+		NeedDelete:       needDelete,
 		ExtraImports:     extraImports,
 	}
 
