@@ -2,7 +2,6 @@ package valueobject
 
 import (
 	"STUOJ/internal/model"
-	"errors"
 )
 
 // TestcaseID 表示测试用例的唯一标识
@@ -15,12 +14,4 @@ func NewTestcaseId(value int64) TestcaseId {
 	var id TestcaseId
 	id.Set(value)
 	return id
-}
-
-// Verify 验证测试用例ID是否合法
-func (t TestcaseId) Verify() error {
-	if t.Value() <= 0 {
-		return errors.New("testcase_id must be greater than 0")
-	}
-	return nil
 }

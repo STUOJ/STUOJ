@@ -2,7 +2,7 @@ package valueobject
 
 import (
 	"STUOJ/internal/model"
-	"fmt"
+	"errors"
 )
 
 type Output struct {
@@ -23,12 +23,8 @@ func (o Output) Equals(other Output) bool {
 }
 
 func (o Output) Verify() error {
-	if len(o.Value()) > 100000 || len(o.Value()) == 0 {
-		return ErrOutput
+	if len(o.Value()) > 100000 {
+		return errors.New("output length exceeds the limit")
 	}
 	return nil
 }
-
-var (
-	ErrOutput = fmt.Errorf("output description length must be between 1 and 100000 characters")
-)

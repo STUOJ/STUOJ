@@ -2,7 +2,6 @@ package valueobject
 
 import (
 	"STUOJ/internal/model"
-	"errors"
 )
 
 // SubmissionID 表示提交记录的唯一标识
@@ -17,11 +16,4 @@ func NewSubmissionId(value int64) SubmissionId {
 	var id SubmissionId
 	id.Set(value)
 	return id
-}
-
-func (id SubmissionId) Verify() error {
-	if id.Value() <= 0 {
-		return errors.New("invalid submission id")
-	}
-	return nil
 }

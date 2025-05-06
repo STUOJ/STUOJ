@@ -10,59 +10,15 @@ import (
 	field2 "STUOJ/internal/infrastructure/repository/entity/field"
 	"STUOJ/internal/model/option"
 	"STUOJ/pkg/errors"
-	"fmt"
 )
 
 type Team struct {
-	Id          int64
-	UserId      int64
-	ContestId   int64
+	Id          valueobject.Id
+	UserId      valueobject.UserId
+	ContestId   valueobject.ContestId
 	Name        valueobject.Name
 	Description valueobject.Description
-	Status      entity.TeamStatus
-}
-
-func (t *Team) verify() error {
-	if err := t.Name.Verify(); err != nil {
-		return err
-	}
-	if err := t.Description.Verify(); err != nil {
-		return err
-	}
-	if t.UserId == 0 {
-		return fmt.Errorf("用户Id不能为空")
-	}
-	if t.ContestId == 0 {
-		return fmt.Errorf("比赛Id不能为空")
-	}
-	return nil
-}
-
-func (t *Team) toEntity() entity.Team {
-	return entity.Team{
-		Id:          uint64(t.Id),
-		UserId:      uint64(t.UserId),
-		ContestId:   uint64(t.ContestId),
-		Name:        t.Name.String(),
-		Description: t.Description.String(),
-		Status:      t.Status,
-	}
-}
-
-func (t *Team) fromEntity(team entity.Team) *Team {
-	t.Id = int64(team.Id)
-	t.UserId = int64(team.UserId)
-	t.ContestId = int64(team.ContestId)
-	t.Name = valueobject.NewName(team.Name)
-	t.Description = valueobject.NewDescription(team.Description)
-	t.Status = team.Status
-	return t
-}
-
-func (t *Team) toOption() *option.QueryOptions {
-	options := option.NewQueryOptions()
-	options.Filters.Add(field2.TeamId, option.OpEqual, t.Id)
-	return options
+	Status      valueobject.Status
 }
 
 func (t *Team) Create() (int64, error) {
@@ -120,7 +76,7 @@ func (t *Team) JoinTeam(userId int64) error {
 		return errors.ErrNotFound.WithMessage(err.Error())
 	}
 	_, err = dao2.TeamUserStore.Insert(entity.TeamUser{
-		TeamId: uint64(t.Id),
+		TeamId: uint64(t.Id.Value()),
 		UserId: uint64(userId),
 	})
 	if err != nil {

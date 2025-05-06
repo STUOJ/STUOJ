@@ -5,9 +5,6 @@ package user
 
 import (
 	"STUOJ/internal/infrastructure/repository/dao"
-	"STUOJ/internal/infrastructure/repository/entity"
-	"STUOJ/internal/infrastructure/repository/entity/field"
-	"STUOJ/internal/model/option"
 	"STUOJ/pkg/errors"
 	"time"
 
@@ -15,67 +12,15 @@ import (
 )
 
 type User struct {
-	Id         int64
+	Id         valueobject.Id
 	Username   valueobject.Username
 	Password   valueobject.Password
-	Role       entity.Role
+	Role       valueobject.Role
 	Email      valueobject.Email
 	Avatar     valueobject.Avatar
 	Signature  valueobject.Signature
 	CreateTime time.Time
 	UpdateTime time.Time
-}
-
-func (u *User) verify() error {
-	if err := u.Username.Verify(); err != nil {
-		return err
-	}
-	if err := u.Password.Verify(); err != nil {
-		return err
-	}
-	if err := u.Email.Verify(); err != nil {
-		return err
-	}
-	if err := u.Avatar.Verify(); err != nil {
-		return err
-	}
-	if err := u.Signature.Verify(); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (u *User) toEntity() entity.User {
-	return entity.User{
-		Id:         uint64(u.Id),
-		Username:   u.Username.String(),
-		Password:   u.Password.String(),
-		Role:       u.Role,
-		Email:      entity.Email(u.Email.String()),
-		Avatar:     u.Avatar.String(),
-		Signature:  u.Signature.String(),
-		CreateTime: u.CreateTime,
-		UpdateTime: u.UpdateTime,
-	}
-}
-
-func (u *User) fromEntity(user entity.User) *User {
-	u.Id = int64(user.Id)
-	u.Username = valueobject.NewUsername(user.Username)
-	u.Password = valueobject.NewPassword(user.Password)
-	u.Role = user.Role
-	u.Email = valueobject.NewEmail(string(user.Email))
-	u.Avatar = valueobject.NewAvatar(user.Avatar)
-	u.Signature = valueobject.NewSignature(user.Signature)
-	u.CreateTime = user.CreateTime
-	u.UpdateTime = user.UpdateTime
-	return u
-}
-
-func (u *User) toOption() *option.QueryOptions {
-	options := option.NewQueryOptions()
-	options.Filters.Add(field.UserId, option.OpEqual, u.Id)
-	return options
 }
 
 func (u *User) Create() (int64, error) {

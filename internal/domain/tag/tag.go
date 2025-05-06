@@ -6,41 +6,12 @@ package tag
 import (
 	"STUOJ/internal/domain/tag/valueobject"
 	"STUOJ/internal/infrastructure/repository/dao"
-	"STUOJ/internal/infrastructure/repository/entity"
-	"STUOJ/internal/infrastructure/repository/entity/field"
-	"STUOJ/internal/model/option"
 	"STUOJ/pkg/errors"
 )
 
 type Tag struct {
-	Id   int64
+	Id   valueobject.Id
 	Name valueobject.Name
-}
-
-func (t *Tag) verify() error {
-	if err := t.Name.Verify(); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (t *Tag) toEntity() entity.Tag {
-	return entity.Tag{
-		Id:   uint64(t.Id),
-		Name: t.Name.String(),
-	}
-}
-
-func (t *Tag) fromEntity(tag entity.Tag) *Tag {
-	t.Id = int64(tag.Id)
-	t.Name = valueobject.NewName(tag.Name)
-	return t
-}
-
-func (t *Tag) toOption() *option.QueryOptions {
-	options := option.NewQueryOptions()
-	options.Filters.Add(field.TagId, option.OpEqual, t.Id)
-	return options
 }
 
 func (t *Tag) Create() (int64, error) {

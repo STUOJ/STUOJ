@@ -6,50 +6,15 @@ package language
 import (
 	"STUOJ/internal/domain/language/valueobject"
 	"STUOJ/internal/infrastructure/repository/dao"
-	"STUOJ/internal/infrastructure/repository/entity"
-	"STUOJ/internal/infrastructure/repository/entity/field"
-	"STUOJ/internal/model/option"
 	"STUOJ/pkg/errors"
 )
 
 type Language struct {
-	Id     int64
+	Id     valueobject.Id
 	Name   valueobject.Name
-	Serial uint16
-	MapId  uint32
-	Status entity.LanguageStatus
-}
-
-func (l *Language) verify() error {
-	if err := l.Name.Verify(); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (l *Language) toEntity() entity.Language {
-	return entity.Language{
-		Id:     uint64(l.Id),
-		Name:   l.Name.String(),
-		Serial: l.Serial,
-		MapId:  l.MapId,
-		Status: l.Status,
-	}
-}
-
-func (l *Language) fromEntity(language entity.Language) *Language {
-	l.Id = int64(language.Id)
-	l.Name = valueobject.NewName(language.Name)
-	l.Serial = language.Serial
-	l.MapId = language.MapId
-	l.Status = language.Status
-	return l
-}
-
-func (l *Language) toOption() *option.QueryOptions {
-	options := option.NewQueryOptions()
-	options.Filters.Add(field.LanguageId, option.OpEqual, l.Id)
-	return options
+	Serial valueobject.Serial
+	MapId  valueobject.MapId
+	Status valueobject.Status
 }
 
 func (l *Language) Create() (int64, error) {
