@@ -56,7 +56,7 @@ func With{{.Name}}({{.ParamName}} {{.ParamType}}) Option {
 
 func ({{.VarName}} *{{.StructName}}) verify() error {
 	{{range.Fields}}
-	{{if .IsValueObject}}
+	{{if and .IsValueObject .HaveVerify}}
 	if err := {{.VarName}}.{{.Name}}.Verify(); err != nil {
 		return err
 	}
@@ -117,6 +117,7 @@ type Field struct {
 	StructName      string
 	IsValueObject   bool
 	ValueObjectType string
+	HaveVerify      bool
 }
 
 type FieldInfo struct {
@@ -222,12 +223,13 @@ func processDomain(dir string, entityName string) error {
 			fieldName := field.Names[0].Name
 			fieldType := getFieldType(field.Type)
 			isValueObject, valueObjectType := isValueObjectType(fieldType)
+			haveVerify := false
 
 			// 确定参数类型
 			var paramType string
 			if isValueObject {
 				// 值对象类型，需要查找对应的构造函数参数类型
-				paramType = getValueObjectParamType(pkgName, valueObjectType)
+				paramType, haveVerify = getValueObjectParamType(pkgName, valueObjectType)
 				needValueObject = true
 				if strings.HasPrefix(paramType, "entity.") {
 					needEntity = true
@@ -258,13 +260,14 @@ func processDomain(dir string, entityName string) error {
 				StructName:      structName,
 				IsValueObject:   isValueObject,
 				ValueObjectType: valueObjectType,
+				HaveVerify:      haveVerify,
 			})
 		}
 
 		return false
 	})
 
-	mapFields, toEntityFields, fromEntityFields, err = processEntity(dir, entityName, fields)
+	mapFields, toEntityFields, fromEntityFields, err = processEntity(entityName, fields)
 	if err == nil {
 		haveEntity = true
 	}
@@ -320,7 +323,7 @@ func processDomain(dir string, entityName string) error {
 	return nil
 }
 
-func processEntity(dir, entityName string, domainField []Field) ([]string, []string, []string, error) {
+func processEntity(entityName string, domainField []Field) ([]string, []string, []string, error) {
 	entityDefFile := filepath.Join("../../../internal/infrastructure/repository/entity", entityName+".go")
 	if _, err := os.Stat(entityDefFile); os.IsNotExist(err) {
 		return nil, nil, nil, fmt.Errorf("实体文件 %s 不存在", entityDefFile)
@@ -482,12 +485,13 @@ func processExternalPackage(fieldType string, extraImports map[string]bool) {
 
 // getValueObjectParamType 获取值对象构造函数的参数类型
 // 通过解析AST获取New函数的返回值类型中的泛型参数类型
-func getValueObjectParamType(pkgName, valueObjectType string) string {
+func getValueObjectParamType(pkgName, valueObjectType string) (string, bool) {
+	haveVerify := false
 	// 尝试查找值对象的构造函数文件
 	voFilePath := filepath.Join("../../../internal/domain", pkgName, "valueobject", utils.ToSnakeCase(valueObjectType)+".go")
 	if _, err := os.Stat(voFilePath); os.IsNotExist(err) {
 		// 如果文件不存在，默认使用string类型
-		return "string"
+		return "string", haveVerify
 	}
 
 	// 解析值对象文件
@@ -495,7 +499,7 @@ func getValueObjectParamType(pkgName, valueObjectType string) string {
 	node, err := parser.ParseFile(fset, voFilePath, nil, parser.ParseComments)
 	if err != nil {
 		// 解析失败，默认使用string类型
-		return "string"
+		return "string", haveVerify
 	}
 
 	// 查找New+ValueObjectType函数的参数类型或model.Valueobject泛型类型
@@ -507,9 +511,12 @@ func getValueObjectParamType(pkgName, valueObjectType string) string {
 			// 获取函数的第一个参数类型
 			if funcDecl.Type.Params != nil && len(funcDecl.Type.Params.List) > 0 {
 				paramType = getFieldType(funcDecl.Type.Params.List[0].Type)
-				return false
 			}
 			return true
+		}
+
+		if ok && funcDecl.Name != nil && funcDecl.Name.Name == "Verify" {
+			haveVerify = true
 		}
 
 		// 检查是否为model.Valueobject泛型类型
@@ -522,21 +529,21 @@ func getValueObjectParamType(pkgName, valueObjectType string) string {
 							// 获取泛型参数类型
 							if len(field.Names) > 0 {
 								paramType = getFieldType(field.Type)
-								return false
 							}
 						}
 					}
 				}
 			}
 		}
+
 		return true
 	})
 
 	// 如果没有找到参数类型，默认使用string
 	if paramType == "" {
-		return "string"
+		return "string", haveVerify
 	}
-	return paramType
+	return paramType, haveVerify
 }
 
 // 生成字段处理代码
