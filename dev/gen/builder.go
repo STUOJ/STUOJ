@@ -26,7 +26,7 @@ package {{.PackageName}}
 
 import (
 	{{if .NeedValueObject}}"STUOJ/internal/domain/{{.PackageName}}/valueobject"{{end}}
-	{{if .NeedEntity}}"STUOJ/internal/infrastructure/repository/entity"{{end}}
+	{{if or .NeedEntity .HaveEntity}}"STUOJ/internal/infrastructure/repository/entity"{{end}}
 	{{if .HaveEntity}}
 	"STUOJ/internal/model/option"
 	"STUOJ/internal/infrastructure/repository/entity/field"
