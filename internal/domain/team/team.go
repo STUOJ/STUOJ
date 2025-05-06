@@ -1,7 +1,7 @@
 package team
 
 //go:generate go run ../../../dev/gen/query_gen.go team
-//go:generate go run ../../../dev/gen/builder.go team
+//go:generate go run ../../../dev/gen/domain.go team
 
 import (
 	"STUOJ/internal/domain/team/valueobject"

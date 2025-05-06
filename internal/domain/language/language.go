@@ -1,7 +1,7 @@
 package language
 
 //go:generate go run ../../../dev/gen/query_gen.go language
-//go:generate go run ../../../dev/gen/builder.go language
+//go:generate go run ../../../dev/gen/domain.go language
 
 import (
 	"STUOJ/internal/domain/language/valueobject"

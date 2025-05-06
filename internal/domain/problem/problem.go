@@ -1,7 +1,7 @@
 package problem
 
 //go:generate go run ../../../dev/gen/query_gen.go problem
-//go:generate go run ../../../dev/gen/builder.go problem
+//go:generate go run ../../../dev/gen/domain.go problem
 
 import (
 	dao2 "STUOJ/internal/infrastructure/repository/dao"

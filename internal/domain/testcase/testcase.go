@@ -1,7 +1,7 @@
 package testcase
 
 //go:generate go run ../../../dev/gen/query_gen.go testcase
-//go:generate go run ../../../dev/gen/builder.go testcase
+//go:generate go run ../../../dev/gen/domain.go testcase
 
 import (
 	"STUOJ/internal/domain/testcase/valueobject"

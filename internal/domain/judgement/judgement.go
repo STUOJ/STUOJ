@@ -1,7 +1,7 @@
 package judgement
 
 //go:generate go run ../../../dev/gen/query_gen.go judgement
-//go:generate go run ../../../dev/gen/builder.go judgement
+//go:generate go run ../../../dev/gen/domain.go judgement
 
 import (
 	"STUOJ/internal/domain/judgement/valueobject"

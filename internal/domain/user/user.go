@@ -1,7 +1,7 @@
 package user
 
 //go:generate go run ../../../dev/gen/query_gen.go user
-//go:generate go run ../../../dev/gen/builder.go user
+//go:generate go run ../../../dev/gen/domain.go user
 
 import (
 	"time"

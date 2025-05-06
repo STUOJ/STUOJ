@@ -1,7 +1,7 @@
 package history
 
 //go:generate go run ../../../dev/gen/query_gen.go history
-//go:generate go run ../../../dev/gen/builder.go history
+//go:generate go run ../../../dev/gen/domain.go history
 
 import (
 	"STUOJ/internal/infrastructure/repository/entity"

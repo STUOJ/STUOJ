@@ -1,7 +1,7 @@
 package comment
 
 //go:generate go run ../../../dev/gen/query_gen.go comment
-//go:generate go run ../../../dev/gen/builder.go comment
+//go:generate go run ../../../dev/gen/domain.go comment
 
 import (
 	"time"

@@ -1,7 +1,7 @@
 package collection
 
 //go:generate go run ../../../dev/gen/query_gen.go collection
-//go:generate go run ../../../dev/gen/builder.go collection
+//go:generate go run ../../../dev/gen/domain.go collection
 
 import (
 	dao2 "STUOJ/internal/infrastructure/repository/dao"

@@ -1,7 +1,7 @@
 package submission
 
 //go:generate go run ../../../dev/gen/query_gen.go submission
-//go:generate go run ../../../dev/gen/builder.go submission
+//go:generate go run ../../../dev/gen/domain.go submission
 
 import (
 	"time"

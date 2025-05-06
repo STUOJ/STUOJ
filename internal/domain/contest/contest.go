@@ -1,7 +1,7 @@
 package contest
 
 //go:generate go run ../../../dev/gen/query_gen.go contest
-//go:generate go run ../../../dev/gen/builder.go contest
+//go:generate go run ../../../dev/gen/domain.go contest
 
 import (
 	dao2 "STUOJ/internal/infrastructure/repository/dao"
