@@ -11,12 +11,12 @@ import (
 )
 
 type History struct {
-	Id           int64
+	Id           valueobject.Id
 	UserId       valueobject.UserId
 	ProblemId    valueobject.ProblemId
 	Title        valueobject.Title
 	Source       valueobject.Source
-	Difficulty   entity.Difficulty
+	Difficulty   valueobject.Difficulty
 	TimeLimit    valueobject.TimeLimit
 	MemoryLimit  valueobject.MemoryLimit
 	Description  valueobject.Description
