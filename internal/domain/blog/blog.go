@@ -5,8 +5,6 @@ package blog
 
 import (
 	"STUOJ/internal/infrastructure/repository/dao"
-	"STUOJ/internal/infrastructure/repository/entity/field"
-	"STUOJ/internal/model/option"
 	"STUOJ/pkg/errors"
 	"time"
 
@@ -22,13 +20,6 @@ type Blog struct {
 	Status     valueobject.Status
 	CreateTime time.Time
 	UpdateTime time.Time
-}
-
-func (b *Blog) toOption() *option.QueryOptions {
-	options := option.NewQueryOptions()
-	options.Filters.Add(field.BlogId, option.OpEqual, b.Id)
-	options.Field = b.existField()
-	return options
 }
 
 func (b *Blog) Create() (int64, error) {

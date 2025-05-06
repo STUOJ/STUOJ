@@ -6,8 +6,6 @@ package contest
 import (
 	dao2 "STUOJ/internal/infrastructure/repository/dao"
 	"STUOJ/internal/infrastructure/repository/entity"
-	"STUOJ/internal/infrastructure/repository/entity/field"
-	"STUOJ/internal/model/option"
 	"STUOJ/pkg/errors"
 	"time"
 
@@ -26,12 +24,6 @@ type Contest struct {
 	EndTime     valueobject.EndTime
 	CreateTime  time.Time
 	UpdateTime  time.Time
-}
-
-func (c *Contest) toOption() *option.QueryOptions {
-	options := option.NewQueryOptions()
-	options.Filters.Add(field.ContestId, option.OpEqual, c.Id)
-	return options
 }
 
 func (c *Contest) Create() (int64, error) {

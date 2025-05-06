@@ -6,8 +6,6 @@ package judgement
 import (
 	"STUOJ/internal/domain/judgement/valueobject"
 	"STUOJ/internal/infrastructure/repository/dao"
-	"STUOJ/internal/infrastructure/repository/entity/field"
-	"STUOJ/internal/model/option"
 	"STUOJ/pkg/errors"
 )
 
@@ -24,12 +22,6 @@ type Judgement struct {
 	CompileOutput valueobject.CompileOutput
 	Message       valueobject.Message
 	Status        valueobject.Status
-}
-
-func (j *Judgement) toOption() *option.QueryOptions {
-	options := option.NewQueryOptions()
-	options.Filters.Add(field.JudgementId, option.OpEqual, j.Id)
-	return options
 }
 
 func (j *Judgement) Create() (int64, error) {

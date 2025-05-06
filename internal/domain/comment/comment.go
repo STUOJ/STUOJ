@@ -5,8 +5,6 @@ package comment
 
 import (
 	"STUOJ/internal/infrastructure/repository/dao"
-	"STUOJ/internal/infrastructure/repository/entity/field"
-	"STUOJ/internal/model/option"
 	"STUOJ/pkg/errors"
 	"time"
 
@@ -21,12 +19,6 @@ type Comment struct {
 	Status     valueobject.Status
 	CreateTime time.Time
 	UpdateTime time.Time
-}
-
-func (c *Comment) toOption() *option.QueryOptions {
-	options := option.NewQueryOptions()
-	options.Filters.Add(field.CommentId, option.OpEqual, c.Id)
-	return options
 }
 
 func (c *Comment) Create() (int64, error) {

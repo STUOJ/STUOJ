@@ -6,8 +6,6 @@ package collection
 import (
 	dao2 "STUOJ/internal/infrastructure/repository/dao"
 	"STUOJ/internal/infrastructure/repository/entity"
-	"STUOJ/internal/infrastructure/repository/entity/field"
-	"STUOJ/internal/model/option"
 	"STUOJ/pkg/errors"
 	"time"
 
@@ -22,12 +20,6 @@ type Collection struct {
 	Status      valueobject.Status
 	CreateTime  time.Time
 	UpdateTime  time.Time
-}
-
-func (c *Collection) toOption() *option.QueryOptions {
-	options := option.NewQueryOptions()
-	options.Filters.Add(field.CollectionId, option.OpEqual, c.Id)
-	return options
 }
 
 func (c *Collection) Create() (int64, error) {

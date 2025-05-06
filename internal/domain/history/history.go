@@ -6,8 +6,6 @@ package history
 import (
 	"STUOJ/internal/infrastructure/repository/dao"
 	"STUOJ/internal/infrastructure/repository/entity"
-	"STUOJ/internal/infrastructure/repository/entity/field"
-	"STUOJ/internal/model/option"
 	"STUOJ/pkg/errors"
 	"time"
 
@@ -31,12 +29,6 @@ type History struct {
 	Hint         valueobject.Description
 	Operation    entity.Operation
 	CreateTime   time.Time
-}
-
-func (h *History) toOption() *option.QueryOptions {
-	options := option.NewQueryOptions()
-	options.Filters.Add(field.HistoryId, option.OpEqual, h.Id)
-	return options
 }
 
 func (h *History) Create() (int64, error) {
