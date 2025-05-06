@@ -2,7 +2,6 @@ package valueobject
 
 import (
 	"STUOJ/internal/model"
-	"fmt"
 )
 
 type Input struct {
@@ -21,14 +20,3 @@ func (i Input) Equals(other Input) bool {
 	}
 	return false
 }
-
-func (i Input) Verify() error {
-	if len(i.Value()) > 100000 || len(i.Value()) == 0 {
-		return ErrInput
-	}
-	return nil
-}
-
-var (
-	ErrInput = fmt.Errorf("input description length must be between 1 and 100000 characters")
-)

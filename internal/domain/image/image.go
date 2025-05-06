@@ -6,13 +6,12 @@ import (
 	"STUOJ/internal/domain/image/valueobject"
 	"STUOJ/internal/domain/image/yuki"
 	"STUOJ/pkg/errors"
-	"fmt"
 	"io"
 	"time"
 )
 
 type Image struct {
-	Key        string
+	Key        valueobject.Key
 	Url        string
 	Album      valueobject.Album
 	Reader     io.Reader
@@ -26,21 +25,11 @@ type ImageHandler interface {
 
 var handler ImageHandler = new(yuki.YukiImage)
 
-func (i Image) verify() error {
-	if err := i.Album.Verify(); err != nil {
-		return err
-	}
-	if i.Reader == nil {
-		return fmt.Errorf("reader is nil")
-	}
-	return nil
-}
-
 func (i Image) Upload() (string, error) {
 	if err := i.verify(); err != nil {
 		return "", errors.ErrValidation.WithError(err)
 	}
-	url, err := handler.UploadImage(i.Reader, i.Key, i.Album)
+	url, err := handler.UploadImage(i.Reader, i.Key.Value(), i.Album)
 	if err != nil {
 		return "", errors.ErrInternalServer.WithError(err)
 	}

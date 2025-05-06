@@ -2,7 +2,7 @@ package valueobject
 
 import (
 	"STUOJ/internal/model"
-	"fmt"
+	"errors"
 )
 
 type Description struct {
@@ -24,11 +24,7 @@ func (c Description) Equals(other Description) bool {
 
 func (c Description) Verify() error {
 	if len(c.Value()) > 100000 || len(c.Value()) == 0 {
-		return ErrContent
+		return errors.New("内容应该在100000个字符以内，且不能为空")
 	}
 	return nil
 }
-
-var (
-	ErrContent = fmt.Errorf("description length must be between 1 and 100000 characters")
-)

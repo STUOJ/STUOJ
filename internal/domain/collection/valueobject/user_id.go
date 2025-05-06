@@ -17,7 +17,7 @@ func NewUserId(value int64) UserId {
 
 func (i UserId) Verify() error {
 	if i.Value() <= 0 {
-		return errors.ErrUserId
+		return errors.ErrId
 	}
 	return nil
 }

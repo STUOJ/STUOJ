@@ -7,16 +7,16 @@ import (
 )
 
 type Status struct {
-	model.Valueobject[entity.BlogStatus]
+	model.Valueobject[entity.ContestStatus]
 }
 
-func NewStatus(value entity.BlogStatus) Status {
+func NewStatus(value entity.ContestStatus) Status {
 	var s Status
 	s.Set(value)
 	return s
 }
 
-func (s Status) Verify() error {
+func (s *Status) Verify() error {
 	if !s.Value().IsValid() {
 		return errors.ErrStatus
 	}

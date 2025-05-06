@@ -7,10 +7,10 @@ import (
 )
 
 type Status struct {
-	model.Valueobject[entity.BlogStatus]
+	model.Valueobject[entity.JudgeStatus]
 }
 
-func NewStatus(value entity.BlogStatus) Status {
+func NewStatus(value entity.JudgeStatus) Status {
 	var s Status
 	s.Set(value)
 	return s

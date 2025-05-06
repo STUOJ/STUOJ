@@ -9,36 +9,19 @@ import (
 	"STUOJ/internal/infrastructure/repository/entity/field"
 	"STUOJ/internal/model/option"
 	"STUOJ/pkg/errors"
-	"fmt"
 	"time"
 
 	"STUOJ/internal/domain/collection/valueobject"
 )
 
 type Collection struct {
-	Id          int64
-	UserId      int64
+	Id          valueobject.Id
+	UserId      valueobject.UserId
 	Title       valueobject.Title
 	Description valueobject.Description
-	Status      entity.CollectionStatus
+	Status      valueobject.Status
 	CreateTime  time.Time
 	UpdateTime  time.Time
-}
-
-func (c *Collection) verify() error {
-	if c.UserId == 0 {
-		return fmt.Errorf("用户Id不能为空")
-	}
-	if !entity.CollectionStatus(c.Status).IsValid() {
-		return fmt.Errorf("题单状态不合法")
-	}
-	if err := c.Title.Verify(); err != nil {
-		return err
-	}
-	if err := c.Description.Verify(); err != nil {
-		return err
-	}
-	return nil
 }
 
 func (c *Collection) toOption() *option.QueryOptions {
@@ -105,7 +88,7 @@ func (c *Collection) UpdateUser(userIds []int64) error {
 	var errs []error
 	for _, id := range userIds {
 		_, err = dao2.CollectionUserStore.Insert(entity.CollectionUser{
-			CollectionId: uint64(c.Id),
+			CollectionId: uint64(c.Id.Value()),
 			UserId:       uint64(id),
 		})
 		if err != nil {
@@ -133,7 +116,7 @@ func (c *Collection) UpdateProblem(problemIds []int64) error {
 	var serial uint16 = 1
 	for _, id := range problemIds {
 		_, err = dao2.CollectionProblemStore.Insert(entity.CollectionProblem{
-			CollectionId: uint64(c.Id),
+			CollectionId: uint64(c.Id.Value()),
 			ProblemId:    uint64(id),
 			Serial:       serial,
 		})

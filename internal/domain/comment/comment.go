@@ -5,63 +5,22 @@ package comment
 
 import (
 	"STUOJ/internal/infrastructure/repository/dao"
-	"STUOJ/internal/infrastructure/repository/entity"
 	"STUOJ/internal/infrastructure/repository/entity/field"
 	"STUOJ/internal/model/option"
 	"STUOJ/pkg/errors"
-	"fmt"
 	"time"
 
 	"STUOJ/internal/domain/comment/valueobject"
 )
 
 type Comment struct {
-	Id         int64
-	UserId     int64
-	BlogId     int64
+	Id         valueobject.Id
+	UserId     valueobject.UserID
+	BlogId     valueobject.BlogID
 	Content    valueobject.Content
-	Status     entity.CommentStatus
+	Status     valueobject.Status
 	CreateTime time.Time
 	UpdateTime time.Time
-}
-
-func (c *Comment) verify() error {
-	if c.UserId == 0 {
-		return fmt.Errorf("用户Id不能为空")
-	}
-	if c.BlogId == 0 {
-		return fmt.Errorf("博客Id不能为空")
-	}
-	if !entity.CommentStatus(c.Status).IsValid() {
-		return fmt.Errorf("评论状态不合法")
-	}
-	if err := c.Content.Verify(); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (c *Comment) toEntity() entity.Comment {
-	return entity.Comment{
-		Id:         uint64(c.Id),
-		UserId:     uint64(c.UserId),
-		BlogId:     uint64(c.BlogId),
-		Content:    c.Content.String(),
-		Status:     c.Status,
-		CreateTime: c.CreateTime,
-		UpdateTime: c.UpdateTime,
-	}
-}
-
-func (c *Comment) fromEntity(comment entity.Comment) *Comment {
-	c.Id = int64(comment.Id)
-	c.UserId = int64(comment.UserId)
-	c.BlogId = int64(comment.BlogId)
-	c.Content = valueobject.NewContent(comment.Content)
-	c.Status = comment.Status
-	c.CreateTime = comment.CreateTime
-	c.UpdateTime = comment.UpdateTime
-	return c
 }
 
 func (c *Comment) toOption() *option.QueryOptions {

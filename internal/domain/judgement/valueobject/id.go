@@ -10,9 +10,9 @@ type Id struct {
 }
 
 func NewId(value int64) Id {
-	var i Id
-	i.Set(value)
-	return i
+	var id Id
+	id.Set(value)
+	return id
 }
 
 func (i Id) Verify() error {

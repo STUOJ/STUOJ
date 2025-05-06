@@ -2,7 +2,7 @@ package valueobject
 
 import (
 	"STUOJ/internal/model"
-	"STUOJ/pkg/errors"
+	"errors"
 	"strings"
 )
 
@@ -12,10 +12,10 @@ type Content struct {
 
 func (c Content) Verify() error {
 	if strings.TrimSpace(c.Value()) == "" {
-		return errors.ErrValidation.WithMessage("评论内容不能为空")
+		return errors.New("评论内容不能为空")
 	}
 	if len(c.Value()) > 10000 {
-		return errors.ErrValidation.WithMessage("评论内容不能超过10000个字符")
+		return errors.New("评论内容不能超过10000个字符")
 	}
 	return nil
 }

@@ -2,7 +2,7 @@ package valueobject
 
 import (
 	"STUOJ/internal/model"
-	"fmt"
+	"errors"
 )
 
 type Title struct {
@@ -24,11 +24,7 @@ func (t Title) Equals(other Title) bool {
 
 func (t Title) Verify() error {
 	if len(t.Value()) > 50 || len(t.Value()) == 0 {
-		return ErrTitle
+		return errors.New("标题应该在50个字符以内，且不能为空")
 	}
 	return nil
 }
-
-var (
-	ErrTitle = fmt.Errorf("title length must be between 1 and 50 characters")
-)

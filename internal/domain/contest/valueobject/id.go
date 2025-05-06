@@ -2,7 +2,7 @@ package valueobject
 
 import (
 	"STUOJ/internal/model"
-	"STUOJ/pkg/errors"
+	"fmt"
 )
 
 type Id struct {
@@ -10,14 +10,16 @@ type Id struct {
 }
 
 func NewId(value int64) Id {
-	var i Id
-	i.Set(value)
-	return i
+	var id Id
+	id.Set(value)
+	return id
 }
 
-func (i Id) Verify() error {
-	if i.Value() <= 0 {
-		return errors.ErrId
+func (id Id) Verify() error {
+	if id.Value() <= 0 {
+		return ErrId
 	}
 	return nil
 }
+
+var ErrId = fmt.Errorf("id is invalid")
