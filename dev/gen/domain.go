@@ -341,7 +341,7 @@ func processDomain(dir string, entityName string) error {
 	}
 
 	// 生成builder.go文件
-	builderFile := filepath.Join(dir, "generated_builder.go")
+	builderFile := filepath.Join(dir, "generated_domain.go")
 
 	// 准备模板数据
 	templateData := TemplateData{
