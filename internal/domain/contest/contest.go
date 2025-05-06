@@ -26,50 +26,6 @@ type Contest struct {
 	UpdateTime  time.Time
 }
 
-func (c *Contest) Create() (int64, error) {
-	c.CreateTime = time.Now()
-	c.UpdateTime = time.Now()
-	if err := c.verify(); err != nil {
-		return 0, errors.ErrValidation.WithMessage(err.Error())
-	}
-	contest, err := dao2.ContestStore.Insert(c.toEntity())
-	if err != nil {
-		return 0, errors.ErrInternalServer.WithMessage(err.Error())
-	}
-	return int64(contest.Id), nil
-}
-
-func (c *Contest) Update() error {
-	var err error
-	options := c.toOption()
-	_, err = dao2.ContestStore.SelectOne(options)
-	if err != nil {
-		return errors.ErrNotFound.WithMessage(err.Error())
-	}
-	c.UpdateTime = time.Now()
-	if err := c.verify(); err != nil {
-		return errors.ErrValidation.WithMessage(err.Error())
-	}
-	_, err = dao2.ContestStore.Updates(c.toEntity(), options)
-	if err != nil {
-		return errors.ErrInternalServer.WithMessage(err.Error())
-	}
-	return nil
-}
-
-func (c *Contest) Delete() error {
-	options := c.toOption()
-	_, err := dao2.ContestStore.SelectOne(options)
-	if err != nil {
-		return errors.ErrNotFound.WithMessage(err.Error())
-	}
-	err = dao2.ContestStore.Delete(options)
-	if err != nil {
-		return errors.ErrInternalServer.WithMessage(err.Error())
-	}
-	return nil
-}
-
 func (c *Contest) UpdateUser(userIds []int64) error {
 	var err error
 	options := c.toOption()

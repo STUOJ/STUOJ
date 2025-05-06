@@ -30,50 +30,6 @@ type Problem struct {
 	UpdateTime   time.Time
 }
 
-func (p *Problem) Create() (int64, error) {
-	p.CreateTime = time.Now()
-	p.UpdateTime = time.Now()
-	if err := p.verify(); err != nil {
-		return 0, errors.ErrValidation.WithMessage(err.Error())
-	}
-	problem, err := dao2.ProblemStore.Insert(p.toEntity())
-	if err != nil {
-		return 0, errors.ErrInternalServer.WithMessage(err.Error())
-	}
-	return int64(problem.Id), nil
-}
-
-func (p *Problem) Update() error {
-	var err error
-	options := p.toOption()
-	_, err = dao2.ProblemStore.SelectOne(options)
-	if err != nil {
-		return errors.ErrNotFound.WithMessage(err.Error())
-	}
-	p.UpdateTime = time.Now()
-	if err := p.verify(); err != nil {
-		return errors.ErrValidation.WithMessage(err.Error())
-	}
-	_, err = dao2.ProblemStore.Updates(p.toEntity(), options)
-	if err != nil {
-		return errors.ErrInternalServer.WithMessage(err.Error())
-	}
-	return nil
-}
-
-func (p *Problem) Delete() error {
-	options := p.toOption()
-	_, err := dao2.ProblemStore.SelectOne(options)
-	if err != nil {
-		return errors.ErrNotFound.WithMessage(err.Error())
-	}
-	err = dao2.ProblemStore.Delete(options)
-	if err != nil {
-		return errors.ErrInternalServer.WithMessage(err.Error())
-	}
-	return nil
-}
-
 func (p *Problem) UpdateTags(tagIds []int64) error {
 	var err error
 	options := p.toOption()

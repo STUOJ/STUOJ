@@ -22,50 +22,6 @@ type Collection struct {
 	UpdateTime  time.Time
 }
 
-func (c *Collection) Create() (int64, error) {
-	c.CreateTime = time.Now()
-	c.UpdateTime = time.Now()
-	if err := c.verify(); err != nil {
-		return 0, errors.ErrValidation.WithMessage(err.Error())
-	}
-	collection, err := dao2.CollectionStore.Insert(c.toEntity())
-	if err != nil {
-		return 0, errors.ErrInternalServer.WithMessage(err.Error())
-	}
-	return int64(collection.Id), nil
-}
-
-func (c *Collection) Update() error {
-	var err error
-	options := c.toOption()
-	_, err = dao2.CollectionStore.SelectOne(options)
-	if err != nil {
-		return errors.ErrNotFound.WithMessage(err.Error())
-	}
-	c.UpdateTime = time.Now()
-	if err := c.verify(); err != nil {
-		return errors.ErrValidation.WithMessage(err.Error())
-	}
-	_, err = dao2.CollectionStore.Updates(c.toEntity(), options)
-	if err != nil {
-		return errors.ErrInternalServer.WithMessage(err.Error())
-	}
-	return nil
-}
-
-func (c *Collection) Delete() error {
-	options := c.toOption()
-	_, err := dao2.CollectionStore.SelectOne(options)
-	if err != nil {
-		return errors.ErrNotFound.WithMessage(err.Error())
-	}
-	err = dao2.CollectionStore.Delete(options)
-	if err != nil {
-		return errors.ErrInternalServer.WithMessage(err.Error())
-	}
-	return nil
-}
-
 func (c *Collection) UpdateUser(userIds []int64) error {
 	var err error
 	options := c.toOption()
