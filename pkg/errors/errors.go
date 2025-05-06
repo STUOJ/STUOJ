@@ -53,36 +53,54 @@ func WithError(err error) Option {
 	}
 }
 
+// WithHttpStatus 返回一个新的Error实例并设置HTTP状态码
+// 不会修改原始错误值
 func (e *Error) WithHttpStatus(httpStatus int) *Error {
-	e.HttpStatus = httpStatus
-	return e
+	newErr := *e
+	newErr.HttpStatus = httpStatus
+	return &newErr
 }
 
+// WithCode 返回一个新的Error实例并设置错误码
+// 不会修改原始错误值
 func (e *Error) WithCode(code int) *Error {
-	e.Code = code
-	return e
+	newErr := *e
+	newErr.Code = code
+	return &newErr
 }
 
+// WithMessage 返回一个新的Error实例并设置错误消息
+// 不会修改原始错误值
 func (e *Error) WithMessage(msg string) *Error {
-	e.Message = msg
-	return e
+	newErr := *e
+	newErr.Message = msg
+	return &newErr
 }
 
+// WithData 返回一个新的Error实例并设置数据
+// 不会修改原始错误值
 func (e *Error) WithData(data any) *Error {
-	e.Data = data
-	return e
+	newErr := *e
+	newErr.Data = data
+	return &newErr
 }
 
+// WithError 返回一个新的Error实例并设置错误消息
+// 不会修改原始错误值
 func (e *Error) WithError(err error) *Error {
-	e.Message = err.Error()
-	return e
+	newErr := *e
+	newErr.Message = err.Error()
+	return &newErr
 }
 
+// WithErrors 返回一个新的Error实例并追加多个错误消息
+// 不会修改原始错误值
 func (e *Error) WithErrors(errs []error) *Error {
+	newErr := *e
 	for _, err := range errs {
-		e.Message += err.Error() + "\n"
+		newErr.Message += err.Error() + "\n"
 	}
-	return e
+	return &newErr
 }
 
 func (e *Error) IsOK() bool {
@@ -98,4 +116,8 @@ var (
 	ErrValidation   = NewError(WithHttpStatus(http.StatusBadRequest), WithCode(1001), WithMessage("请求参数验证失败"))
 	ErrUnauthorized = NewError(WithHttpStatus(http.StatusForbidden), WithCode(1002), WithMessage("未授权访问"))
 	ErrNotFound     = NewError(WithHttpStatus(http.StatusNotFound), WithCode(1003), WithMessage("资源未找到"))
+	ErrId           = ErrValidation.WithMessage("id 不合法")
+	ErrStatus       = ErrValidation.WithMessage("status 不合法")
+	ErrUserId       = ErrValidation.WithMessage("user_id 不合法")
+	ErrProblemId    = ErrValidation.WithMessage("problem_id 不合法")
 )
