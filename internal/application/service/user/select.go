@@ -4,6 +4,7 @@ import (
 	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/application/dto/response"
 	"STUOJ/internal/domain/user"
+	"STUOJ/internal/infrastructure/repository/entity"
 	"STUOJ/internal/infrastructure/repository/querycontext"
 	"STUOJ/internal/model"
 	"STUOJ/pkg/errors"
@@ -25,8 +26,13 @@ func SelectById(id int64, reqUser model.ReqUser) (response.UserQueryData, error)
 	qc.Id.Add(id)
 	qc.Field.SelectId().SelectUsername().SelectRole().SelectEmail().SelectAvatar().SelectSignature().SelectCreateTime().SelectUpdateTime()
 	u0, map_, err := user.Query.SelectOne(qc, user.QueryUserACCount(), user.QueryUserBlogCount(), user.QueryUserSubmissionCount())
+
 	if err != nil {
 		return resp, err
+	}
+
+	if reqUser.Id != u0.Id.Value() && reqUser.Role < entity.RoleAdmin {
+		u0.Email.Set("")
 	}
 
 	resp.UserData = domain2Resp(u0)
