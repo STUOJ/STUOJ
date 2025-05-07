@@ -51,7 +51,8 @@ type History struct {
 	SampleOutput string     `gorm:"type:longtext;not null;comment:输出样例"`
 	Hint         string     `gorm:"type:longtext;not null;comment:提示"`
 	Operation    Operation  `gorm:"not null;default:0;comment:操作"`
-	CreateTime   time.Time  `gorm:"type:timestamp;not null;default:CURRENT_TIMESTAMP;comment:创建时间"`
+	CreateTime   time.Time  `gorm:"autoCreateTime;comment:创建时间"`
+	UpdateTime   time.Time  `gorm:"autoUpdateTime;comment:更新时间"`
 	User         User       `gorm:"foreignKey:UserId;references:Id;constraint:OnUpdate:RESTRICT,OnDelete:RESTRICT"`
 }
 

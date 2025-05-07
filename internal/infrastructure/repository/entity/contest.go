@@ -66,8 +66,8 @@ type Contest struct {
 	TeamSize    uint8         `gorm:"not null;default:1;comment:组队人数"`
 	StartTime   time.Time     `gorm:"type:timestamp;not null;default:CURRENT_TIMESTAMP;comment:开始时间"`
 	EndTime     time.Time     `gorm:"type:timestamp;not null;default:CURRENT_TIMESTAMP;comment:结束时间"`
-	CreateTime  time.Time     `gorm:"type:timestamp;not null;default:CURRENT_TIMESTAMP;comment:创建时间"`
-	UpdateTime  time.Time     `gorm:"type:timestamp;not null;default:CURRENT_TIMESTAMP;comment:更新时间"`
+	CreateTime  time.Time     `gorm:"autoCreateTime;comment:创建时间"`
+	UpdateTime  time.Time     `gorm:"autoUpdateTime;comment:更新时间"`
 	User        User          `gorm:"foreignKey:UserId;references:Id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 

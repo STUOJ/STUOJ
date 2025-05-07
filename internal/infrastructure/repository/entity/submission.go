@@ -19,8 +19,8 @@ type Submission struct {
 	Length     uint32      `gorm:"not null;default:0;comment:源代码长度"`
 	LanguageId uint64      `gorm:"not null;default:0;comment:语言Id"`
 	SourceCode string      `gorm:"type:longtext;not null;comment:源代码"`
-	CreateTime time.Time   `gorm:"type:timestamp;not null;default:CURRENT_TIMESTAMP;comment:创建时间"`
-	UpdateTime time.Time   `gorm:"type:timestamp;not null;default:CURRENT_TIMESTAMP;comment:更新时间"`
+	CreateTime time.Time   `gorm:"autoCreateTime;comment:创建时间"`
+	UpdateTime time.Time   `gorm:"autoUpdateTime;comment:更新时间"`
 	User       User        `gorm:"foreignKey:UserId;references:Id;constraint:OnUpdate:RESTRICT,OnDelete:RESTRICT"`
 	Problem    Problem     `gorm:"foreignKey:ProblemId;references:Id;constraint:OnUpdate:RESTRICT,OnDelete:RESTRICT"`
 	Language   Language    `gorm:"foreignKey:LanguageId;references:Id;constraint:OnUpdate:RESTRICT,OnDelete:RESTRICT"`
