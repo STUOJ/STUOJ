@@ -61,8 +61,10 @@ func With{{.Name}}({{.ParamName}} {{.ParamType}}) Option {
 func ({{.VarName}} *{{.StructName}}) verify() error {
 	{{range.Fields}}
 	{{if and .IsValueObject .HaveVerify}}
-	if err := {{.VarName}}.{{.Name}}.Verify(); err != nil {
-		return err
+	if {{.VarName}}.{{.Name}}.Exist() {
+		if err := {{.VarName}}.{{.Name}}.Verify(); err != nil {
+			return err
+		}
 	}
 	{{end}}
 	{{end}}
@@ -72,7 +74,7 @@ func ({{.VarName}} *{{.StructName}}) verify() error {
 {{if .HaveEntity}}
 func ({{.VarName}} *{{.StructName}}) toOption() *option.QueryOptions {
 	options := option.NewQueryOptions()
-	options.Filters.Add(field.{{.StructName}}Id, option.OpEqual, {{.VarName}}.Id)
+	options.Filters.Add(field.{{.StructName}}Id, option.OpEqual, {{.VarName}}.Id.Value())
 	options.Field = {{.VarName}}.existField()
 	return options
 }
