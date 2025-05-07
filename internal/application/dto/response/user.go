@@ -14,9 +14,17 @@ type UserData struct {
 }
 
 type UserStatistics struct {
-	ACCount     int64  `json:"ac_count"`
-	BlogCount   string `json:"blog_count"`
-	SubmitCount string `json:"submit_count"`
+	ACCount     int64 `json:"ac_count"`
+	BlogCount   int64 `json:"blog_count"`
+	SubmitCount int64 `json:"submit_count"`
+}
+
+func Map2UserStatistics(m map[string]any) UserStatistics {
+	return UserStatistics{
+		ACCount:     m["ac_count"].(int64),
+		BlogCount:   m["blog_count"].(int64),
+		SubmitCount: m["submit_count"].(int64),
+	}
 }
 
 type UserQueryData struct {

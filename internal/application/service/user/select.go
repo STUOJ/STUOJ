@@ -17,19 +17,20 @@ type UserPage struct {
 }
 
 // SelectById 根据ID查询用户
-func SelectById(id int64, reqUser model.ReqUser) (response.UserData, error) {
-	var resp response.UserData
+func SelectById(id int64, reqUser model.ReqUser) (response.UserQueryData, error) {
+	var resp response.UserQueryData
 
 	// 查询
 	qc := querycontext.UserQueryContext{}
 	qc.Id.Add(id)
 	qc.Field.SelectId().SelectUsername().SelectRole().SelectEmail().SelectAvatar().SelectSignature().SelectCreateTime().SelectUpdateTime()
-	u0, _, err := user.Query.SelectOne(qc)
+	u0, map_, err := user.Query.SelectOne(qc, user.QueryUserACCount(), user.QueryUserBlogCount(), user.QueryUserSubmissionCount())
 	if err != nil {
 		return resp, err
 	}
 
-	resp = domain2Resp(u0)
+	resp.UserData = domain2Resp(u0)
+	resp.UserStatistics = response.Map2UserStatistics(map_)
 	return resp, nil
 }
 
