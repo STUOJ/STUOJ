@@ -67,7 +67,39 @@ func (f *{{$.StructName}}Field) SelectAll() *{{$.StructName}}Field{
     f.{{ .Name }} = true
 {{- end }}
     return f
-}`
+}
+	
+var {{.StructName | toSnake}}GroupField = map[string]struct{}{
+	{{- range.Fields }}
+	{{if .HaveEnum}}
+	"{{.Name | toSnake}}": struct{}{},
+	{{end}}
+	{{- end }}
+}
+
+type {{.StructName}}GroupField struct {
+	field string
+}
+
+func New{{.StructName}}GroupField(field string) *{{.StructName}}GroupField {
+    groupField := &{{.StructName}}GroupField{}
+    groupField.SetField(field)
+    return groupField
+}
+
+func (f *{{.StructName}}GroupField) Verify() bool {
+    _, ok := {{.StructName | toSnake}}GroupField[f.field]
+    return ok
+}
+
+func (f *{{.StructName}}GroupField) SetField(field string) {
+    f.field = field
+}
+
+func (f *{{$.StructName}}GroupField) Field() string {
+    return f.field
+}
+`
 
 type FieldInfo struct {
 	Name     string
@@ -102,6 +134,18 @@ func main() {
 
 }
 
+// 存储类型名到其常量值的映射，用于判断是否为枚举类型
+type EnumTypeInfo struct {
+	TypeName  string
+	Constants map[string]bool // 存储常量名
+}
+
+// 检测类型是否为枚举类型
+func isEnumType(typeName string, enumTypes map[string]*EnumTypeInfo) bool {
+	_, ok := enumTypes[typeName]
+	return ok
+}
+
 func processEntity(dir string, structName string) error {
 	file := os.Getenv("GOFILE")
 	entityFile := filepath.Join(dir, file)
@@ -112,6 +156,51 @@ func processEntity(dir string, structName string) error {
 	if err != nil {
 		return fmt.Errorf("解析文件 %s 失败: %v", entityFile, err)
 	}
+
+	// 收集所有自定义类型及其常量定义
+	enumTypes := make(map[string]*EnumTypeInfo)
+	ast.Inspect(node, func(n ast.Node) bool {
+		// 查找类型定义
+		typeSpec, ok := n.(*ast.TypeSpec)
+		if ok {
+			// 检查是否是基于基本类型的自定义类型
+			if _, ok := typeSpec.Type.(*ast.Ident); ok {
+				enumTypes[typeSpec.Name.Name] = &EnumTypeInfo{
+					TypeName:  typeSpec.Name.Name,
+					Constants: make(map[string]bool),
+				}
+			}
+		}
+
+		// 查找常量声明
+		genDecl, ok := n.(*ast.GenDecl)
+		if ok && genDecl.Tok == token.CONST {
+			for _, spec := range genDecl.Specs {
+				valueSpec, ok := spec.(*ast.ValueSpec)
+				if !ok || valueSpec.Type == nil {
+					continue
+				}
+
+				// 获取常量类型
+				typeIdent, ok := valueSpec.Type.(*ast.Ident)
+				if !ok {
+					continue
+				}
+
+				// 检查类型是否在我们的枚举类型映射中
+				enumType, exists := enumTypes[typeIdent.Name]
+				if !exists {
+					continue
+				}
+
+				// 将常量添加到该类型的常量映射中
+				for _, name := range valueSpec.Names {
+					enumType.Constants[name.Name] = true
+				}
+			}
+		}
+		return true
+	})
 
 	var tableName string
 	var fields []FieldInfo
@@ -166,9 +255,24 @@ func processEntity(dir string, structName string) error {
 					}
 					fieldName = strings.Join(parts, "")
 				}
+
+				// 检查字段类型是否为枚举类型
+				isEnum := false
+				switch t := field.Type.(type) {
+				case *ast.Ident:
+					// 直接类型名称，如 BlogStatus
+					isEnum = isEnumType(t.Name, enumTypes)
+				case *ast.SelectorExpr:
+					// 带包名的类型，如 entity.BlogStatus
+					if _, ok := t.X.(*ast.Ident); ok {
+						typeName := t.Sel.Name
+						isEnum = isEnumType(typeName, enumTypes)
+					}
+				}
+
 				fieldInfo := FieldInfo{
 					Name:     fieldName,
-					HaveEnum: false,
+					HaveEnum: isEnum,
 				}
 				fields = append(fields, fieldInfo)
 			}
