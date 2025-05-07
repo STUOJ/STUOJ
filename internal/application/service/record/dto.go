@@ -12,14 +12,14 @@ import (
 
 func domain2SubmissionData(dm submission.Submission) (resp response.SubmissionData) {
 	resp = response.SubmissionData{
-		Id:         dm.Id,
-		Status:     int64(dm.Status),
-		Score:      dm.Score,
-		Memory:     dm.Memory,
-		Time:       dm.Time,
-		Length:     dm.Length,
-		LanguageId: dm.LanguageId,
-		SourceCode: dm.SourceCode.String(),
+		Id:         dm.Id.Value(),
+		Status:     int64(dm.Status.Value()),
+		Score:      dm.Score.Value(),
+		Memory:     dm.Memory.Value(),
+		Time:       float64(dm.Time.Value()),
+		Length:     dm.Length.Value(),
+		LanguageId: dm.LanguageId.Value(),
+		SourceCode: dm.SourceCode.Value(),
 		CreateTime: dm.CreateTime.String(),
 		UpdateTime: dm.UpdateTime.String(),
 	}
@@ -28,15 +28,15 @@ func domain2SubmissionData(dm submission.Submission) (resp response.SubmissionDa
 
 func domain2JudgementData(dm judgement.Judgement) (resp response.JudgementData) {
 	resp = response.JudgementData{
-		Id:           dm.Id,
-		Memory:       dm.Memory,
-		Message:      dm.Message,
-		Status:       int64(dm.Status),
-		Stderr:       dm.Stderr,
-		Stdout:       dm.Stdout,
-		SubmissionId: dm.SubmissionId,
-		TestcaseId:   dm.TestcaseId,
-		Time:         dm.Time,
+		Id:           dm.Id.Value(),
+		Memory:       dm.Memory.Value(),
+		Message:      dm.Message.Value(),
+		Status:       int64(dm.Status.Value()),
+		Stderr:       dm.Stderr.Value(),
+		Stdout:       dm.Stdout.Value(),
+		SubmissionId: dm.SubmissionId.Value(),
+		TestcaseId:   dm.TestcaseId.Value(),
+		Time:         float64(dm.Time.Value()),
 	}
 	return
 }

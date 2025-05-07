@@ -28,9 +28,9 @@ func params2Query(params request.QuerySolutionParams) (query querycontext.Soluti
 
 func domain2Resp(dm solution.Solution) response.SolutionData {
 	return response.SolutionData{
-		Id:         dm.Id,
-		ProblemId:  dm.ProblemId,
-		LanguageId: dm.LanguageId,
-		SourceCode: dm.SourceCode.String(),
+		Id:         dm.Id.Value(),
+		ProblemId:  dm.ProblemId.Value(),
+		LanguageId: dm.LanguageId.Value(),
+		SourceCode: dm.SourceCode.Value(),
 	}
 }

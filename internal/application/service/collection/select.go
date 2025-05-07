@@ -31,7 +31,7 @@ func SelectById(id int64, reqUser model.ReqUser) (response.CollectionData, error
 	if err != nil {
 		return res, err
 	}
-	if collectionDomain.Status < entity.CollectionPublic {
+	if collectionDomain.Status.Value() < entity.CollectionPublic {
 		if err := isPermission(collectionDomain, reqUser); err != nil {
 			return response.CollectionData{}, errors.ErrUnauthorized.WithMessage("没有权限查看该题单")
 		}
@@ -58,7 +58,7 @@ func SelectById(id int64, reqUser model.ReqUser) (response.CollectionData, error
 	userQuery := querycontext.UserQueryContext{}
 	userQuery.Field = *query.UserSimpleField
 	collaboratorIds, _ := utils.StringToInt64Slice(collectionMap["collection_user_id"].(string))
-	userQuery.Id.Add(collectionDomain.UserId)
+	userQuery.Id.Add(collectionDomain.UserId.Value())
 	userQuery.Id.Add(collaboratorIds...)
 	userDomain, _, err := user.Query.SelectByIds(userQuery)
 
@@ -66,7 +66,7 @@ func SelectById(id int64, reqUser model.ReqUser) (response.CollectionData, error
 		for _, u := range collaboratorIds {
 			res.Collaborator = append(res.Collaborator, response.Domain2UserSimpleData(userDomain[int64(u)]))
 		}
-		res.User = response.Domain2UserSimpleData(userDomain[int64(collectionDomain.UserId)])
+		res.User = response.Domain2UserSimpleData(userDomain[int64(collectionDomain.UserId.Value())])
 	}
 	return res, err
 }
@@ -86,7 +86,7 @@ func Select(params request.QueryCollectionParams, reqUser model.ReqUser) (Collec
 
 	userIds := make([]int64, len(collections))
 	for _, c := range collections {
-		userIds = append(userIds, c.UserId)
+		userIds = append(userIds, c.UserId.Value())
 	}
 
 	userQuery := querycontext.UserQueryContext{}
@@ -97,7 +97,7 @@ func Select(params request.QueryCollectionParams, reqUser model.ReqUser) (Collec
 	for _, collection_ := range collections {
 		var resCollection response.CollectionListItem
 		resCollection = domain2listItemResponse(collection_)
-		resCollection.User = response.Domain2UserSimpleData(users[int64(collection_.UserId)])
+		resCollection.User = response.Domain2UserSimpleData(users[int64(collection_.UserId.Value())])
 		res.Collections = append(res.Collections, resCollection)
 	}
 

@@ -11,9 +11,9 @@ import (
 )
 
 func isPermission(c collection.Collection, reqUser model.ReqUser) error {
-	if c.UserId != reqUser.Id && reqUser.Role < entity.RoleAdmin {
+	if c.UserId.Value() != reqUser.Id && reqUser.Role < entity.RoleAdmin {
 		query := querycontext.CollectionQueryContext{}
-		query.Id.Add(c.Id)
+		query.Id.Add(c.Id.Value())
 		_, map_, err := collection.Query.SelectOne(query, collection.QueryUserId())
 		userIds, err := utils.StringToInt64Slice(map_["collection_user_id"].(string))
 		if err != nil {

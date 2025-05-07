@@ -59,7 +59,7 @@ func InitJudgeLanguages() error {
 	}
 	for i := range languages {
 		if lang, exists := oldLangMap[languages[i].Name]; exists {
-			lang.MapId = uint32(languages[i].Id)
+			lang.MapId.Set(uint32(languages[i].Id))
 			if err := lang.Update(); err != nil {
 				return err
 			}

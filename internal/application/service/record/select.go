@@ -32,11 +32,11 @@ func Select(params request.QuerySubmissionParams, reqUser model.ReqUser) (Submis
 
 	userIds := make([]int64, len(submissions))
 	for i, s := range submissions {
-		userIds[i] = s.UserId
+		userIds[i] = s.UserId.Value()
 	}
 	problemIds := make([]int64, len(submissions))
 	for i, s := range submissions {
-		problemIds[i] = s.ProblemId
+		problemIds[i] = s.ProblemId.Value()
 	}
 
 	uqc := querycontext.UserQueryContext{}
@@ -53,13 +53,13 @@ func Select(params request.QuerySubmissionParams, reqUser model.ReqUser) (Submis
 		respSubmission := domain2SubmissionData(s)
 
 		// 获取用户信息
-		if s.UserId != 0 {
-			respSubmission.User = response.Domain2UserSimpleData(users[s.UserId])
+		if s.UserId.Value() != 0 {
+			respSubmission.User = response.Domain2UserSimpleData(users[s.UserId.Value()])
 		}
 
 		// 获取题目信息
-		if s.ProblemId != 0 {
-			respSubmission.Problem = response.Domain2ProblemSimpleData(problems[s.ProblemId])
+		if s.ProblemId.Value() != 0 {
+			respSubmission.Problem = response.Domain2ProblemSimpleData(problems[s.ProblemId.Value()])
 		}
 
 		resp.Submissions = append(resp.Submissions, respSubmission)
@@ -88,8 +88,8 @@ func SelectById(sid int64, reqUser model.ReqUser) (response.RecordData, error) {
 	}
 
 	// 隐藏源代码
-	if reqUser.Role < entity.RoleAdmin && reqUser.Id != s0.UserId {
-		s0.SourceCode = ""
+	if reqUser.Role < entity.RoleAdmin && reqUser.Id != s0.UserId.Value() {
+		s0.SourceCode.Set("")
 	}
 
 	// 获取评测结果

@@ -30,7 +30,7 @@ func SelectById(id int64, reqUser model.ReqUser) (response.HistoryData, error) {
 	res = response.Domain2HistoryData(historyDomain)
 
 	userQuery := querycontext.UserQueryContext{}
-	userQuery.Id.Add(historyDomain.UserId)
+	userQuery.Id.Add(historyDomain.UserId.Value())
 	userQuery.Field = *query.UserSimpleField
 	userDomain, _, err := user.Query.SelectOne(userQuery)
 	if err == nil {
@@ -57,7 +57,7 @@ func Select(params request.QueryHistoryParams, reqUser model.ReqUser) (HistoryPa
 
 		// 获取用户信息
 		userQuery := querycontext.UserQueryContext{}
-		userQuery.Id.Add(v.UserId)
+		userQuery.Id.Add(v.UserId.Value())
 		userQuery.Field = *query.UserSimpleField
 		userDomain, _, err := user.Query.SelectOne(userQuery)
 		if err == nil {

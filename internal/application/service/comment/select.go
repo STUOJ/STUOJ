@@ -37,7 +37,7 @@ func Select(params request.QueryCommentParams, reqUser model.ReqUser) (CommentPa
 
 	userIds := make([]int64, len(comments))
 	for i, c := range comments {
-		userIds[i] = c.UserId
+		userIds[i] = c.UserId.Value()
 	}
 	uqc := querycontext.UserQueryContext{}
 	uqc.Id.Add(userIds...)
@@ -46,7 +46,7 @@ func Select(params request.QueryCommentParams, reqUser model.ReqUser) (CommentPa
 
 	blogIds := make([]int64, len(comments))
 	for i, c := range comments {
-		blogIds[i] = c.BlogId
+		blogIds[i] = c.BlogId.Value()
 	}
 	bqc := querycontext.BlogQueryContext{}
 	bqc.Id.Add(blogIds...)
@@ -57,13 +57,13 @@ func Select(params request.QueryCommentParams, reqUser model.ReqUser) (CommentPa
 		respComment := domain2Resp(u)
 
 		// 获取用户信息
-		if u.UserId != 0 {
-			respComment.User = response.Domain2UserSimpleData(users[u.UserId])
+		if u.UserId.Value() != 0 {
+			respComment.User = response.Domain2UserSimpleData(users[u.UserId.Value()])
 		}
 
 		// 获取博客信息
-		if u.BlogId != 0 {
-			respComment.Blog = response.Domain2BlogSimpleData(blogs[u.BlogId])
+		if u.BlogId.Value() != 0 {
+			respComment.Blog = response.Domain2BlogSimpleData(blogs[u.BlogId.Value()])
 		}
 
 		resp.Comments = append(resp.Comments, respComment)

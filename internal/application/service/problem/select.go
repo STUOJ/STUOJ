@@ -37,7 +37,7 @@ func SelectById(id int64, reqUser model.ReqUser) (response.ProblemQueryData, err
 		return response.ProblemQueryData{}, errors.ErrInternalServer.WithMessage("获取题目修改者id失败")
 	}
 
-	if problemDomain.Status < entity.ProblemPublic && reqUser.Role < entity.RoleAdmin && !slices.Contains(userIds, reqUser.Id) {
+	if problemDomain.Status.Value() < entity.ProblemPublic && reqUser.Role < entity.RoleAdmin && !slices.Contains(userIds, reqUser.Id) {
 		return response.ProblemQueryData{}, errors.ErrUnauthorized.WithMessage("无权限查看")
 	}
 

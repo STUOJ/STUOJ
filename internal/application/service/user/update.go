@@ -41,13 +41,13 @@ func UpdatePassword(req request.UserForgetPasswordReq, reqUser model.ReqUser) er
 	}
 
 	// 检查权限
-	err = isPermission(u0.Id, reqUser)
+	err = isPermission(u0.Id.Value(), reqUser)
 	if err != nil {
 		return err
 	}
 
 	u1 := user.NewUser(
-		user.WithId(u0.Id),
+		user.WithId(u0.Id.Value()),
 		user.WithPassword(req.Password),
 	)
 
@@ -68,13 +68,13 @@ func UpdateRole(req request.UserUpdateRoleReq, reqUser model.ReqUser) error {
 	newRole := entity.Role(req.Role)
 
 	// 检查权限
-	err = isPermission(u0.Id, reqUser)
+	err = isPermission(u0.Id.Value(), reqUser)
 	if err != nil {
 		return err
 	}
 
 	u1 := user.NewUser(
-		user.WithId(u0.Id),
+		user.WithId(u0.Id.Value()),
 		user.WithRole(newRole),
 	)
 
@@ -124,7 +124,7 @@ func UpdateAvatar(req request.UserChangeAvatarReq, reqUser model.ReqUser) (strin
 
 	// 更新头像
 	u1 := user.NewUser(
-		user.WithId(u0.Id),
+		user.WithId(u0.Id.Value()),
 		user.WithAvatar(url),
 	)
 	err = u1.Update()

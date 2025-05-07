@@ -25,9 +25,9 @@ type BlogSimpleData struct {
 
 func Domain2BlogSimpleData(b blog.Blog) BlogSimpleData {
 	return BlogSimpleData{
-		Id:        b.Id,
-		ProblemId: b.ProblemId,
+		Id:        b.Id.Value(),
+		ProblemId: b.ProblemId.Value(),
 		Title:     b.Title.String(),
-		UserId:    b.UserId,
+		UserId:    b.UserId.Value(),
 	}
 }

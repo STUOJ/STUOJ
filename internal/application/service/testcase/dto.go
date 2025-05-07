@@ -23,10 +23,10 @@ func params2Query(params request.QueryTestcaseParams) (query querycontext.Testca
 
 func domain2Resp(dm testcase.Testcase) response.TestcaseData {
 	return response.TestcaseData{
-		Id:         dm.Id,
-		ProblemId:  dm.ProblemId,
-		Serial:     dm.Serial,
-		TestInput:  dm.TestInput.String(),
-		TestOutput: dm.TestOutput.String(),
+		Id:         dm.Id.Value(),
+		ProblemId:  dm.ProblemId.Value(),
+		Serial:     dm.Serial.Value(),
+		TestInput:  dm.TestInput.Value(),
+		TestOutput: dm.TestOutput.Value(),
 	}
 }

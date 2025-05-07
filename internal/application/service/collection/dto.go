@@ -57,10 +57,10 @@ func params2Model(params request.QueryCollectionParams) (query querycontext.Coll
 
 func domain2response(c collection.Collection) response.CollectionData {
 	return response.CollectionData{
-		Id:          int64(c.Id),
+		Id:          int64(c.Id.Value()),
 		Title:       c.Title.String(),
 		Description: c.Description.String(),
-		Status:      int64(c.Status),
+		Status:      int64(c.Status.Value()),
 		CreateTime:  c.CreateTime.String(),
 		UpdateTime:  c.UpdateTime.String(),
 	}
@@ -68,9 +68,9 @@ func domain2response(c collection.Collection) response.CollectionData {
 
 func domain2listItemResponse(c collection.Collection) response.CollectionListItem {
 	return response.CollectionListItem{
-		Id:         int64(c.Id),
+		Id:         int64(c.Id.Value()),
 		Title:      c.Title.String(),
-		Status:     int64(c.Status),
+		Status:     int64(c.Status.Value()),
 		CreateTime: c.CreateTime.String(),
 		UpdateTime: c.UpdateTime.String(),
 	}

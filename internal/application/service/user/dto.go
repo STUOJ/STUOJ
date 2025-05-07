@@ -12,12 +12,12 @@ import (
 
 func domain2Resp(dm user.User) (resp response.UserData) {
 	resp = response.UserData{
-		Id:         dm.Id,
-		Username:   dm.Username.String(),
-		Role:       uint8(dm.Role),
-		Email:      dm.Email.String(),
-		Avatar:     dm.Avatar.String(),
-		Signature:  dm.Signature.String(),
+		Id:         dm.Id.Value(),
+		Username:   dm.Username.Value(),
+		Role:       uint8(dm.Role.Value()),
+		Email:      dm.Email.Value(),
+		Avatar:     dm.Avatar.Value(),
+		Signature:  dm.Signature.Value(),
 		CreateTime: dm.CreateTime.String(),
 		UpdateTime: dm.UpdateTime.String(),
 	}

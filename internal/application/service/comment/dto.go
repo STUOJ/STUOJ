@@ -12,9 +12,9 @@ import (
 
 func domain2Resp(dm comment.Comment) (resp response.CommentData) {
 	resp = response.CommentData{
-		Id:         dm.Id,
+		Id:         dm.Id.Value(),
 		Content:    dm.Content.String(),
-		Status:     int64(dm.Status),
+		Status:     int64(dm.Status.Value()),
 		CreateTime: dm.CreateTime.String(),
 		UpdateTime: dm.UpdateTime.String(),
 	}

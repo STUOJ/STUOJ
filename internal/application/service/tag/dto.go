@@ -10,8 +10,8 @@ import (
 // domain2Resp 将领域模型转换为响应模型
 func domain2Resp(t tag.Tag) response.TagData {
 	return response.TagData{
-		Id:   t.Id,
-		Name: t.Name.String(),
+		Id:   t.Id.Value(),
+		Name: t.Name.Value(),
 	}
 }
 

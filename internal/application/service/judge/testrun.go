@@ -18,7 +18,7 @@ func TestRun(req request.TestRunReq, reqUser model.ReqUser) (response.TestRunRes
 	if err != nil {
 		return response.TestRunRes{}, err
 	}
-	languageMapId := languageDomain.MapId
+	languageMapId := languageDomain.MapId.Value()
 	submission := runner.RunnerSubmission{
 		SourceCode: req.SourceCode,
 		LanguageId: int64(languageMapId),

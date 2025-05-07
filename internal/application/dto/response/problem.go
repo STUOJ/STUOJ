@@ -34,8 +34,8 @@ type ProblemSimpleData struct {
 
 func Domain2ProblemSimpleData(p problem.Problem) ProblemSimpleData {
 	return ProblemSimpleData{
-		Difficulty: int64(p.Difficulty),
-		Id:         int64(p.Id),
+		Difficulty: int64(p.Difficulty.Value()),
+		Id:         int64(p.Id.Value()),
 		Source:     p.Source.String(),
 		Title:      p.Title.String(),
 	}
@@ -71,10 +71,10 @@ type ProblemListItemData struct {
 func Domain2ProblemListItemData(p problem.Problem) ProblemListItemData {
 	return ProblemListItemData{
 		CreateTime: p.CreateTime.String(),
-		Difficulty: int64(p.Difficulty),
-		Id:         int64(p.Id),
+		Difficulty: int64(p.Difficulty.Value()),
+		Id:         int64(p.Id.Value()),
 		Source:     p.Source.String(),
-		Status:     int64(p.Status),
+		Status:     int64(p.Status.Value()),
 		Title:      p.Title.String(),
 		UpdateTime: p.UpdateTime.String(),
 	}

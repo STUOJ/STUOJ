@@ -67,7 +67,7 @@ func UpdateProblem(req request.UpdateCollectionProblemReq, reqUser model.ReqUser
 		return errors.ErrUnauthorized.WithMessage("有题目不存在")
 	}
 	for _, i := range problems {
-		if i.Status != entity.ProblemPublic {
+		if i.Status.Value() != entity.ProblemPublic {
 			return errors.ErrUnauthorized.WithMessage("有题目不是公开状态")
 		}
 	}
@@ -82,7 +82,7 @@ func UpdateUser(req request.UpdateCollectionUserReq, reqUser model.ReqUser) erro
 	if err != nil {
 		return err
 	}
-	if c0.UserId != int64(reqUser.Id) {
+	if c0.UserId.Value() != int64(reqUser.Id) {
 		return errors.ErrUnauthorized.WithMessage("没有权限修改该题单的合作者")
 	}
 	// 查询用户

@@ -26,7 +26,7 @@ func Submit(req request.JudgeReq, reqUser model.ReqUser) (int64, error) {
 	if err != nil {
 		return 0, err
 	}
-	languageMapId := languageDomain.MapId
+	languageMapId := languageDomain.MapId.Value()
 
 	problemQuery := querycontext.ProblemQueryContext{}
 	problemQuery.Id.Add(req.ProblemId)
@@ -34,7 +34,7 @@ func Submit(req request.JudgeReq, reqUser model.ReqUser) (int64, error) {
 	if err != nil {
 		return 0, errors.ErrNotFound.WithMessage("题目不存在")
 	}
-	if problemDomain.Status < entity.ProblemPublic && reqUser.Role < entity.RoleAdmin {
+	if problemDomain.Status.Value() < entity.ProblemPublic && reqUser.Role < entity.RoleAdmin {
 		userIds, err := utils.StringToInt64Slice(problemMap["problem_user_id"].(string))
 		if err != nil {
 			return 0, errors.ErrInternalServer.WithMessage("内部错误")
@@ -50,7 +50,7 @@ func Submit(req request.JudgeReq, reqUser model.ReqUser) (int64, error) {
 		submission.WithProblemId(int64(req.ProblemId)),
 		submission.WithStatus(entity.JudgeIE), // 设置为IE状态,保证在错误导致中断的情况下显示为IE
 		submission.WithLength(int64(len(req.SourceCode))),
-		submission.WithLanguageId(int64(languageDomain.Id)),
+		submission.WithLanguageId(int64(languageDomain.Id.Value())),
 		submission.WithSourceCode(req.SourceCode),
 	)
 	submissionId, err := submissionDomain.Create()
@@ -79,7 +79,7 @@ func Submit(req request.JudgeReq, reqUser model.ReqUser) (int64, error) {
 	for i, tc := range testcaseDomain {
 		judgementDomain := judgement.NewJudgement(
 			judgement.WithSubmissionId(submissionId),
-			judgement.WithTestcaseId(tc.Id),
+			judgement.WithTestcaseId(tc.Id.Value()),
 			judgement.WithStatus(entity.JudgeIE), //设置为IE状态,保证在错误导致中断的情况下显示为IE
 			judgement.WithCompileOutput(""),
 			judgement.WithMessage(""),
@@ -95,8 +95,8 @@ func Submit(req request.JudgeReq, reqUser model.ReqUser) (int64, error) {
 		LanguageId:   int64(languageMapId),
 		SourceCode:   req.SourceCode,
 		Testcase:     testcaseSubmission,
-		CPUTimeLimit: problemDomain.TimeLimit,
-		MemoryLimit:  problemDomain.MemoryLimit,
+		CPUTimeLimit: problemDomain.TimeLimit.Value(),
+		MemoryLimit:  problemDomain.MemoryLimit.Value(),
 	}
 	runnerResult := runner.Runner.CodeRun(runnerSubmission)
 
@@ -108,7 +108,7 @@ func Submit(req request.JudgeReq, reqUser model.ReqUser) (int64, error) {
 		// 更新judgement记录
 		judgementDomain := judgement.NewJudgement(
 			judgement.WithId(judgementIds[i]),
-			judgement.WithTime(v.Time),
+			judgement.WithTime(int64(v.Time)),
 			judgement.WithMemory(int64(v.Memory)),
 			judgement.WithStdout(v.Stdout),
 			judgement.WithStderr(v.Stderr),
@@ -128,7 +128,7 @@ func Submit(req request.JudgeReq, reqUser model.ReqUser) (int64, error) {
 		submission.WithStatus(entity.JudgeStatus(runnerResult.Status.Id)),
 		submission.WithScore(int64(score)),
 		submission.WithMemory(int64(runnerResult.Memory)),
-		submission.WithTime(runnerResult.Time),
+		submission.WithTime(int64(runnerResult.Time)),
 	)
 	err = submissionDomain.Update()
 	if err != nil {

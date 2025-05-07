@@ -31,14 +31,14 @@ func SelectById(id int64, reqUser model.ReqUser) (response.BlogData, error) {
 	}
 	resp = domain2Resp(domainBlog)
 	userQuery := querycontext.UserQueryContext{}
-	userQuery.Id.Add(domainBlog.UserId)
+	userQuery.Id.Add(domainBlog.UserId.Value())
 	userQuery.Field = *query.UserSimpleField
 	domainUser, _, err := user.Query.SelectOne(userQuery)
 	if err == nil {
 		resp.User = response.Domain2UserSimpleData(domainUser)
 	}
 	problemQuery := querycontext.ProblemQueryContext{}
-	problemQuery.Id.Add(domainBlog.ProblemId)
+	problemQuery.Id.Add(domainBlog.ProblemId.Value())
 	problemQuery.Field = *query.ProblemSimpleField
 	_, map_, err := problem.Query.SelectOne(problemQuery, problem.QueryMaxScore(reqUser.Id), problem.QueryTag())
 	if err == nil {
@@ -64,11 +64,11 @@ func Select(params request.QueryBlogParams, reqUser model.ReqUser) (BlogPage, er
 	}
 	problemIds := make([]int64, len(blogs))
 	for i, blog_ := range blogs {
-		problemIds[i] = blog_.ProblemId
+		problemIds[i] = blog_.ProblemId.Value()
 	}
 	userIds := make([]int64, len(blogs))
 	for i, blog_ := range blogs {
-		userIds[i] = blog_.UserId
+		userIds[i] = blog_.UserId.Value()
 	}
 	problemQueryContext := querycontext.ProblemQueryContext{}
 	problemQueryContext.Id.Add(problemIds...)
@@ -83,12 +83,12 @@ func Select(params request.QueryBlogParams, reqUser model.ReqUser) (BlogPage, er
 	for _, blog_ := range blogs {
 		var resBlog response.BlogData
 		resBlog = domain2Resp(blog_)
-		if blog_.ProblemId != 0 {
-			resBlog.Problem.ProblemSimpleData = response.Map2ProblemSimpleData(problemMap[blog_.ProblemId])
-			resBlog.Problem.ProblemUserScore = response.Map2ProblemUserScore(problemMap[blog_.ProblemId])
+		if blog_.ProblemId.Value() != 0 {
+			resBlog.Problem.ProblemSimpleData = response.Map2ProblemSimpleData(problemMap[blog_.ProblemId.Value()])
+			resBlog.Problem.ProblemUserScore = response.Map2ProblemUserScore(problemMap[blog_.ProblemId.Value()])
 		}
-		if blog_.UserId != 0 {
-			resBlog.User = response.Domain2UserSimpleData(users[blog_.UserId])
+		if blog_.UserId.Value() != 0 {
+			resBlog.User = response.Domain2UserSimpleData(users[blog_.UserId.Value()])
 		}
 		resp.Blogs = append(resp.Blogs, resBlog)
 	}

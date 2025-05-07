@@ -55,10 +55,10 @@ func params2Query(params request.QueryBlogParams) (query querycontext.BlogQueryC
 
 func domain2Resp(dm blog.Blog) (res response.BlogData) {
 	res = response.BlogData{
-		Id:         dm.Id,
+		Id:         dm.Id.Value(),
 		Title:      dm.Title.String(),
 		Content:    dm.Content.String(),
-		Status:     uint8(dm.Status),
+		Status:     uint8(dm.Status.Value()),
 		CreateTime: dm.CreateTime.String(),
 		UpdateTime: dm.UpdateTime.String(),
 	}

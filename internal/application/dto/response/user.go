@@ -34,9 +34,9 @@ type UserSimpleData struct {
 func Domain2UserSimpleData(u user.User) UserSimpleData {
 	return UserSimpleData{
 		Avatar: u.Avatar.String(),
-		Id:     u.Id,
+		Id:     u.Id.Value(),
 		Name:   u.Username.String(),
-		Role:   uint8(u.Role),
+		Role:   uint8(u.Role.Value()),
 	}
 }
 

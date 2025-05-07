@@ -23,11 +23,11 @@ func params2Model(params request.QueryLanguageParams) (query querycontext.Langua
 
 func domain2response(languageDomain language.Language) (res response.LanguageData) {
 	res = response.LanguageData{
-		Id:     languageDomain.Id,
-		Serial: languageDomain.Serial,
-		Status: uint8(languageDomain.Status),
-		Name:   languageDomain.Name.String(),
-		MapId:  languageDomain.MapId,
+		Id:     languageDomain.Id.Value(),
+		Serial: languageDomain.Serial.Value(),
+		Status: uint8(languageDomain.Status.Value()),
+		Name:   languageDomain.Name.Value(),
+		MapId:  languageDomain.MapId.Value(),
 	}
 	return
 }
