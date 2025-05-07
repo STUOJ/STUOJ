@@ -63,8 +63,8 @@ type User struct {
 	Email      Email     `gorm:"type:varchar(255);not null;comment:邮箱;unique"`
 	Avatar     string    `gorm:"type:text;not null;comment:头像URL"`
 	Signature  string    `gorm:"type:text;not null;comment:个性签名"`
-	CreateTime time.Time `gorm:"type:timestamp;not null;default:CURRENT_TIMESTAMP;comment:创建时间"`
-	UpdateTime time.Time `gorm:"type:timestamp;not null;default:CURRENT_TIMESTAMP;comment:更新时间"`
+	CreateTime time.Time `gorm:"autoCreateTime;comment:创建时间"`
+	UpdateTime time.Time `gorm:"autoUpdateTime;comment:更新时间"`
 }
 
 func (User) TableName() string {

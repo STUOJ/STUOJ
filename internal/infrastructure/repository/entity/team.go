@@ -1,5 +1,7 @@
 package entity
 
+import "time"
+
 // TeamStatus 团队状态: 1 禁止, 2 无效, 3 有效
 //
 //go:generate go run ../../../../dev/gen/enum_valid.go TeamStatus
@@ -35,6 +37,8 @@ type Team struct {
 	Name        string     `gorm:"type:text;not null;comment:队名"`
 	Description string     `gorm:"type:longtext;not null;comment:简介"`
 	Status      TeamStatus `gorm:"not null;default:1;comment:状态"`
+	CreateTime  time.Time  `gorm:"autoCreateTime;comment:创建时间"`
+	UpdateTime  time.Time  `gorm:"autoUpdateTime;comment:更新时间"`
 	User        User       `gorm:"foreignKey:UserId;references:Id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Contest     Contest    `gorm:"foreignKey:ContestId;references:Id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }

@@ -1,5 +1,7 @@
 package entity
 
+import "time"
+
 // JudgeStatus 评测状态：0 Pending, 1 In Queue, 2 Processing, 3 AC, 4 WA, 5 TLE, 6 CE, 7 RE(SIGSEGV), 8 RE(SIGXFSZ), 9 RE(SIGFPE), 10 RE(SIGABRT), 11 RE(NZEC), 12 RE(Other), 13 IE, 14 EFE
 type JudgeStatus uint64
 
@@ -72,6 +74,8 @@ type Judgement struct {
 	Stderr        string      `gorm:"type:longtext;not null;comment:标准错误输出"`
 	CompileOutput string      `gorm:"type:longtext;not null;comment:编译输出"`
 	Message       string      `gorm:"type:longtext;not null;comment:信息"`
+	CreateTime    time.Time   `gorm:"autoCreateTime;comment:创建时间"`
+	UpdateTime    time.Time   `gorm:"autoUpdateTime;comment:更新时间"`
 	Status        JudgeStatus `gorm:"not null;default:1;comment:状态"`
 	Submission    Submission  `gorm:"foreignKey:SubmissionId;references:Id;constraint:OnUpdate:RESTRICT,OnDelete:CASCADE"`
 }
