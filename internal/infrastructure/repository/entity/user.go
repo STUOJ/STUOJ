@@ -1,8 +1,6 @@
 package entity
 
 import (
-	"errors"
-	"regexp"
 	"time"
 )
 
@@ -34,23 +32,6 @@ func (r Role) String() string {
 	return "未知"
 }
 
-type Email string
-
-func (e Email) Verify() error {
-	emailRegex := `^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$`
-
-	// 编译正则表达式
-	re := regexp.MustCompile(emailRegex)
-	if !re.MatchString(string(e)) {
-		return errors.New("邮箱格式不正确！")
-	}
-	return nil
-}
-
-func (e Email) String() string {
-	return string(e)
-}
-
 // User 用户
 //
 //go:generate go run ../../../../dev/gen/dao_store.go -struct=User
@@ -60,7 +41,7 @@ type User struct {
 	Username   string    `gorm:"type:varchar(255);not null;comment:用户名;unique"`
 	Password   string    `gorm:"type:varchar(255);not null;default:123456;comment:密码"`
 	Role       Role      `gorm:"not null;default:1;comment:角色"`
-	Email      Email     `gorm:"type:varchar(255);not null;comment:邮箱;unique"`
+	Email      string    `gorm:"type:varchar(255);not null;comment:邮箱;unique"`
 	Avatar     string    `gorm:"type:text;not null;comment:头像URL"`
 	Signature  string    `gorm:"type:text;not null;comment:个性签名"`
 	CreateTime time.Time `gorm:"autoCreateTime;comment:创建时间"`
