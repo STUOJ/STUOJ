@@ -112,6 +112,20 @@ func UpdateAvatar(req request.UserChangeAvatarReq, reqUser model.ReqUser) (strin
 	if err != nil {
 		return "", errors.ErrInternalServer.WithMessage("头像上传失败")
 	}
+	// 更新头像
+	u1 := user.NewUser(
+		user.WithId(u0.Id.Value()),
+		user.WithAvatar(url),
+	)
+	err = u1.Update()
+
+	if err != nil {
+		return "", err
+	}
+
+	if u0.Avatar.String() == "https://avatars.githubusercontent.com/u/188169408?s=200&v=4" {
+		return url, nil
+	}
 
 	// 删除旧头像
 	oldImage := image.NewImage(
@@ -120,16 +134,6 @@ func UpdateAvatar(req request.UserChangeAvatarReq, reqUser model.ReqUser) (strin
 	err = oldImage.Delete()
 	if err != nil {
 		return "", errors.ErrInternalServer.WithMessage("旧头像删除失败")
-	}
-
-	// 更新头像
-	u1 := user.NewUser(
-		user.WithId(u0.Id.Value()),
-		user.WithAvatar(url),
-	)
-	err = u1.Update()
-	if err != nil {
-		return "", err
 	}
 
 	return url, nil
