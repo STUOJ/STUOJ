@@ -3,6 +3,7 @@ package comment
 import (
 	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/domain/comment"
+	"STUOJ/internal/infrastructure/repository/entity"
 	"STUOJ/internal/model"
 )
 
@@ -12,6 +13,7 @@ func Insert(req request.CreateCommentReq, reqUser model.ReqUser) (int64, error) 
 		comment.WithBlogId(req.BlogId),
 		comment.WithUserId(reqUser.Id),
 		comment.WithContent(req.Content),
+		comment.WithStatus(entity.CommentPublic),
 	)
 
 	return cm1.Create()

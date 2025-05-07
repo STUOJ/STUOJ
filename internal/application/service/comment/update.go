@@ -8,6 +8,7 @@ import (
 
 func Update(req request.UpdateCommentReq, reqUser model.ReqUser) error {
 	cm1 := comment.NewComment(
+		comment.WithId(req.Id),
 		comment.WithContent(req.Content),
 	)
 
