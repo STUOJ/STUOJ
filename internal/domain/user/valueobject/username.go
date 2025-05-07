@@ -5,6 +5,7 @@ import (
 	"STUOJ/pkg/utils"
 	"errors"
 	"strings"
+	"unicode/utf8"
 )
 
 type Username struct {
@@ -13,7 +14,7 @@ type Username struct {
 
 func (u Username) Verify() error {
 	val := u.Value()
-	if len(val) < 3 || len(val) > 12 {
+	if utf8.RuneCountInString(val) < 3 || utf8.RuneCountInString(val) > 12 {
 		return errors.New("用户名长度必须在3-12个字符之间！")
 	}
 	if strings.ContainsAny(val, " \t\n\r") {

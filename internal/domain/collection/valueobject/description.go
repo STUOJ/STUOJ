@@ -3,6 +3,7 @@ package valueobject
 import (
 	"STUOJ/internal/model"
 	"errors"
+	"unicode/utf8"
 )
 
 type Description struct {
@@ -23,7 +24,7 @@ func (c Description) Equals(other Description) bool {
 }
 
 func (c Description) Verify() error {
-	if len(c.Value()) > 100000 || len(c.Value()) == 0 {
+	if utf8.RuneCountInString(c.Value()) > 100000 || len(c.Value()) == 0 {
 		return errors.New("内容应该在100000个字符以内，且不能为空")
 	}
 	return nil

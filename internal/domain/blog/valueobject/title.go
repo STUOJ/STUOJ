@@ -3,6 +3,7 @@ package valueobject
 import (
 	"STUOJ/internal/model"
 	"errors"
+	"unicode/utf8"
 )
 
 type Title struct {
@@ -23,7 +24,7 @@ func (t Title) Equals(other Title) bool {
 }
 
 func (t Title) Verify() error {
-	if len(t.Value()) > 50 || len(t.Value()) == 0 {
+	if utf8.RuneCountInString(t.Value()) > 50 || len(t.Value()) == 0 {
 		return errors.New("标题应该在50个字符以内，且不能为空")
 	}
 	return nil

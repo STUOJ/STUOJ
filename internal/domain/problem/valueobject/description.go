@@ -3,6 +3,7 @@ package valueobject
 import (
 	"STUOJ/internal/model"
 	"errors"
+	"unicode/utf8"
 )
 
 type Description struct {
@@ -23,7 +24,7 @@ func (d Description) Equals(other Description) bool {
 }
 
 func (d Description) Verify() error {
-	if len(d.Value()) > 100000 {
+	if utf8.RuneCountInString(d.Value()) > 100000 {
 		return errors.New("描述长度错误")
 	}
 	return nil

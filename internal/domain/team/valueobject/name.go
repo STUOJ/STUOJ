@@ -3,6 +3,7 @@ package valueobject
 import (
 	"STUOJ/internal/model"
 	"errors"
+	"unicode/utf8"
 )
 
 type Name struct {
@@ -13,8 +14,8 @@ func (n Name) Verify() error {
 	if len(n.Value()) == 0 {
 		return errors.New("队名不能为空！")
 	}
-	if len(n.Value()) > 255 {
-		return errors.New("队名长度不能超过255个字符！")
+	if utf8.RuneCountInString(n.Value()) > 12 {
+		return errors.New("队名长度不能超过12个字符！")
 	}
 	return nil
 }

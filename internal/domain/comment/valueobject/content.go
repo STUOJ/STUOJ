@@ -4,6 +4,7 @@ import (
 	"STUOJ/internal/model"
 	"errors"
 	"strings"
+	"unicode/utf8"
 )
 
 type Content struct {
@@ -14,7 +15,7 @@ func (c Content) Verify() error {
 	if strings.TrimSpace(c.Value()) == "" {
 		return errors.New("评论内容不能为空")
 	}
-	if len(c.Value()) > 10000 {
+	if utf8.RuneCountInString(c.Value()) > 10000 {
 		return errors.New("评论内容不能超过10000个字符")
 	}
 	return nil

@@ -3,6 +3,7 @@ package valueobject
 import (
 	"STUOJ/internal/model"
 	"errors"
+	"unicode/utf8"
 )
 
 type Input struct {
@@ -23,7 +24,7 @@ func (i Input) Equals(other Input) bool {
 }
 
 func (i Input) Verify() error {
-	if len(i.Value()) > 100000 {
+	if utf8.RuneCountInString(i.Value()) > 100000 {
 		return errors.New("input too long")
 	}
 	return nil
