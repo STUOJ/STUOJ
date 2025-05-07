@@ -136,12 +136,12 @@ func tokenAutoRefresh(c *gin.Context) error {
 
 func getUserRole(uid uint64) (entity.Role, error) {
 	// 获取用户信息
-	u, err := user.SelectById(int64(uid), model.ReqUser{})
+	role, err := user.SelectRoleById(int64(uid))
 	if err != nil {
 		return 0, err
 	}
 
-	return entity.Role(u.Role), nil
+	return role, nil
 }
 
 func tokenVerify(c *gin.Context) error {

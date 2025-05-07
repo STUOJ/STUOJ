@@ -111,3 +111,16 @@ func LoginByEmail(req request.UserLoginReq, reqUser model.ReqUser) (string, erro
 
 	return token, nil
 }
+
+func SelectRoleById(id int64) (entity.Role, error) {
+	qc := querycontext.UserQueryContext{}
+	qc.Id.Add(id)
+	qc.Field.SelectRole()
+
+	u0, _, err := user.Query.SelectOne(qc)
+	if err != nil {
+		return 0, err
+	}
+
+	return u0.Role.Value(), nil
+}
