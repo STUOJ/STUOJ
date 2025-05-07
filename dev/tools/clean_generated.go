@@ -1,7 +1,7 @@
 //go:build ignore
 
 // 清理生成文件的工具
-// 使用方法: go run clean_generated.go [-y]
+// 使用方法: go run .\dev\tools\clean_generated.go [-y]
 // -y 表示跳过确认，直接删除所有生成文件
 package main
 
