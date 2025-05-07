@@ -82,6 +82,7 @@ type TemplateData struct {
 }
 
 func main() {
+
 	structName := flag.String("struct", "", "结构体名称")
 	flag.Parse()
 	if *structName == "" {
@@ -102,18 +103,8 @@ func main() {
 }
 
 func processEntity(dir string, structName string) error {
-	// 尝试两种文件名格式：下划线分隔和驼峰转蛇形
-	entityFile1 := filepath.Join(dir, structName+".go")
-	entityFile2 := filepath.Join(dir, strings.Split(utils.ToSnakeCase(structName), "_")[0]+".go")
-
-	var entityFile string
-	if _, err := os.Stat(entityFile1); err == nil {
-		entityFile = entityFile1
-	} else if _, err := os.Stat(entityFile2); err == nil {
-		entityFile = entityFile2
-	} else {
-		return fmt.Errorf("实体文件 %s 或 %s 不存在", entityFile1, entityFile2)
-	}
+	file := os.Getenv("GOFILE")
+	entityFile := filepath.Join(dir, file)
 
 	// 解析domain中的实体结构体
 	fset := token.NewFileSet()
