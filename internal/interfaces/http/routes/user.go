@@ -22,8 +22,8 @@ func InitUserRoute(ginServer *gin.Engine) {
 		userUserRoute.Use(middlewares.TokenAuthUser())
 
 		userUserRoute.GET("/current", handler.UserCurrentId)
-		userUserRoute.PUT("/modify/:id", handler.UserModify)
-		userUserRoute.POST("/avatar/:id", handler.ModifyUserAvatar)
+		userUserRoute.PUT("/modify", handler.UserModify)
+		userUserRoute.POST("/avatar", handler.ModifyUserAvatar)
 	}
 
 	userAdminRoute := ginServer.Group("/user")
