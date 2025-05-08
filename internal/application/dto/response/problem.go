@@ -2,6 +2,7 @@ package response
 
 import (
 	"STUOJ/internal/domain/problem"
+	"STUOJ/internal/infrastructure/repository/entity"
 	"STUOJ/pkg/utils"
 )
 
@@ -43,8 +44,8 @@ func Domain2ProblemSimpleData(p problem.Problem) ProblemSimpleData {
 
 func Map2ProblemSimpleData(p map[string]any) ProblemSimpleData {
 	return ProblemSimpleData{
-		Difficulty: p["difficulty"].(int64),
-		Id:         p["id"].(int64),
+		Difficulty: int64(p["difficulty"].(entity.Difficulty)),
+		Id:         int64(p["id"].(uint64)),
 		Source:     p["source"].(string),
 		Title:      p["title"].(string),
 	}
