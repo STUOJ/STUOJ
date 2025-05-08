@@ -98,8 +98,13 @@ type TagIds struct {
 	TagIds []int64 `json:"tag_ids"`
 }
 
+// Map2TagIds 将map数据转换为TagIds结构体
+// 当tag_ids为nil时返回空切片，避免panic
 func Map2TagIds(p map[string]any) TagIds {
-	tagIds, _ := utils.StringToInt64Slice(p["tag_ids"].(string))
+	if p["problem_tag_id"] == nil {
+		return TagIds{TagIds: []int64{}}
+	}
+	tagIds, _ := utils.StringToInt64Slice(p["problem_tag_id"].(string))
 	return TagIds{
 		TagIds: tagIds,
 	}
