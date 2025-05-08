@@ -55,25 +55,25 @@ func params2Query(params request.QuerySubmissionParams) (query querycontext.Subm
 			query.StartTime.Set(t)
 		}
 	}
-	if params.User != nil && *params.User != "" {
+	if params.User != nil {
 		ids, err := utils.StringToInt64Slice(*params.User)
 		if err == nil {
 			query.UserId.Set(ids)
 		}
 	}
-	if params.Problem != nil && *params.Problem != "" {
+	if params.Problem != nil {
 		ids, err := utils.StringToInt64Slice(*params.Problem)
 		if err == nil {
 			query.ProblemId.Set(ids)
 		}
 	}
-	if params.Status != nil && *params.Status != "" {
+	if params.Status != nil {
 		ids, err := utils.StringToInt64Slice(*params.Status)
 		if err == nil {
 			query.Status.Set(ids)
 		}
 	}
-	if params.Language != nil && *params.Language != "" {
+	if params.Language != nil {
 		ids, err := utils.StringToInt64Slice(*params.Language)
 		if err == nil {
 			query.Language.Set(ids)

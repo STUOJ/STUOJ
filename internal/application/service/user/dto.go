@@ -37,22 +37,22 @@ func params2Query(params request.QueryUserParams) (query querycontext.UserQueryC
 			query.StartTime.Set(t)
 		}
 	}
-	if params.Id != nil && *params.Id != "" {
+	if params.Id != nil {
 		ids, err := utils.StringToInt64Slice(*params.Id)
 		if err == nil {
 			query.Id.Set(ids)
 		}
 	}
-	if params.Role != nil && *params.Role != "" {
+	if params.Role != nil {
 		ids, err := utils.StringToUint8Slice(*params.Role)
 		if err == nil {
 			query.Role.Set(ids)
 		}
 	}
-	if params.Username != nil && *params.Username != "" {
+	if params.Username != nil {
 		query.Username.Set(*params.Username)
 	}
-	if params.Email != nil && *params.Email != "" {
+	if params.Email != nil {
 		query.Email.Set(*params.Email)
 	}
 	if params.Page != nil && params.Size != nil {

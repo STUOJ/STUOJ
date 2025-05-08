@@ -10,12 +10,12 @@ import (
 )
 
 func params2Query(params request.QuerySolutionParams) (query querycontext.SolutionQueryContext) {
-	if params.Language != nil && *params.Language != "" {
+	if params.Language != nil {
 		if ids, err := utils.StringToInt64Slice(*params.Language); err == nil {
 			query.LanguageId.Set(ids)
 		}
 	}
-	if params.Problem != nil && *params.Problem != "" {
+	if params.Problem != nil {
 		if ids, err := utils.StringToInt64Slice(*params.Problem); err == nil {
 			query.ProblemId.Set(ids)
 		}

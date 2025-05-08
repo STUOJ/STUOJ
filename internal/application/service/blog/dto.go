@@ -23,25 +23,25 @@ func params2Query(params request.QueryBlogParams) (query querycontext.BlogQueryC
 			query.StartTime.Set(t)
 		}
 	}
-	if params.Problem != nil && *params.Problem != "" {
+	if params.Problem != nil {
 		ids, err := utils.StringToInt64Slice(*params.Problem)
 		if err == nil {
 			query.ProblemId.Set(ids)
 		}
 	}
-	if params.User != nil && *params.User != "" {
+	if params.User != nil {
 		ids, err := utils.StringToInt64Slice(*params.User)
 		if err == nil {
 			query.UserId.Set(ids)
 		}
 	}
-	if params.Status != nil && *params.Status != "" {
+	if params.Status != nil {
 		ids, err := utils.StringToUint8Slice(*params.Status)
 		if err == nil {
 			query.Status.Set(ids)
 		}
 	}
-	if params.Title != nil && *params.Title != "" {
+	if params.Title != nil {
 		query.Title.Set(*params.Title)
 	}
 	if params.Page != nil && params.Size != nil {

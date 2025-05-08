@@ -34,7 +34,7 @@ func params2Query(params request.QueryCommentParams) (query querycontext.Comment
 			query.StartTime.Set(t)
 		}
 	}
-	if params.Status != nil && *params.Status != "" {
+	if params.Status != nil {
 		ids, err := utils.StringToInt64Slice(*params.Status)
 		if err == nil {
 			query.Status.Set(ids)
