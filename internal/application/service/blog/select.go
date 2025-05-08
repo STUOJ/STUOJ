@@ -78,7 +78,7 @@ func Select(params request.QueryBlogParams, reqUser model.ReqUser) (BlogPage, er
 	userQueryContext := querycontext.UserQueryContext{}
 	userQueryContext.Id.Add(userIds...)
 	userQueryContext.Field = *query.UserSimpleField
-	users, _, err := user.Query.Select(userQueryContext)
+	users, _, err := user.Query.SelectByIds(userQueryContext)
 
 	for _, blog_ := range blogs {
 		var resBlog response.BlogData
