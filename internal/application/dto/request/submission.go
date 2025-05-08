@@ -2,13 +2,13 @@ package request
 
 type QuerySubmissionParams struct {
 	EndTime   *string `form:"end-time,omitempty"`
-	Language  *int64  `form:"language,omitempty"`
+	Language  *string `form:"language,omitempty"`
 	Order     *string `form:"order,omitempty"`
 	OrderBy   *string `form:"order_by,omitempty"`
 	Page      *int64  `form:"page,omitempty"`
-	Problem   *int64  `form:"problem,omitempty"`
+	Problem   *string `form:"problem,omitempty"`
 	Size      *int64  `form:"size,omitempty"`
 	StartTime *string `form:"start-time,omitempty"`
-	Status    *int64  `form:"status,omitempty"`
-	User      *int64  `form:"user,omitempty"`
+	Status    *string `form:"status,omitempty"`
+	User      *string `form:"user,omitempty"`
 }

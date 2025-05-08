@@ -7,6 +7,7 @@ import (
 	"STUOJ/internal/domain/submission"
 	"STUOJ/internal/infrastructure/repository/querycontext"
 	"STUOJ/internal/model/option"
+	"STUOJ/pkg/utils"
 	"time"
 )
 
@@ -55,16 +56,28 @@ func params2Query(params request.QuerySubmissionParams) (query querycontext.Subm
 		}
 	}
 	if params.User != nil {
-		query.UserId.Add(*params.User)
+		ids, err := utils.StringToInt64Slice(*params.User)
+		if err == nil {
+			query.UserId.Set(ids)
+		}
 	}
 	if params.Problem != nil {
-		query.ProblemId.Add(*params.Problem)
+		ids, err := utils.StringToInt64Slice(*params.Problem)
+		if err == nil {
+			query.ProblemId.Set(ids)
+		}
 	}
 	if params.Status != nil {
-		query.Status.Add(*params.Status)
+		ids, err := utils.StringToInt64Slice(*params.Status)
+		if err == nil {
+			query.Status.Set(ids)
+		}
 	}
 	if params.Language != nil {
-		query.Language.Add(*params.Language)
+		ids, err := utils.StringToInt64Slice(*params.Language)
+		if err == nil {
+			query.Language.Set(ids)
+		}
 	}
 	if params.Page != nil && params.Size != nil {
 		query.Page = option.NewPagination(*params.Page, *params.Size)
