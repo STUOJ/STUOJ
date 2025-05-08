@@ -12,6 +12,7 @@ func InitBlogRoute(ginServer *gin.Engine) {
 	{
 		blogPublicRoute.GET("/", handler.BlogList)
 		blogPublicRoute.GET("/:id", handler.BlogInfo)
+		blogPublicRoute.GET("/statistics", handler.BlogStatistics)
 	}
 
 	blogUserRoute := ginServer.Group("/blog")
@@ -37,6 +38,7 @@ func InitCommentRoute(ginServer *gin.Engine) {
 		commentUserRoute.Use(middlewares.TokenAuthUser())
 
 		commentUserRoute.POST("/", handler.CommentAdd)
+		commentUserRoute.GET("/statistics", handler.CommentStatistics)
 	}
 
 	commentAdminRoute := ginServer.Group("/comment")

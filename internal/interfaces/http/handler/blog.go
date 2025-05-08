@@ -110,3 +110,18 @@ func BlogRemove(c *gin.Context) {
 	// 返回结果
 	c.JSON(http.StatusOK, model.RespOk("删除成功", nil))
 }
+
+func BlogStatistics(c *gin.Context) {
+	reqUser := model.NewReqUser(c)
+	params := request.BlogStatisticsParams{}
+	if err := c.ShouldBindQuery(&params); err != nil {
+		c.Error(&errors.ErrValidation)
+		return
+	}
+	res, err := blog.Statistics(params, *reqUser)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+	c.JSON(http.StatusOK, model.RespOk("OK", res))
+}

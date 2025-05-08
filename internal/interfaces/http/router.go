@@ -49,9 +49,6 @@ func InitRoute() error {
 	routes2.InitBlogRoute(ginServer)
 	routes2.InitCommentRoute(ginServer)
 
-	// routes/statistics.go
-	routes2.InitStatisticsRoute(ginServer)
-
 	// routes/system.go
 	routes2.InitSystemRoute(ginServer)
 

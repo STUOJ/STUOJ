@@ -77,3 +77,13 @@ func Select(params request.QueryCommentParams, reqUser model.ReqUser) (CommentPa
 	}
 	return resp, nil
 }
+
+func Statistics(params request.CommentStatisticsParams, reqUser model.ReqUser) (response.StatisticsRes, error) {
+	qc := params2Query(params.QueryCommentParams)
+	qc.GroupBy = params.GroupBy
+	resp, err := comment.Query.GroupCount(qc)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}

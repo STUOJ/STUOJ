@@ -41,3 +41,18 @@ func UpdateLanguage(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, model.RespOk("OK", nil))
 }
+
+func LanguageStatistics(c *gin.Context) {
+	reqUser := model.NewReqUser(c)
+	params := request.LanguageStatisticsParams{}
+	if err := c.ShouldBindQuery(&params); err != nil {
+		c.Error(&errors.ErrValidation)
+		return
+	}
+	res, err := language.Statistics(params, *reqUser)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+	c.JSON(http.StatusOK, model.RespOk("OK", res))
+}

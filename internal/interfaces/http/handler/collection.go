@@ -148,3 +148,19 @@ func CollectionModifyUser(c *gin.Context) {
 
 	c.JSON(http.StatusOK, model.RespOk("修改成功", nil))
 }
+
+func CollectionStatistics(c *gin.Context) {
+	reqUser := model.NewReqUser(c)
+	params := request.CollectionStatisticsParams{}
+	if err := c.ShouldBindQuery(&params); err != nil {
+		c.Error(&errors.ErrValidation)
+		return
+	}
+	res, err := collection.Statistics(params, *reqUser)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	c.JSON(http.StatusOK, model.RespOk("OK", res))
+}

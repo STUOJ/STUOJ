@@ -107,3 +107,13 @@ func Select(params request.QueryCollectionParams, reqUser model.ReqUser) (Collec
 	res.Page.Total = total
 	return res, err
 }
+
+func Statistics(params request.CollectionStatisticsParams, reqUser model.ReqUser) (response.StatisticsRes, error) {
+	query_ := params2Model(params.QueryCollectionParams)
+	query_.GroupBy = params.GroupBy
+	resp, err := collection.Query.GroupCount(query_)
+	if err != nil {
+		return response.StatisticsRes{}, err
+	}
+	return resp, nil
+}

@@ -25,3 +25,13 @@ func Select(params request.QueryLanguageParams, reqUser model.ReqUser) ([]respon
 	}
 	return res, nil
 }
+
+func Statistics(params request.LanguageStatisticsParams, reqUser model.ReqUser) (response.StatisticsRes, error) {
+	languageQuery := params2Model(params.QueryLanguageParams)
+	languageQuery.GroupBy = params.GroupBy
+	resp, err := language.Query.GroupCount(languageQuery)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}

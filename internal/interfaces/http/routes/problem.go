@@ -12,6 +12,7 @@ func InitProblemRoute(ginServer *gin.Engine) {
 	{
 		problemPublicRoute.GET("/", handler.ProblemList)
 		problemPublicRoute.GET("/:id", handler.ProblemInfo)
+		problemPublicRoute.GET("/statistics", handler.ProblemStatistics)
 	}
 
 	problemEditorRoute := ginServer.Group("/problem")
@@ -71,6 +72,7 @@ func InitSolutionRoute(ginServer *gin.Engine) {
 		solutionEditorRoute.POST("/", handler.SolutionAdd)
 		solutionEditorRoute.PUT("/", handler.SolutionModify)
 		solutionEditorRoute.DELETE("/:id", handler.SolutionRemove)
+		solutionEditorRoute.GET("/statistics", handler.SolutionStatistics)
 	}
 }
 

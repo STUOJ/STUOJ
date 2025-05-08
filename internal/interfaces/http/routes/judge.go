@@ -24,6 +24,7 @@ func InitRecordRoute(ginServer *gin.Engine) {
 		recordPublicRoute.GET("/", handler.RecordList)
 		recordPublicRoute.GET("/:id", handler.RecordInfo)
 		recordPublicRoute.GET("/ac/user", handler.SelectACUsers)
+		recordPublicRoute.GET("/statistics", handler.RecordStatistics)
 	}
 
 	recordAdminRoute := ginServer.Group("/record")
@@ -45,5 +46,6 @@ func InitLanguageRoute(ginServer *gin.Engine) {
 		languageAdminRouter.Use(middlewares.TokenAuthAdmin())
 
 		languageAdminRouter.PUT("/update", handler.UpdateLanguage)
+		languageAdminRouter.GET("/statistics", handler.LanguageStatistics)
 	}
 }

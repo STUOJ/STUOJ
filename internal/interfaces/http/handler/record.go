@@ -72,3 +72,18 @@ func SelectACUsers(c *gin.Context) {
 
 	c.JSON(http.StatusOK, model.RespOk("OK", users))
 }
+
+func RecordStatistics(c *gin.Context) {
+	reqUser := model.NewReqUser(c)
+	params := request.SubmissionStatisticsParams{}
+	if err := c.ShouldBindQuery(&params); err != nil {
+		c.Error(&errors.ErrValidation)
+		return
+	}
+	res, err := record.Statistics(params, *reqUser)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+	c.JSON(http.StatusOK, model.RespOk("OK", res))
+}

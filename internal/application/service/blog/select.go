@@ -100,3 +100,13 @@ func Select(params request.QueryBlogParams, reqUser model.ReqUser) (BlogPage, er
 	}
 	return resp, nil
 }
+
+func Statistics(params request.BlogStatisticsParams, reqUser model.ReqUser) (response.StatisticsRes, error) {
+	query_ := params2Query(params.QueryBlogParams)
+	query_.GroupBy = params.GroupBy
+	resp, err := blog.Query.GroupCount(query_)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}

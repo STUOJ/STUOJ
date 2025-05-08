@@ -124,3 +124,13 @@ func SelectRoleById(id int64) (entity.Role, error) {
 
 	return u0.Role.Value(), nil
 }
+
+func Statistics(params request.UserStatisticsParams, reqUser model.ReqUser) (response.StatisticsRes, error) {
+	qc := params2Query(params.QueryUserParams)
+	qc.GroupBy = params.GroupBy
+	resp, err := user.Query.GroupCount(qc)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}

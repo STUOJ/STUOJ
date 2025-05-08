@@ -132,3 +132,19 @@ func HistoryListOfProblem(c *gin.Context) {
 
 	c.JSON(http.StatusOK, model.RespOk("OK", hs))
 }
+
+func ProblemStatistics(c *gin.Context) {
+	reqUser := model.NewReqUser(c)
+	params := request.ProblemStatisticsParams{}
+	if err := c.ShouldBindQuery(&params); err != nil {
+		c.Error(&errors.ErrValidation)
+		return
+	}
+
+	res, err := problem.Statistics(params, *reqUser)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+	c.JSON(http.StatusOK, model.RespOk("OK", res))
+}

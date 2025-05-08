@@ -84,3 +84,13 @@ func Select(params request.QueryProblemParams, reqUser model.ReqUser) (ProblemPa
 	res.Page.Total = total
 	return res, nil
 }
+
+func Statistics(params request.ProblemStatisticsParams, reqUser model.ReqUser) (response.StatisticsRes, error) {
+	problemQueryContext := params2Query(params.QueryProblemParams)
+	problemQueryContext.GroupBy = params.GroupBy
+	resp, err := problem.Query.GroupCount(problemQueryContext)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}

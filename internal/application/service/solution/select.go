@@ -54,3 +54,13 @@ func SelectById(id int64, reqUser model.ReqUser) (response.SolutionData, error) 
 	resp = domain2Resp(s0)
 	return resp, nil
 }
+
+func Statistics(params request.SolutionStatisticsParams, reqUser model.ReqUser) (response.StatisticsRes, error) {
+	qc := params2Query(params.QuerySolutionParams)
+	qc.GroupBy = params.GroupBy
+	resp, err := solution.Query.GroupCount(qc)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}

@@ -34,6 +34,7 @@ func InitUserRoute(ginServer *gin.Engine) {
 		userAdminRoute.GET("/", handler.UserList)
 		userAdminRoute.POST("/", handler.UserAdd)
 		userAdminRoute.PUT("/role", handler.UserModifyRole)
+		userAdminRoute.GET("/statistics", handler.UserStatistics)
 
 	}
 

@@ -74,3 +74,22 @@ func CommentModify(c *gin.Context) {
 	// 返回结果
 	c.JSON(http.StatusOK, model.RespOk("修改成功", nil))
 }
+
+func CommentStatistics(c *gin.Context) {
+	reqUser := model.NewReqUser(c)
+	params := request.CommentStatisticsParams{}
+	// 参数绑定
+	err := c.ShouldBindQuery(&params)
+	if err != nil {
+		c.Error(&errors.ErrValidation)
+		return
+	}
+	res, err := comment.Statistics(params, *reqUser)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	// 返回结果
+	c.JSON(http.StatusOK, model.RespOk("查询成功", res))
+}

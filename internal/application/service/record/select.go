@@ -124,3 +124,13 @@ func SelectAcUsers(pid int64, size int64) ([]response.UserSimpleData, error) {
 	}
 	return resp, nil
 }
+
+func Statistics(params request.SubmissionStatisticsParams, reqUser model.ReqUser) (response.StatisticsRes, error) {
+	qc := params2Query(params.QuerySubmissionParams)
+	qc.GroupBy = params.GroupBy
+	resp, err := submission.Query.GroupCount(qc)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
