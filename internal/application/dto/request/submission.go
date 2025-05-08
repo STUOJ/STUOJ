@@ -12,3 +12,8 @@ type QuerySubmissionParams struct {
 	Status    *string `form:"status,omitempty"`
 	User      *string `form:"user,omitempty"`
 }
+
+type SubmissionStatisticsParams struct {
+	QuerySubmissionParams
+	GroupBy string `form:"group_by"`
+}

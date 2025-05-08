@@ -13,6 +13,11 @@ type QueryBlogParams struct {
 	User      *string `form:"user,omitempty"`
 }
 
+type BlogStatisticsParams struct {
+	QueryBlogParams
+	GroupBy string `form:"group_by"`
+}
+
 type CreateBlogReq struct {
 	Content   string `json:"content"`
 	ProblemId int64  `json:"problem_id,omitempty"`

@@ -6,6 +6,11 @@ type QueryLanguageParams struct {
 	Status  *string `form:"status,omitempty"`
 }
 
+type LanguageStatisticsParams struct {
+	QueryLanguageParams
+	GroupBy string `form:"group_by"`
+}
+
 type UpdateLanguageReq struct {
 	Id     int64  `json:"id"`
 	MapId  int64  `json:"map_id,omitempty"`

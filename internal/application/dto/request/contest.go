@@ -1,12 +1,17 @@
 package request
 
 type QueryContestParams struct {
-	EndTime   string `form:"end-time,omitempty"`
-	Format    string `form:"format,omitempty"`
-	Page      int64  `form:"page,omitempty"`
-	Size      int64  `form:"size,omitempty"`
-	StartTime string `form:"start-time,omitempty"`
-	Status    string `form:"status,omitempty"`
+	EndTime   *string `form:"end-time,omitempty"`
+	Format    *string `form:"format,omitempty"`
+	Page      *int64  `form:"page,omitempty"`
+	Size      *int64  `form:"size,omitempty"`
+	StartTime *string `form:"start-time,omitempty"`
+	Status    *string `form:"status,omitempty"`
+}
+
+type ContestStatisticsParams struct {
+	QueryContestParams
+	GroupBy string `form:"group-by,omitempty"`
 }
 
 type CreateContestReq struct {

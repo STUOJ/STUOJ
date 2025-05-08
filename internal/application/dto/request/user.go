@@ -15,6 +15,11 @@ type QueryUserParams struct {
 	Email     *string `form:"email,omitempty"`
 }
 
+type UserStatisticsParams struct {
+	QueryUserParams
+	GroupBy string `form:"group_by"`
+}
+
 type UserRegisterReq struct {
 	Email      string `json:"email"`
 	Password   string `json:"password"`

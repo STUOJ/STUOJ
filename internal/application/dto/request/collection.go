@@ -13,6 +13,11 @@ type QueryCollectionParams struct {
 	User      *string `form:"user,omitempty"`
 }
 
+type CollectionStatisticsParams struct {
+	QueryCollectionParams
+	GroupBy string `form:"group_by"`
+}
+
 type CreateCollectionReq struct {
 	Description string `json:"description"`
 	Status      int64  `json:"status"`

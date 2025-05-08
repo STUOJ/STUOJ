@@ -6,6 +6,12 @@ type QuerySolutionParams struct {
 	Problem  *string `json:"problem,omitempty"`
 	Size     *int64  `json:"size,omitempty"`
 }
+
+type SolutionStatisticsParams struct {
+	QuerySolutionParams
+	GroupBy string `form:"group_by"`
+}
+
 type CreateSolutionReq struct {
 	LanguageId int64  `json:"language_id"`
 	ProblemId  int64  `json:"problem_id"`

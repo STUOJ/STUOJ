@@ -12,6 +12,11 @@ type QueryCommentParams struct {
 	Status    *string `form:"status,omitempty"`
 }
 
+type CommentStatisticsParams struct {
+	QueryCommentParams
+	GroupBy string `form:"group_by"`
+}
+
 type CreateCommentReq struct {
 	BlogId  int64  `json:"blog_id"`
 	Content string `json:"content"`

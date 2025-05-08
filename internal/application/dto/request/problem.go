@@ -14,6 +14,11 @@ type QueryProblemParams struct {
 	User       *int64  `form:"user,omitempty"`
 }
 
+type ProblemStatisticsParams struct {
+	QueryProblemParams
+	GroupBy string `form:"group_by"`
+}
+
 type QueryOneProblemParams struct {
 	Solutions *bool `form:"solutions,omitempty"`
 	Testcases *bool `form:"testcases,omitempty"`
