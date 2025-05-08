@@ -23,6 +23,7 @@ func InitRoute() error {
 	// 使用中间件
 	ginServer.Use(middlewares2.TokenGetInfo())
 	ginServer.Use(middlewares2.ErrorHandler())
+	ginServer.Use(middlewares2.QueryCleaner())
 
 	// 初始化路由
 
