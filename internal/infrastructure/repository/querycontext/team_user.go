@@ -6,8 +6,8 @@ import (
 	"STUOJ/internal/model/option"
 )
 
-//go:generate go run ../../../../dev/gen/querycontext_gen.go TeamUserQuery
-type TeamUserQuery struct {
+//go:generate go run ../../../../dev/gen/querycontext_gen.go TeamUserQueryContext
+type TeamUserQueryContext struct {
 	TeamId model.FieldList[int64]
 	UserId model.FieldList[int64]
 	option.QueryParams
@@ -15,7 +15,7 @@ type TeamUserQuery struct {
 }
 
 // applyFilter 应用团队成员查询过滤器
-func (query *TeamUserQuery) applyFilter(options option.Options) option.Options {
+func (query *TeamUserQueryContext) applyFilter(options option.Options) option.Options {
 	filters := options.GetFilters()
 	if query.TeamId.Exist() {
 		filters.Add(field2.TeamId, option.OpIn, query.TeamId.Value())
