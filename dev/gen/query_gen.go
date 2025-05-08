@@ -90,8 +90,9 @@ func (*_Query) SelectByIds(context querycontext.{{.EntityName}}QueryContext, opt
 	res{{.EntityName}}s := make(map[int64]{{.EntityName}}, len(res))
 	resMaps := make(map[int64]map[string]any, len(res))
 	for _, v := range res {
-		res{{.EntityName}}s[v["id"].(int64)] = Dto(v)
-		resMaps[v["id"].(int64)] = v
+		id := int64(v["id"].(uint64))
+		res{{.EntityName}}s[id] = Dto(v)
+		resMaps[id] = v
 	}
 	return res{{.EntityName}}s, resMaps, nil
 }
