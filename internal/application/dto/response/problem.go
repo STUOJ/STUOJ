@@ -104,7 +104,7 @@ func Map2TagIds(p map[string]any) TagIds {
 	if p["problem_tag_id"] == nil {
 		return TagIds{TagIds: []int64{}}
 	}
-	tagIds, _ := utils.StringToInt64Slice(p["problem_tag_id"].(string))
+	tagIds, _ := utils.StringToInt64Slice(string(p["problem_tag_id"].([]uint8)))
 	return TagIds{
 		TagIds: tagIds,
 	}

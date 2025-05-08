@@ -32,7 +32,7 @@ func SelectById(id int64, reqUser model.ReqUser) (response.ProblemQueryData, err
 	res.ProblemUserScore = response.Map2ProblemUserScore(problemMap)
 	res.TagIds = response.Map2TagIds(problemMap)
 
-	userIds, err := utils.StringToInt64Slice(problemMap["problem_user_id"].(string))
+	userIds, err := utils.StringToInt64Slice(string(problemMap["problem_user_id"].([]uint8)))
 	if err != nil {
 		return response.ProblemQueryData{}, errors.ErrInternalServer.WithMessage("获取题目修改者id失败")
 	}
