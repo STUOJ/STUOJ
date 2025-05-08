@@ -7,9 +7,11 @@ package main
 
 import (
 	"STUOJ/pkg/utils"
+	"bytes"
 	"flag"
 	"fmt"
 	"go/ast"
+	"go/format"
 	"go/parser"
 	"go/token"
 	"html/template"
@@ -248,16 +250,23 @@ func main() {
 		Imports:    imports,
 	}
 
-	outputFile := filepath.Join(outputDir, fmt.Sprintf("generated_%s_store.go", utils.ToSnakeCase(structName)))
-	field, err := os.Create(outputFile)
+	var buf bytes.Buffer
+
+	err = t.Execute(&buf, data)
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer field.Close()
 
-	err = t.Execute(field, data)
+	// 格式化代码
+	formattedCode, err := format.Source(buf.Bytes())
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("原始代码:\n%s\n", buf.String())
+	}
+
+	outputFile := filepath.Join(outputDir, fmt.Sprintf("generated_%s_store.go", utils.ToSnakeCase(structName)))
+	// 写入文件
+	if err := os.WriteFile(outputFile, formattedCode, 0644); err != nil {
+		log.Fatalf("写入文件 %s 失败: %v", outputFile, err)
 	}
 
 	fmt.Printf("生成成功: %s\n", outputFile)
