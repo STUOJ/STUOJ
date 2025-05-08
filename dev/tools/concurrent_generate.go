@@ -214,6 +214,10 @@ func executeTask(task GenerateTask, verbose bool) GenerateResult {
 	result.TimeTaken = time.Since(startTime)
 	result.Output = output.String()
 
+	if verbose {
+		fmt.Printf("任务执行完成，耗时: %v\n", result.TimeTaken)
+	}
+
 	if err != nil {
 		result.Success = false
 		result.Error = fmt.Errorf("命令执行失败: %w", err)
