@@ -114,8 +114,8 @@ func Dto(data map[string]any) {{.StructName}} {
 
 func Dtos(datas []map[string]any) []{{.StructName}} {
 	var entitys = make([]{{.StructName}}, len(datas))
-	for _, e := range datas {
-		entitys = append(entitys, Dto(e))
+	for i, e := range datas {
+		entitys[i] = Dto(e)
 	}
 	return entitys
 }
