@@ -6,7 +6,7 @@ import (
 
 // ContestStatus 比赛状态: 1 作废, 2 隐藏, 3 公开
 //
-//go:generate go run ../../../../dev/gen/enum_valid.go ContestStatus
+//go:generate go run ../../../../dev/gen/enum_valid.go
 type ContestStatus uint8
 
 const (
@@ -30,7 +30,7 @@ func (s ContestStatus) String() string {
 
 // ContestFormat 比赛赛制: 1 ACM, 2 OI, 3 IOI
 //
-//go:generate go run ../../../../dev/gen/enum_valid.go ContestFormat
+//go:generate go run ../../../../dev/gen/enum_valid.go
 type ContestFormat uint8
 
 const (

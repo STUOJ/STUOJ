@@ -4,7 +4,7 @@ import "time"
 
 // BlogStatus 状态：1 删除, 2 草稿, 3 公开, 4 公告
 //
-//go:generate go run ../../../../dev/gen/enum_valid.go BlogStatus
+//go:generate go run ../../../../dev/gen/enum_valid.go
 type BlogStatus uint8
 
 const (

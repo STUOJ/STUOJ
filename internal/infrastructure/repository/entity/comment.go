@@ -4,7 +4,7 @@ import "time"
 
 // CommentStatus 状态：1 删除, 2 公开
 //
-//go:generate go run ../../../../dev/gen/enum_valid.go CommentStatus
+//go:generate go run ../../../../dev/gen/enum_valid.go
 type CommentStatus uint8
 
 const (

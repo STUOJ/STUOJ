@@ -6,7 +6,7 @@ import (
 
 // CollectionStatus 题单状态: 1 删除, 2 私有, 3 公开
 //
-//go:generate go run ../../../../dev/gen/enum_valid.go CollectionStatus
+//go:generate go run ../../../../dev/gen/enum_valid.go
 type CollectionStatus uint8
 
 const (

@@ -6,7 +6,7 @@ import (
 
 // Role 角色：0 访客，1 用户，2 编辑，3 管理，4 站长
 //
-//go:generate go run ../../../../dev/gen/enum_valid.go Role
+//go:generate go run ../../../../dev/gen/enum_valid.go
 type Role uint8
 
 const (

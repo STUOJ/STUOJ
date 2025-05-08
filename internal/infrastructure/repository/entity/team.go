@@ -4,7 +4,7 @@ import "time"
 
 // TeamStatus 团队状态: 1 禁止, 2 无效, 3 有效
 //
-//go:generate go run ../../../../dev/gen/enum_valid.go TeamStatus
+//go:generate go run ../../../../dev/gen/enum_valid.go
 type TeamStatus uint8
 
 const (
