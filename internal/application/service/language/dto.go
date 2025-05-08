@@ -13,7 +13,7 @@ func params2Model(params request.QueryLanguageParams) (query querycontext.Langua
 	if params.Order != nil && params.OrderBy != nil {
 		query.Sort = option.NewSortQuery(*params.OrderBy, *params.Order)
 	}
-	if params.Status != nil {
+	if params.Status != nil && *params.Status != "" {
 		if statusIds, err := utils.StringToUint8Slice(*params.Status); err == nil {
 			query.Status.Set(statusIds)
 		}

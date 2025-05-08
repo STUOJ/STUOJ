@@ -9,17 +9,17 @@ import (
 
 func params2Query(params request.QueryHistoryParams) querycontext.HistoryQueryContext {
 	query := querycontext.HistoryQueryContext{}
-	if params.ProblemId != nil {
+	if params.ProblemId != nil && *params.ProblemId != "" {
 		if problemIds, err := utils.StringToInt64Slice(*params.ProblemId); err == nil {
 			query.ProblemId.Add(problemIds...)
 		}
 	}
-	if params.UserId != nil {
+	if params.UserId != nil && *params.UserId != "" {
 		if userIds, err := utils.StringToInt64Slice(*params.UserId); err == nil {
 			query.UserId.Add(userIds...)
 		}
 	}
-	if params.Operation != nil {
+	if params.Operation != nil && *params.Operation != "" {
 		if operations, err := utils.StringToInt8Slice(*params.Operation); err == nil {
 			query.Operation.Add(operations...)
 		}

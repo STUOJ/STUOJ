@@ -10,7 +10,7 @@ import (
 )
 
 func params2Query(params request.QueryTestcaseParams) (query querycontext.TestcaseQueryContext) {
-	if params.Problem != nil {
+	if params.Problem != nil && *params.Problem != "" {
 		if ids, err := utils.StringToInt64Slice(*params.Problem); err == nil {
 			query.ProblemId.Set(ids)
 		}

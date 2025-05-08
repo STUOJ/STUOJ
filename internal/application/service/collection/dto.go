@@ -23,16 +23,16 @@ func params2Model(params request.QueryCollectionParams) (query querycontext.Coll
 			query.StartTime.Set(t)
 		}
 	}
-	if params.Title != nil {
+	if params.Title != nil && *params.Title != "" {
 		query.Title.Set(*params.Title)
 	}
-	if params.User != nil {
+	if params.User != nil && *params.User != "" {
 		ids, err := utils.StringToInt64Slice(*params.User)
 		if err == nil {
 			query.UserId.Set(ids)
 		}
 	}
-	if params.Status != nil {
+	if params.Status != nil && *params.Status != "" {
 		ids, err := utils.StringToInt64Slice(*params.Status)
 		if err == nil {
 			query.Status.Set(ids)
@@ -45,7 +45,7 @@ func params2Model(params request.QueryCollectionParams) (query querycontext.Coll
 		query.Sort = option.NewSortQuery(*params.Order, *params.OrderBy)
 	}
 
-	if params.Problem != nil {
+	if params.Problem != nil && *params.Problem != "" {
 		problemIds, err := utils.StringToInt64Slice(*params.Problem)
 		if err == nil {
 			collection.WhereProblem(problemIds)(&query)

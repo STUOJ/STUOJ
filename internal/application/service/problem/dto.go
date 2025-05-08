@@ -11,17 +11,17 @@ import (
 )
 
 func params2Query(params request.QueryProblemParams) (query querycontext.ProblemQueryContext) {
-	if params.Difficulty != nil {
+	if params.Difficulty != nil && *params.Difficulty != "" {
 		if difficulty, err := utils.StringToUint8Slice(*params.Difficulty); err == nil {
 			query.Difficulty.Add(difficulty...)
 		}
 	}
-	if params.Status != nil {
+	if params.Status != nil && *params.Status != "" {
 		if status, err := utils.StringToUint8Slice(*params.Status); err == nil {
 			query.Status.Add(status...)
 		}
 	}
-	if params.Title != nil {
+	if params.Title != nil && *params.Title != "" {
 		query.Title.Set(*params.Title)
 	}
 	if params.EndTime != nil {
@@ -42,7 +42,7 @@ func params2Query(params request.QueryProblemParams) (query querycontext.Problem
 	if params.Order != nil && params.OrderBy != nil {
 		query.Sort = option.NewSortQuery(*params.Order, *params.OrderBy)
 	}
-	if params.Tag != nil {
+	if params.Tag != nil && *params.Tag != "" {
 		if tag, err := utils.StringToInt64Slice(*params.Tag); err == nil {
 			problem.WhereTag(tag)(&query)
 		}

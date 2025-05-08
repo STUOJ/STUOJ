@@ -26,7 +26,7 @@ func params2Query(params request.QueryTagParams) querycontext.TagQueryContext {
 	}
 
 	// 设置名称查询
-	if params.Name != nil {
+	if params.Name != nil && *params.Name != "" {
 		qc.Name.Add(*params.Name)
 	}
 
