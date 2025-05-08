@@ -53,7 +53,7 @@ func (store *_{{.StructName}}Store) Select(options *option.QueryOptions) ([]map[
 	err := repository.Db.Transaction(func(tx *gorm.DB) error {
 		tx = tx.Model(&entity.{{.StructName}}{})
 		tx = where(tx)
-		return tx.Scan(&entities).Error
+		return tx.Find(&entities).Error
 	})
 	return entities, err
 }
@@ -65,7 +65,7 @@ func (store *_{{.StructName}}Store) SelectOne(options *option.QueryOptions) (map
 	err := repository.Db.Transaction(func(tx *gorm.DB) error {
 		tx = tx.Model(&entity.{{.StructName}}{})
 		tx = where(tx)
-		return tx.Scan(&entity_).Error
+		return tx.First(&entity_).Error
 	})
 	return entity_, err
 }
