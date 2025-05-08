@@ -43,11 +43,6 @@ func (v {{$typeName}}) ValidValues() []int {
 // main 是程序的入口，根据命令行参数生成枚举常量的Go代码文件。
 // 它解析当前目录的AST，收集指定类型的常量值，并生成对应的枚举结构。
 func main() {
-	// 检查命令行参数数量，确保提供了类型名和包名，否则终止程序
-	if len(os.Args) < 2 {
-		log.Fatal("Usage: go run generate_const.go <type-name>")
-	}
-	typeName := os.Args[1]
 
 	fset := token.NewFileSet()
 	// 解析当前目录下的Go源文件，收集所有包和文件的信息，包含注释以便后续处理
@@ -101,8 +96,7 @@ func main() {
 	// 加载并验证模板，准备生成代码所需的数据结构
 	t := template.Must(template.New("enum").Parse(tmpl))
 	data := map[string]interface{}{
-		"TypeName": typeName,
-		"Values":   values,
+		"Values": values,
 	}
 
 	var buf bytes.Buffer
