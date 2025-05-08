@@ -37,7 +37,7 @@ func params2Query(params request.QueryBlogParams) (query querycontext.BlogQueryC
 	}
 	if params.Status != nil {
 		ids, err := utils.StringToUint8Slice(*params.Status)
-		if err != nil {
+		if err == nil {
 			query.Status.Set(ids)
 		}
 	}

@@ -39,13 +39,13 @@ func params2Query(params request.QueryUserParams) (query querycontext.UserQueryC
 	}
 	if params.Id != nil {
 		ids, err := utils.StringToInt64Slice(*params.Id)
-		if err != nil {
+		if err == nil {
 			query.Id.Set(ids)
 		}
 	}
 	if params.Role != nil {
 		ids, err := utils.StringToUint8Slice(*params.Role)
-		if err != nil {
+		if err == nil {
 			query.Role.Set(ids)
 		}
 	}

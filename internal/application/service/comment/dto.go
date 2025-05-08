@@ -36,7 +36,7 @@ func params2Query(params request.QueryCommentParams) (query querycontext.Comment
 	}
 	if params.Status != nil {
 		ids, err := utils.StringToInt64Slice(*params.Status)
-		if err != nil {
+		if err == nil {
 			query.Status.Set(ids)
 		}
 	}
