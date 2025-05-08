@@ -9,7 +9,7 @@ type QueryContext interface {
 type QueryContextOption func(QueryContext) QueryContext
 
 type QueryParams struct {
-	GroupBy      GroupField
+	GroupBy      string
 	ExtraFilters Filters
 	Page         Pagination
 	Sort         Sort

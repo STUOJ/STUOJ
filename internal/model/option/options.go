@@ -46,8 +46,10 @@ type GroupCountOptions struct {
 	Filters Filters
 }
 
-func NewGroupCountOptions() *GroupCountOptions {
-	return &GroupCountOptions{}
+func NewGroupCountOptions(groupBy GroupField) *GroupCountOptions {
+	return &GroupCountOptions{
+		GroupBy: groupBy,
+	}
 }
 
 func (g *GroupCountOptions) GenerateQuery() func(*gorm.DB) *gorm.DB {
