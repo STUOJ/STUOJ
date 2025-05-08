@@ -87,7 +87,7 @@ type ProblemUserScore struct {
 
 func Map2ProblemUserScore(p map[string]any) ProblemUserScore {
 	var score ProblemUserScore
-	score.HasUserSubmission = p["has_user_submission"].(bool)
+	score.HasUserSubmission = p["has_user_submission"].(int64) == 1
 	if p["user_score"] != nil {
 		score.UserScore = p["user_score"].(int64)
 	}

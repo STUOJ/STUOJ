@@ -29,7 +29,7 @@ const (
 func QueryTag() option.QueryContextOption {
 	return func(pqm option.QueryContext) option.QueryContext {
 		field := pqm.GetField()
-		selector := option.NewSelector(QueryProblemTag, option.OpExtra)
+		selector := option.NewSelector(QueryProblemTag)
 		field.AddSelect(*selector)
 		return pqm
 	}
@@ -42,7 +42,7 @@ const (
 func QueryUser() option.QueryContextOption {
 	return func(pqm option.QueryContext) option.QueryContext {
 		field := pqm.GetField()
-		selector := option.NewSelector(QueryProblemUser, option.OpExtra)
+		selector := option.NewSelector(QueryProblemUser)
 		field.AddSelect(*selector)
 		return pqm
 	}

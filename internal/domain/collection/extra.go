@@ -11,7 +11,7 @@ const (
 func QueryProblemId() option.QueryContextOption {
 	return func(pqm option.QueryContext) option.QueryContext {
 		field := pqm.GetField()
-		selector := option.NewSelector(QueryCollectionProblem, option.OpExtra)
+		selector := option.NewSelector(QueryCollectionProblem)
 		field.AddSelect(*selector)
 		return pqm
 	}
@@ -24,7 +24,7 @@ const (
 func QueryUserId() option.QueryContextOption {
 	return func(pqm option.QueryContext) option.QueryContext {
 		field := pqm.GetField()
-		selector := option.NewSelector(QueryCollectionUser, option.OpExtra)
+		selector := option.NewSelector(QueryCollectionUser)
 		field.AddSelect(*selector)
 		return pqm
 	}
