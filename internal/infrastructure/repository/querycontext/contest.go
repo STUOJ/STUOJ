@@ -1,6 +1,7 @@
 package querycontext
 
 import (
+	"STUOJ/internal/infrastructure/repository/entity"
 	"STUOJ/internal/infrastructure/repository/entity/field"
 	"STUOJ/internal/model"
 	"STUOJ/internal/model/option"
@@ -12,8 +13,8 @@ type ContestQueryContext struct {
 	Id          model.FieldList[int64]
 	UserId      model.FieldList[int64]
 	Title       model.Field[string]
-	Status      model.FieldList[int8]
-	Format      model.FieldList[int8]
+	Status      model.FieldList[entity.ContestStatus]
+	Format      model.FieldList[entity.ContestFormat]
 	TeamSize    model.FieldList[int8]
 	StartTime   model.Field[time.Time]
 	EndTime     model.Field[time.Time]

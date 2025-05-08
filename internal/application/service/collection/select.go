@@ -76,9 +76,9 @@ func Select(params request.QueryCollectionParams, reqUser model.ReqUser) (Collec
 	var res CollectionPage
 	query_ := params2Model(params)
 	if !query_.Status.Exist() {
-		query_.Status.Set([]int64{int64(entity.CollectionPublic)})
+		query_.Status.Add(entity.CollectionPublic)
 	}
-	if slices.Contains(query_.Status.Value(), int64(entity.CollectionPrivate)) && reqUser.Role < entity.RoleAdmin {
+	if slices.Contains(query_.Status.Value(), entity.CollectionPrivate) && reqUser.Role < entity.RoleAdmin {
 		query_.UserId.Set([]int64{int64(reqUser.Id)})
 	}
 	query_.Field = *query.CollectionListItemField

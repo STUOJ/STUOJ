@@ -1,6 +1,7 @@
 package querycontext
 
 import (
+	"STUOJ/internal/infrastructure/repository/entity"
 	"STUOJ/internal/infrastructure/repository/entity/field"
 	"STUOJ/internal/model"
 	"STUOJ/internal/model/option"
@@ -12,7 +13,7 @@ type UserQueryContext struct {
 	Id        model.FieldList[int64]
 	Username  model.Field[string]
 	Email     model.Field[string]
-	Role      model.FieldList[uint8]
+	Role      model.FieldList[entity.Role]
 	StartTime model.Field[time.Time]
 	EndTime   model.Field[time.Time]
 	option.QueryParams

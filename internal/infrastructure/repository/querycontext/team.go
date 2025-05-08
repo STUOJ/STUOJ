@@ -1,6 +1,7 @@
 package querycontext
 
 import (
+	"STUOJ/internal/infrastructure/repository/entity"
 	"STUOJ/internal/infrastructure/repository/entity/field"
 	"STUOJ/internal/model"
 	"STUOJ/internal/model/option"
@@ -12,7 +13,7 @@ type TeamQueryContext struct {
 	UserId    model.FieldList[int64]
 	ContestId model.FieldList[int64]
 	Name      model.Field[string]
-	Status    model.FieldList[int8]
+	Status    model.FieldList[entity.TeamStatus]
 	option.QueryParams
 	Field field.TeamField
 }

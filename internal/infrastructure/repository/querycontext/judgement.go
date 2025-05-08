@@ -1,6 +1,7 @@
 package querycontext
 
 import (
+	"STUOJ/internal/infrastructure/repository/entity"
 	"STUOJ/internal/infrastructure/repository/entity/field"
 	"STUOJ/internal/model"
 	"STUOJ/internal/model/option"
@@ -11,7 +12,7 @@ type JudgementQueryContext struct {
 	Id           model.FieldList[int64]
 	SubmissionId model.FieldList[int64]
 	TestcaseId   model.FieldList[int64]
-	Status       model.FieldList[int64]
+	Status       model.FieldList[entity.JudgeStatus]
 	option.QueryParams
 	Field field.JudgementField
 }

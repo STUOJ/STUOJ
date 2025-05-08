@@ -4,9 +4,9 @@ import (
 	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/application/dto/response"
 	"STUOJ/internal/domain/language"
+	"STUOJ/internal/infrastructure/repository/dao"
 	"STUOJ/internal/infrastructure/repository/querycontext"
 	"STUOJ/internal/model/option"
-	"STUOJ/pkg/utils"
 )
 
 func params2Model(params request.QueryLanguageParams) (query querycontext.LanguageQueryContext) {
@@ -14,8 +14,8 @@ func params2Model(params request.QueryLanguageParams) (query querycontext.Langua
 		query.Sort = option.NewSortQuery(*params.OrderBy, *params.Order)
 	}
 	if params.Status != nil {
-		if statusIds, err := utils.StringToUint8Slice(*params.Status); err == nil {
-			query.Status.Set(statusIds)
+		if status, err := dao.StringToLanguageStatusSlice(*params.Status); err == nil {
+			query.Status.Set(status)
 		}
 	}
 	return query

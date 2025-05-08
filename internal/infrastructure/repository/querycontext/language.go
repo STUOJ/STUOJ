@@ -1,6 +1,7 @@
 package querycontext
 
 import (
+	"STUOJ/internal/infrastructure/repository/entity"
 	"STUOJ/internal/infrastructure/repository/entity/field"
 	"STUOJ/internal/model"
 	"STUOJ/internal/model/option"
@@ -12,7 +13,7 @@ type LanguageQueryContext struct {
 	Name   model.Field[string]
 	Serial model.FieldList[uint16]
 	MapId  model.FieldList[uint32]
-	Status model.FieldList[uint8]
+	Status model.FieldList[entity.LanguageStatus]
 	option.QueryParams
 	Field field.LanguageField
 }

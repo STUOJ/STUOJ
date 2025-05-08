@@ -4,6 +4,7 @@ import (
 	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/application/dto/response"
 	"STUOJ/internal/domain/collection"
+	"STUOJ/internal/infrastructure/repository/dao"
 	"STUOJ/internal/infrastructure/repository/querycontext"
 	"STUOJ/internal/model/option"
 	"STUOJ/pkg/utils"
@@ -33,16 +34,16 @@ func params2Model(params request.QueryCollectionParams) (query querycontext.Coll
 		}
 	}
 	if params.Status != nil {
-		ids, err := utils.StringToInt64Slice(*params.Status)
+		status, err := dao.StringToCollectionStatusSlice(*params.Status)
 		if err == nil {
-			query.Status.Set(ids)
+			query.Status.Set(status)
 		}
 	}
 	if params.Page != nil && params.Size != nil {
 		query.Page = option.NewPagination(int64(*params.Page), int64(*params.Size))
 	}
 	if params.Order != nil && params.OrderBy != nil {
-		query.Sort = option.NewSortQuery(*params.Order, *params.OrderBy)
+		query.Sort = option.NewSortQuery(*params.OrderBy, *params.Order)
 	}
 
 	if params.Problem != nil {

@@ -1,6 +1,7 @@
 package querycontext
 
 import (
+	"STUOJ/internal/infrastructure/repository/entity"
 	"STUOJ/internal/infrastructure/repository/entity/field"
 	"STUOJ/internal/model"
 	"STUOJ/internal/model/option"
@@ -16,7 +17,7 @@ type HistoryQueryContext struct {
 	Difficulty model.FieldList[int64]
 	StartTime  model.Field[time.Time]
 	EndTime    model.Field[time.Time]
-	Operation  model.FieldList[int8]
+	Operation  model.FieldList[entity.Operation]
 	option.QueryParams
 	Field field.HistoryField
 }

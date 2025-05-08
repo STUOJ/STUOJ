@@ -1,6 +1,7 @@
 package querycontext
 
 import (
+	"STUOJ/internal/infrastructure/repository/entity"
 	"STUOJ/internal/infrastructure/repository/entity/field"
 	"STUOJ/internal/model"
 	"STUOJ/internal/model/option"
@@ -13,7 +14,7 @@ type BlogQueryContext struct {
 	UserId    model.FieldList[int64]
 	ProblemId model.FieldList[int64]
 	Title     model.Field[string]
-	Status    model.FieldList[uint8]
+	Status    model.FieldList[entity.BlogStatus]
 	StartTime model.Field[time.Time]
 	EndTime   model.Field[time.Time]
 	option.QueryParams

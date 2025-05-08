@@ -1,6 +1,7 @@
 package querycontext
 
 import (
+	"STUOJ/internal/infrastructure/repository/entity"
 	"STUOJ/internal/infrastructure/repository/entity/field"
 	"STUOJ/internal/model"
 	"STUOJ/internal/model/option"
@@ -12,7 +13,7 @@ type CollectionQueryContext struct {
 	Id        model.FieldList[int64]
 	Title     model.Field[string]
 	UserId    model.FieldList[int64]
-	Status    model.FieldList[int64]
+	Status    model.FieldList[entity.CollectionStatus]
 	StartTime model.Field[time.Time]
 	EndTime   model.Field[time.Time]
 	option.QueryParams

@@ -4,9 +4,9 @@ import (
 	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/application/dto/response"
 	"STUOJ/internal/domain/comment"
+	"STUOJ/internal/infrastructure/repository/dao"
 	"STUOJ/internal/infrastructure/repository/querycontext"
 	"STUOJ/internal/model/option"
-	"STUOJ/pkg/utils"
 	"time"
 )
 
@@ -35,9 +35,9 @@ func params2Query(params request.QueryCommentParams) (query querycontext.Comment
 		}
 	}
 	if params.Status != nil {
-		ids, err := utils.StringToInt64Slice(*params.Status)
+		status, err := dao.StringToCommentStatusSlice(*params.Status)
 		if err == nil {
-			query.Status.Set(ids)
+			query.Status.Set(status)
 		}
 	}
 	if params.User != nil {
@@ -50,7 +50,7 @@ func params2Query(params request.QueryCommentParams) (query querycontext.Comment
 		query.Page = option.NewPagination(*params.Page, *params.Size)
 	}
 	if params.Order != nil && params.OrderBy != nil {
-		query.Sort = option.NewSortQuery(*params.Order, *params.OrderBy)
+		query.Sort = option.NewSortQuery(*params.OrderBy, *params.Order)
 	}
 	return query
 }

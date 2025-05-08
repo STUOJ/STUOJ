@@ -2,6 +2,7 @@ package history
 
 import (
 	"STUOJ/internal/application/dto/request"
+	"STUOJ/internal/infrastructure/repository/dao"
 	"STUOJ/internal/infrastructure/repository/querycontext"
 	"STUOJ/internal/model/option"
 	"STUOJ/pkg/utils"
@@ -20,7 +21,7 @@ func params2Query(params request.QueryHistoryParams) querycontext.HistoryQueryCo
 		}
 	}
 	if params.Operation != nil {
-		if operations, err := utils.StringToInt8Slice(*params.Operation); err == nil {
+		if operations, err := dao.StringToOperationSlice(*params.Operation); err == nil {
 			query.Operation.Add(operations...)
 		}
 	}
@@ -28,7 +29,7 @@ func params2Query(params request.QueryHistoryParams) querycontext.HistoryQueryCo
 		query.Page = option.NewPagination(*params.Page, *params.Size)
 	}
 	if params.Order != nil && params.OrderBy != nil {
-		query.Sort = option.NewSortQuery(*params.Order, *params.OrderBy)
+		query.Sort = option.NewSortQuery(*params.OrderBy, *params.Order)
 	}
 	return query
 }

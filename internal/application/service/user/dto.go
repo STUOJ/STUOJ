@@ -4,6 +4,7 @@ import (
 	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/application/dto/response"
 	"STUOJ/internal/domain/user"
+	"STUOJ/internal/infrastructure/repository/dao"
 	"STUOJ/internal/infrastructure/repository/querycontext"
 	"STUOJ/internal/model/option"
 	"STUOJ/pkg/utils"
@@ -44,9 +45,9 @@ func params2Query(params request.QueryUserParams) (query querycontext.UserQueryC
 		}
 	}
 	if params.Role != nil {
-		ids, err := utils.StringToUint8Slice(*params.Role)
+		role, err := dao.StringToRoleSlice(*params.Role)
 		if err == nil {
-			query.Role.Set(ids)
+			query.Role.Set(role)
 		}
 	}
 	if params.Username != nil {
@@ -59,7 +60,7 @@ func params2Query(params request.QueryUserParams) (query querycontext.UserQueryC
 		query.Page = option.NewPagination(*params.Page, *params.Size)
 	}
 	if params.Order != nil && params.OrderBy != nil {
-		query.Sort = option.NewSortQuery(*params.Order, *params.OrderBy)
+		query.Sort = option.NewSortQuery(*params.OrderBy, *params.Order)
 	}
 	return query
 }

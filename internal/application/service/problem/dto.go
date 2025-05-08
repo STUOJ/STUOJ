@@ -4,6 +4,7 @@ import (
 	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/application/dto/response"
 	"STUOJ/internal/domain/problem"
+	"STUOJ/internal/infrastructure/repository/dao"
 	"STUOJ/internal/infrastructure/repository/querycontext"
 	"STUOJ/internal/model/option"
 	"STUOJ/pkg/utils"
@@ -12,13 +13,13 @@ import (
 
 func params2Query(params request.QueryProblemParams) (query querycontext.ProblemQueryContext) {
 	if params.Difficulty != nil {
-		if difficulty, err := utils.StringToUint8Slice(*params.Difficulty); err == nil {
+		if difficulty, err := dao.StringToDifficultySlice(*params.Difficulty); err == nil {
 			query.Difficulty.Add(difficulty...)
 		}
 	}
 	if params.Status != nil {
-		if status, err := utils.StringToUint8Slice(*params.Status); err == nil {
-			query.Status.Set(statuss)
+		if status, err := dao.StringToProblemStatusSlice(*params.Status); err == nil {
+			query.Status.Set(status)
 		}
 	}
 	if params.Title != nil {
@@ -40,7 +41,7 @@ func params2Query(params request.QueryProblemParams) (query querycontext.Problem
 		query.Page = option.NewPagination(*params.Page, *params.Size)
 	}
 	if params.Order != nil && params.OrderBy != nil {
-		query.Sort = option.NewSortQuery(*params.Order, *params.OrderBy)
+		query.Sort = option.NewSortQuery(*params.OrderBy, *params.Order)
 	}
 	if params.Tag != nil {
 		if tag, err := utils.StringToInt64Slice(*params.Tag); err == nil {

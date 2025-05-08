@@ -1,6 +1,7 @@
 package querycontext
 
 import (
+	"STUOJ/internal/infrastructure/repository/entity"
 	"STUOJ/internal/infrastructure/repository/entity/field"
 	"STUOJ/internal/model"
 	"STUOJ/internal/model/option"
@@ -12,8 +13,8 @@ type ProblemQueryContext struct {
 	Id         model.FieldList[int64]
 	Title      model.Field[string]
 	Source     model.Field[string]
-	Status     model.FieldList[uint8]
-	Difficulty model.FieldList[uint8]
+	Status     model.FieldList[entity.ProblemStatus]
+	Difficulty model.FieldList[entity.Difficulty]
 	StartTime  model.Field[time.Time]
 	EndTime    model.Field[time.Time]
 	option.QueryParams

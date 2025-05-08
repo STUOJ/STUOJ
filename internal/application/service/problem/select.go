@@ -59,8 +59,8 @@ func Select(params request.QueryProblemParams, reqUser model.ReqUser) (ProblemPa
 	problemQueryContext := params2Query(params)
 
 	if !problemQueryContext.Status.Exist() {
-		problemQueryContext.Status.Add(uint8(entity.ProblemPublic))
-	} else if len(slices.DeleteFunc(problemQueryContext.Status.Value(), func(s uint8) bool { return s == uint8(entity.ProblemPublic) })) > 0 && reqUser.Role < entity.RoleAdmin {
+		problemQueryContext.Status.Add(entity.ProblemPublic)
+	} else if len(slices.DeleteFunc(problemQueryContext.Status.Value(), func(s entity.ProblemStatus) bool { return s == entity.ProblemPublic })) > 0 && reqUser.Role < entity.RoleAdmin {
 		problem.WhereUser(reqUser.Id)(&problemQueryContext)
 	}
 
