@@ -27,7 +27,6 @@ import (
 	"STUOJ/internal/infrastructure/repository/entity"
 	"STUOJ/internal/model/option"
 	"gorm.io/gorm"
-	"fmt"
 	{{- range.Imports}}
 	"{{.}}"
 	{{- end}}
@@ -107,9 +106,6 @@ func (store *_{{.StructName}}Store) Count(options *option.QueryOptions) (int64, 
 
 func (store *_{{.StructName}}Store) GroupCount(options *option.GroupCountOptions)([]option.GroupCountResult, error){
 	var res []option.GroupCountResult
-	if ok := options.Verify();!ok {
-		return nil,fmt.Errorf("分组字段验证失败")
-	}
 	where := options.GenerateQuery()
 	err := repository.Db.Transaction(func(tx *gorm.DB) error {
 		tx = tx.Model(&entity.{{.StructName}}{})

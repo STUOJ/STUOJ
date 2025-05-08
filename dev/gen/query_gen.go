@@ -65,6 +65,18 @@ func (*_Query) Count(context querycontext.{{.EntityName}}QueryContext) (int64, e
 	return res, nil
 }
 
+func (*_Query) GroupCount(context querycontext.{{.EntityName}}QueryContext) ([]option.GroupCountResult, error) {
+	options := context.GenerateGroupCountOptions()
+	if ok := options.Verify();!ok {
+		return nil,errors.ErrInternalServer.WithMessage("分组字段验证失败")
+	}
+	res, err := dao.{{.EntityName}}Store.GroupCount(options)
+	if err!= nil {
+		return nil, errors.ErrInternalServer.WithMessage("查询失败")
+	}
+	return res, nil
+}
+
 {{if .HaveId}}
 func (*_Query) SelectByIds(context querycontext.{{.EntityName}}QueryContext, optionFunc ...option.QueryContextOption) (map[int64]{{.EntityName}}, map[int64]map[string]any, error) {
 	for _, o := range optionFunc {
