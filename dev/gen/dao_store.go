@@ -133,6 +133,38 @@ func (store *_{{.StructName}}Store) Dto(data map[string]any) entity.{{.StructNam
 	return entity_
 }
 
+{{- range.Fields}}
+{{if .EntityType}}
+// StringTo{{.Type}}Slice converts a comma-separated string to a slice of entity.{{.Type}}.
+func StringTo{{.Type}}Slice(s string) ([]entity.{{.Type}}, error) {
+	if s == "" {
+		return nil, nil
+	}
+	var res []entity.{{.Type}}
+	parts := strings.Split(s, ",")
+	for _, p := range parts {
+		p = strings.TrimSpace(p)
+		if p == "" {
+			continue
+		}
+		{{if eq .StrconvFunc "ParseBool"}}
+		val, err := strconv.ParseBool(p)
+		{{else if .StrconvFunc}}
+		parsedVal, err := strconv.{{.StrconvFunc}}(p, {{.StrconvBase}}, {{.StrconvBitSize}})
+		if err != nil {
+			return nil, fmt.Errorf("failed to parse '%s' as {{.UnderlyingType}} for {{.Type}}: %w", p, err)
+		}
+		val := entity.{{.Type}}(parsedVal)
+		{{else}}
+		// Fallback or error for unsupported types - this should ideally not be reached if getUnderlyingTypeInfo is comprehensive
+		return nil, fmt.Errorf("unsupported underlying type for {{.Type}}: {{.UnderlyingType}}")
+		{{end}}
+		res = append(res, val)
+	}
+	return res, nil
+}
+{{end}}
+{{end}}
 `
 
 type TemplateData struct {
@@ -142,9 +174,15 @@ type TemplateData struct {
 }
 
 type FieldInfo struct {
-	Name    string
-	Type    string
-	PkgPath string
+	Name           string
+	Type           string // The original type name, e.g., "BlogStatus"
+	PkgPath        string
+	EntityType     bool
+	ParamName      string
+	UnderlyingType string // The underlying base type, e.g., "uint8"
+	StrconvFunc    string // The strconv function to use, e.g., "ParseUint"
+	StrconvBase    int    // The base for strconv function (0, 8, 10, 16, etc.)
+	StrconvBitSize int    // The bit size for strconv function (0, 8, 16, 32, 64)
 }
 
 func main() {
@@ -197,14 +235,26 @@ func main() {
 				}
 				// 获取字段类型
 				typeExpr := field.Type
-				var fieldType, pkgPath string
+				var fieldType, pkgPath, paramName string
+				var entityType bool
+				// 如果是自定义类型（非基本类型），添加entity包路径
+				var underlyingType, strconvFunc string
+				var strconvBase, strconvBitSize int
 				switch t := typeExpr.(type) {
 				case *ast.Ident:
 					fieldType = t.Name
-					// 如果是自定义类型（非基本类型），添加entity包路径
 					if !isBuiltinType(fieldType) {
 						pkgPath = "entity"
 						pkgPaths[pkgPath] = struct{}{}
+						// 进一步解析以找到自定义类型的基础类型
+						underlyingType, strconvFunc, strconvBase, strconvBitSize = getUnderlyingTypeInfo(entityFile, fieldType)
+						// 只有在当前文件中找到类型定义，才认为是EntityType
+						if underlyingType != "" {
+							entityType = true
+							pkgPaths["strings"] = struct{}{}
+							pkgPaths["strconv"] = struct{}{}
+							pkgPaths["fmt"] = struct{}{}
+						}
 					}
 				case *ast.SelectorExpr:
 					fieldType = t.Sel.Name
@@ -219,11 +269,23 @@ func main() {
 				default:
 					continue
 				}
-				fields = append(fields, FieldInfo{Name: fieldName, Type: fieldType, PkgPath: pkgPath})
+				fields = append(fields, FieldInfo{
+					Name:           fieldName,
+					Type:           fieldType,
+					PkgPath:        pkgPath,
+					EntityType:     entityType,
+					ParamName:      paramName,
+					UnderlyingType: underlyingType,
+					StrconvFunc:    strconvFunc,
+					StrconvBase:    strconvBase,
+					StrconvBitSize: strconvBitSize,
+				})
 			}
 		}
 		return true
 	})
+
+	// 导入包路径
 
 	// 导入包路径
 	var imports []string
@@ -338,4 +400,80 @@ func isBuiltinType(typeName string) bool {
 	}
 	_, ok := builtinTypes[typeName]
 	return ok
+}
+
+// getUnderlyingTypeInfo 解析指定文件中的类型定义，获取其基础类型信息
+func getUnderlyingTypeInfo(filePath string, typeName string) (string, string, int, int) {
+	fset := token.NewFileSet()
+	node, err := parser.ParseFile(fset, filePath, nil, 0)
+	if err != nil {
+		log.Printf("警告: 解析文件 %s 以获取类型 %s 的基础类型失败: %v\n", filePath, typeName, err)
+		return "", "", 0, 0
+	}
+
+	var baseType, strconvFunc string
+	var strconvBase, strconvBitSize int
+
+	ast.Inspect(node, func(n ast.Node) bool {
+		if ts, ok := n.(*ast.TypeSpec); ok {
+			if ts.Name.Name == typeName {
+				if ident, ok := ts.Type.(*ast.Ident); ok {
+					baseType = ident.Name
+					switch baseType {
+					case "int", "int8", "int16", "int32", "int64":
+						strconvFunc = "ParseInt"
+						strconvBase = 10
+						switch baseType {
+						case "int8":
+							strconvBitSize = 8
+						case "int16":
+							strconvBitSize = 16
+						case "int32":
+							strconvBitSize = 32
+						case "int64":
+							strconvBitSize = 64
+						default: // int
+							strconvBitSize = 0 // 0 implies int
+						}
+					case "uint", "uint8", "uint16", "uint32", "uint64", "byte", "rune":
+						strconvFunc = "ParseUint"
+						strconvBase = 10
+						switch baseType {
+						case "uint8", "byte":
+							strconvBitSize = 8
+						case "uint16":
+							strconvBitSize = 16
+						case "uint32", "rune":
+							strconvBitSize = 32
+						case "uint64":
+							strconvBitSize = 64
+						default: // uint
+							strconvBitSize = 0 // 0 implies uint
+						}
+					case "bool":
+						strconvFunc = "ParseBool"
+					// case "float32", "float64":
+					// 	strconvFunc = "ParseFloat"
+					// 	switch baseType {
+					// 	case "float32":
+					// 		strconvBitSize = 32
+					// 	case "float64":
+					// 		strconvBitSize = 64
+					// 	}
+					// string 不在这里处理，因为它不是自定义类型的基础类型转换目标
+					default:
+						log.Printf("警告: 类型 %s 的基础类型 %s 暂不支持自动生成Slice转换函数\n", typeName, baseType)
+					}
+					return false // 找到类型定义，停止遍历
+				}
+			}
+		}
+		return true
+	})
+
+	if baseType == "" {
+		log.Printf("警告: 未能在文件 %s 中找到类型 %s 的定义\n", filePath, typeName)
+	}
+
+	return baseType, strconvFunc, strconvBase, strconvBitSize
 }
