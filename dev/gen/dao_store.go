@@ -133,6 +133,12 @@ func (store *_{{.StructName}}Store) Dto(data map[string]any) entity.{{.StructNam
 
 `
 
+type TemplateData struct {
+	StructName string
+	Fields     []FieldInfo
+	Imports    []string
+}
+
 type FieldInfo struct {
 	Name    string
 	Type    string
@@ -142,93 +148,80 @@ type FieldInfo struct {
 func main() {
 	// 解析命令行参数
 	var (
-		typeName string
+		structName string
 	)
-	flag.StringVar(&typeName, "struct", "", "结构体类型名称")
+	flag.StringVar(&structName, "struct", "", "结构体类型名称")
 	flag.Parse()
 
 	// 校验参数
-	if typeName == "" {
+	if structName == "" {
 		log.Fatal("必须指定-type参数")
 	}
 
+	dir, err := os.Getwd()
+	if err != nil {
+		log.Fatal("获取当前工作目录失败: %v\n", err)
+	}
+
+	file := os.Getenv("GOFILE")
+	entityFile := filepath.Join(dir, file)
+
 	fset := token.NewFileSet()
 
-	pkgs, err := parser.ParseDir(fset, ".", nil, parser.ParseComments)
+	node, err := parser.ParseFile(fset, entityFile, nil, parser.ParseComments)
 	if err != nil {
 		log.Fatal(err)
 	}
-	var (
-		targetStruct *ast.StructType
-	)
 
-	// 查找目标结构体
-	for _, pkgFiles := range pkgs {
-		for _, file := range pkgFiles.Files {
-			for _, decl := range file.Decls {
-				genDecl, ok := decl.(*ast.GenDecl)
-				if !ok || genDecl.Tok != token.TYPE {
+	fields := []FieldInfo{}
+	pkgPaths := map[string]struct{}{}
+	ast.Inspect(node, func(n ast.Node) bool {
+		if structDecl, ok := n.(*ast.TypeSpec); ok && structDecl.Name.Name == structName {
+			structType, ok := structDecl.Type.(*ast.StructType)
+			if !ok {
+				return true
+			}
+			for _, field := range structType.Fields.List {
+				if len(field.Names) == 0 {
 					continue
 				}
-				for _, spec := range genDecl.Specs {
-					typeSpec, ok := spec.(*ast.TypeSpec)
-					if !ok || typeSpec.Name.Name != typeName {
-						continue
-					}
-					if structType, ok := typeSpec.Type.(*ast.StructType); ok {
-						targetStruct = structType
-						break
-					}
+				fieldName := field.Names[0].Name
+				if field.Tag == nil {
+					continue
 				}
+				gormTag := getGormTag(field.Tag.Value)
+				if hasForeignKey(gormTag) {
+					continue
+				}
+				// 获取字段类型
+				typeExpr := field.Type
+				var fieldType, pkgPath string
+				switch t := typeExpr.(type) {
+				case *ast.Ident:
+					fieldType = t.Name
+					// 如果是自定义类型（非基本类型），添加entity包路径
+					if !isBuiltinType(fieldType) {
+						pkgPath = "entity"
+						pkgPaths[pkgPath] = struct{}{}
+					}
+				case *ast.SelectorExpr:
+					fieldType = t.Sel.Name
+					if ident, ok := t.X.(*ast.Ident); ok {
+						pkgPath = ident.Name
+						pkgPaths[pkgPath] = struct{}{}
+					}
+				case *ast.ArrayType:
+					fieldType = "[]" + getArrayElemType(t.Elt)
+				case *ast.StarExpr:
+					fieldType = "*" + getStarExprType(t.X)
+				default:
+					continue
+				}
+				fields = append(fields, FieldInfo{Name: fieldName, Type: fieldType, PkgPath: pkgPath})
 			}
 		}
-	}
-
-	if targetStruct == nil {
-		log.Fatalf("未找到类型 %s 对应的结构体", typeName)
-	}
-
-	// 解析结构体字段
-	var fields []FieldInfo
-	pkgPaths := make(map[string]struct{})
-	for _, f := range targetStruct.Fields.List {
-		if len(f.Names) == 0 {
-			continue
-		}
-		fieldName := f.Names[0].Name
-		if f.Tag == nil {
-			continue
-		}
-		gormTag := getGormTag(f.Tag.Value)
-		if hasForeignKey(gormTag) {
-			continue
-		}
-		// 获取字段类型
-		typeExpr := f.Type
-		var fieldType, pkgPath string
-		switch t := typeExpr.(type) {
-		case *ast.Ident:
-			fieldType = t.Name
-			// 如果是自定义类型（非基本类型），添加entity包路径
-			if !isBuiltinType(fieldType) {
-				pkgPath = "entity"
-				pkgPaths[pkgPath] = struct{}{}
-			}
-		case *ast.SelectorExpr:
-			fieldType = t.Sel.Name
-			if ident, ok := t.X.(*ast.Ident); ok {
-				pkgPath = ident.Name
-				pkgPaths[pkgPath] = struct{}{}
-			}
-		case *ast.ArrayType:
-			fieldType = "[]" + getArrayElemType(t.Elt)
-		case *ast.StarExpr:
-			fieldType = "*" + getStarExprType(t.X)
-		default:
-			continue
-		}
-		fields = append(fields, FieldInfo{Name: fieldName, Type: fieldType, PkgPath: pkgPath})
-	}
+		return true
+	})
 
 	// 导入包路径
 	var imports []string
@@ -249,20 +242,20 @@ func main() {
 	t := template.Must(template.New("dao").
 		Funcs(template.FuncMap{"toSnake": utils.ToSnakeCase}).
 		Parse(tmpl))
-	data := map[string]any{
-		"StructName": typeName,
-		"Fields":     fields,
-		"Imports":    imports,
+	data := TemplateData{
+		StructName: structName,
+		Fields:     fields,
+		Imports:    imports,
 	}
 
-	outputFile := filepath.Join(outputDir, fmt.Sprintf("generated_%s_store.go", utils.ToSnakeCase(typeName)))
-	f, err := os.Create(outputFile)
+	outputFile := filepath.Join(outputDir, fmt.Sprintf("generated_%s_store.go", utils.ToSnakeCase(structName)))
+	field, err := os.Create(outputFile)
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer f.Close()
+	defer field.Close()
 
-	err = t.Execute(f, data)
+	err = t.Execute(field, data)
 	if err != nil {
 		log.Fatal(err)
 	}
