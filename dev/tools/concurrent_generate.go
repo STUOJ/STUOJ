@@ -42,6 +42,7 @@ type GenerateResult struct {
 // FindGenerateTasks 扫描目录查找所有包含go:generate注释的文件
 func FindGenerateTasks(rootPath string) ([]GenerateTask, error) {
 	var tasks []GenerateTask
+	cmdSet := make(map[string]struct{}) // 用于去重的命令集合
 
 	err := filepath.Walk(rootPath, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -69,13 +70,17 @@ func FindGenerateTasks(rootPath string) ([]GenerateTask, error) {
 						cmd := strings.TrimPrefix(c.Text, "//go:generate")
 						cmd = strings.TrimSpace(cmd)
 						if cmd != "" {
-							// 获取文件所在目录作为命令执行目录
-							dir := filepath.Dir(path)
-							tasks = append(tasks, GenerateTask{
-								FilePath: path,
-								Command:  cmd,
-								Dir:      dir,
-							})
+							// 检查命令是否已存在
+							if _, exists := cmdSet[cmd]; !exists {
+								cmdSet[cmd] = struct{}{}
+								// 获取文件所在目录作为命令执行目录
+								dir := filepath.Dir(path)
+								tasks = append(tasks, GenerateTask{
+									FilePath: path,
+									Command:  cmd,
+									Dir:      dir,
+								})
+							}
 						}
 					}
 				}
