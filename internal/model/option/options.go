@@ -78,8 +78,8 @@ func (g *GroupCountOptions) GetFilters() *Filters {
 }
 
 type GroupCountResult struct {
-	Field string `gorm:"column:field"`
-	Count int64  `gorm:"column:count"`
+	Field string `gorm:"column:field" json:"field"`
+	Count int64  `gorm:"column:count" json:"count"`
 }
 
 type Options interface {
