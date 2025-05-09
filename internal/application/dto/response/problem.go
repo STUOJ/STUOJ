@@ -2,7 +2,6 @@ package response
 
 import (
 	"STUOJ/internal/domain/problem"
-	"STUOJ/internal/infrastructure/repository/entity"
 	"STUOJ/pkg/utils"
 )
 
@@ -43,12 +42,12 @@ func Domain2ProblemSimpleData(p problem.Problem) ProblemSimpleData {
 }
 
 func Map2ProblemSimpleData(p map[string]any) ProblemSimpleData {
-	return ProblemSimpleData{
-		Difficulty: int64(p["difficulty"].(entity.Difficulty)),
-		Id:         int64(p["id"].(uint64)),
-		Source:     p["source"].(string),
-		Title:      p["title"].(string),
-	}
+	var res ProblemSimpleData
+	utils.SafeTypeAssert(p["id"], &res.Id)
+	utils.SafeTypeAssert(p["title"], &res.Title)
+	utils.SafeTypeAssert(p["source"], &res.Source)
+	utils.SafeTypeAssert(p["difficulty"], &res.Difficulty)
+	return res
 }
 
 type ProblemQueryData struct {
@@ -88,10 +87,8 @@ type ProblemUserScore struct {
 
 func Map2ProblemUserScore(p map[string]any) ProblemUserScore {
 	var score ProblemUserScore
-	score.HasUserSubmission = p["has_user_submission"].(int64) == 1
-	if p["user_score"] != nil {
-		score.UserScore = p["user_score"].(int64)
-	}
+	utils.SafeTypeAssert(p["has_user_submission"], &score.HasUserSubmission)
+	utils.SafeTypeAssert(p["user_score"], &score.UserScore)
 	return score
 }
 
@@ -102,11 +99,10 @@ type TagIds struct {
 // Map2TagIds 将map数据转换为TagIds结构体
 // 当tag_ids为nil时返回空切片，避免panic
 func Map2TagIds(p map[string]any) TagIds {
+	var res TagIds
 	if p["problem_tag_id"] == nil {
-		return TagIds{TagIds: []int64{}}
+		return res
 	}
-	tagIds, _ := utils.StringToInt64Slice(string(p["problem_tag_id"].([]uint8)))
-	return TagIds{
-		TagIds: tagIds,
-	}
+	utils.SafeTypeAssert(string(p["problem_tag_id"].([]uint8)), &res.TagIds)
+	return res
 }

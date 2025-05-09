@@ -1,6 +1,9 @@
 package response
 
-import "STUOJ/internal/domain/user"
+import (
+	"STUOJ/internal/domain/user"
+	"STUOJ/pkg/utils"
+)
 
 type UserData struct {
 	Id         int64  `json:"id"`
@@ -20,11 +23,11 @@ type UserStatistics struct {
 }
 
 func Map2UserStatistics(m map[string]any) UserStatistics {
-	return UserStatistics{
-		ACCount:     m["ac_count"].(int64),
-		BlogCount:   m["blog_count"].(int64),
-		SubmitCount: m["submit_count"].(int64),
-	}
+	var res UserStatistics
+	utils.SafeTypeAssert(m["ac_count"], &res.ACCount)
+	utils.SafeTypeAssert(m["blog_count"], &res.BlogCount)
+	utils.SafeTypeAssert(m["submit_count"], &res.SubmitCount)
+	return res
 }
 
 type UserQueryData struct {
@@ -49,10 +52,10 @@ func Domain2UserSimpleData(u user.User) UserSimpleData {
 }
 
 func Map2UserSimpleData(u map[string]any) UserSimpleData {
-	return UserSimpleData{
-		Avatar: u["avatar"].(string),
-		Id:     u["id"].(int64),
-		Name:   u["username"].(string),
-		Role:   uint8(u["role"].(int64)),
-	}
+	var res UserSimpleData
+	utils.SafeTypeAssert(u["avatar"], &res.Avatar)
+	utils.SafeTypeAssert(u["id"], &res.Id)
+	utils.SafeTypeAssert(u["username"], &res.Name)
+	utils.SafeTypeAssert(u["role"], &res.Role)
+	return res
 }
