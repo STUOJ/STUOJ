@@ -73,6 +73,21 @@ func GetFormatName(id uint64) string {
 	}
 }
 
+// GetAlbumRoleByName 根据相册名称查找其对应的 uint8 角色常量。
+func GetAlbumRoleByName(name string) uint8 {
+	switch name {
+	case "avatar":
+		return YukiAvatarAlbum
+	case "problem":
+		return YukiProblemAlbum
+	case "blog":
+		return YukiBlogAlbum
+	default:
+		return 0 // 或者一个表示未知的常量
+	}
+}
+
+// GetAlbumName 根据角色获取相册名称。
 func GetAlbumName(role uint8) string {
 	switch role {
 	case YukiAvatarAlbum:
