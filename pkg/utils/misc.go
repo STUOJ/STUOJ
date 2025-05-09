@@ -139,6 +139,129 @@ func SafeTypeAssert(sourceValue interface{}, targetPointer interface{}) bool {
 	sourceVal := reflect.ValueOf(sourceValue)
 	sourceType := sourceVal.Type()
 
+	// 新增逻辑：如果sourceValue是字符串，targetPointer指向数字切片，则尝试转换
+	// 例如：sourceValue = "1,2,3", targetPointer = &[]int{}
+	// 结果：*targetPointer = []int{1,2,3}
+	if sourceType.Kind() == reflect.String && targetType.Kind() == reflect.Slice {
+		elemType := targetType.Elem()
+		isNumericSlice := false
+		// 检查切片元素是否为数字类型
+		switch elemType.Kind() {
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64,
+			reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64,
+			reflect.Float32, reflect.Float64:
+			isNumericSlice = true
+		}
+
+		if isNumericSlice {
+			strVal := sourceVal.String()
+			// 如果源字符串为空，则将目标切片设置为空切片
+			if strVal == "" {
+				targetElem.Set(reflect.MakeSlice(targetType, 0, 0))
+				return true
+			}
+			parts := strings.Split(strVal, ",")
+			// 创建与目标类型相同的新切片
+			newSlice := reflect.MakeSlice(targetType, len(parts), len(parts))
+			for i, part := range parts {
+				trimmedPart := strings.TrimSpace(part)
+				// 根据切片元素类型进行转换
+				switch elemType.Kind() {
+				case reflect.Int:
+					val, err := strconv.ParseInt(trimmedPart, 10, 0) // 使用0让ParseInt决定位数
+					if err != nil {
+						targetElem.Set(reflect.Zero(targetType)) // 转换失败，设置零值并返回
+						return false
+					}
+					newSlice.Index(i).SetInt(val)
+				case reflect.Int8:
+					val, err := strconv.ParseInt(trimmedPart, 10, 8)
+					if err != nil {
+						targetElem.Set(reflect.Zero(targetType))
+						return false
+					}
+					newSlice.Index(i).SetInt(val)
+				case reflect.Int16:
+					val, err := strconv.ParseInt(trimmedPart, 10, 16)
+					if err != nil {
+						targetElem.Set(reflect.Zero(targetType))
+						return false
+					}
+					newSlice.Index(i).SetInt(val)
+				case reflect.Int32:
+					val, err := strconv.ParseInt(trimmedPart, 10, 32)
+					if err != nil {
+						targetElem.Set(reflect.Zero(targetType))
+						return false
+					}
+					newSlice.Index(i).SetInt(val)
+				case reflect.Int64:
+					val, err := strconv.ParseInt(trimmedPart, 10, 64)
+					if err != nil {
+						targetElem.Set(reflect.Zero(targetType))
+						return false
+					}
+					newSlice.Index(i).SetInt(val)
+				case reflect.Uint:
+					val, err := strconv.ParseUint(trimmedPart, 10, 0) // 使用0让ParseUint决定位数
+					if err != nil {
+						targetElem.Set(reflect.Zero(targetType))
+						return false
+					}
+					newSlice.Index(i).SetUint(val)
+				case reflect.Uint8:
+					val, err := strconv.ParseUint(trimmedPart, 10, 8)
+					if err != nil {
+						targetElem.Set(reflect.Zero(targetType))
+						return false
+					}
+					newSlice.Index(i).SetUint(val)
+				case reflect.Uint16:
+					val, err := strconv.ParseUint(trimmedPart, 10, 16)
+					if err != nil {
+						targetElem.Set(reflect.Zero(targetType))
+						return false
+					}
+					newSlice.Index(i).SetUint(val)
+				case reflect.Uint32:
+					val, err := strconv.ParseUint(trimmedPart, 10, 32)
+					if err != nil {
+						targetElem.Set(reflect.Zero(targetType))
+						return false
+					}
+					newSlice.Index(i).SetUint(val)
+				case reflect.Uint64:
+					val, err := strconv.ParseUint(trimmedPart, 10, 64)
+					if err != nil {
+						targetElem.Set(reflect.Zero(targetType))
+						return false
+					}
+					newSlice.Index(i).SetUint(val)
+				case reflect.Float32:
+					val, err := strconv.ParseFloat(trimmedPart, 32)
+					if err != nil {
+						targetElem.Set(reflect.Zero(targetType))
+						return false
+					}
+					newSlice.Index(i).SetFloat(val)
+				case reflect.Float64:
+					val, err := strconv.ParseFloat(trimmedPart, 64)
+					if err != nil {
+						targetElem.Set(reflect.Zero(targetType))
+						return false
+					}
+					newSlice.Index(i).SetFloat(val)
+				default:
+					// 此处理论上不会到达，因为isNumericSlice已检查
+					targetElem.Set(reflect.Zero(targetType))
+					return false
+				}
+			}
+			targetElem.Set(newSlice) // 成功转换并填充切片
+			return true
+		}
+	}
+
 	// 特殊处理：数字类型到布尔类型的转换
 	if targetType.Kind() == reflect.Bool {
 		switch sourceType.Kind() {
