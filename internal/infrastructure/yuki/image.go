@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
-	"log"
 	"mime/multipart"
 	"net/http"
 	"strconv"
@@ -49,7 +48,6 @@ func UploadImage(reader io.Reader, filename string, role uint8) (YukiImage, erro
 		return YukiImage{}, err
 	}
 	defer resp.Body.Close()
-	log.Println("resp.StatusCode: ", resp.StatusCode)
 	bodys, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return YukiImage{}, err
