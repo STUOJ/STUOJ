@@ -52,7 +52,7 @@ func TestSolutionUpdate_Success(t *testing.T) {
 	if err != nil {
 		t.Fatalf("创建提交失败: %v", err)
 	}
-	s.Id = id
+	s.Id.Set(id)
 	s.SourceCode = valueobject.NewSourceCode("print(\"Updated\")")
 	err = s.Update()
 	if err != nil {
@@ -85,7 +85,7 @@ func TestSolutionDelete_Success(t *testing.T) {
 	if err != nil {
 		t.Fatalf("创建提交失败: %v", err)
 	}
-	s.Id = id
+	s.Id.Set(id)
 	err = s.Delete()
 	if err != nil {
 		t.Fatalf("删除提交失败: %v", err)

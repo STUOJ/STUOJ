@@ -61,7 +61,7 @@ func TestCollectionUpdate_Success(t *testing.T) {
 	if err != nil {
 		t.Fatalf("创建题单失败: %v", err)
 	}
-	c.Id = id
+	c.Id.Set(id)
 	c.Description = valueobject.NewDescription("更新后的描述")
 	err = c.Update()
 	if err != nil {
@@ -96,7 +96,7 @@ func TestCollectionDelete_Success(t *testing.T) {
 	if err != nil {
 		t.Fatalf("创建题单失败: %v", err)
 	}
-	c.Id = id
+	c.Id.Set(id)
 	err = c.Delete()
 	if err != nil {
 		t.Fatalf("删除题单失败: %v", err)

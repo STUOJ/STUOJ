@@ -73,7 +73,7 @@ func TestContestUpdate_Success(t *testing.T) {
 	if err != nil {
 		t.Fatalf("创建比赛失败: %v", err)
 	}
-	c.Id = id
+	c.Id.Set(id)
 	c.Description = valueobject.NewDescription("更新后的描述")
 	err = c.Update()
 	if err != nil {
@@ -116,7 +116,7 @@ func TestContestDelete_Success(t *testing.T) {
 	if err != nil {
 		t.Fatalf("创建比赛失败: %v", err)
 	}
-	c.Id = id
+	c.Id.Set(id)
 	err = c.Delete()
 	if err != nil {
 		t.Fatalf("删除比赛失败: %v", err)

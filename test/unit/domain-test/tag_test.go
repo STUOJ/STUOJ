@@ -47,7 +47,7 @@ func TestTagUpdate_Success(t *testing.T) {
 	if err != nil {
 		t.Fatalf("创建标签失败: %v", err)
 	}
-	tg.Id = id
+	tg.Id.Set(id)
 	tg.Name = valueobject.NewName(randomTagName())
 	err = tg.Update()
 	if err != nil {
@@ -76,7 +76,7 @@ func TestTagDelete_Success(t *testing.T) {
 	if err != nil {
 		t.Fatalf("创建标签失败: %v", err)
 	}
-	tg.Id = id
+	tg.Id.Set(id)
 	err = tg.Delete()
 	if err != nil {
 		t.Fatalf("删除标签失败: %v", err)

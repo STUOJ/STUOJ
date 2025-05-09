@@ -55,8 +55,8 @@ func TestLanguageUpdate_Success(t *testing.T) {
 	if err != nil {
 		t.Fatalf("创建语言失败: %v", err)
 	}
-	l.Id = id
-	l.Status = entity.LanguageDisabled
+	l.Id.Set(id)
+	l.Status.Set(entity.LanguageDisabled)
 	err = l.Update()
 	if err != nil {
 		t.Fatalf("更新语言失败: %v", err)
@@ -90,7 +90,7 @@ func TestLanguageDelete_Success(t *testing.T) {
 	if err != nil {
 		t.Fatalf("创建语言失败: %v", err)
 	}
-	l.Id = id
+	l.Id.Set(id)
 	err = l.Delete()
 	if err != nil {
 		t.Fatalf("删除语言失败: %v", err)

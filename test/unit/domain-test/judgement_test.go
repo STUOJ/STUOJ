@@ -63,8 +63,8 @@ func TestJudgementUpdate_Success(t *testing.T) {
 	if err != nil {
 		t.Fatalf("创建评测记录失败: %v", err)
 	}
-	j.Id = id
-	j.Message = "updated"
+	j.Id.Set(id) // 使用Valueobject设置ID
+	j.Message.Set("updated")
 	err = j.Update()
 	if err != nil {
 		t.Fatalf("更新评测记录失败: %v", err)
@@ -100,7 +100,7 @@ func TestJudgementDelete_Success(t *testing.T) {
 	if err != nil {
 		t.Fatalf("创建评测记录失败: %v", err)
 	}
-	j.Id = id
+	j.Id.Set(id)
 	err = j.Delete()
 	if err != nil {
 		t.Fatalf("删除评测记录失败: %v", err)

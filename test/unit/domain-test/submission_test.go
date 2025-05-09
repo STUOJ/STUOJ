@@ -64,8 +64,8 @@ func TestSubmissionUpdate_Success(t *testing.T) {
 	if err != nil {
 		t.Fatalf("创建提交失败: %v", err)
 	}
-	s.Id = id
-	s.Score = 80
+	s.Id.Set(id)
+	s.Score.Set(80)
 	err = s.Update()
 	if err != nil {
 		t.Fatalf("更新提交失败: %v", err)
@@ -109,7 +109,7 @@ func TestSubmissionDelete_Success(t *testing.T) {
 	if err != nil {
 		t.Fatalf("创建提交失败: %v", err)
 	}
-	s.Id = id
+	s.Id.Set(id)
 	err = s.Delete()
 	if err != nil {
 		t.Fatalf("删除提交失败: %v", err)

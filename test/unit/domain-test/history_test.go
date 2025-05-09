@@ -102,7 +102,7 @@ func TestHistoryUpdate_Success(t *testing.T) {
 	if err != nil {
 		t.Fatalf("创建历史记录失败: %v", err)
 	}
-	h.Id = id
+	h.Id.Set(id) // 使用Valueobject设置ID
 	h.Description = valueobject.NewDescription("更新后的描述")
 	err = h.Update()
 	if err != nil {
@@ -157,7 +157,7 @@ func TestHistoryDelete_Success(t *testing.T) {
 	if err != nil {
 		t.Fatalf("创建历史记录失败: %v", err)
 	}
-	h.Id = id
+	h.Id.Set(id) // 使用Valueobject设置ID
 	err = h.Delete()
 	if err != nil {
 		t.Fatalf("删除历史记录失败: %v", err)

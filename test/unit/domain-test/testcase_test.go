@@ -45,7 +45,7 @@ func TestTestcaseUpdate_Success(t *testing.T) {
 	if err != nil {
 		t.Fatalf("创建测试用例失败: %v", err)
 	}
-	tc.Id = id
+	tc.Id.Set(id) // 使用Valueobject设置ID
 	tc.TestOutput = valueobject.NewTestOutput("更新后的输出")
 	err = tc.Update()
 	if err != nil {
@@ -80,7 +80,7 @@ func TestTestcaseDelete_Success(t *testing.T) {
 	if err != nil {
 		t.Fatalf("创建测试用例失败: %v", err)
 	}
-	tc.Id = id
+	tc.Id.Set(id) // 使用Valueobject设置ID
 	err = tc.Delete()
 	if err != nil {
 		t.Fatalf("删除测试用例失败: %v", err)

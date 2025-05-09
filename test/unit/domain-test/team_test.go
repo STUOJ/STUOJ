@@ -63,7 +63,7 @@ func TestTeamUpdate_Success(t *testing.T) {
 	if err != nil {
 		t.Fatalf("创建队伍失败: %v", err)
 	}
-	teamObj.Id = id
+	teamObj.Id.Set(id) // 使用Valueobject设置ID
 	teamObj.Description = valueobject.NewDescription("更新后的描述")
 	err = teamObj.Update()
 	if err != nil {
@@ -100,7 +100,7 @@ func TestTeamDelete_Success(t *testing.T) {
 	if err != nil {
 		t.Fatalf("创建队伍失败: %v", err)
 	}
-	teamObj.Id = id
+	teamObj.Id.Set(id) // 使用Valueobject设置ID
 	err = teamObj.Delete()
 	if err != nil {
 		t.Fatalf("删除队伍失败: %v", err)

@@ -84,7 +84,7 @@ func TestUserUpdate_Success(t *testing.T) {
 	if err != nil {
 		t.Fatalf("创建用户失败: %v", err)
 	}
-	u.Id = id
+	u.Id.Set(id) // 使用Valueobject设置ID
 	u.Signature = valueobject.NewSignature("新签名")
 	err = u.Update()
 	if err != nil {
@@ -123,7 +123,7 @@ func TestUserDelete_Success(t *testing.T) {
 	if err != nil {
 		t.Fatalf("创建用户失败: %v", err)
 	}
-	u.Id = id
+	u.Id.Set(id) // 使用Valueobject设置ID
 	err = u.Delete()
 	if err != nil {
 		t.Fatalf("删除用户失败: %v", err)
@@ -161,7 +161,7 @@ func TestUserUpdatePassword_Success(t *testing.T) {
 	if err != nil {
 		t.Fatalf("创建用户失败: %v", err)
 	}
-	u.Id = id
+	u.Id.Set(id) // 使用Valueobject设置ID
 
 	// 修改密码
 	u.Password = valueobject.NewPasswordPlaintext("NewPassword456!")

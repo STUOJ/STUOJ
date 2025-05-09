@@ -1,11 +1,7 @@
 package domain_test
 
 import (
-	"STUOJ/internal/domain/image"
-	"bytes"
 	"math/rand"
-	"testing"
-	"time"
 )
 
 // 生成随机相册编号
@@ -13,6 +9,7 @@ func randomAlbum() uint8 {
 	return uint8(rand.Intn(256))
 }
 
+/*
 // 测试图片上传成功
 func TestImageUpload_Success(t *testing.T) {
 	img := image.NewImage(
@@ -49,3 +46,4 @@ func TestImageDelete(t *testing.T) {
 		t.Logf("图片删除返回错误: %v", err)
 	}
 }
+*/

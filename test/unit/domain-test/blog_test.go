@@ -64,7 +64,7 @@ func TestBlogUpdate_Success(t *testing.T) {
 	if err != nil {
 		t.Fatalf("创建博客失败: %v", err)
 	}
-	b.Id = valueobject.NewId(id)
+	b.Id.Set(id) // 使用Valueobject设置ID
 	b.Title = valueobject.NewTitle("更新后的标题")
 	err = b.Update()
 	if err != nil {

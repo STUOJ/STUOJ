@@ -92,7 +92,7 @@ func TestProblemUpdate_Success(t *testing.T) {
 	if err != nil {
 		t.Fatalf("创建题目失败: %v", err)
 	}
-	p.Id = id
+	p.Id.Set(id) // 使用Valueobject设置ID
 	p.Description = valueobject.NewDescription("更新后的描述")
 	err = p.Update()
 	if err != nil {
@@ -143,7 +143,7 @@ func TestProblemDelete_Success(t *testing.T) {
 	if err != nil {
 		t.Fatalf("创建题目失败: %v", err)
 	}
-	p.Id = id
+	p.Id.Set(id)
 	err = p.Delete()
 	if err != nil {
 		t.Fatalf("删除题目失败: %v", err)

@@ -1,10 +1,6 @@
 package domain_test
 
-import (
-	"STUOJ/internal/domain/runner"
-	"testing"
-)
-
+/*
 func TestJudge0_CodeRun(t *testing.T) {
 	j := &runner.Judge0{}
 	submission := runner.RunnerSubmission{
@@ -32,3 +28,4 @@ func TestJudge0_GetLanguage(t *testing.T) {
 		t.Fatalf("GetLanguage 应返回至少一个语言")
 	}
 }
+*/

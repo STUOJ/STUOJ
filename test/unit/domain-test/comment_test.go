@@ -70,7 +70,7 @@ func TestCommentUpdate_Success(t *testing.T) {
 	if err != nil {
 		t.Fatalf("创建评论失败: %v", err)
 	}
-	c.Id = id
+	c.Id.Set(id)
 	c.Content = valueobject.NewContent("更新后的评论内容")
 	err = c.Update()
 	if err != nil {
@@ -105,7 +105,7 @@ func TestCommentDelete_Success(t *testing.T) {
 	if err != nil {
 		t.Fatalf("创建评论失败: %v", err)
 	}
-	c.Id = id
+	c.Id.Set(id)
 	err = c.Delete()
 	if err != nil {
 		t.Fatalf("删除评论失败: %v", err)
