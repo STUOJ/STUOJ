@@ -67,15 +67,15 @@ func (j *Judge0) GetLanguage() ([]RunnerLanguage, error) {
 
 func runnerSubmissionToJudgeSubmission(submission RunnerSubmission) []judge0.JudgeSubmission {
 	var judgeSubmissions = make([]judge0.JudgeSubmission, len(submission.Testcase))
-	for _, testCase := range submission.Testcase {
-		judgeSubmissions = append(judgeSubmissions, judge0.JudgeSubmission{
+	for i, testCase := range submission.Testcase {
+		judgeSubmissions[i] = judge0.JudgeSubmission{
 			SourceCode:     submission.SourceCode,
 			LanguageId:     uint64(submission.LanguageId),
 			Stdin:          testCase.Input,
 			ExpectedOutput: testCase.ExpectedOutput,
 			CPUTimeLimit:   submission.CPUTimeLimit,
 			MemoryLimit:    uint64(submission.MemoryLimit),
-		})
+		}
 	}
 	return judgeSubmissions
 }
