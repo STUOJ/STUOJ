@@ -92,85 +92,69 @@ func Uint64SliceToString(ids []uint64) string {
 	return strings.Join(strs, ",")
 }
 
-// SafeTypeAssert 安全类型断言函数，如果转换失败则返回期望类型的零值
-// value: 要转换的interface{}值
-// expectedType: 期望的类型，如"int", "string"等
-// 返回值: 转换后的值或期望类型的零值
-func SafeTypeAssert(value interface{}, expectedType string) interface{} {
-	switch expectedType {
-	case "int":
-		if v, ok := value.(int); ok {
-			return v
-		}
-		return 0
-	case "int8":
-		if v, ok := value.(int8); ok {
-			return v
-		}
-		return int8(0)
-	case "int16":
-		if v, ok := value.(int16); ok {
-			return v
-		}
-		return int16(0)
-	case "int32":
-		if v, ok := value.(int32); ok {
-			return v
-		}
-		return int32(0)
-	case "int64":
-		if v, ok := value.(int64); ok {
-			return v
-		}
-		return int64(0)
-	case "uint":
-		if v, ok := value.(uint); ok {
-			return v
-		}
-		return uint(0)
-	case "uint8":
-		if v, ok := value.(uint8); ok {
-			return v
-		}
-		return uint8(0)
-	case "uint16":
-		if v, ok := value.(uint16); ok {
-			return v
-		}
-		return uint16(0)
-	case "uint32":
-		if v, ok := value.(uint32); ok {
-			return v
-		}
-		return uint32(0)
-	case "uint64":
-		if v, ok := value.(uint64); ok {
-			return v
-		}
-		return uint64(0)
-	case "float32":
-		if v, ok := value.(float32); ok {
-			return v
-		}
-		return float32(0)
-	case "float64":
-		if v, ok := value.(float64); ok {
-			return v
-		}
-		return float64(0)
-	case "bool":
-		if v, ok := value.(bool); ok {
-			return v
-		}
+// SafeTypeAssert 尝试安全地将sourceValue赋值给targetPointer指向的变量
+// 处理直接赋值和Go reflect包支持的类型转换（例如基础类型、数值类型等）
+// 参数:
+//
+//	sourceValue: 要赋值的值，可以为nil
+//	targetPointer: 指向目标变量的指针，必须是一个非nil且可设置的可寻址变量
+//
+// 返回值:
+//
+//	bool: 如果赋值或转换成功返回true，否则返回false
+//	      如果返回false且targetPointer是一个有效的可设置指针
+//	      则将其指向的变量设置为零值
+//	      如果targetPointer不是有效指针或指向不可设置的变量，则立即返回false
+func SafeTypeAssert(sourceValue interface{}, targetPointer interface{}) bool {
+	targetVal := reflect.ValueOf(targetPointer)
+
+	// 检查targetPointer是否为指针且不为nil
+	if targetVal.Kind() != reflect.Ptr || targetVal.IsNil() {
 		return false
-	case "string":
-		if v, ok := value.(string); ok {
-			return v
-		}
-		return ""
-	default:
-		return nil
 	}
+
+	targetElem := targetVal.Elem()
+
+	// 检查指向的元素是否可设置
+	if !targetElem.CanSet() {
+		return false
+	}
+
+	targetType := targetElem.Type()
+
+	// 处理sourceValue为nil的情况
+	if sourceValue == nil {
+		// 检查目标类型是否可以接受nil值
+		switch targetType.Kind() {
+		case reflect.Chan, reflect.Func, reflect.Interface, reflect.Map, reflect.Ptr, reflect.Slice:
+			targetElem.Set(reflect.Zero(targetType)) // 对于可nil类型设置为nil
+			return true
+		default:
+			// 目标类型不可nil(如int, struct)，无法赋值为nil
+			targetElem.Set(reflect.Zero(targetType))
+			return false
+		}
+	}
+
+	sourceVal := reflect.ValueOf(sourceValue)
+	sourceType := sourceVal.Type()
+
+	// 1. 直接赋值
+	if sourceType.AssignableTo(targetType) {
+		targetElem.Set(sourceVal)
+		return true
+	}
+
+	// 2. 可转换赋值(处理数值类型、底层类型等)
+	if sourceType.ConvertibleTo(targetType) {
+		convertedValue := sourceVal.Convert(targetType)
+		targetElem.Set(convertedValue)
+		return true
+	}
+
+	// 如果无法赋值或转换，将目标设置为零值并返回false
+	targetElem.Set(reflect.Zero(targetType))
+	return false
 }
 
 func ConvertStringToType[T any](str string, result *interface{}) error {
