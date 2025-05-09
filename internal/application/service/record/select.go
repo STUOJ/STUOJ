@@ -106,6 +106,19 @@ func SelectById(sid int64, reqUser model.ReqUser) (response.RecordData, error) {
 		resp.Judgements = append(resp.Judgements, respJudgement)
 	}
 
+	pqc := querycontext.ProblemQueryContext{}
+	pqc.Id.Add(s0.ProblemId.Value())
+	pqc.Field = *query.ProblemSimpleField
+	p, _, err := problem.Query.SelectOne(pqc)
+
+	// 获取用户信息
+	uqc := querycontext.UserQueryContext{}
+	uqc.Id.Add(s0.UserId.Value())
+	uqc.Field = *query.UserSimpleField
+	u, _, err := user.Query.SelectOne(uqc)
+
+	resp.Submission.Problem = response.Domain2ProblemSimpleData(p)
+	resp.Submission.User = response.Domain2UserSimpleData(u)
 	return resp, nil
 }
 
