@@ -58,12 +58,13 @@ func InitJudgeLanguages() error {
 		oldLangMap[oldLangs[i].Name.String()] = &oldLangs[i]
 	}
 	for i := range languages {
-		if lang, exists := oldLangMap[languages[i].Name]; exists {
+		if lang, exists := oldLangMap[languages[i].Name]; exists && languages[i].Id != int64(lang.MapId.Value()) {
 			lang.MapId.Set(uint32(languages[i].Id))
 			if err := lang.Update(); err != nil {
 				return err
 			}
-		} else {
+		} else if !exists {
+			log.Printf("找不到：%+v\n", languages[i])
 			lang := language.NewLanguage(language.WithName(languages[i].Name), language.WithMapId(uint32(languages[i].Id)))
 			if _, err := lang.Create(); err != nil {
 				return err
