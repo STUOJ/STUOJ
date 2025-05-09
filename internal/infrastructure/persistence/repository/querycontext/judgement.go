@@ -7,7 +7,7 @@ import (
 	option "STUOJ/internal/infrastructure/persistence/repository/option"
 )
 
-//go:generate go run ../../../../dev/gen/querycontext_gen.go JudgementQueryContext
+//go:generate go run ../../../../../dev/gen/querycontext_gen.go JudgementQueryContext
 type JudgementQueryContext struct {
 	Id           dto.FieldList[int64]
 	SubmissionId dto.FieldList[int64]

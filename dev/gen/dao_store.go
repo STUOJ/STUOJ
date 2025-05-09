@@ -297,7 +297,7 @@ func main() {
 	}
 
 	// 创建输出目录
-	outputDir := "../dao"
+	outputDir := "../repository/dao"
 	if err := os.MkdirAll(outputDir, 0755); err != nil {
 		log.Fatal(err)
 	}

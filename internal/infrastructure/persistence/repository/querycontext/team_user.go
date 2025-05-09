@@ -6,7 +6,7 @@ import (
 	option "STUOJ/internal/infrastructure/persistence/repository/option"
 )
 
-//go:generate go run ../../../../dev/gen/querycontext_gen.go TeamUserQueryContext
+//go:generate go run ../../../../../dev/gen/querycontext_gen.go TeamUserQueryContext
 type TeamUserQueryContext struct {
 	TeamId dto.FieldList[int64]
 	UserId dto.FieldList[int64]

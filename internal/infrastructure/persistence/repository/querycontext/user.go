@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-//go:generate go run ../../../../dev/gen/querycontext_gen.go UserQueryContext
+//go:generate go run ../../../../../dev/gen/querycontext_gen.go UserQueryContext
 type UserQueryContext struct {
 	Id        dto.FieldList[int64]
 	Username  dto.Field[string]

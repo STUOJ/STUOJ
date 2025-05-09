@@ -7,7 +7,7 @@ import (
 	option "STUOJ/internal/infrastructure/persistence/repository/option"
 )
 
-//go:generate go run ../../../../dev/gen/querycontext_gen.go LanguageQueryContext
+//go:generate go run ../../../../../dev/gen/querycontext_gen.go LanguageQueryContext
 type LanguageQueryContext struct {
 	Id     dto.FieldList[int64]
 	Name   dto.Field[string]

@@ -6,7 +6,7 @@ import (
 	option "STUOJ/internal/infrastructure/persistence/repository/option"
 )
 
-//go:generate go run ../../../../dev/gen/querycontext_gen.go TagQueryContext
+//go:generate go run ../../../../../dev/gen/querycontext_gen.go TagQueryContext
 type TagQueryContext struct {
 	Id   dto.FieldList[int64]
 	Name dto.FieldList[string]

@@ -6,7 +6,7 @@ import (
 	option "STUOJ/internal/infrastructure/persistence/repository/option"
 )
 
-//go:generate go run ../../../../dev/gen/querycontext_gen.go TestcaseQueryContext
+//go:generate go run ../../../../../dev/gen/querycontext_gen.go TestcaseQueryContext
 type TestcaseQueryContext struct {
 	Id        dto.FieldList[int64]
 	ProblemId dto.FieldList[int64]

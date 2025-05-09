@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-//go:generate go run ../../../../dev/gen/querycontext_gen.go HistoryQueryContext
+//go:generate go run ../../../../../dev/gen/querycontext_gen.go HistoryQueryContext
 type HistoryQueryContext struct {
 	Id         dto.FieldList[int64]
 	UserId     dto.FieldList[int64]

@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-//go:generate go run ../../../../dev/gen/querycontext_gen.go CollectionQueryContext
+//go:generate go run ../../../../../dev/gen/querycontext_gen.go CollectionQueryContext
 type CollectionQueryContext struct {
 	Id        dto.FieldList[int64]
 	Title     dto.Field[string]
