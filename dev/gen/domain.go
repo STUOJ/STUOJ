@@ -26,12 +26,12 @@ package {{.PackageName}}
 
 import (
 	{{if .NeedValueObject}}"STUOJ/internal/domain/{{.PackageName}}/valueobject"{{end}}
-	{{if or .NeedEntity .HaveEntity}}"STUOJ/internal/infrastructure/repository/entity"{{end}}
+	{{if or .NeedEntity .HaveEntity}}"STUOJ/internal/infrastructure/persistence/entity"{{end}}
 	{{if .HaveEntity}}
-	"STUOJ/internal/model/option"
-	"STUOJ/internal/infrastructure/repository/entity/field"
+	"STUOJ/internal/infrastructure/persistence/repository/option"
+	"STUOJ/internal/infrastructure/persistence/entity/field"
 	{{if or .NeedCreate .NeedUpdate .NeedDelete}}
-	"STUOJ/internal/infrastructure/repository/dao"
+	"STUOJ/internal/infrastructure/persistence/repository/dao"
 	"STUOJ/pkg/errors"
 	{{end}}
 	{{end}}
@@ -391,7 +391,7 @@ func processDomain(dir string, entityName string) error {
 }
 
 func processEntity(entityName string, domainField []Field) ([]string, []string, []string, error) {
-	entityDefFile := filepath.Join("../../../internal/infrastructure/repository/entity", entityName+".go")
+	entityDefFile := filepath.Join("../../../internal/infrastructure/persistence/entity", entityName+".go")
 	if _, err := os.Stat(entityDefFile); os.IsNotExist(err) {
 		return nil, nil, nil, fmt.Errorf("实体文件 %s 不存在", entityDefFile)
 	}
