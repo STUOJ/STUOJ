@@ -24,6 +24,10 @@ go.work.sum
 # env file
 .env
 
+# configuration file
+config.yml
+config.yaml
+
 # IDEA
 .idea/
 
@@ -35,6 +39,6 @@ dist/
 
 tmp/
 
-*_generated.go
+generated_*.go
 
-
+*.ast

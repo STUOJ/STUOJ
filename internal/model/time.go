@@ -1,12 +1,11 @@
 package model
 
 import (
-	"STUOJ/utils"
+	"STUOJ/pkg/utils"
 	"errors"
+	"github.com/gin-gonic/gin"
 	"log"
 	"time"
-
-	"github.com/gin-gonic/gin"
 )
 
 // 时间范围

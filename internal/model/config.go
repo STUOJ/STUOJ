@@ -2,6 +2,5 @@ package model
 
 // 系统设置
 type Configuration struct {
-	System interface{}     `json:"system"`
-	Judge  JudgeConfigInfo `json:"judge"`
+	System interface{} `json:"system"`
 }

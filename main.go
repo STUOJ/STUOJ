@@ -1,9 +1,7 @@
 package main
 
-import (
-	"STUOJ/internal/bootstrap"
-)
+import "STUOJ/cmd/app"
 
 func main() {
-	bootstrap.Init()
+	app.Main()
 }
