@@ -139,6 +139,21 @@ func SafeTypeAssert(sourceValue interface{}, targetPointer interface{}) bool {
 	sourceVal := reflect.ValueOf(sourceValue)
 	sourceType := sourceVal.Type()
 
+	// 特殊处理：数字类型到布尔类型的转换
+	if targetType.Kind() == reflect.Bool {
+		switch sourceType.Kind() {
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			targetElem.SetBool(sourceVal.Int() != 0)
+			return true
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr:
+			targetElem.SetBool(sourceVal.Uint() != 0)
+			return true
+		case reflect.Float32, reflect.Float64:
+			targetElem.SetBool(sourceVal.Float() != 0)
+			return true
+		}
+	}
+
 	// 1. 直接赋值
 	if sourceType.AssignableTo(targetType) {
 		targetElem.Set(sourceVal)
