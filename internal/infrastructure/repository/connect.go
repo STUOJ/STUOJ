@@ -41,7 +41,11 @@ func InitDatabase() error {
 		return err
 	}
 
-	// autoMigrate()
+	err = autoMigrate()
+	if err != nil {
+		log.Println("数据库迁移失败！")
+		return err
+	}
 
 	return nil
 }

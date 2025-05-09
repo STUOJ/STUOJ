@@ -22,6 +22,8 @@ func autoMigrate() error {
 		&entity.CollectionUser{},
 		&entity.CollectionProblem{},
 		&entity.Contest{},
+		&entity.ContestProblem{},
+		&entity.ContestUser{},
 		&entity.Team{},
 		&entity.TeamUser{},
 		&entity.TeamSubmission{},
