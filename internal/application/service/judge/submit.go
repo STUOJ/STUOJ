@@ -102,7 +102,7 @@ func Submit(req request.JudgeReq, reqUser request.ReqUser) (int64, error) {
 		// 更新judgement记录
 		judgementDomain := judgement.NewJudgement(
 			judgement.WithId(judgementIds[i]),
-			judgement.WithTime(int64(v.Time)),
+			judgement.WithTime(v.Time),
 			judgement.WithMemory(int64(v.Memory)),
 			judgement.WithStdout(v.Stdout),
 			judgement.WithStderr(v.Stderr),
@@ -122,7 +122,7 @@ func Submit(req request.JudgeReq, reqUser request.ReqUser) (int64, error) {
 		submission.WithStatus(entity.JudgeStatus(runnerResult.Status.Id)),
 		submission.WithScore(int64(score)),
 		submission.WithMemory(int64(runnerResult.Memory)),
-		submission.WithTime(int64(runnerResult.Time)),
+		submission.WithTime(runnerResult.Time),
 	)
 	err = submissionDomain.Update()
 	if err != nil {

@@ -5,10 +5,10 @@ import (
 )
 
 type Time struct {
-	shared.Valueobject[int64]
+	shared.Valueobject[float64]
 }
 
-func NewTime(value int64) Time {
+func NewTime(value float64) Time {
 	var t Time
 	t.Set(value)
 	return t
