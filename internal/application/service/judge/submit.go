@@ -3,7 +3,6 @@ package judge
 import (
 	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/domain/judgement"
-	"STUOJ/internal/domain/language"
 	"STUOJ/internal/domain/problem"
 	"STUOJ/internal/domain/runner"
 	"STUOJ/internal/domain/submission"
@@ -19,14 +18,10 @@ import (
 )
 
 func Submit(req request.JudgeReq, reqUser model.ReqUser) (int64, error) {
-	languageQuery := querycontext.LanguageQueryContext{}
-	languageQuery.Id.Add(req.LanguageId)
-	languageQuery.Field = *query.LanguageAllField
-	languageDomain, _, err := language.Query.SelectOne(languageQuery)
+	languageMapId, err := SelectLanguageMapId(req.LanguageId)
 	if err != nil {
 		return 0, err
 	}
-	languageMapId := languageDomain.MapId.Value()
 
 	problemQuery := querycontext.ProblemQueryContext{}
 	problemQuery.Id.Add(req.ProblemId)
@@ -50,7 +45,7 @@ func Submit(req request.JudgeReq, reqUser model.ReqUser) (int64, error) {
 		submission.WithProblemId(int64(req.ProblemId)),
 		submission.WithStatus(entity.JudgeIE), // 设置为IE状态,保证在错误导致中断的情况下显示为IE
 		submission.WithLength(int64(len(req.SourceCode))),
-		submission.WithLanguageId(int64(languageDomain.Id.Value())),
+		submission.WithLanguageId(int64(req.LanguageId)),
 		submission.WithSourceCode(req.SourceCode),
 	)
 	submissionId, err := submissionDomain.Create()
