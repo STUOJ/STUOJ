@@ -12,6 +12,67 @@ const (
 	YukiBlogAlbum    uint8 = 3
 )
 
+var wantAlbum = []YukiAlbum{
+	{
+		Name:      GetAlbumName(YukiAvatarAlbum),
+		MaxHeight: 512,
+		MaxWidth:  512,
+		FormatSupport: []YukiFormat{
+			{
+				Id: JPEG,
+			},
+			{
+				Id: PNG,
+			},
+		},
+	},
+	{
+		Name:      GetAlbumName(YukiProblemAlbum),
+		MaxHeight: 1080,
+		MaxWidth:  1920,
+		FormatSupport: []YukiFormat{
+			{
+				Id: JPEG,
+			},
+			{
+				Id: PNG,
+			},
+			{
+				Id: GIF,
+			},
+		},
+	},
+	{
+		Name:      GetAlbumName(YukiBlogAlbum),
+		MaxHeight: 1080,
+		MaxWidth:  1920,
+		FormatSupport: []YukiFormat{
+			{
+				Id: JPEG,
+			},
+			{
+				Id: PNG,
+			},
+			{
+				Id: GIF,
+			},
+		},
+	},
+}
+
+func GetFormatName(id uint64) string {
+	switch id {
+	case JPEG:
+		return "jpeg"
+	case PNG:
+		return "png"
+	case GIF:
+		return "gif"
+	default:
+		return "unknown"
+	}
+}
+
 func GetAlbumName(role uint8) string {
 	switch role {
 	case YukiAvatarAlbum:
