@@ -9,7 +9,7 @@ import (
 	"STUOJ/internal/domain/user"
 	entity "STUOJ/internal/infrastructure/persistence/entity"
 	querycontext2 "STUOJ/internal/infrastructure/persistence/repository/querycontext"
-	query2 "STUOJ/internal/infrastructure/persistence/repository/queryfield"
+	query "STUOJ/internal/infrastructure/persistence/repository/queryfield"
 	"slices"
 )
 
@@ -23,7 +23,7 @@ func SelectById(id int64, reqUser request.ReqUser) (response.BlogData, error) {
 	var resp response.BlogData
 	blogQuery := querycontext2.BlogQueryContext{}
 	blogQuery.Id.Add(id)
-	blogQuery.Field = *query2.BlogAllField
+	blogQuery.Field = *query.BlogAllField
 
 	domainBlog, _, err := blog.Query.SelectOne(blogQuery)
 	if err != nil {
@@ -32,14 +32,14 @@ func SelectById(id int64, reqUser request.ReqUser) (response.BlogData, error) {
 	resp = domain2Resp(domainBlog)
 	userQuery := querycontext2.UserQueryContext{}
 	userQuery.Id.Add(domainBlog.UserId.Value())
-	userQuery.Field = *query2.UserSimpleField
+	userQuery.Field = *query.UserSimpleField
 	domainUser, _, err := user.Query.SelectOne(userQuery)
 	if err == nil {
 		resp.User = response.Domain2UserSimpleData(domainUser)
 	}
 	problemQuery := querycontext2.ProblemQueryContext{}
 	problemQuery.Id.Add(domainBlog.ProblemId.Value())
-	problemQuery.Field = *query2.ProblemSimpleField
+	problemQuery.Field = *query.ProblemSimpleField
 	_, map_, err := problem.Query.SelectOne(problemQuery, problem.QueryMaxScore(reqUser.Id), problem.QueryTag())
 	if err == nil {
 		resp.Problem.ProblemSimpleData = response.Map2ProblemSimpleData(map_)
@@ -57,7 +57,7 @@ func Select(params request.QueryBlogParams, reqUser request.ReqUser) (BlogPage, 
 	if (slices.Contains(query_.Status.Value(), entity.BlogDeleted) || slices.Contains(query_.Status.Value(), entity.BlogDraft)) && reqUser.Role < entity.RoleAdmin {
 		query_.UserId.Set([]int64{reqUser.Id})
 	}
-	query_.Field = *query2.BlogAllField
+	query_.Field = *query.BlogAllField
 	blogs, _, err := blog.Query.Select(query_)
 	if err != nil {
 		return BlogPage{}, err
@@ -72,12 +72,12 @@ func Select(params request.QueryBlogParams, reqUser request.ReqUser) (BlogPage, 
 	}
 	problemQueryContext := querycontext2.ProblemQueryContext{}
 	problemQueryContext.Id.Add(problemIds...)
-	problemQueryContext.Field = *query2.ProblemSimpleField
+	problemQueryContext.Field = *query.ProblemSimpleField
 	_, problemMap, err := problem.Query.SelectByIds(problemQueryContext, problem.QueryMaxScore(reqUser.Id), problem.QueryTag())
 
 	userQueryContext := querycontext2.UserQueryContext{}
 	userQueryContext.Id.Add(userIds...)
-	userQueryContext.Field = *query2.UserSimpleField
+	userQueryContext.Field = *query.UserSimpleField
 	users, _, err := user.Query.SelectByIds(userQueryContext)
 
 	for _, blog_ := range blogs {

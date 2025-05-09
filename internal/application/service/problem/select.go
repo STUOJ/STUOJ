@@ -8,7 +8,7 @@ import (
 	"STUOJ/internal/domain/user"
 	entity "STUOJ/internal/infrastructure/persistence/entity"
 	querycontext2 "STUOJ/internal/infrastructure/persistence/repository/querycontext"
-	query2 "STUOJ/internal/infrastructure/persistence/repository/queryfield"
+	query "STUOJ/internal/infrastructure/persistence/repository/queryfield"
 	"STUOJ/pkg/errors"
 	"STUOJ/pkg/utils"
 	"slices"
@@ -23,7 +23,7 @@ func SelectById(id int64, reqUser request.ReqUser) (response.ProblemQueryData, e
 	var res response.ProblemQueryData
 	problemQueryContext := querycontext2.ProblemQueryContext{}
 	problemQueryContext.Id.Add(id)
-	problemQueryContext.Field = *query2.ProblemAllField
+	problemQueryContext.Field = *query.ProblemAllField
 	problemDomain, problemMap, err := problem.Query.SelectOne(problemQueryContext, problem.QueryMaxScore(reqUser.Id), problem.QueryTag(), problem.QueryUser())
 	if err != nil {
 		return response.ProblemQueryData{}, err
@@ -43,7 +43,7 @@ func SelectById(id int64, reqUser request.ReqUser) (response.ProblemQueryData, e
 
 	userQueryContext := querycontext2.UserQueryContext{}
 	userQueryContext.Id.Set(userIds)
-	userQueryContext.Field = *query2.UserSimpleField
+	userQueryContext.Field = *query.UserSimpleField
 	userDomain, _, err := user.Query.Select(userQueryContext)
 	if err != nil {
 		return response.ProblemQueryData{}, err
@@ -64,7 +64,7 @@ func Select(params request.QueryProblemParams, reqUser request.ReqUser) (Problem
 		problem.WhereUser(reqUser.Id)(&problemQueryContext)
 	}
 
-	problemQueryContext.Field = *query2.ProblemListItemField
+	problemQueryContext.Field = *query.ProblemListItemField
 
 	problemDomain, problemMap, err := problem.Query.Select(problemQueryContext, problem.QueryMaxScore(reqUser.Id), problem.QueryTag(), problem.QueryUser())
 	if err != nil {

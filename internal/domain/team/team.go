@@ -8,7 +8,7 @@ import (
 	"STUOJ/internal/infrastructure/persistence/entity"
 	"STUOJ/internal/infrastructure/persistence/entity/field"
 	"STUOJ/internal/infrastructure/persistence/repository/dao"
-	option2 "STUOJ/internal/infrastructure/persistence/repository/option"
+	option "STUOJ/internal/infrastructure/persistence/repository/option"
 	"STUOJ/pkg/errors"
 )
 
@@ -43,9 +43,9 @@ func (t *Team) QuitTeam(userId int64) error {
 	if err != nil {
 		return errors.ErrNotFound.WithMessage(err.Error())
 	}
-	deleteOptions := option2.NewQueryOptions()
-	deleteOptions.Filters.Add(field.TeamId, option2.OpEqual, t.Id)
-	deleteOptions.Filters.Add(field.UserId, option2.OpEqual, userId)
+	deleteOptions := option.NewQueryOptions()
+	deleteOptions.Filters.Add(field.TeamId, option.OpEqual, t.Id)
+	deleteOptions.Filters.Add(field.UserId, option.OpEqual, userId)
 	err = dao.TeamStore.Delete(deleteOptions)
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())

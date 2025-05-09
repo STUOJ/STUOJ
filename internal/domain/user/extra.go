@@ -2,19 +2,19 @@ package user
 
 import (
 	"STUOJ/internal/infrastructure/persistence/entity"
-	option2 "STUOJ/internal/infrastructure/persistence/repository/option"
+	option "STUOJ/internal/infrastructure/persistence/repository/option"
 	"fmt"
 )
 
 const acCountSQL = "(SELECT COUNT(DISTINCT(problem_id)) FROM tbl_submission WHERE tbl_submission.user_id = tbl_user.id AND tbl_submission.status = 3) AS ac_count"
 
-func QueryUserACCount() option2.QueryContextOption {
-	return func(pqm option2.QueryContext) option2.QueryContext {
+func QueryUserACCount() option.QueryContextOption {
+	return func(pqm option.QueryContext) option.QueryContext {
 		field := pqm.GetField()
 		if field == nil {
 			return pqm
 		}
-		acCountSelector := option2.NewSelector(acCountSQL)
+		acCountSelector := option.NewSelector(acCountSQL)
 		field.AddSelect(*acCountSelector)
 		return pqm
 	}
@@ -22,13 +22,13 @@ func QueryUserACCount() option2.QueryContextOption {
 
 var blogCountSQL = fmt.Sprintf("(SELECT COUNT(*) FROM tbl_blog WHERE tbl_blog.user_id = tbl_user.id AND tbl_blog.status >= %d) AS blog_count", entity.BlogPublic)
 
-func QueryUserBlogCount() option2.QueryContextOption {
-	return func(pqm option2.QueryContext) option2.QueryContext {
+func QueryUserBlogCount() option.QueryContextOption {
+	return func(pqm option.QueryContext) option.QueryContext {
 		field := pqm.GetField()
 		if field == nil {
 			return pqm
 		}
-		blogCountSelector := option2.NewSelector(blogCountSQL)
+		blogCountSelector := option.NewSelector(blogCountSQL)
 		field.AddSelect(*blogCountSelector)
 		return pqm
 	}
@@ -36,13 +36,13 @@ func QueryUserBlogCount() option2.QueryContextOption {
 
 const submissionCountSQL = "(SELECT COUNT(*) FROM tbl_submission WHERE tbl_submission.user_id = tbl_user.id) AS submit_count"
 
-func QueryUserSubmissionCount() option2.QueryContextOption {
-	return func(pqm option2.QueryContext) option2.QueryContext {
+func QueryUserSubmissionCount() option.QueryContextOption {
+	return func(pqm option.QueryContext) option.QueryContext {
 		field := pqm.GetField()
 		if field == nil {
 			return pqm
 		}
-		submissionCountSelector := option2.NewSelector(submissionCountSQL)
+		submissionCountSelector := option.NewSelector(submissionCountSQL)
 		field.AddSelect(*submissionCountSelector)
 		return pqm
 	}

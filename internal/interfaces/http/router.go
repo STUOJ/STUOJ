@@ -1,8 +1,8 @@
 package http
 
 import (
-	middlewares2 "STUOJ/internal/interfaces/http/middlewares"
-	routes2 "STUOJ/internal/interfaces/http/routes"
+	middlewares "STUOJ/internal/interfaces/http/middlewares"
+	routes "STUOJ/internal/interfaces/http/routes"
 	"STUOJ/internal/interfaces/http/vo"
 	"net/http"
 
@@ -21,41 +21,41 @@ func InitRoute() error {
 	})
 
 	// 使用中间件
-	ginServer.Use(middlewares2.TokenGetInfo())
-	ginServer.Use(middlewares2.ErrorHandler())
-	ginServer.Use(middlewares2.QueryCleaner())
+	ginServer.Use(middlewares.TokenGetInfo())
+	ginServer.Use(middlewares.ErrorHandler())
+	ginServer.Use(middlewares.QueryCleaner())
 
 	// 初始化路由
 
 	// routes/user.go
-	routes2.InitUserRoute(ginServer)
+	routes.InitUserRoute(ginServer)
 
 	// routes/problem.go
-	routes2.InitProblemRoute(ginServer)
-	routes2.InitTagRoute(ginServer)
-	routes2.InitSolutionRoute(ginServer)
-	routes2.InitTestcaseRoute(ginServer)
-	routes2.InitCollectionRoute(ginServer)
+	routes.InitProblemRoute(ginServer)
+	routes.InitTagRoute(ginServer)
+	routes.InitSolutionRoute(ginServer)
+	routes.InitTestcaseRoute(ginServer)
+	routes.InitCollectionRoute(ginServer)
 
 	// routes/judge.go
-	routes2.InitJudgeRoute(ginServer)
-	routes2.InitRecordRoute(ginServer)
-	routes2.InitLanguageRoute(ginServer)
+	routes.InitJudgeRoute(ginServer)
+	routes.InitRecordRoute(ginServer)
+	routes.InitLanguageRoute(ginServer)
 
 	// routes/contest.go
-	//routes2.InitContestRoute(ginServer)
-	//routes2.InitTeamRoute(ginServer)
+	//routes.InitContestRoute(ginServer)
+	//routes.InitTeamRoute(ginServer)
 
 	// routes/blog.go
-	routes2.InitBlogRoute(ginServer)
-	routes2.InitCommentRoute(ginServer)
+	routes.InitBlogRoute(ginServer)
+	routes.InitCommentRoute(ginServer)
 
 	// routes/system.go
-	routes2.InitSystemRoute(ginServer)
+	routes.InitSystemRoute(ginServer)
 
 	// routes/misc.go
-	routes2.InitAiRouter(ginServer)
-	routes2.InitMiscRoute(ginServer)
+	routes.InitAiRouter(ginServer)
+	routes.InitMiscRoute(ginServer)
 
 	return nil
 }

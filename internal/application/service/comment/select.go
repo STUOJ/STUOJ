@@ -9,7 +9,7 @@ import (
 	"STUOJ/internal/domain/user"
 	entity "STUOJ/internal/infrastructure/persistence/entity"
 	querycontext2 "STUOJ/internal/infrastructure/persistence/repository/querycontext"
-	query2 "STUOJ/internal/infrastructure/persistence/repository/queryfield"
+	query "STUOJ/internal/infrastructure/persistence/repository/queryfield"
 	"slices"
 )
 
@@ -41,7 +41,7 @@ func Select(params request.QueryCommentParams, reqUser request.ReqUser) (Comment
 	}
 	uqc := querycontext2.UserQueryContext{}
 	uqc.Id.Add(userIds...)
-	uqc.Field = *query2.UserSimpleField
+	uqc.Field = *query.UserSimpleField
 	users, _, err := user.Query.Select(uqc)
 
 	blogIds := make([]int64, len(comments))
@@ -50,7 +50,7 @@ func Select(params request.QueryCommentParams, reqUser request.ReqUser) (Comment
 	}
 	bqc := querycontext2.BlogQueryContext{}
 	bqc.Id.Add(blogIds...)
-	bqc.Field = *query2.BlogSimpleField
+	bqc.Field = *query.BlogSimpleField
 	blogs, _, err := blog.Query.Select(bqc)
 
 	for _, u := range comments {

@@ -4,7 +4,7 @@ import (
 	"STUOJ/internal/application/dto"
 	"STUOJ/internal/infrastructure/persistence/entity"
 	"STUOJ/internal/infrastructure/persistence/entity/field"
-	option2 "STUOJ/internal/infrastructure/persistence/repository/option"
+	option "STUOJ/internal/infrastructure/persistence/repository/option"
 	"time"
 )
 
@@ -22,48 +22,48 @@ type ContestQueryContext struct {
 	BeginEnd    dto.Field[time.Time]
 	FinishStart dto.Field[time.Time]
 	FinishEnd   dto.Field[time.Time]
-	option2.QueryParams
+	option.QueryParams
 	Field field.ContestField
 }
 
 // applyFilter 应用查询过滤器到options
-func (query *ContestQueryContext) applyFilter(options option2.Options) option2.Options {
+func (query *ContestQueryContext) applyFilter(options option.Options) option.Options {
 	filters := options.GetFilters()
 	if query.Id.Exist() {
-		filters.Add(field.ContestId, option2.OpIn, query.Id.Value())
+		filters.Add(field.ContestId, option.OpIn, query.Id.Value())
 	}
 	if query.UserId.Exist() {
-		filters.Add(field.ContestUserId, option2.OpIn, query.UserId.Value())
+		filters.Add(field.ContestUserId, option.OpIn, query.UserId.Value())
 	}
 	if query.Title.Exist() {
-		filters.Add(field.ContestTitle, option2.OpLike, query.Title.Value())
+		filters.Add(field.ContestTitle, option.OpLike, query.Title.Value())
 	}
 	if query.Status.Exist() {
-		filters.Add(field.ContestStatus, option2.OpIn, query.Status.Value())
+		filters.Add(field.ContestStatus, option.OpIn, query.Status.Value())
 	}
 	if query.Format.Exist() {
-		filters.Add(field.ContestFormat, option2.OpIn, query.Format.Value())
+		filters.Add(field.ContestFormat, option.OpIn, query.Format.Value())
 	}
 	if query.TeamSize.Exist() {
-		filters.Add(field.ContestTeamSize, option2.OpIn, query.TeamSize.Value())
+		filters.Add(field.ContestTeamSize, option.OpIn, query.TeamSize.Value())
 	}
 	if query.StartTime.Exist() {
-		filters.Add(field.ContestStartTime, option2.OpGreaterEq, query.StartTime.Value())
+		filters.Add(field.ContestStartTime, option.OpGreaterEq, query.StartTime.Value())
 	}
 	if query.EndTime.Exist() {
-		filters.Add(field.ContestEndTime, option2.OpLessEq, query.EndTime.Value())
+		filters.Add(field.ContestEndTime, option.OpLessEq, query.EndTime.Value())
 	}
 	if query.BeginStart.Exist() {
-		filters.Add(field.ContestStartTime, option2.OpGreaterEq, query.BeginStart.Value())
+		filters.Add(field.ContestStartTime, option.OpGreaterEq, query.BeginStart.Value())
 	}
 	if query.BeginEnd.Exist() {
-		filters.Add(field.ContestStartTime, option2.OpLessEq, query.BeginEnd.Value())
+		filters.Add(field.ContestStartTime, option.OpLessEq, query.BeginEnd.Value())
 	}
 	if query.FinishStart.Exist() {
-		filters.Add(field.ContestEndTime, option2.OpGreaterEq, query.FinishStart.Value())
+		filters.Add(field.ContestEndTime, option.OpGreaterEq, query.FinishStart.Value())
 	}
 	if query.FinishEnd.Exist() {
-		filters.Add(field.ContestEndTime, option2.OpLessEq, query.FinishEnd.Value())
+		filters.Add(field.ContestEndTime, option.OpLessEq, query.FinishEnd.Value())
 	}
 	filters.AddFiter(query.ExtraFilters.Conditions...)
 	return options

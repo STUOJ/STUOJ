@@ -9,7 +9,7 @@ import (
 	"STUOJ/internal/domain/user"
 	entity "STUOJ/internal/infrastructure/persistence/entity"
 	querycontext2 "STUOJ/internal/infrastructure/persistence/repository/querycontext"
-	query2 "STUOJ/internal/infrastructure/persistence/repository/queryfield"
+	query "STUOJ/internal/infrastructure/persistence/repository/queryfield"
 	"STUOJ/pkg/errors"
 	"STUOJ/pkg/utils"
 	"slices"
@@ -26,7 +26,7 @@ func SelectById(id int64, reqUser request.ReqUser) (response.CollectionData, err
 	// 获取题单信息
 	collectionQueryContext := querycontext2.CollectionQueryContext{}
 	collectionQueryContext.Id.Add(id)
-	collectionQueryContext.Field = *query2.CollectionAllField
+	collectionQueryContext.Field = *query.CollectionAllField
 	collectionDomain, collectionMap, err := collection.Query.SelectOne(collectionQueryContext, collection.QueryProblemId(), collection.QueryUserId())
 	if err != nil {
 		return res, err
@@ -39,7 +39,7 @@ func SelectById(id int64, reqUser request.ReqUser) (response.CollectionData, err
 	res = domain2response(collectionDomain)
 
 	problemQuery := querycontext2.ProblemQueryContext{}
-	problemQuery.Field = *query2.ProblemSimpleField
+	problemQuery.Field = *query.ProblemSimpleField
 	problemIds, _ := utils.StringToInt64Slice(string(collectionMap["collection_problem_id"].([]uint8)))
 	problemQuery.Id.Set(problemIds)
 	_, problemMap, err := problem.Query.SelectByIds(problemQuery, problem.QueryMaxScore(res.User.Id), problem.QueryTag())
@@ -56,7 +56,7 @@ func SelectById(id int64, reqUser request.ReqUser) (response.CollectionData, err
 	}
 
 	userQuery := querycontext2.UserQueryContext{}
-	userQuery.Field = *query2.UserSimpleField
+	userQuery.Field = *query.UserSimpleField
 	collaboratorIds, _ := utils.StringToInt64Slice(string(collectionMap["collection_user_id"].([]uint8)))
 	userQuery.Id.Add(collectionDomain.UserId.Value())
 	userQuery.Id.Add(collaboratorIds...)
@@ -81,7 +81,7 @@ func Select(params request.QueryCollectionParams, reqUser request.ReqUser) (Coll
 	if slices.Contains(query_.Status.Value(), entity.CollectionPrivate) && reqUser.Role < entity.RoleAdmin {
 		query_.UserId.Set([]int64{int64(reqUser.Id)})
 	}
-	query_.Field = *query2.CollectionListItemField
+	query_.Field = *query.CollectionListItemField
 	collections, _, err := collection.Query.Select(query_)
 
 	userIds := make([]int64, len(collections))
@@ -90,7 +90,7 @@ func Select(params request.QueryCollectionParams, reqUser request.ReqUser) (Coll
 	}
 
 	userQuery := querycontext2.UserQueryContext{}
-	userQuery.Field = *query2.UserSimpleField
+	userQuery.Field = *query.UserSimpleField
 	userQuery.Id.Set(userIds)
 
 	users, _, err := user.Query.SelectByIds(userQuery)

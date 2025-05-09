@@ -10,7 +10,7 @@ import (
 	"STUOJ/internal/domain/user"
 	"STUOJ/internal/infrastructure/persistence/entity"
 	querycontext2 "STUOJ/internal/infrastructure/persistence/repository/querycontext"
-	query2 "STUOJ/internal/infrastructure/persistence/repository/queryfield"
+	query "STUOJ/internal/infrastructure/persistence/repository/queryfield"
 )
 
 type SubmissionPage struct {
@@ -41,12 +41,12 @@ func Select(params request.QuerySubmissionParams, reqUser request.ReqUser) (Subm
 
 	uqc := querycontext2.UserQueryContext{}
 	uqc.Id.Add(userIds...)
-	uqc.Field = *query2.UserSimpleField
+	uqc.Field = *query.UserSimpleField
 	users, _, err := user.Query.SelectByIds(uqc)
 
 	pqc := querycontext2.ProblemQueryContext{}
 	pqc.Id.Add(problemIds...)
-	pqc.Field = *query2.ProblemSimpleField
+	pqc.Field = *query.ProblemSimpleField
 	problems, _, err := problem.Query.SelectByIds(pqc)
 
 	for _, s := range submissions {
@@ -108,13 +108,13 @@ func SelectById(sid int64, reqUser request.ReqUser) (response.RecordData, error)
 
 	pqc := querycontext2.ProblemQueryContext{}
 	pqc.Id.Add(s0.ProblemId.Value())
-	pqc.Field = *query2.ProblemSimpleField
+	pqc.Field = *query.ProblemSimpleField
 	p, _, err := problem.Query.SelectOne(pqc)
 
 	// 获取用户信息
 	uqc := querycontext2.UserQueryContext{}
 	uqc.Id.Add(s0.UserId.Value())
-	uqc.Field = *query2.UserSimpleField
+	uqc.Field = *query.UserSimpleField
 	u, _, err := user.Query.SelectOne(uqc)
 
 	resp.Submission.Problem = response.Domain2ProblemSimpleData(p)

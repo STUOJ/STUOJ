@@ -4,7 +4,7 @@ import (
 	"STUOJ/internal/application/dto"
 	"STUOJ/internal/infrastructure/persistence/entity"
 	"STUOJ/internal/infrastructure/persistence/entity/field"
-	option2 "STUOJ/internal/infrastructure/persistence/repository/option"
+	option "STUOJ/internal/infrastructure/persistence/repository/option"
 	"time"
 )
 
@@ -16,30 +16,30 @@ type CollectionQueryContext struct {
 	Status    dto.FieldList[entity.CollectionStatus]
 	StartTime dto.Field[time.Time]
 	EndTime   dto.Field[time.Time]
-	option2.QueryParams
+	option.QueryParams
 	Field field.CollectionField
 }
 
 // applyFilter 应用收藏查询过滤器
-func (query *CollectionQueryContext) applyFilter(options option2.Options) option2.Options {
+func (query *CollectionQueryContext) applyFilter(options option.Options) option.Options {
 	filters := options.GetFilters()
 	if query.Id.Exist() {
-		filters.Add(field.CollectionId, option2.OpIn, query.Id.Value())
+		filters.Add(field.CollectionId, option.OpIn, query.Id.Value())
 	}
 	if query.Title.Exist() {
-		filters.Add(field.CollectionTitle, option2.OpLike, query.Title.Value())
+		filters.Add(field.CollectionTitle, option.OpLike, query.Title.Value())
 	}
 	if query.UserId.Exist() {
-		filters.Add(field.CollectionUserId, option2.OpIn, query.UserId.Value())
+		filters.Add(field.CollectionUserId, option.OpIn, query.UserId.Value())
 	}
 	if query.Status.Exist() {
-		filters.Add(field.CollectionStatus, option2.OpIn, query.Status.Value())
+		filters.Add(field.CollectionStatus, option.OpIn, query.Status.Value())
 	}
 	if query.StartTime.Exist() {
-		filters.Add(field.CollectionCreateTime, option2.OpGreaterEq, query.StartTime.Value())
+		filters.Add(field.CollectionCreateTime, option.OpGreaterEq, query.StartTime.Value())
 	}
 	if query.EndTime.Exist() {
-		filters.Add(field.CollectionCreateTime, option2.OpLessEq, query.EndTime.Value())
+		filters.Add(field.CollectionCreateTime, option.OpLessEq, query.EndTime.Value())
 	}
 	filters.AddFiter(query.ExtraFilters.Conditions...)
 	return options
