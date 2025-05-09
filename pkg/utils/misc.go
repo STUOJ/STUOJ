@@ -92,6 +92,87 @@ func Uint64SliceToString(ids []uint64) string {
 	return strings.Join(strs, ",")
 }
 
+// SafeTypeAssert 安全类型断言函数，如果转换失败则返回期望类型的零值
+// value: 要转换的interface{}值
+// expectedType: 期望的类型，如"int", "string"等
+// 返回值: 转换后的值或期望类型的零值
+func SafeTypeAssert(value interface{}, expectedType string) interface{} {
+	switch expectedType {
+	case "int":
+		if v, ok := value.(int); ok {
+			return v
+		}
+		return 0
+	case "int8":
+		if v, ok := value.(int8); ok {
+			return v
+		}
+		return int8(0)
+	case "int16":
+		if v, ok := value.(int16); ok {
+			return v
+		}
+		return int16(0)
+	case "int32":
+		if v, ok := value.(int32); ok {
+			return v
+		}
+		return int32(0)
+	case "int64":
+		if v, ok := value.(int64); ok {
+			return v
+		}
+		return int64(0)
+	case "uint":
+		if v, ok := value.(uint); ok {
+			return v
+		}
+		return uint(0)
+	case "uint8":
+		if v, ok := value.(uint8); ok {
+			return v
+		}
+		return uint8(0)
+	case "uint16":
+		if v, ok := value.(uint16); ok {
+			return v
+		}
+		return uint16(0)
+	case "uint32":
+		if v, ok := value.(uint32); ok {
+			return v
+		}
+		return uint32(0)
+	case "uint64":
+		if v, ok := value.(uint64); ok {
+			return v
+		}
+		return uint64(0)
+	case "float32":
+		if v, ok := value.(float32); ok {
+			return v
+		}
+		return float32(0)
+	case "float64":
+		if v, ok := value.(float64); ok {
+			return v
+		}
+		return float64(0)
+	case "bool":
+		if v, ok := value.(bool); ok {
+			return v
+		}
+		return false
+	case "string":
+		if v, ok := value.(string); ok {
+			return v
+		}
+		return ""
+	default:
+		return nil
+	}
+}
+
 func ConvertStringToType[T any](str string, result *interface{}) error {
 	var tmp T
 	switch any(tmp).(type) {
