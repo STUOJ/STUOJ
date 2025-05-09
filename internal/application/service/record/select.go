@@ -42,7 +42,7 @@ func Select(params request.QuerySubmissionParams, reqUser model.ReqUser) (Submis
 	uqc := querycontext.UserQueryContext{}
 	uqc.Id.Add(userIds...)
 	uqc.Field = *query.UserSimpleField
-	users, _, err := user.Query.Select(uqc)
+	users, _, err := user.Query.SelectByIds(uqc)
 
 	pqc := querycontext.ProblemQueryContext{}
 	pqc.Id.Add(problemIds...)
