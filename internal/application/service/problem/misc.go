@@ -9,7 +9,7 @@ import (
 
 func isPermission(problemMap map[string]any, reqUser model.ReqUser) error {
 	// 检查是否是题目的创建者或管理员
-	userIds, err := utils.StringToInt64Slice(problemMap["problem_user_id"].(string))
+	userIds, err := utils.StringToInt64Slice(string(problemMap["problem_user_id"].([]uint8)))
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage("获取题目修改者id失败")
 	}

@@ -40,7 +40,7 @@ func SelectById(id int64, reqUser model.ReqUser) (response.CollectionData, error
 
 	problemQuery := querycontext.ProblemQueryContext{}
 	problemQuery.Field = *query.ProblemSimpleField
-	problemIds, _ := utils.StringToInt64Slice(collectionMap["collection_problem_id"].(string))
+	problemIds, _ := utils.StringToInt64Slice(string(collectionMap["collection_problem_id"].([]uint8)))
 	problemQuery.Id.Set(problemIds)
 	_, problemMap, err := problem.Query.SelectByIds(problemQuery, problem.QueryMaxScore(res.User.Id), problem.QueryTag())
 
@@ -57,7 +57,7 @@ func SelectById(id int64, reqUser model.ReqUser) (response.CollectionData, error
 
 	userQuery := querycontext.UserQueryContext{}
 	userQuery.Field = *query.UserSimpleField
-	collaboratorIds, _ := utils.StringToInt64Slice(collectionMap["collection_user_id"].(string))
+	collaboratorIds, _ := utils.StringToInt64Slice(string(collectionMap["collection_user_id"].([]uint8)))
 	userQuery.Id.Add(collectionDomain.UserId.Value())
 	userQuery.Id.Add(collaboratorIds...)
 	userDomain, _, err := user.Query.SelectByIds(userQuery)

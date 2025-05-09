@@ -35,7 +35,7 @@ func Submit(req request.JudgeReq, reqUser model.ReqUser) (int64, error) {
 		return 0, errors.ErrNotFound.WithMessage("题目不存在")
 	}
 	if problemDomain.Status.Value() < entity.ProblemPublic && reqUser.Role < entity.RoleAdmin {
-		userIds, err := utils.StringToInt64Slice(problemMap["problem_user_id"].(string))
+		userIds, err := utils.StringToInt64Slice(string(problemMap["problem_user_id"].([]uint8)))
 		if err != nil {
 			return 0, errors.ErrInternalServer.WithMessage("内部错误")
 		}

@@ -15,7 +15,7 @@ func isPermission(c collection.Collection, reqUser model.ReqUser) error {
 		query := querycontext.CollectionQueryContext{}
 		query.Id.Add(c.Id.Value())
 		_, map_, err := collection.Query.SelectOne(query, collection.QueryUserId())
-		userIds, err := utils.StringToInt64Slice(map_["collection_user_id"].(string))
+		userIds, err := utils.StringToInt64Slice(string(map_["collection_user_id"].([]uint8)))
 		if err != nil {
 			return err
 		}
