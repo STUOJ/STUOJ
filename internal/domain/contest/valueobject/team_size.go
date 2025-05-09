@@ -1,13 +1,13 @@
 package valueobject
 
 import (
-	"STUOJ/internal/model"
+	"STUOJ/internal/domain/shared"
 	"fmt"
 )
 
 // TeamSize 表示比赛团队大小的值对象
 type TeamSize struct {
-	model.Valueobject[uint8]
+	shared.Valueobject[uint8]
 }
 
 // Verify 验证团队大小是否有效

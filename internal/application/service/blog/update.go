@@ -3,13 +3,12 @@ package blog
 import (
 	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/domain/blog"
-	entity "STUOJ/internal/infrastructure/repository/entity"
-	"STUOJ/internal/infrastructure/repository/querycontext"
-	"STUOJ/internal/model"
+	entity "STUOJ/internal/infrastructure/persistence/entity"
+	"STUOJ/internal/infrastructure/persistence/repository/querycontext"
 	"STUOJ/pkg/errors"
 )
 
-func Update(req request.UpdateBlogReq, reqUser model.ReqUser) error {
+func Update(req request.UpdateBlogReq, reqUser request.ReqUser) error {
 	blogQueryContext := querycontext.BlogQueryContext{}
 	blogQueryContext.Id.Add(req.Id)
 	blogQueryContext.Field.SelectId().SelectStatus().SelectUserId()

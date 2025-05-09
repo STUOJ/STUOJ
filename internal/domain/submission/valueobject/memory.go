@@ -1,11 +1,11 @@
 package valueobject
 
 import (
-	"STUOJ/internal/model"
+	"STUOJ/internal/domain/shared"
 )
 
 type Memory struct {
-	model.Valueobject[int64]
+	shared.Valueobject[int64]
 }
 
 func NewMemory(value int64) Memory {

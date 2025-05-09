@@ -1,12 +1,12 @@
 package valueobject
 
 import (
-	"STUOJ/internal/model"
+	"STUOJ/internal/domain/shared"
 	"fmt"
 )
 
 type MimeType struct {
-	model.Valueobject[int64]
+	shared.Valueobject[int64]
 }
 
 const (

@@ -1,23 +1,23 @@
 package solution
 
 import (
+	"STUOJ/internal/application/dto"
 	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/application/dto/response"
 	"STUOJ/internal/domain/solution"
-	"STUOJ/internal/infrastructure/repository/query"
-	"STUOJ/internal/infrastructure/repository/querycontext"
-	"STUOJ/internal/model"
+	"STUOJ/internal/infrastructure/persistence/repository/querycontext"
+	"STUOJ/internal/infrastructure/persistence/repository/queryfield"
 )
 
 type SolutionPage struct {
 	Solutions []response.SolutionData `json:"solutions"`
-	model.Page
+	dto.Page
 }
 
-func Select(params request.QuerySolutionParams, reqUser model.ReqUser) (SolutionPage, error) {
+func Select(params request.QuerySolutionParams, reqUser request.ReqUser) (SolutionPage, error) {
 	var res SolutionPage
 	query_ := params2Query(params)
-	query_.Field = *query.SolutionAllField
+	query_.Field = *queryfield.SolutionAllField
 	solutions, _, err := solution.Query.Select(query_)
 	if err != nil {
 		return res, err
@@ -33,7 +33,7 @@ func Select(params request.QuerySolutionParams, reqUser model.ReqUser) (Solution
 }
 
 // SelectById 根据ID查询评测点数据
-func SelectById(id int64, reqUser model.ReqUser) (response.SolutionData, error) {
+func SelectById(id int64, reqUser request.ReqUser) (response.SolutionData, error) {
 	var resp response.SolutionData
 
 	// 检查权限
@@ -45,7 +45,7 @@ func SelectById(id int64, reqUser model.ReqUser) (response.SolutionData, error) 
 	// 查询
 	qc := querycontext.SolutionQueryContext{}
 	qc.Id.Add(id)
-	qc.Field = *query.SolutionAllField
+	qc.Field = *queryfield.SolutionAllField
 	s0, _, err := solution.Query.SelectOne(qc)
 	if err != nil {
 		return resp, err
@@ -55,7 +55,7 @@ func SelectById(id int64, reqUser model.ReqUser) (response.SolutionData, error) 
 	return resp, nil
 }
 
-func Statistics(params request.SolutionStatisticsParams, reqUser model.ReqUser) (response.StatisticsRes, error) {
+func Statistics(params request.SolutionStatisticsParams, reqUser request.ReqUser) (response.StatisticsRes, error) {
 	qc := params2Query(params.QuerySolutionParams)
 	qc.GroupBy = params.GroupBy
 	resp, err := solution.Query.GroupCount(qc)

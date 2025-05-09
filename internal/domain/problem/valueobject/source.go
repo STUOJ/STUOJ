@@ -1,12 +1,12 @@
 package valueobject
 
 import (
-	"STUOJ/internal/model"
+	"STUOJ/internal/domain/shared"
 	"fmt"
 )
 
 type Source struct {
-	model.Valueobject[string]
+	shared.Valueobject[string]
 }
 
 func NewSource(value string) Source {

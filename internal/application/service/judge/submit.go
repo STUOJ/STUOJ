@@ -7,23 +7,22 @@ import (
 	"STUOJ/internal/domain/runner"
 	"STUOJ/internal/domain/submission"
 	"STUOJ/internal/domain/testcase"
-	entity "STUOJ/internal/infrastructure/repository/entity"
-	query "STUOJ/internal/infrastructure/repository/query"
-	querycontext "STUOJ/internal/infrastructure/repository/querycontext"
-	"STUOJ/internal/model"
-	"STUOJ/internal/model/option"
+	entity "STUOJ/internal/infrastructure/persistence/entity"
+	"STUOJ/internal/infrastructure/persistence/repository/option"
+	querycontext2 "STUOJ/internal/infrastructure/persistence/repository/querycontext"
+	"STUOJ/internal/infrastructure/persistence/repository/queryfield"
 	"STUOJ/pkg/errors"
 	"STUOJ/pkg/utils"
 	"slices"
 )
 
-func Submit(req request.JudgeReq, reqUser model.ReqUser) (int64, error) {
+func Submit(req request.JudgeReq, reqUser request.ReqUser) (int64, error) {
 	languageMapId, err := SelectLanguageMapId(req.LanguageId)
 	if err != nil {
 		return 0, err
 	}
 
-	problemQuery := querycontext.ProblemQueryContext{}
+	problemQuery := querycontext2.ProblemQueryContext{}
 	problemQuery.Id.Add(req.ProblemId)
 	problemDomain, problemMap, err := problem.Query.SelectOne(problemQuery)
 	if err != nil {
@@ -53,10 +52,10 @@ func Submit(req request.JudgeReq, reqUser model.ReqUser) (int64, error) {
 		return 0, err
 	}
 
-	testcaseQuery := querycontext.TestcaseQueryContext{}
+	testcaseQuery := querycontext2.TestcaseQueryContext{}
 	testcaseQuery.ProblemId.Add(req.ProblemId)
 	testcaseQuery.Page = option.NewPagination(0, 1000)
-	testcaseQuery.Field = *query.TestcaseAllField
+	testcaseQuery.Field = *queryfield.TestcaseAllField
 	testcaseDomain, _, err := testcase.Query.Select(testcaseQuery)
 	if err != nil {
 		return 0, errors.ErrNotFound.WithMessage("找不到测试点")

@@ -1,13 +1,13 @@
 package valueobject
 
 import (
-	"STUOJ/internal/model"
+	"STUOJ/internal/domain/shared"
 	"errors"
 	"strings"
 )
 
 type Avatar struct {
-	model.Valueobject[string]
+	shared.Valueobject[string]
 }
 
 func (a Avatar) Verify() error {

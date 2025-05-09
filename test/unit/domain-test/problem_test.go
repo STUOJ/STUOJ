@@ -3,7 +3,7 @@ package domain_test
 import (
 	"STUOJ/internal/domain/problem"
 	"STUOJ/internal/domain/problem/valueobject"
-	"STUOJ/internal/infrastructure/repository/entity"
+	"STUOJ/internal/infrastructure/persistence/entity"
 	"testing"
 	"time"
 )

@@ -4,7 +4,7 @@ import (
 	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/application/dto/response"
 	"STUOJ/internal/domain/tag"
-	"STUOJ/internal/infrastructure/repository/querycontext"
+	"STUOJ/internal/infrastructure/persistence/repository/querycontext"
 )
 
 // domain2Resp 将领域模型转换为响应模型

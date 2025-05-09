@@ -3,7 +3,7 @@ package handler
 import (
 	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/application/service/collection"
-	"STUOJ/internal/model"
+	"STUOJ/internal/interfaces/http/vo"
 	"STUOJ/pkg/errors"
 
 	"net/http"
@@ -14,7 +14,7 @@ import (
 
 // 获取题单数据
 func CollectionInfo(c *gin.Context) {
-	reqUser := model.NewReqUser(c)
+	reqUser := request.NewReqUser(c)
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.Error(&errors.ErrValidation)
@@ -27,12 +27,12 @@ func CollectionInfo(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, model.RespOk("OK", coll))
+	c.JSON(http.StatusOK, vo.RespOk("OK", coll))
 }
 
 // 获取题单列表
 func CollectionList(c *gin.Context) {
-	reqUser := model.NewReqUser(c)
+	reqUser := request.NewReqUser(c)
 	params := request.QueryCollectionParams{}
 	if err := c.ShouldBindQuery(&params); err != nil {
 		c.Error(&errors.ErrValidation)
@@ -45,12 +45,12 @@ func CollectionList(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, model.RespOk("OK", collections))
+	c.JSON(http.StatusOK, vo.RespOk("OK", collections))
 }
 
 // 添加题单
 func CollectionAdd(c *gin.Context) {
-	reqUser := model.NewReqUser(c)
+	reqUser := request.NewReqUser(c)
 	var req request.CreateCollectionReq
 
 	// 参数绑定
@@ -68,12 +68,12 @@ func CollectionAdd(c *gin.Context) {
 	}
 
 	// 返回结果
-	c.JSON(http.StatusOK, model.RespOk("添加成功，返回题单ID", id))
+	c.JSON(http.StatusOK, vo.RespOk("添加成功，返回题单ID", id))
 }
 
 // 修改题单数据
 func CollectionModify(c *gin.Context) {
-	reqUser := model.NewReqUser(c)
+	reqUser := request.NewReqUser(c)
 	var req request.UpdateCollectionReq
 
 	// 参数绑定
@@ -90,12 +90,12 @@ func CollectionModify(c *gin.Context) {
 	}
 
 	// 返回结果
-	c.JSON(http.StatusOK, model.RespOk("修改成功", nil))
+	c.JSON(http.StatusOK, vo.RespOk("修改成功", nil))
 }
 
 // 删除题单
 func CollectionRemove(c *gin.Context) {
-	reqUser := model.NewReqUser(c)
+	reqUser := request.NewReqUser(c)
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.Error(&errors.ErrValidation)
@@ -108,11 +108,11 @@ func CollectionRemove(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, model.RespOk("删除成功", nil))
+	c.JSON(http.StatusOK, vo.RespOk("删除成功", nil))
 }
 
 func CollectionModifyProblem(c *gin.Context) {
-	reqUser := model.NewReqUser(c)
+	reqUser := request.NewReqUser(c)
 	var req request.UpdateCollectionProblemReq
 
 	// 参数绑定
@@ -128,11 +128,11 @@ func CollectionModifyProblem(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, model.RespOk("修改成功", nil))
+	c.JSON(http.StatusOK, vo.RespOk("修改成功", nil))
 }
 
 func CollectionModifyUser(c *gin.Context) {
-	reqUser := model.NewReqUser(c)
+	reqUser := request.NewReqUser(c)
 	var req request.UpdateCollectionUserReq
 
 	err := c.ShouldBindBodyWithJSON(&req)
@@ -146,11 +146,11 @@ func CollectionModifyUser(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, model.RespOk("修改成功", nil))
+	c.JSON(http.StatusOK, vo.RespOk("修改成功", nil))
 }
 
 func CollectionStatistics(c *gin.Context) {
-	reqUser := model.NewReqUser(c)
+	reqUser := request.NewReqUser(c)
 	params := request.CollectionStatisticsParams{}
 	if err := c.ShouldBindQuery(&params); err != nil {
 		c.Error(&errors.ErrValidation)
@@ -162,5 +162,5 @@ func CollectionStatistics(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, model.RespOk("OK", res))
+	c.JSON(http.StatusOK, vo.RespOk("OK", res))
 }

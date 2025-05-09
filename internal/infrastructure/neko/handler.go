@@ -1,7 +1,7 @@
 package neko
 
 import (
-	"STUOJ/internal/model"
+	"STUOJ/internal/interfaces/http/vo"
 	"github.com/gin-gonic/gin"
 	"io"
 	"log"
@@ -17,7 +17,7 @@ func ForwardHandler(c *gin.Context) {
 	req, err := http.NewRequest(c.Request.Method, url, c.Request.Body)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.RespError("请求失败！", nil))
+		c.JSON(http.StatusInternalServerError, vo.RespError("请求失败！", nil))
 		return
 	}
 
@@ -26,7 +26,7 @@ func ForwardHandler(c *gin.Context) {
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.RespError("请求失败！", nil))
+		c.JSON(http.StatusInternalServerError, vo.RespError("请求失败！", nil))
 		return
 	}
 	defer res.Body.Close()
@@ -34,7 +34,7 @@ func ForwardHandler(c *gin.Context) {
 	_, err = io.Copy(c.Writer, res.Body)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.RespError("请求失败！", nil))
+		c.JSON(http.StatusInternalServerError, vo.RespError("请求失败！", nil))
 		return
 	}
 }

@@ -1,7 +1,7 @@
 package domain_test
 
 import (
-	"STUOJ/internal/infrastructure/repository"
+	"STUOJ/internal/infrastructure/persistence/repository"
 	"STUOJ/pkg/config"
 	"os"
 	"testing"

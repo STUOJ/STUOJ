@@ -1,12 +1,12 @@
 package user
 
 import (
+	"STUOJ/internal/application/dto"
 	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/application/dto/response"
 	"STUOJ/internal/domain/user"
-	"STUOJ/internal/infrastructure/repository/entity"
-	"STUOJ/internal/infrastructure/repository/querycontext"
-	"STUOJ/internal/model"
+	"STUOJ/internal/infrastructure/persistence/entity"
+	"STUOJ/internal/infrastructure/persistence/repository/querycontext"
 	"STUOJ/pkg/errors"
 	"STUOJ/pkg/utils"
 	"log"
@@ -14,11 +14,11 @@ import (
 
 type UserPage struct {
 	Users []response.UserData `json:"users"`
-	model.Page
+	dto.Page
 }
 
 // SelectById 根据ID查询用户
-func SelectById(id int64, reqUser model.ReqUser) (response.UserQueryData, error) {
+func SelectById(id int64, reqUser request.ReqUser) (response.UserQueryData, error) {
 	var resp response.UserQueryData
 
 	// 查询
@@ -41,7 +41,7 @@ func SelectById(id int64, reqUser model.ReqUser) (response.UserQueryData, error)
 }
 
 // SelectByEmail 根据邮箱查询用户
-func SelectByEmail(email string, reqUser model.ReqUser) (response.UserData, error) {
+func SelectByEmail(email string, reqUser request.ReqUser) (response.UserData, error) {
 	var resp response.UserData
 	qc := querycontext.UserQueryContext{}
 	qc.Email.Set(email)
@@ -58,7 +58,7 @@ func SelectByEmail(email string, reqUser model.ReqUser) (response.UserData, erro
 }
 
 // Select 查询所有用户
-func Select(params request.QueryUserParams, reqUser model.ReqUser) (UserPage, error) {
+func Select(params request.QueryUserParams, reqUser request.ReqUser) (UserPage, error) {
 	var resp UserPage
 
 	// 查询
@@ -84,7 +84,7 @@ func Select(params request.QueryUserParams, reqUser model.ReqUser) (UserPage, er
 }
 
 // LoginByEmail 根据邮箱验证密码
-func LoginByEmail(req request.UserLoginReq, reqUser model.ReqUser) (string, error) {
+func LoginByEmail(req request.UserLoginReq, reqUser request.ReqUser) (string, error) {
 	qc := querycontext.UserQueryContext{}
 	qc.Email.Set(req.Email)
 	qc.Field.SelectId().SelectPassword()
@@ -125,7 +125,7 @@ func SelectRoleById(id int64) (entity.Role, error) {
 	return u0.Role.Value(), nil
 }
 
-func Statistics(params request.UserStatisticsParams, reqUser model.ReqUser) (response.StatisticsRes, error) {
+func Statistics(params request.UserStatisticsParams, reqUser request.ReqUser) (response.StatisticsRes, error) {
 	qc := params2Query(params.QueryUserParams)
 	qc.GroupBy = params.GroupBy
 	resp, err := user.Query.GroupCount(qc)

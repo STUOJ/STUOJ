@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"STUOJ/internal/infrastructure/repository/entity"
+	"STUOJ/internal/infrastructure/persistence/entity"
 	"fmt"
 	"math"
 	"reflect"

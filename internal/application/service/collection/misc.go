@@ -1,16 +1,16 @@
 package collection
 
 import (
+	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/domain/collection"
-	"STUOJ/internal/infrastructure/repository/entity"
-	"STUOJ/internal/infrastructure/repository/querycontext"
-	"STUOJ/internal/model"
+	"STUOJ/internal/infrastructure/persistence/entity"
+	"STUOJ/internal/infrastructure/persistence/repository/querycontext"
 	"STUOJ/pkg/errors"
 	"STUOJ/pkg/utils"
 	"slices"
 )
 
-func isPermission(c collection.Collection, reqUser model.ReqUser) error {
+func isPermission(c collection.Collection, reqUser request.ReqUser) error {
 	if c.UserId.Value() != reqUser.Id && reqUser.Role < entity.RoleAdmin {
 		query := querycontext.CollectionQueryContext{}
 		query.Id.Add(c.Id.Value())

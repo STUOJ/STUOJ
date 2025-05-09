@@ -3,7 +3,7 @@ package handler
 import (
 	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/application/service/blog"
-	"STUOJ/internal/model"
+	"STUOJ/internal/interfaces/http/vo"
 	"STUOJ/pkg/errors"
 
 	"net/http"
@@ -13,7 +13,7 @@ import (
 )
 
 func BlogInfo(c *gin.Context) {
-	reqUser := model.NewReqUser(c)
+	reqUser := request.NewReqUser(c)
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.Error(&errors.ErrValidation)
@@ -26,11 +26,11 @@ func BlogInfo(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, model.RespOk("OK", b))
+	c.JSON(http.StatusOK, vo.RespOk("OK", b))
 }
 
 func BlogList(c *gin.Context) {
-	reqUser := model.NewReqUser(c)
+	reqUser := request.NewReqUser(c)
 	params := request.QueryBlogParams{}
 	if err := c.ShouldBindQuery(&params); err != nil {
 		c.Error(&errors.ErrValidation)
@@ -42,12 +42,12 @@ func BlogList(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, model.RespOk("OK", blogs))
+	c.JSON(http.StatusOK, vo.RespOk("OK", blogs))
 }
 
 // 保存博客
 func BlogUpload(c *gin.Context) {
-	reqUser := model.NewReqUser(c)
+	reqUser := request.NewReqUser(c)
 	var req request.CreateBlogReq
 
 	// 参数绑定
@@ -65,12 +65,12 @@ func BlogUpload(c *gin.Context) {
 	}
 
 	// 返回结果
-	c.JSON(http.StatusOK, model.RespOk("发布成功，返回博客ID", id))
+	c.JSON(http.StatusOK, vo.RespOk("发布成功，返回博客ID", id))
 }
 
 // 编辑博客
 func BlogEdit(c *gin.Context) {
-	reqUser := model.NewReqUser(c)
+	reqUser := request.NewReqUser(c)
 	var req request.UpdateBlogReq
 
 	// 参数绑定
@@ -88,12 +88,12 @@ func BlogEdit(c *gin.Context) {
 	}
 
 	// 返回结果
-	c.JSON(http.StatusOK, model.RespOk("修改成功", nil))
+	c.JSON(http.StatusOK, vo.RespOk("修改成功", nil))
 }
 
 // 删除博客
 func BlogRemove(c *gin.Context) {
-	reqUser := model.NewReqUser(c)
+	reqUser := request.NewReqUser(c)
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.Error(&errors.ErrValidation)
@@ -108,11 +108,11 @@ func BlogRemove(c *gin.Context) {
 	}
 
 	// 返回结果
-	c.JSON(http.StatusOK, model.RespOk("删除成功", nil))
+	c.JSON(http.StatusOK, vo.RespOk("删除成功", nil))
 }
 
 func BlogStatistics(c *gin.Context) {
-	reqUser := model.NewReqUser(c)
+	reqUser := request.NewReqUser(c)
 	params := request.BlogStatisticsParams{}
 	if err := c.ShouldBindQuery(&params); err != nil {
 		c.Error(&errors.ErrValidation)
@@ -123,5 +123,5 @@ func BlogStatistics(c *gin.Context) {
 		c.Error(err)
 		return
 	}
-	c.JSON(http.StatusOK, model.RespOk("OK", res))
+	c.JSON(http.StatusOK, vo.RespOk("OK", res))
 }

@@ -1,9 +1,10 @@
 package middlewares
 
 import (
+	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/application/service/user"
-	"STUOJ/internal/infrastructure/repository/entity"
-	"STUOJ/internal/model"
+	"STUOJ/internal/infrastructure/persistence/entity"
+	"STUOJ/internal/interfaces/http/vo"
 	"STUOJ/pkg/config"
 	"STUOJ/pkg/utils"
 	"errors"
@@ -24,13 +25,13 @@ func TokenGetInfo() gin.HandlerFunc {
 		}
 		uid, err := utils.GetTokenUid(c)
 		if err != nil {
-			c.JSON(http.StatusUnauthorized, model.RespError("获取用户id失败", nil))
+			c.JSON(http.StatusUnauthorized, vo.RespError("获取用户id失败", nil))
 			c.Abort()
 			return
 		}
 		role, err := getUserRole(uid)
 		if err != nil {
-			c.JSON(http.StatusUnauthorized, model.RespError("无法查询到用户组", nil))
+			c.JSON(http.StatusUnauthorized, vo.RespError("无法查询到用户组", nil))
 			c.Abort()
 			return
 		}
@@ -50,9 +51,9 @@ func TokenGetInfo() gin.HandlerFunc {
 
 func TokenAuthUser() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		reqUser := model.NewReqUser(c)
+		reqUser := request.NewReqUser(c)
 		if reqUser.Role < entity.RoleUser {
-			c.JSON(http.StatusForbidden, model.RespError("请登录", nil))
+			c.JSON(http.StatusForbidden, vo.RespError("请登录", nil))
 			c.Abort()
 			return
 		}
@@ -63,9 +64,9 @@ func TokenAuthUser() gin.HandlerFunc {
 
 func TokenAuthEditor() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		reqUser := model.NewReqUser(c)
+		reqUser := request.NewReqUser(c)
 		if reqUser.Role < entity.RoleEditor {
-			c.JSON(http.StatusForbidden, model.RespError("权限不足", nil))
+			c.JSON(http.StatusForbidden, vo.RespError("权限不足", nil))
 			c.Abort()
 			return
 		}
@@ -76,9 +77,9 @@ func TokenAuthEditor() gin.HandlerFunc {
 
 func TokenAuthAdmin() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		reqUser := model.NewReqUser(c)
+		reqUser := request.NewReqUser(c)
 		if reqUser.Role < entity.RoleAdmin {
-			c.JSON(http.StatusForbidden, model.RespError("权限不足", nil))
+			c.JSON(http.StatusForbidden, vo.RespError("权限不足", nil))
 			c.Abort()
 			return
 		}
@@ -90,9 +91,9 @@ func TokenAuthAdmin() gin.HandlerFunc {
 
 func TokenAuthRoot() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		reqUser := model.NewReqUser(c)
+		reqUser := request.NewReqUser(c)
 		if reqUser.Role < entity.RoleRoot {
-			c.JSON(http.StatusForbidden, model.RespError("权限不足", nil))
+			c.JSON(http.StatusForbidden, vo.RespError("权限不足", nil))
 			c.Abort()
 			return
 		}
@@ -106,7 +107,7 @@ func tokenAutoRefresh(c *gin.Context) error {
 	config := config.Conf.Token
 	exp, err := utils.GetTokenExpire(c)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, model.RespError("token无效，获取用户信息失败", nil))
+		c.JSON(http.StatusUnauthorized, vo.RespError("token无效，获取用户信息失败", nil))
 		c.Abort()
 		return err
 	}
@@ -118,18 +119,18 @@ func tokenAutoRefresh(c *gin.Context) error {
 		return nil
 	}
 
-	reqUser := model.NewReqUser(c)
+	reqUser := request.NewReqUser(c)
 	uid := uint64(reqUser.Id)
 
 	// 生成新token
 	token, err := utils.GenerateToken(uid)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, model.RespError("token刷新失败", nil))
+		c.JSON(http.StatusUnauthorized, vo.RespError("token刷新失败", nil))
 		c.Abort()
 		return err
 	}
 
-	c.JSON(http.StatusUnauthorized, model.RespRetry("token已刷新，请重新发送请求", token))
+	c.JSON(http.StatusUnauthorized, vo.RespRetry("token已刷新，请重新发送请求", token))
 	c.Abort()
 	return nil
 }

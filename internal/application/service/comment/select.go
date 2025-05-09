@@ -1,15 +1,15 @@
 package comment
 
 import (
+	model "STUOJ/internal/application/dto"
 	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/application/dto/response"
 	"STUOJ/internal/domain/blog"
 	"STUOJ/internal/domain/comment"
 	"STUOJ/internal/domain/user"
-	entity "STUOJ/internal/infrastructure/repository/entity"
-	query "STUOJ/internal/infrastructure/repository/query"
-	querycontext "STUOJ/internal/infrastructure/repository/querycontext"
-	model "STUOJ/internal/model"
+	entity "STUOJ/internal/infrastructure/persistence/entity"
+	querycontext2 "STUOJ/internal/infrastructure/persistence/repository/querycontext"
+	query2 "STUOJ/internal/infrastructure/persistence/repository/queryfield"
 	"slices"
 )
 
@@ -19,7 +19,7 @@ type CommentPage struct {
 }
 
 // Select 查询所有评论
-func Select(params request.QueryCommentParams, reqUser model.ReqUser) (CommentPage, error) {
+func Select(params request.QueryCommentParams, reqUser request.ReqUser) (CommentPage, error) {
 	var resp CommentPage
 
 	// 查询
@@ -39,18 +39,18 @@ func Select(params request.QueryCommentParams, reqUser model.ReqUser) (CommentPa
 	for i, c := range comments {
 		userIds[i] = c.UserId.Value()
 	}
-	uqc := querycontext.UserQueryContext{}
+	uqc := querycontext2.UserQueryContext{}
 	uqc.Id.Add(userIds...)
-	uqc.Field = *query.UserSimpleField
+	uqc.Field = *query2.UserSimpleField
 	users, _, err := user.Query.Select(uqc)
 
 	blogIds := make([]int64, len(comments))
 	for i, c := range comments {
 		blogIds[i] = c.BlogId.Value()
 	}
-	bqc := querycontext.BlogQueryContext{}
+	bqc := querycontext2.BlogQueryContext{}
 	bqc.Id.Add(blogIds...)
-	bqc.Field = *query.BlogSimpleField
+	bqc.Field = *query2.BlogSimpleField
 	blogs, _, err := blog.Query.Select(bqc)
 
 	for _, u := range comments {
@@ -78,7 +78,7 @@ func Select(params request.QueryCommentParams, reqUser model.ReqUser) (CommentPa
 	return resp, nil
 }
 
-func Statistics(params request.CommentStatisticsParams, reqUser model.ReqUser) (response.StatisticsRes, error) {
+func Statistics(params request.CommentStatisticsParams, reqUser request.ReqUser) (response.StatisticsRes, error) {
 	qc := params2Query(params.QueryCommentParams)
 	qc.GroupBy = params.GroupBy
 	resp, err := comment.Query.GroupCount(qc)

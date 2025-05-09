@@ -3,11 +3,10 @@ package solution
 import (
 	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/domain/solution"
-	"STUOJ/internal/model"
 )
 
 // Update 根据ID更新题解
-func Update(req request.UpdateSolutionReq, reqUser model.ReqUser) error {
+func Update(req request.UpdateSolutionReq, reqUser request.ReqUser) error {
 	// 检查权限
 	err := isPermission(reqUser)
 	if err != nil {

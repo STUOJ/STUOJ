@@ -5,14 +5,13 @@ import (
 	"STUOJ/internal/domain/image"
 	imgval "STUOJ/internal/domain/image/valueobject"
 	"STUOJ/internal/domain/user"
-	"STUOJ/internal/infrastructure/repository/entity"
-	"STUOJ/internal/infrastructure/repository/querycontext"
-	"STUOJ/internal/model"
+	"STUOJ/internal/infrastructure/persistence/entity"
+	"STUOJ/internal/infrastructure/persistence/repository/querycontext"
 	"STUOJ/pkg/errors"
 )
 
 // Update 根据Id更新用户基本信息
-func Update(req request.UserUpdateReq, reqUser model.ReqUser) error {
+func Update(req request.UserUpdateReq, reqUser request.ReqUser) error {
 	// 检查权限
 	err := isPermission(req.Id, reqUser)
 	if err != nil {
@@ -30,7 +29,7 @@ func Update(req request.UserUpdateReq, reqUser model.ReqUser) error {
 }
 
 // UpdatePassword 根据Email更新用户密码
-func UpdatePassword(req request.UserForgetPasswordReq, reqUser model.ReqUser) error {
+func UpdatePassword(req request.UserForgetPasswordReq, reqUser request.ReqUser) error {
 	// 读取用户
 	qt := querycontext.UserQueryContext{}
 	qt.Email.Set(req.Email)
@@ -55,7 +54,7 @@ func UpdatePassword(req request.UserForgetPasswordReq, reqUser model.ReqUser) er
 }
 
 // UpdateRole 根据Id更新用户权限组
-func UpdateRole(req request.UserUpdateRoleReq, reqUser model.ReqUser) error {
+func UpdateRole(req request.UserUpdateRoleReq, reqUser request.ReqUser) error {
 	// 读取用户
 	qt := querycontext.UserQueryContext{}
 	qt.Id.Add(req.Id)
@@ -82,7 +81,7 @@ func UpdateRole(req request.UserUpdateRoleReq, reqUser model.ReqUser) error {
 }
 
 // UpdateAvatar 更新用户头像
-func UpdateAvatar(req request.UserChangeAvatarReq, reqUser model.ReqUser) (string, error) {
+func UpdateAvatar(req request.UserChangeAvatarReq, reqUser request.ReqUser) (string, error) {
 	// 检查权限
 	err := isPermission(req.Id, reqUser)
 	if err != nil {

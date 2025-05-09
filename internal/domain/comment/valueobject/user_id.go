@@ -1,13 +1,13 @@
 package valueobject
 
 import (
-	"STUOJ/internal/model"
+	"STUOJ/internal/domain/shared"
 	"STUOJ/pkg/errors"
 )
 
 // UserID 表示评论关联的用户ID值对象
 type UserID struct {
-	model.Valueobject[int64]
+	shared.Valueobject[int64]
 }
 
 // Verify 验证用户ID是否有效

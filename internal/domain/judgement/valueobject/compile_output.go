@@ -1,13 +1,13 @@
 package valueobject
 
 import (
-	"STUOJ/internal/model"
+	"STUOJ/internal/domain/shared"
 )
 
 // CompileOutput 封装判题记录的编译输出内容
 // 包含输出内容验证逻辑
 type CompileOutput struct {
-	model.Valueobject[string]
+	shared.Valueobject[string]
 }
 
 // NewCompileOutput 创建编译输出值对象

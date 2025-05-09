@@ -2,7 +2,7 @@ package runner
 
 import (
 	"STUOJ/internal/infrastructure/judge0"
-	"STUOJ/internal/infrastructure/repository/entity"
+	"STUOJ/internal/infrastructure/persistence/entity"
 	"strconv"
 
 	"sync"

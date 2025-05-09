@@ -3,7 +3,7 @@ package handler
 import (
 	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/application/service/tag"
-	"STUOJ/internal/model"
+	"STUOJ/internal/interfaces/http/vo"
 	"STUOJ/pkg/errors"
 	"net/http"
 	"strconv"
@@ -14,7 +14,7 @@ import (
 // 获取标签信息
 func TagInfo(c *gin.Context) {
 	// 获取用户信息
-	reqUser := model.NewReqUser(c)
+	reqUser := request.NewReqUser(c)
 
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -29,13 +29,13 @@ func TagInfo(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, model.RespOk("OK", t))
+	c.JSON(http.StatusOK, vo.RespOk("OK", t))
 }
 
 // 获取标签列表
 func TagList(c *gin.Context) {
 	// 获取用户信息
-	reqUser := model.NewReqUser(c)
+	reqUser := request.NewReqUser(c)
 
 	// 解析查询参数
 	params := request.QueryTagParams{}
@@ -51,13 +51,13 @@ func TagList(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, model.RespOk("OK", tags))
+	c.JSON(http.StatusOK, vo.RespOk("OK", tags))
 }
 
 // 添加标签
 func TagAdd(c *gin.Context) {
 	// 获取用户信息
-	reqUser := model.NewReqUser(c)
+	reqUser := request.NewReqUser(c)
 
 	var req request.CreateTagReq
 
@@ -76,13 +76,13 @@ func TagAdd(c *gin.Context) {
 	}
 
 	// 返回结果
-	c.JSON(http.StatusOK, model.RespOk("添加成功，返回标签ID", id))
+	c.JSON(http.StatusOK, vo.RespOk("添加成功，返回标签ID", id))
 }
 
 // 修改标签数据
 func TagModify(c *gin.Context) {
 	// 获取用户信息
-	reqUser := model.NewReqUser(c)
+	reqUser := request.NewReqUser(c)
 
 	var req request.UpdateTagReq
 
@@ -100,13 +100,13 @@ func TagModify(c *gin.Context) {
 	}
 
 	// 返回结果
-	c.JSON(http.StatusOK, model.RespOk("修改成功", nil))
+	c.JSON(http.StatusOK, vo.RespOk("修改成功", nil))
 }
 
 // 删除标签
 func TagRemove(c *gin.Context) {
 	// 获取用户信息
-	reqUser := model.NewReqUser(c)
+	reqUser := request.NewReqUser(c)
 
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -122,5 +122,5 @@ func TagRemove(c *gin.Context) {
 	}
 
 	// 返回结果
-	c.JSON(http.StatusOK, model.RespOk("删除成功", nil))
+	c.JSON(http.StatusOK, vo.RespOk("删除成功", nil))
 }

@@ -1,13 +1,13 @@
 package valueobject
 
 import (
-	"STUOJ/internal/model"
+	"STUOJ/internal/domain/shared"
 	"errors"
 	"time"
 )
 
 type StartTime struct {
-	model.Valueobject[time.Time]
+	shared.Valueobject[time.Time]
 }
 
 func NewStartTime(value time.Time) StartTime {

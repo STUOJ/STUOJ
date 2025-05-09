@@ -4,8 +4,8 @@ package contest
 //go:generate go run ../../../dev/gen/domain.go contest
 
 import (
-	dao2 "STUOJ/internal/infrastructure/repository/dao"
-	"STUOJ/internal/infrastructure/repository/entity"
+	"STUOJ/internal/infrastructure/persistence/entity"
+	"STUOJ/internal/infrastructure/persistence/repository/dao"
 	"STUOJ/pkg/errors"
 	"time"
 
@@ -29,17 +29,17 @@ type Contest struct {
 func (c *Contest) UpdateUser(userIds []int64) error {
 	var err error
 	options := c.toOption()
-	_, err = dao2.ContestStore.SelectOne(options)
+	_, err = dao.ContestStore.SelectOne(options)
 	if err != nil {
 		return errors.ErrNotFound.WithMessage(err.Error())
 	}
-	err = dao2.ContestUserStore.Delete(options)
+	err = dao.ContestUserStore.Delete(options)
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
 	var errs []error
 	for _, id := range userIds {
-		_, err = dao2.ContestUserStore.Insert(entity.ContestUser{
+		_, err = dao.ContestUserStore.Insert(entity.ContestUser{
 			ContestId: uint64(c.Id.Value()),
 			UserId:    uint64(id),
 		})
@@ -56,18 +56,18 @@ func (c *Contest) UpdateUser(userIds []int64) error {
 func (c *Contest) UpdateProblem(problemIds []int64) error {
 	var err error
 	options := c.toOption()
-	_, err = dao2.ContestStore.SelectOne(options)
+	_, err = dao.ContestStore.SelectOne(options)
 	if err != nil {
 		return errors.ErrNotFound.WithMessage(err.Error())
 	}
-	err = dao2.ContestProblemStore.Delete(options)
+	err = dao.ContestProblemStore.Delete(options)
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
 	var errs []error
 	var serial uint16 = 1
 	for _, id := range problemIds {
-		_, err = dao2.ContestProblemStore.Insert(entity.ContestProblem{
+		_, err = dao.ContestProblemStore.Insert(entity.ContestProblem{
 			ContestId: uint64(c.Id.Value()),
 			ProblemId: uint64(id),
 			Serial:    serial,

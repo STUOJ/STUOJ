@@ -1,12 +1,12 @@
 package valueobject
 
 import (
-	"STUOJ/internal/model"
+	"STUOJ/internal/domain/shared"
 	"errors"
 )
 
 type Serial struct {
-	model.Valueobject[uint16]
+	shared.Valueobject[uint16]
 }
 
 func NewSerial(value uint16) Serial {

@@ -3,12 +3,11 @@ package comment
 import (
 	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/domain/comment"
-	"STUOJ/internal/infrastructure/repository/entity"
-	"STUOJ/internal/model"
+	"STUOJ/internal/infrastructure/persistence/entity"
 )
 
 // Insert 插入评论
-func Insert(req request.CreateCommentReq, reqUser model.ReqUser) (int64, error) {
+func Insert(req request.CreateCommentReq, reqUser request.ReqUser) (int64, error) {
 	cm1 := comment.NewComment(
 		comment.WithBlogId(req.BlogId),
 		comment.WithUserId(reqUser.Id),

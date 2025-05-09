@@ -1,12 +1,12 @@
 package testcase
 
 import (
+	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/domain/testcase"
-	"STUOJ/internal/model"
 )
 
 // Delete 根据ID删除评测点数据
-func Delete(id int64, reqUser model.ReqUser) error {
+func Delete(id int64, reqUser request.ReqUser) error {
 	// 检查权限
 	err := isPermission(reqUser)
 	if err != nil {

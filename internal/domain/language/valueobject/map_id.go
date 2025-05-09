@@ -1,12 +1,12 @@
 package valueobject
 
 import (
-	"STUOJ/internal/model"
+	"STUOJ/internal/domain/shared"
 	"errors"
 )
 
 type MapId struct {
-	model.Valueobject[uint32]
+	shared.Valueobject[uint32]
 }
 
 func NewMapId(value uint32) MapId {

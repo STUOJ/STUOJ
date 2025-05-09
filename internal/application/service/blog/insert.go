@@ -4,14 +4,13 @@ import (
 	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/domain/blog"
 	"STUOJ/internal/domain/problem"
-	"STUOJ/internal/infrastructure/repository/entity"
-	"STUOJ/internal/infrastructure/repository/querycontext"
-	"STUOJ/internal/model"
+	entity "STUOJ/internal/infrastructure/persistence/entity"
+	"STUOJ/internal/infrastructure/persistence/repository/querycontext"
 	"STUOJ/pkg/errors"
 )
 
 // 插入博客
-func Insert(req request.CreateBlogReq, reqUser model.ReqUser) (int64, error) {
+func Insert(req request.CreateBlogReq, reqUser request.ReqUser) (int64, error) {
 	blog := blog.NewBlog(blog.WithContent(req.Content),
 		blog.WithTitle(req.Title),
 		blog.WithUserId(reqUser.Id),

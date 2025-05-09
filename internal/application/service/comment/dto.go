@@ -4,9 +4,9 @@ import (
 	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/application/dto/response"
 	"STUOJ/internal/domain/comment"
-	"STUOJ/internal/infrastructure/repository/dao"
-	"STUOJ/internal/infrastructure/repository/querycontext"
-	"STUOJ/internal/model/option"
+	"STUOJ/internal/infrastructure/persistence/repository/dao"
+	option2 "STUOJ/internal/infrastructure/persistence/repository/option"
+	"STUOJ/internal/infrastructure/persistence/repository/querycontext"
 	"time"
 )
 
@@ -47,10 +47,10 @@ func params2Query(params request.QueryCommentParams) (query querycontext.Comment
 		query.BlogId.Set(*params.Blog)
 	}
 	if params.Page != nil && params.Size != nil {
-		query.Page = option.NewPagination(*params.Page, *params.Size)
+		query.Page = option2.NewPagination(*params.Page, *params.Size)
 	}
 	if params.Order != nil && params.OrderBy != nil {
-		query.Sort = option.NewSortQuery(*params.OrderBy, *params.Order)
+		query.Sort = option2.NewSortQuery(*params.OrderBy, *params.Order)
 	}
 	return query
 }

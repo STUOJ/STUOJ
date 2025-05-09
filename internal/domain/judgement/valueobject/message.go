@@ -1,11 +1,11 @@
 package valueobject
 
 import (
-	"STUOJ/internal/model"
+	"STUOJ/internal/domain/shared"
 )
 
 type Message struct {
-	model.Valueobject[string]
+	shared.Valueobject[string]
 }
 
 func NewMessage(content string) Message {

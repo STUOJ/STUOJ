@@ -1,13 +1,13 @@
 package valueobject
 
 import (
-	"STUOJ/internal/infrastructure/repository/entity"
-	"STUOJ/internal/model"
+	"STUOJ/internal/domain/shared"
+	"STUOJ/internal/infrastructure/persistence/entity"
 	"errors"
 )
 
 type Format struct {
-	model.Valueobject[entity.ContestFormat]
+	shared.Valueobject[entity.ContestFormat]
 }
 
 func NewFormat(value entity.ContestFormat) Format {

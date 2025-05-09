@@ -4,9 +4,9 @@ import (
 	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/application/dto/response"
 	"STUOJ/internal/domain/collection"
-	"STUOJ/internal/infrastructure/repository/dao"
-	"STUOJ/internal/infrastructure/repository/querycontext"
-	"STUOJ/internal/model/option"
+	"STUOJ/internal/infrastructure/persistence/repository/dao"
+	option2 "STUOJ/internal/infrastructure/persistence/repository/option"
+	"STUOJ/internal/infrastructure/persistence/repository/querycontext"
 	"STUOJ/pkg/utils"
 	"time"
 )
@@ -40,10 +40,10 @@ func params2Model(params request.QueryCollectionParams) (query querycontext.Coll
 		}
 	}
 	if params.Page != nil && params.Size != nil {
-		query.Page = option.NewPagination(int64(*params.Page), int64(*params.Size))
+		query.Page = option2.NewPagination(int64(*params.Page), int64(*params.Size))
 	}
 	if params.Order != nil && params.OrderBy != nil {
-		query.Sort = option.NewSortQuery(*params.OrderBy, *params.Order)
+		query.Sort = option2.NewSortQuery(*params.OrderBy, *params.Order)
 	}
 
 	if params.Problem != nil {

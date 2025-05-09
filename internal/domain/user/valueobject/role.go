@@ -1,13 +1,13 @@
 package valueobject
 
 import (
-	"STUOJ/internal/infrastructure/repository/entity"
-	"STUOJ/internal/model"
+	"STUOJ/internal/domain/shared"
+	"STUOJ/internal/infrastructure/persistence/entity"
 	"STUOJ/pkg/errors"
 )
 
 type Role struct {
-	model.Valueobject[entity.Role]
+	shared.Valueobject[entity.Role]
 }
 
 func NewRole(value entity.Role) Role {

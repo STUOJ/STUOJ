@@ -1,12 +1,12 @@
 package valueobject
 
 import (
-	"STUOJ/internal/model"
+	"STUOJ/internal/domain/shared"
 	"errors"
 )
 
 type ContestId struct {
-	model.Valueobject[int64]
+	shared.Valueobject[int64]
 }
 
 func NewContestId(value int64) ContestId {

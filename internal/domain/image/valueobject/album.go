@@ -1,12 +1,12 @@
 package valueobject
 
 import (
-	"STUOJ/internal/model"
+	"STUOJ/internal/domain/shared"
 	"fmt"
 )
 
 type Album struct {
-	model.Valueobject[uint8]
+	shared.Valueobject[uint8]
 }
 
 const (

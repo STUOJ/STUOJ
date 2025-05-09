@@ -3,7 +3,7 @@ package handler
 import (
 	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/application/service/user"
-	"STUOJ/internal/model"
+	"STUOJ/internal/interfaces/http/vo"
 	"STUOJ/pkg/errors"
 	"log"
 	"net/http"
@@ -22,14 +22,14 @@ func UserRegister(c *gin.Context) {
 		return
 	}
 
-	id, err := user.Register(req, model.ReqUser{})
+	id, err := user.Register(req, request.ReqUser{})
 	if err != nil {
 		c.Error(err)
 		return
 	}
 
 	// 返回结果
-	c.JSON(http.StatusOK, model.RespOk("注册成功，返回用户ID", id))
+	c.JSON(http.StatusOK, vo.RespOk("注册成功，返回用户ID", id))
 }
 
 func UserLogin(c *gin.Context) {
@@ -42,43 +42,43 @@ func UserLogin(c *gin.Context) {
 		return
 	}
 
-	token, err := user.LoginByEmail(req, model.ReqUser{})
+	token, err := user.LoginByEmail(req, request.ReqUser{})
 	if err != nil {
 		c.Error(err)
 		return
 	}
 
 	// 登录成功，返回token
-	c.JSON(http.StatusOK, model.RespOk("登录成功，返回token", token))
+	c.JSON(http.StatusOK, vo.RespOk("登录成功，返回token", token))
 }
 
 // 获取用户信息
 func UserInfo(c *gin.Context) {
-	reqUser := model.NewReqUser(c)
+	reqUser := request.NewReqUser(c)
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		c.JSON(http.StatusBadRequest, vo.RespError("参数错误", nil))
 		return
 	}
 
 	u, err := user.SelectById(int64(id), *reqUser)
 
-	c.JSON(http.StatusOK, model.RespOk("OK", u))
+	c.JSON(http.StatusOK, vo.RespOk("OK", u))
 }
 
 // 获取当前用户id
 func UserCurrentId(c *gin.Context) {
-	reqUser := model.NewReqUser(c)
+	reqUser := request.NewReqUser(c)
 	if reqUser.Id == 0 {
 		c.Error(errors.ErrUnauthorized.WithMessage("未登录"))
 		return
 	}
-	c.JSON(http.StatusOK, model.RespOk("OK", reqUser.Id))
+	c.JSON(http.StatusOK, vo.RespOk("OK", reqUser.Id))
 }
 
 func UserModify(c *gin.Context) {
-	reqUser := model.NewReqUser(c)
+	reqUser := request.NewReqUser(c)
 	var req request.UserUpdateReq
 	// 参数绑定
 	err := c.ShouldBindBodyWithJSON(&req)
@@ -92,11 +92,11 @@ func UserModify(c *gin.Context) {
 		return
 	}
 	// 返回结果
-	c.JSON(http.StatusOK, model.RespOk("修改成功", nil))
+	c.JSON(http.StatusOK, vo.RespOk("修改成功", nil))
 }
 
 func UserChangePassword(c *gin.Context) {
-	reqUser := model.NewReqUser(c)
+	reqUser := request.NewReqUser(c)
 	var req request.UserForgetPasswordReq
 
 	// 参数绑定
@@ -114,12 +114,12 @@ func UserChangePassword(c *gin.Context) {
 	}
 
 	// 返回结果
-	c.JSON(http.StatusOK, model.RespOk("修改成功", nil))
+	c.JSON(http.StatusOK, vo.RespOk("修改成功", nil))
 }
 
 // 修改用户头像
 func ModifyUserAvatar(c *gin.Context) {
-	reqUser := model.NewReqUser(c)
+	reqUser := request.NewReqUser(c)
 	var req request.UserChangeAvatarReq
 
 	// 参数绑定
@@ -140,12 +140,12 @@ func ModifyUserAvatar(c *gin.Context) {
 	}
 
 	// 返回结果
-	c.JSON(http.StatusOK, model.RespOk("更新成功", url))
+	c.JSON(http.StatusOK, vo.RespOk("更新成功", url))
 }
 
 // 获取用户列表
 func UserList(c *gin.Context) {
-	reqUser := model.NewReqUser(c)
+	reqUser := request.NewReqUser(c)
 	var req request.QueryUserParams
 
 	// 参数绑定
@@ -161,11 +161,11 @@ func UserList(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, model.RespOk("OK", users))
+	c.JSON(http.StatusOK, vo.RespOk("OK", users))
 }
 
 func UserAdd(c *gin.Context) {
-	reqUser := model.NewReqUser(c)
+	reqUser := request.NewReqUser(c)
 	var req request.CreateUserReq
 
 	// 参数绑定
@@ -185,16 +185,16 @@ func UserAdd(c *gin.Context) {
 		return
 	}
 	// 返回结果
-	c.JSON(http.StatusOK, model.RespOk("添加成功，返回用户ID", id))
+	c.JSON(http.StatusOK, vo.RespOk("添加成功，返回用户ID", id))
 }
 
 // 删除用户
 func UserRemove(c *gin.Context) {
-	reqUser := model.NewReqUser(c)
+	reqUser := request.NewReqUser(c)
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		c.JSON(http.StatusBadRequest, vo.RespError("参数错误", nil))
 		return
 	}
 
@@ -204,11 +204,11 @@ func UserRemove(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, model.RespOk("删除成功", nil))
+	c.JSON(http.StatusOK, vo.RespOk("删除成功", nil))
 }
 
 func UserModifyRole(c *gin.Context) {
-	reqUser := model.NewReqUser(c)
+	reqUser := request.NewReqUser(c)
 	var req request.UserUpdateRoleReq
 
 	// 参数绑定
@@ -224,11 +224,11 @@ func UserModifyRole(c *gin.Context) {
 	}
 
 	// 返回结果
-	c.JSON(http.StatusOK, model.RespOk("修改成功", nil))
+	c.JSON(http.StatusOK, vo.RespOk("修改成功", nil))
 }
 
 func UserStatistics(c *gin.Context) {
-	reqUser := model.NewReqUser(c)
+	reqUser := request.NewReqUser(c)
 	params := request.UserStatisticsParams{}
 
 	// 参数绑定
@@ -244,5 +244,5 @@ func UserStatistics(c *gin.Context) {
 	}
 
 	// 返回结果
-	c.JSON(http.StatusOK, model.RespOk("OK", res))
+	c.JSON(http.StatusOK, vo.RespOk("OK", res))
 }

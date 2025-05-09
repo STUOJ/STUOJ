@@ -1,7 +1,7 @@
 package bootstrap
 
 import (
-	"STUOJ/internal/infrastructure/repository"
+	"STUOJ/internal/infrastructure/persistence/repository"
 	"log"
 )
 

@@ -3,7 +3,7 @@ package http
 import (
 	middlewares2 "STUOJ/internal/interfaces/http/middlewares"
 	routes2 "STUOJ/internal/interfaces/http/routes"
-	"STUOJ/internal/model"
+	"STUOJ/internal/interfaces/http/vo"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -12,12 +12,12 @@ import (
 func InitRoute() error {
 	// index
 	ginServer.GET("/", func(c *gin.Context) {
-		c.JSON(http.StatusOK, model.RespOk("STUOJ后端启动成功！", nil))
+		c.JSON(http.StatusOK, vo.RespOk("STUOJ后端启动成功！", nil))
 	})
 
 	// 404
 	ginServer.NoRoute(func(c *gin.Context) {
-		c.JSON(http.StatusNotFound, model.RespError("404 Not Found", nil))
+		c.JSON(http.StatusNotFound, vo.RespError("404 Not Found", nil))
 	})
 
 	// 使用中间件

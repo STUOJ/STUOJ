@@ -3,7 +3,7 @@ package handler
 import (
 	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/application/service/judge"
-	"STUOJ/internal/model"
+	"STUOJ/internal/interfaces/http/vo"
 	"STUOJ/pkg/errors"
 
 	"net/http"
@@ -13,7 +13,7 @@ import (
 
 // 提交评测
 func JudgeSubmit(c *gin.Context) {
-	reqUser := model.NewReqUser(c)
+	reqUser := request.NewReqUser(c)
 	var req request.JudgeReq
 
 	// 参数绑定
@@ -30,11 +30,11 @@ func JudgeSubmit(c *gin.Context) {
 	}
 
 	// 返回提交ID
-	c.JSON(http.StatusOK, model.RespOk("提交成功，返回记录提交ID", id))
+	c.JSON(http.StatusOK, vo.RespOk("提交成功，返回记录提交ID", id))
 }
 
 func JudgeTestRun(c *gin.Context) {
-	reqUser := model.NewReqUser(c)
+	reqUser := request.NewReqUser(c)
 	var req request.TestRunReq
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
@@ -49,5 +49,5 @@ func JudgeTestRun(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, model.RespOk("OK", j))
+	c.JSON(http.StatusOK, vo.RespOk("OK", j))
 }

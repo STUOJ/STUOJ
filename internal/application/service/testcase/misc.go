@@ -1,9 +1,9 @@
 package testcase
 
 import (
+	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/domain/problem"
-	"STUOJ/internal/infrastructure/repository/entity"
-	"STUOJ/internal/model"
+	"STUOJ/internal/infrastructure/persistence/entity"
 	"STUOJ/pkg/errors"
 )
 
@@ -17,7 +17,7 @@ func updateProblemUpdateTime(id int64) error {
 }
 
 // isPermission 检查用户权限
-func isPermission(reqUser model.ReqUser) error {
+func isPermission(reqUser request.ReqUser) error {
 	if reqUser.Role < entity.RoleEditor {
 		return &errors.ErrUnauthorized
 	}

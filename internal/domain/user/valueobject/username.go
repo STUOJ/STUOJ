@@ -1,7 +1,7 @@
 package valueobject
 
 import (
-	"STUOJ/internal/model"
+	"STUOJ/internal/domain/shared"
 	"STUOJ/pkg/utils"
 	"errors"
 	"strings"
@@ -9,7 +9,7 @@ import (
 )
 
 type Username struct {
-	model.Valueobject[string]
+	shared.Valueobject[string]
 }
 
 func (u Username) Verify() error {

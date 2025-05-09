@@ -4,8 +4,8 @@ import (
 	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/application/dto/response"
 	"STUOJ/internal/domain/testcase"
-	"STUOJ/internal/infrastructure/repository/querycontext"
-	"STUOJ/internal/model/option"
+	"STUOJ/internal/infrastructure/persistence/repository/option"
+	"STUOJ/internal/infrastructure/persistence/repository/querycontext"
 	"STUOJ/pkg/utils"
 )
 

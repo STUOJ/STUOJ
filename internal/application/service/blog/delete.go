@@ -1,14 +1,14 @@
 package blog
 
 import (
+	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/domain/blog"
-	"STUOJ/internal/infrastructure/repository/entity"
-	"STUOJ/internal/infrastructure/repository/querycontext"
-	"STUOJ/internal/model"
+	"STUOJ/internal/infrastructure/persistence/entity"
+	"STUOJ/internal/infrastructure/persistence/repository/querycontext"
 )
 
 // DeleteLogic 逻辑删除博客
-func DeleteLogic(id int64, reqUser model.ReqUser) error {
+func DeleteLogic(id int64, reqUser request.ReqUser) error {
 	// 查询
 	qc := querycontext.BlogQueryContext{}
 	qc.Id.Add(id)
@@ -34,7 +34,7 @@ func DeleteLogic(id int64, reqUser model.ReqUser) error {
 }
 
 // Delete 根据Id删除博客
-func Delete(id int64, reqUser model.ReqUser) error {
+func Delete(id int64, reqUser request.ReqUser) error {
 	// 查询
 	qc := querycontext.BlogQueryContext{}
 	qc.Id.Add(id)

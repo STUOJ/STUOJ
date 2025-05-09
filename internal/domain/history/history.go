@@ -4,7 +4,7 @@ package history
 //go:generate go run ../../../dev/gen/domain.go history
 
 import (
-	"STUOJ/internal/infrastructure/repository/entity"
+	"STUOJ/internal/infrastructure/persistence/entity"
 	"time"
 
 	"STUOJ/internal/domain/history/valueobject"

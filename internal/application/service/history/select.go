@@ -1,27 +1,27 @@
 package history
 
 import (
+	"STUOJ/internal/application/dto"
 	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/application/dto/response"
 	"STUOJ/internal/domain/history"
 	"STUOJ/internal/domain/user"
-	query "STUOJ/internal/infrastructure/repository/query"
-	querycontext "STUOJ/internal/infrastructure/repository/querycontext"
-	"STUOJ/internal/model"
+	querycontext2 "STUOJ/internal/infrastructure/persistence/repository/querycontext"
+	query2 "STUOJ/internal/infrastructure/persistence/repository/queryfield"
 )
 
 type HistoryPage struct {
 	Historys []response.HistoryListItemData `json:"historys"`
-	model.Page
+	dto.Page
 }
 
-func SelectById(id int64, reqUser model.ReqUser) (response.HistoryData, error) {
+func SelectById(id int64, reqUser request.ReqUser) (response.HistoryData, error) {
 
 	var res response.HistoryData
 	// 创建查询选项
-	historyQuery := querycontext.HistoryQueryContext{}
+	historyQuery := querycontext2.HistoryQueryContext{}
 	historyQuery.Id.Add(id)
-	historyQuery.Field = *query.HistoryAllField
+	historyQuery.Field = *query2.HistoryAllField
 
 	historyDomain, _, err := history.Query.SelectOne(historyQuery)
 	if err != nil {
@@ -29,9 +29,9 @@ func SelectById(id int64, reqUser model.ReqUser) (response.HistoryData, error) {
 	}
 	res = response.Domain2HistoryData(historyDomain)
 
-	userQuery := querycontext.UserQueryContext{}
+	userQuery := querycontext2.UserQueryContext{}
 	userQuery.Id.Add(historyDomain.UserId.Value())
-	userQuery.Field = *query.UserSimpleField
+	userQuery.Field = *query2.UserSimpleField
 	userDomain, _, err := user.Query.SelectOne(userQuery)
 	if err == nil {
 		res.User = response.Domain2UserSimpleData(userDomain)
@@ -40,10 +40,10 @@ func SelectById(id int64, reqUser model.ReqUser) (response.HistoryData, error) {
 }
 
 // Select 查询所有历史记录
-func Select(params request.QueryHistoryParams, reqUser model.ReqUser) (HistoryPage, error) {
+func Select(params request.QueryHistoryParams, reqUser request.ReqUser) (HistoryPage, error) {
 	var res HistoryPage
 	historyQueryContext := params2Query(params)
-	historyQueryContext.Field = *query.HistorySimpleField
+	historyQueryContext.Field = *query2.HistorySimpleField
 
 	historyDomains, _, err := history.Query.Select(historyQueryContext)
 	if err != nil {
@@ -56,9 +56,9 @@ func Select(params request.QueryHistoryParams, reqUser model.ReqUser) (HistoryPa
 		res.Historys[i] = response.Domain2HistoryListItem(v)
 
 		// 获取用户信息
-		userQuery := querycontext.UserQueryContext{}
+		userQuery := querycontext2.UserQueryContext{}
 		userQuery.Id.Add(v.UserId.Value())
-		userQuery.Field = *query.UserSimpleField
+		userQuery.Field = *query2.UserSimpleField
 		userDomain, _, err := user.Query.SelectOne(userQuery)
 		if err == nil {
 			res.Historys[i].User = response.Domain2UserSimpleData(userDomain)
@@ -66,7 +66,7 @@ func Select(params request.QueryHistoryParams, reqUser model.ReqUser) (HistoryPa
 	}
 
 	// 构建分页信息
-	res.Page = model.Page{
+	res.Page = dto.Page{
 		Page:  historyQueryContext.Page.Page,
 		Size:  historyQueryContext.Page.PageSize,
 		Total: int64(len(historyDomains)),

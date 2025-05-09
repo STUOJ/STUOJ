@@ -1,7 +1,7 @@
 package submission
 
 import (
-	"STUOJ/internal/infrastructure/repository/dao"
+	"STUOJ/internal/infrastructure/persistence/repository/dao"
 	"STUOJ/pkg/errors"
 )
 

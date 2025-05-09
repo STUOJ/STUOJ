@@ -4,14 +4,13 @@ import (
 	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/domain/history"
 	"STUOJ/internal/domain/problem"
-	entity "STUOJ/internal/infrastructure/repository/entity"
-	"STUOJ/internal/infrastructure/repository/querycontext"
-	"STUOJ/internal/model"
+	entity "STUOJ/internal/infrastructure/persistence/entity"
+	"STUOJ/internal/infrastructure/persistence/repository/querycontext"
 )
 
 // Update 根据ID更新题目
 // 更新题目信息，包括标题、描述、难度等基本信息以及关联的标签
-func Update(req request.UpdateProblemReq, reqUser model.ReqUser) error {
+func Update(req request.UpdateProblemReq, reqUser request.ReqUser) error {
 	// 查询题目
 	qc := querycontext.ProblemQueryContext{}
 	qc.Id.Add(req.Id)

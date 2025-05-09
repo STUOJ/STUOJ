@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"STUOJ/internal/model"
+	"STUOJ/internal/interfaces/http/vo"
 	"STUOJ/pkg/config"
 	"log"
 	"net/http"
@@ -12,14 +12,14 @@ import (
 // 获取设置列表
 func ConfigList(c *gin.Context) {
 	var err error
-	configuration := model.Configuration{}
+	configuration := vo.Configuration{}
 
 	configuration.System = *config.Conf
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.RespError("获取配置信息失败", nil))
+		c.JSON(http.StatusInternalServerError, vo.RespError("获取配置信息失败", nil))
 		return
 	}
 
-	c.JSON(http.StatusOK, model.RespOk("OK", configuration))
+	c.JSON(http.StatusOK, vo.RespOk("OK", configuration))
 }

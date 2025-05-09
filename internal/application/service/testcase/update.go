@@ -3,11 +3,10 @@ package testcase
 import (
 	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/domain/testcase"
-	"STUOJ/internal/model"
 )
 
 // Update 根据ID更新评测点数据
-func Update(req request.UpdateTestcaseReq, reqUser model.ReqUser) error {
+func Update(req request.UpdateTestcaseReq, reqUser request.ReqUser) error {
 	// 检查权限
 	err := isPermission(reqUser)
 	if err != nil {

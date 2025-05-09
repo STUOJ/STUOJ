@@ -1,7 +1,7 @@
 package dao_test
 
 import (
-	"STUOJ/internal/infrastructure/repository/dao"
+	"STUOJ/internal/infrastructure/persistence/repository/dao"
 	"testing"
 )
 

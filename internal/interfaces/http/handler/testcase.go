@@ -3,7 +3,7 @@ package handler
 import (
 	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/application/service/testcase"
-	model2 "STUOJ/internal/model"
+	"STUOJ/internal/interfaces/http/vo"
 	"STUOJ/pkg/errors"
 	"net/http"
 	"strconv"
@@ -13,7 +13,7 @@ import (
 
 // 获取评测点数据
 func TestcaseInfo(c *gin.Context) {
-	reqUser := model2.NewReqUser(c)
+	reqUser := request.NewReqUser(c)
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.Error(&errors.ErrValidation)
@@ -27,11 +27,11 @@ func TestcaseInfo(c *gin.Context) {
 	}
 
 	// 返回数据
-	c.JSON(http.StatusOK, model2.RespOk("OK", t))
+	c.JSON(http.StatusOK, vo.RespOk("OK", t))
 }
 
 func TestcaseList(c *gin.Context) {
-	reqUser := model2.NewReqUser(c)
+	reqUser := request.NewReqUser(c)
 	params := request.QueryTestcaseParams{}
 	if err := c.ShouldBindQuery(&params); err != nil {
 		c.Error(&errors.ErrValidation)
@@ -44,11 +44,11 @@ func TestcaseList(c *gin.Context) {
 	}
 
 	// 返回数据
-	c.JSON(http.StatusOK, model2.RespOk("OK", ts))
+	c.JSON(http.StatusOK, vo.RespOk("OK", ts))
 }
 
 func TestcaseAdd(c *gin.Context) {
-	reqUser := model2.NewReqUser(c)
+	reqUser := request.NewReqUser(c)
 	var req request.CreateTestcaseReq
 
 	// 参数绑定
@@ -66,11 +66,11 @@ func TestcaseAdd(c *gin.Context) {
 	}
 
 	// 返回结果
-	c.JSON(http.StatusOK, model2.RespOk("添加成功，返回评测点ID", id))
+	c.JSON(http.StatusOK, vo.RespOk("添加成功，返回评测点ID", id))
 }
 
 func TestcaseModify(c *gin.Context) {
-	reqUser := model2.NewReqUser(c)
+	reqUser := request.NewReqUser(c)
 	var req request.UpdateTestcaseReq
 
 	// 参数绑定
@@ -88,12 +88,12 @@ func TestcaseModify(c *gin.Context) {
 	}
 
 	// 返回结果
-	c.JSON(http.StatusOK, model2.RespOk("修改成功", nil))
+	c.JSON(http.StatusOK, vo.RespOk("修改成功", nil))
 }
 
 // 删除评测点数据
 func TestcaseRemove(c *gin.Context) {
-	reqUser := model2.NewReqUser(c)
+	reqUser := request.NewReqUser(c)
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.Error(&errors.ErrValidation)
@@ -107,12 +107,12 @@ func TestcaseRemove(c *gin.Context) {
 	}
 
 	// 返回结果
-	c.JSON(http.StatusOK, model2.RespOk("删除成功", nil))
+	c.JSON(http.StatusOK, vo.RespOk("删除成功", nil))
 }
 
 // 生成测试用例数据
 func TestcaseDataMake(c *gin.Context) {
-	var t model2.CommonTestcaseInput
+	var t vo.CommonTestcaseInput
 	if err := c.ShouldBindJSON(&t); err != nil {
 		c.Error(&errors.ErrValidation)
 		return
@@ -125,5 +125,5 @@ func TestcaseDataMake(c *gin.Context) {
 	}
 
 	// 返回结果
-	c.JSON(http.StatusOK, model2.RespOk("OK", tc.String()))
+	c.JSON(http.StatusOK, vo.RespOk("OK", tc.String()))
 }

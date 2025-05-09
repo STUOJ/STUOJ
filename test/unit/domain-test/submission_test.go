@@ -2,7 +2,7 @@ package domain_test
 
 import (
 	"STUOJ/internal/domain/submission"
-	"STUOJ/internal/infrastructure/repository/entity"
+	"STUOJ/internal/infrastructure/persistence/entity"
 	"testing"
 )
 

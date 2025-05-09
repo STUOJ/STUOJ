@@ -1,13 +1,13 @@
 package valueobject
 
 import (
-	"STUOJ/internal/infrastructure/repository/entity"
-	"STUOJ/internal/model"
+	"STUOJ/internal/domain/shared"
+	"STUOJ/internal/infrastructure/persistence/entity"
 	"STUOJ/pkg/errors"
 )
 
 type Difficulty struct {
-	model.Valueobject[entity.Difficulty]
+	shared.Valueobject[entity.Difficulty]
 }
 
 func NewDifficulty(value entity.Difficulty) Difficulty {

@@ -1,8 +1,8 @@
 package entity_test
 
 import (
-	"STUOJ/internal/infrastructure/repository/entity"
-	"STUOJ/internal/model"
+	"STUOJ/internal/domain/shared"
+	"STUOJ/internal/infrastructure/persistence/entity"
 	"testing"
 )
 
@@ -15,7 +15,7 @@ func TestEnum(t *testing.T) {
 	}
 
 	// 若需显式断言（可选）
-	s, ok := any(status).(model.ValidatableStatus)
+	s, ok := any(status).(shared.ValidatableStatus)
 	if !ok {
 		t.Error("type assertion failed")
 	}

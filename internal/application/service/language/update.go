@@ -3,12 +3,11 @@ package language
 import (
 	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/domain/language"
-	entity "STUOJ/internal/infrastructure/repository/entity"
-	"STUOJ/internal/model"
+	entity "STUOJ/internal/infrastructure/persistence/entity"
 	"STUOJ/pkg/errors"
 )
 
-func Update(req request.UpdateLanguageReq, reqUser model.ReqUser) error {
+func Update(req request.UpdateLanguageReq, reqUser request.ReqUser) error {
 	if reqUser.Role < entity.RoleAdmin {
 		return &errors.ErrUnauthorized
 	}

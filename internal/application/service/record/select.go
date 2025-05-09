@@ -1,16 +1,16 @@
 package record
 
 import (
+	model "STUOJ/internal/application/dto"
 	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/application/dto/response"
 	"STUOJ/internal/domain/judgement"
 	"STUOJ/internal/domain/problem"
 	"STUOJ/internal/domain/submission"
 	"STUOJ/internal/domain/user"
-	"STUOJ/internal/infrastructure/repository/entity"
-	query "STUOJ/internal/infrastructure/repository/query"
-	querycontext "STUOJ/internal/infrastructure/repository/querycontext"
-	model "STUOJ/internal/model"
+	"STUOJ/internal/infrastructure/persistence/entity"
+	querycontext2 "STUOJ/internal/infrastructure/persistence/repository/querycontext"
+	query2 "STUOJ/internal/infrastructure/persistence/repository/queryfield"
 )
 
 type SubmissionPage struct {
@@ -19,7 +19,7 @@ type SubmissionPage struct {
 }
 
 // Select 查询所有提交记录
-func Select(params request.QuerySubmissionParams, reqUser model.ReqUser) (SubmissionPage, error) {
+func Select(params request.QuerySubmissionParams, reqUser request.ReqUser) (SubmissionPage, error) {
 	var resp SubmissionPage
 
 	// 查询
@@ -39,14 +39,14 @@ func Select(params request.QuerySubmissionParams, reqUser model.ReqUser) (Submis
 		problemIds[i] = s.ProblemId.Value()
 	}
 
-	uqc := querycontext.UserQueryContext{}
+	uqc := querycontext2.UserQueryContext{}
 	uqc.Id.Add(userIds...)
-	uqc.Field = *query.UserSimpleField
+	uqc.Field = *query2.UserSimpleField
 	users, _, err := user.Query.SelectByIds(uqc)
 
-	pqc := querycontext.ProblemQueryContext{}
+	pqc := querycontext2.ProblemQueryContext{}
 	pqc.Id.Add(problemIds...)
-	pqc.Field = *query.ProblemSimpleField
+	pqc.Field = *query2.ProblemSimpleField
 	problems, _, err := problem.Query.SelectByIds(pqc)
 
 	for _, s := range submissions {
@@ -75,11 +75,11 @@ func Select(params request.QuerySubmissionParams, reqUser model.ReqUser) (Submis
 }
 
 // SelectById 根据提交ID查询提交记录
-func SelectById(sid int64, reqUser model.ReqUser) (response.RecordData, error) {
+func SelectById(sid int64, reqUser request.ReqUser) (response.RecordData, error) {
 	var resp response.RecordData
 
 	// 查询
-	qc := querycontext.SubmissionQueryContext{}
+	qc := querycontext2.SubmissionQueryContext{}
 	qc.Id.Add(sid)
 	qc.Field.SelectAll()
 	s0, _, err := submission.Query.SelectOne(qc)
@@ -93,7 +93,7 @@ func SelectById(sid int64, reqUser model.ReqUser) (response.RecordData, error) {
 	}
 
 	// 获取评测结果
-	jqc := querycontext.JudgementQueryContext{}
+	jqc := querycontext2.JudgementQueryContext{}
 	jqc.SubmissionId.Add(sid)
 	jqc.Field.SelectAll()
 	judgements, _, err := judgement.Query.Select(jqc)
@@ -106,15 +106,15 @@ func SelectById(sid int64, reqUser model.ReqUser) (response.RecordData, error) {
 		resp.Judgements = append(resp.Judgements, respJudgement)
 	}
 
-	pqc := querycontext.ProblemQueryContext{}
+	pqc := querycontext2.ProblemQueryContext{}
 	pqc.Id.Add(s0.ProblemId.Value())
-	pqc.Field = *query.ProblemSimpleField
+	pqc.Field = *query2.ProblemSimpleField
 	p, _, err := problem.Query.SelectOne(pqc)
 
 	// 获取用户信息
-	uqc := querycontext.UserQueryContext{}
+	uqc := querycontext2.UserQueryContext{}
 	uqc.Id.Add(s0.UserId.Value())
-	uqc.Field = *query.UserSimpleField
+	uqc.Field = *query2.UserSimpleField
 	u, _, err := user.Query.SelectOne(uqc)
 
 	resp.Submission.Problem = response.Domain2ProblemSimpleData(p)
@@ -138,7 +138,7 @@ func SelectAcUsers(pid int64, size int64) ([]response.UserSimpleData, error) {
 	return resp, nil
 }
 
-func Statistics(params request.SubmissionStatisticsParams, reqUser model.ReqUser) (response.StatisticsRes, error) {
+func Statistics(params request.SubmissionStatisticsParams, reqUser request.ReqUser) (response.StatisticsRes, error) {
 	qc := params2Query(params.QuerySubmissionParams)
 	qc.GroupBy = params.GroupBy
 	resp, err := submission.Query.GroupCount(qc)

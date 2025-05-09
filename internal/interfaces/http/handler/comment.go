@@ -3,7 +3,7 @@ package handler
 import (
 	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/application/service/comment"
-	"STUOJ/internal/model"
+	"STUOJ/internal/interfaces/http/vo"
 	"STUOJ/pkg/errors"
 	"net/http"
 
@@ -11,7 +11,7 @@ import (
 )
 
 func CommentAdd(c *gin.Context) {
-	reqUser := model.NewReqUser(c)
+	reqUser := request.NewReqUser(c)
 
 	var req request.CreateCommentReq
 	// 参数绑定
@@ -29,12 +29,12 @@ func CommentAdd(c *gin.Context) {
 	}
 
 	// 返回结果
-	c.JSON(http.StatusOK, model.RespOk("发布成功，返回评论ID", id))
+	c.JSON(http.StatusOK, vo.RespOk("发布成功，返回评论ID", id))
 }
 
 // 获取评论列表
 func CommentList(c *gin.Context) {
-	reqUser := model.NewReqUser(c)
+	reqUser := request.NewReqUser(c)
 	params := request.QueryCommentParams{}
 	// 参数绑定
 	err := c.ShouldBindQuery(&params)
@@ -51,11 +51,11 @@ func CommentList(c *gin.Context) {
 	}
 
 	// 返回结果
-	c.JSON(http.StatusOK, model.RespOk("查询成功", commonts))
+	c.JSON(http.StatusOK, vo.RespOk("查询成功", commonts))
 }
 
 func CommentModify(c *gin.Context) {
-	reqUser := model.NewReqUser(c)
+	reqUser := request.NewReqUser(c)
 	var req request.UpdateCommentReq
 	// 参数绑定
 	err := c.ShouldBindBodyWithJSON(&req)
@@ -72,11 +72,11 @@ func CommentModify(c *gin.Context) {
 	}
 
 	// 返回结果
-	c.JSON(http.StatusOK, model.RespOk("修改成功", nil))
+	c.JSON(http.StatusOK, vo.RespOk("修改成功", nil))
 }
 
 func CommentStatistics(c *gin.Context) {
-	reqUser := model.NewReqUser(c)
+	reqUser := request.NewReqUser(c)
 	params := request.CommentStatisticsParams{}
 	// 参数绑定
 	err := c.ShouldBindQuery(&params)
@@ -91,5 +91,5 @@ func CommentStatistics(c *gin.Context) {
 	}
 
 	// 返回结果
-	c.JSON(http.StatusOK, model.RespOk("查询成功", res))
+	c.JSON(http.StatusOK, vo.RespOk("查询成功", res))
 }

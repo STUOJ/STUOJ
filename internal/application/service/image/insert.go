@@ -3,11 +3,10 @@ package image
 import (
 	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/domain/image"
-	"STUOJ/internal/model"
 	"STUOJ/pkg/errors"
 )
 
-func Insert(req request.UploadImageReq, reqUser model.ReqUser) (string, error) {
+func Insert(req request.UploadImageReq, reqUser request.ReqUser) (string, error) {
 	ioReader, err := req.File.Open()
 	if err != nil {
 		return "", errors.ErrValidation.WithError(err)

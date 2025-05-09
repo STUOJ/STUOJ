@@ -4,9 +4,9 @@ import (
 	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/application/dto/response"
 	"STUOJ/internal/domain/language"
-	"STUOJ/internal/infrastructure/repository/dao"
-	"STUOJ/internal/infrastructure/repository/querycontext"
-	"STUOJ/internal/model/option"
+	"STUOJ/internal/infrastructure/persistence/repository/dao"
+	"STUOJ/internal/infrastructure/persistence/repository/option"
+	"STUOJ/internal/infrastructure/persistence/repository/querycontext"
 )
 
 func params2Model(params request.QueryLanguageParams) (query querycontext.LanguageQueryContext) {

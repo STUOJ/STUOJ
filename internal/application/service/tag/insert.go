@@ -3,11 +3,10 @@ package tag
 import (
 	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/domain/tag"
-	"STUOJ/internal/model"
 )
 
 // Insert 插入标签
-func Insert(req request.CreateTagReq, reqUser model.ReqUser) (int64, error) {
+func Insert(req request.CreateTagReq, reqUser request.ReqUser) (int64, error) {
 	// 检查权限
 	err := isPermission(reqUser)
 	if err != nil {

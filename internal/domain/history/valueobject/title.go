@@ -1,11 +1,11 @@
 package valueobject
 
 import (
-	"STUOJ/internal/model"
+	"STUOJ/internal/domain/shared"
 )
 
 type Title struct {
-	model.Valueobject[string]
+	shared.Valueobject[string]
 }
 
 func NewTitle(title string) Title {

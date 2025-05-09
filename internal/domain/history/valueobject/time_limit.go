@@ -1,12 +1,12 @@
 package valueobject
 
 import (
-	"STUOJ/internal/model"
+	"STUOJ/internal/domain/shared"
 )
 
 // TimeLimit 表示历史记录中的时间限制值对象
 type TimeLimit struct {
-	model.Valueobject[float64]
+	shared.Valueobject[float64]
 }
 
 // NewTimeLimit 创建一个新的TimeLimit值对象

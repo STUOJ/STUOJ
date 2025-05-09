@@ -3,11 +3,10 @@ package solution
 import (
 	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/domain/solution"
-	"STUOJ/internal/model"
 )
 
 // 插入题解
-func Insert(req request.CreateSolutionReq, reqUser model.ReqUser) (int64, error) {
+func Insert(req request.CreateSolutionReq, reqUser request.ReqUser) (int64, error) {
 	// 检查权限
 	err := isPermission(reqUser)
 	if err != nil {

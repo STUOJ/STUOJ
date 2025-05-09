@@ -1,14 +1,14 @@
 package comment
 
 import (
+	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/domain/comment"
-	"STUOJ/internal/infrastructure/repository/entity"
-	"STUOJ/internal/infrastructure/repository/querycontext"
-	"STUOJ/internal/model"
+	"STUOJ/internal/infrastructure/persistence/entity"
+	"STUOJ/internal/infrastructure/persistence/repository/querycontext"
 )
 
 // DeleteLogic 逻辑删除
-func DeleteLogic(id int64, reqUser model.ReqUser) error {
+func DeleteLogic(id int64, reqUser request.ReqUser) error {
 	// 查询
 	qc := querycontext.CommentQueryContext{}
 	qc.Id.Add(id)

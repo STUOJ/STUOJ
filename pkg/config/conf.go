@@ -1,7 +1,7 @@
 package config
 
 import (
-	"STUOJ/internal/model"
+	"STUOJ/internal/interfaces/http/vo"
 	utils "STUOJ/pkg/utils"
 )
 
@@ -35,7 +35,7 @@ func InitConfig() error {
 	utils.Expire = Conf.Token.Expire
 	utils.Secret = Conf.Token.Secret
 	utils.Refresh = Conf.Token.Refresh
-	model.DatamakeLimit = Conf.Server.DatamakeLimit
+	vo.DatamakeLimit = Conf.Server.DatamakeLimit
 	utils.EmailHost = Conf.Email.Host
 	utils.EmailPort = Conf.Email.Port
 	utils.FromEmail = Conf.Email.Email

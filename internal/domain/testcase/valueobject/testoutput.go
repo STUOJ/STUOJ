@@ -1,12 +1,12 @@
 package valueobject
 
 import (
-	"STUOJ/internal/model"
+	"STUOJ/internal/domain/shared"
 	"STUOJ/pkg/errors"
 )
 
 type TestOutput struct {
-	model.Valueobject[string]
+	shared.Valueobject[string]
 }
 
 func (t TestOutput) Verify() error {

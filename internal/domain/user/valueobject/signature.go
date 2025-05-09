@@ -1,14 +1,14 @@
 package valueobject
 
 import (
-	"STUOJ/internal/model"
+	"STUOJ/internal/domain/shared"
 	"STUOJ/pkg/utils"
 	"errors"
 	"unicode/utf8"
 )
 
 type Signature struct {
-	model.Valueobject[string]
+	shared.Valueobject[string]
 }
 
 func (s Signature) Verify() error {

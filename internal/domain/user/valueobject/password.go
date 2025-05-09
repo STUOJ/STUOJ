@@ -1,15 +1,15 @@
 package valueobject
 
 import (
-	"STUOJ/internal/model"
+	"STUOJ/internal/domain/shared"
 	"errors"
 	"golang.org/x/crypto/bcrypt"
 )
 
 // Password 只允许通过构造函数创建
 type Password struct {
-	model.Valueobject[string]        // 密文，存数据库或从数据库读出
-	plaintext                 string // 明文，仅新建/修改时用，其他场景为空
+	shared.Valueobject[string]        // 密文，存数据库或从数据库读出
+	plaintext                  string // 明文，仅新建/修改时用，其他场景为空
 }
 
 // NewPasswordPlaintext 创建新密码（明文），用于注册/修改密码

@@ -3,14 +3,13 @@ package user
 import (
 	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/domain/user"
-	"STUOJ/internal/infrastructure/repository/entity"
-	"STUOJ/internal/model"
+	"STUOJ/internal/infrastructure/persistence/entity"
 	"STUOJ/pkg/errors"
 	"STUOJ/pkg/utils"
 )
 
 // Register 用户注册
-func Register(req request.UserRegisterReq, reqUser model.ReqUser) (int64, error) {
+func Register(req request.UserRegisterReq, reqUser request.ReqUser) (int64, error) {
 	u := user.NewUser(
 		user.WithUsername(req.Username),
 		user.WithPassword(req.Password),

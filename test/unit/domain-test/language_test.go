@@ -2,7 +2,7 @@ package domain_test
 
 import (
 	"STUOJ/internal/domain/language"
-	"STUOJ/internal/infrastructure/repository/entity"
+	"STUOJ/internal/infrastructure/persistence/entity"
 	"math/rand"
 	"testing"
 )

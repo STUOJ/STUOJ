@@ -5,10 +5,10 @@ package team
 
 import (
 	"STUOJ/internal/domain/team/valueobject"
-	dao2 "STUOJ/internal/infrastructure/repository/dao"
-	"STUOJ/internal/infrastructure/repository/entity"
-	field2 "STUOJ/internal/infrastructure/repository/entity/field"
-	"STUOJ/internal/model/option"
+	"STUOJ/internal/infrastructure/persistence/entity"
+	"STUOJ/internal/infrastructure/persistence/entity/field"
+	"STUOJ/internal/infrastructure/persistence/repository/dao"
+	option2 "STUOJ/internal/infrastructure/persistence/repository/option"
 	"STUOJ/pkg/errors"
 )
 
@@ -23,11 +23,11 @@ type Team struct {
 
 func (t *Team) JoinTeam(userId int64) error {
 	options := t.toOption()
-	_, err := dao2.TeamStore.SelectOne(options)
+	_, err := dao.TeamStore.SelectOne(options)
 	if err != nil {
 		return errors.ErrNotFound.WithMessage(err.Error())
 	}
-	_, err = dao2.TeamUserStore.Insert(entity.TeamUser{
+	_, err = dao.TeamUserStore.Insert(entity.TeamUser{
 		TeamId: uint64(t.Id.Value()),
 		UserId: uint64(userId),
 	})
@@ -39,14 +39,14 @@ func (t *Team) JoinTeam(userId int64) error {
 
 func (t *Team) QuitTeam(userId int64) error {
 	options := t.toOption()
-	_, err := dao2.TeamStore.SelectOne(options)
+	_, err := dao.TeamStore.SelectOne(options)
 	if err != nil {
 		return errors.ErrNotFound.WithMessage(err.Error())
 	}
-	deleteOptions := option.NewQueryOptions()
-	deleteOptions.Filters.Add(field2.TeamId, option.OpEqual, t.Id)
-	deleteOptions.Filters.Add(field2.UserId, option.OpEqual, userId)
-	err = dao2.TeamStore.Delete(deleteOptions)
+	deleteOptions := option2.NewQueryOptions()
+	deleteOptions.Filters.Add(field.TeamId, option2.OpEqual, t.Id)
+	deleteOptions.Filters.Add(field.UserId, option2.OpEqual, userId)
+	err = dao.TeamStore.Delete(deleteOptions)
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}

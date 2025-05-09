@@ -1,20 +1,20 @@
 package tag
 
 import (
+	"STUOJ/internal/application/dto"
 	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/application/dto/response"
 	"STUOJ/internal/domain/tag"
-	"STUOJ/internal/infrastructure/repository/querycontext"
-	"STUOJ/internal/model"
+	"STUOJ/internal/infrastructure/persistence/repository/querycontext"
 )
 
 type TagPage struct {
 	Tags []response.TagData `json:"tags"`
-	model.Page
+	dto.Page
 }
 
 // Select 分页查询标签列表
-func Select(params request.QueryTagParams, reqUser model.ReqUser) (TagPage, error) {
+func Select(params request.QueryTagParams, reqUser request.ReqUser) (TagPage, error) {
 	var res TagPage
 
 	// 转换查询参数
@@ -36,7 +36,7 @@ func Select(params request.QueryTagParams, reqUser model.ReqUser) (TagPage, erro
 	}
 
 	// 设置分页信息
-	res.Page = model.Page{
+	res.Page = dto.Page{
 		Page: tagQueryContext.Page.Page,
 		Size: tagQueryContext.Page.PageSize,
 	}
@@ -49,7 +49,7 @@ func Select(params request.QueryTagParams, reqUser model.ReqUser) (TagPage, erro
 }
 
 // SelectById 根据ID查询单个标签
-func SelectById(id int64, reqUser model.ReqUser) (response.TagData, error) {
+func SelectById(id int64, reqUser request.ReqUser) (response.TagData, error) {
 	var resp response.TagData
 
 	// 查询

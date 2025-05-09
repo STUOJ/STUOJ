@@ -1,12 +1,12 @@
 package valueobject
 
 import (
-	"STUOJ/internal/model"
+	"STUOJ/internal/domain/shared"
 	"errors"
 )
 
 type Length struct {
-	model.Valueobject[int64]
+	shared.Valueobject[int64]
 }
 
 func NewLength(value int64) Length {

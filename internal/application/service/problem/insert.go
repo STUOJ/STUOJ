@@ -4,13 +4,12 @@ import (
 	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/domain/history"
 	"STUOJ/internal/domain/problem"
-	entity "STUOJ/internal/infrastructure/repository/entity"
-	"STUOJ/internal/model"
+	entity "STUOJ/internal/infrastructure/persistence/entity"
 )
 
 // Insert 创建新题目
 // 创建题目信息，包括标题、描述、难度等基本信息以及关联的标签
-func Insert(req request.CreateProblemReq, reqUser model.ReqUser) (int64, error) {
+func Insert(req request.CreateProblemReq, reqUser request.ReqUser) (int64, error) {
 	// 创建新的题目对象
 	p := problem.NewProblem(
 		problem.WithTitle(req.Title),

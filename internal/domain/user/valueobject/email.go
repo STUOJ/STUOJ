@@ -1,13 +1,13 @@
 package valueobject
 
 import (
-	"STUOJ/internal/model"
+	"STUOJ/internal/domain/shared"
 	"errors"
 	"regexp"
 )
 
 type Email struct {
-	model.Valueobject[string]
+	shared.Valueobject[string]
 }
 
 func (e Email) Verify() error {

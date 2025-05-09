@@ -2,7 +2,7 @@ package judge
 
 import (
 	"STUOJ/internal/domain/language"
-	querycontext "STUOJ/internal/infrastructure/repository/querycontext"
+	"STUOJ/internal/infrastructure/persistence/repository/querycontext"
 )
 
 func SelectLanguageMapId(languageId int64) (int64, error) {

@@ -1,13 +1,13 @@
 package valueobject
 
 import (
-	"STUOJ/internal/infrastructure/repository/entity"
-	"STUOJ/internal/model"
+	"STUOJ/internal/domain/shared"
+	"STUOJ/internal/infrastructure/persistence/entity"
 	"STUOJ/pkg/errors"
 )
 
 type Operation struct {
-	model.Valueobject[entity.Operation]
+	shared.Valueobject[entity.Operation]
 }
 
 func NewOperation(value entity.Operation) Operation {

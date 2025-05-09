@@ -4,8 +4,8 @@ package problem
 //go:generate go run ../../../dev/gen/domain.go problem
 
 import (
-	dao2 "STUOJ/internal/infrastructure/repository/dao"
-	"STUOJ/internal/infrastructure/repository/entity"
+	"STUOJ/internal/infrastructure/persistence/entity"
+	"STUOJ/internal/infrastructure/persistence/repository/dao"
 	"STUOJ/pkg/errors"
 	"time"
 
@@ -33,17 +33,17 @@ type Problem struct {
 func (p *Problem) UpdateTags(tagIds []int64) error {
 	var err error
 	options := p.toOption()
-	_, err = dao2.ProblemStore.SelectOne(options)
+	_, err = dao.ProblemStore.SelectOne(options)
 	if err != nil {
 		return errors.ErrNotFound.WithMessage(err.Error())
 	}
-	err = dao2.ProblemTagStore.Delete(options)
+	err = dao.ProblemTagStore.Delete(options)
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
 	var errs []error
 	for _, id := range tagIds {
-		_, err = dao2.ProblemTagStore.Insert(entity.ProblemTag{
+		_, err = dao.ProblemTagStore.Insert(entity.ProblemTag{
 			ProblemId: uint64(p.Id.Value()),
 			TagId:     uint64(id),
 		})

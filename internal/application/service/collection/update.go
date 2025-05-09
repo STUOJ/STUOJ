@@ -5,16 +5,15 @@ import (
 	"STUOJ/internal/domain/collection"
 	"STUOJ/internal/domain/problem"
 	"STUOJ/internal/domain/user"
-	entity "STUOJ/internal/infrastructure/repository/entity"
-	querycontext "STUOJ/internal/infrastructure/repository/querycontext"
-	"STUOJ/internal/model"
+	entity "STUOJ/internal/infrastructure/persistence/entity"
+	querycontext2 "STUOJ/internal/infrastructure/persistence/repository/querycontext"
 	"STUOJ/pkg/errors"
 	"sort"
 )
 
 // Update 根据Id更新题单
-func Update(req request.UpdateCollectionReq, reqUser model.ReqUser) error {
-	queryContext := querycontext.CollectionQueryContext{}
+func Update(req request.UpdateCollectionReq, reqUser request.ReqUser) error {
+	queryContext := querycontext2.CollectionQueryContext{}
 	queryContext.Id.Add(req.Id)
 	c0, _, err := collection.Query.SelectOne(queryContext)
 	if err != nil {
@@ -33,9 +32,9 @@ func Update(req request.UpdateCollectionReq, reqUser model.ReqUser) error {
 }
 
 // UpdateProblem 给题单添加题目
-func UpdateProblem(req request.UpdateCollectionProblemReq, reqUser model.ReqUser) error {
+func UpdateProblem(req request.UpdateCollectionProblemReq, reqUser request.ReqUser) error {
 	// 查询题单
-	queryContext := querycontext.CollectionQueryContext{}
+	queryContext := querycontext2.CollectionQueryContext{}
 	queryContext.Id.Add(int64(req.CollectionId))
 	c0, _, err := collection.Query.SelectOne(queryContext)
 	if err != nil {
@@ -57,7 +56,7 @@ func UpdateProblem(req request.UpdateCollectionProblemReq, reqUser model.ReqUser
 	}
 
 	// 查询题目
-	query := querycontext.ProblemQueryContext{}
+	query := querycontext2.ProblemQueryContext{}
 	query.Id.Set(problemIds)
 	problems, _, err := problem.Query.Select(query)
 	if err != nil {
@@ -74,9 +73,9 @@ func UpdateProblem(req request.UpdateCollectionProblemReq, reqUser model.ReqUser
 	return c0.UpdateProblem(problemIds)
 }
 
-func UpdateUser(req request.UpdateCollectionUserReq, reqUser model.ReqUser) error {
+func UpdateUser(req request.UpdateCollectionUserReq, reqUser request.ReqUser) error {
 	// 查询题单
-	queryContext := querycontext.CollectionQueryContext{}
+	queryContext := querycontext2.CollectionQueryContext{}
 	queryContext.Id.Add(int64(req.CollectionId))
 	c0, _, err := collection.Query.SelectOne(queryContext)
 	if err != nil {
@@ -86,7 +85,7 @@ func UpdateUser(req request.UpdateCollectionUserReq, reqUser model.ReqUser) erro
 		return errors.ErrUnauthorized.WithMessage("没有权限修改该题单的合作者")
 	}
 	// 查询用户
-	query := querycontext.UserQueryContext{}
+	query := querycontext2.UserQueryContext{}
 	// 将int64切片转换为uint64切片
 	userIds := make([]int64, len(req.UserIds))
 	for i, id := range req.UserIds {

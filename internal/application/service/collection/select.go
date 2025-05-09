@@ -1,15 +1,15 @@
 package collection
 
 import (
+	model "STUOJ/internal/application/dto"
 	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/application/dto/response"
 	"STUOJ/internal/domain/collection"
 	"STUOJ/internal/domain/problem"
 	"STUOJ/internal/domain/user"
-	entity "STUOJ/internal/infrastructure/repository/entity"
-	query "STUOJ/internal/infrastructure/repository/query"
-	querycontext "STUOJ/internal/infrastructure/repository/querycontext"
-	model "STUOJ/internal/model"
+	entity "STUOJ/internal/infrastructure/persistence/entity"
+	querycontext2 "STUOJ/internal/infrastructure/persistence/repository/querycontext"
+	query2 "STUOJ/internal/infrastructure/persistence/repository/queryfield"
 	"STUOJ/pkg/errors"
 	"STUOJ/pkg/utils"
 	"slices"
@@ -21,12 +21,12 @@ type CollectionPage struct {
 }
 
 // SelectById 根据Id查询题单
-func SelectById(id int64, reqUser model.ReqUser) (response.CollectionData, error) {
+func SelectById(id int64, reqUser request.ReqUser) (response.CollectionData, error) {
 	var res response.CollectionData
 	// 获取题单信息
-	collectionQueryContext := querycontext.CollectionQueryContext{}
+	collectionQueryContext := querycontext2.CollectionQueryContext{}
 	collectionQueryContext.Id.Add(id)
-	collectionQueryContext.Field = *query.CollectionAllField
+	collectionQueryContext.Field = *query2.CollectionAllField
 	collectionDomain, collectionMap, err := collection.Query.SelectOne(collectionQueryContext, collection.QueryProblemId(), collection.QueryUserId())
 	if err != nil {
 		return res, err
@@ -38,8 +38,8 @@ func SelectById(id int64, reqUser model.ReqUser) (response.CollectionData, error
 	}
 	res = domain2response(collectionDomain)
 
-	problemQuery := querycontext.ProblemQueryContext{}
-	problemQuery.Field = *query.ProblemSimpleField
+	problemQuery := querycontext2.ProblemQueryContext{}
+	problemQuery.Field = *query2.ProblemSimpleField
 	problemIds, _ := utils.StringToInt64Slice(string(collectionMap["collection_problem_id"].([]uint8)))
 	problemQuery.Id.Set(problemIds)
 	_, problemMap, err := problem.Query.SelectByIds(problemQuery, problem.QueryMaxScore(res.User.Id), problem.QueryTag())
@@ -55,8 +55,8 @@ func SelectById(id int64, reqUser model.ReqUser) (response.CollectionData, error
 		}
 	}
 
-	userQuery := querycontext.UserQueryContext{}
-	userQuery.Field = *query.UserSimpleField
+	userQuery := querycontext2.UserQueryContext{}
+	userQuery.Field = *query2.UserSimpleField
 	collaboratorIds, _ := utils.StringToInt64Slice(string(collectionMap["collection_user_id"].([]uint8)))
 	userQuery.Id.Add(collectionDomain.UserId.Value())
 	userQuery.Id.Add(collaboratorIds...)
@@ -72,7 +72,7 @@ func SelectById(id int64, reqUser model.ReqUser) (response.CollectionData, error
 }
 
 // Select 查询题单
-func Select(params request.QueryCollectionParams, reqUser model.ReqUser) (CollectionPage, error) {
+func Select(params request.QueryCollectionParams, reqUser request.ReqUser) (CollectionPage, error) {
 	var res CollectionPage
 	query_ := params2Model(params)
 	if !query_.Status.Exist() {
@@ -81,7 +81,7 @@ func Select(params request.QueryCollectionParams, reqUser model.ReqUser) (Collec
 	if slices.Contains(query_.Status.Value(), entity.CollectionPrivate) && reqUser.Role < entity.RoleAdmin {
 		query_.UserId.Set([]int64{int64(reqUser.Id)})
 	}
-	query_.Field = *query.CollectionListItemField
+	query_.Field = *query2.CollectionListItemField
 	collections, _, err := collection.Query.Select(query_)
 
 	userIds := make([]int64, len(collections))
@@ -89,8 +89,8 @@ func Select(params request.QueryCollectionParams, reqUser model.ReqUser) (Collec
 		userIds = append(userIds, c.UserId.Value())
 	}
 
-	userQuery := querycontext.UserQueryContext{}
-	userQuery.Field = *query.UserSimpleField
+	userQuery := querycontext2.UserQueryContext{}
+	userQuery.Field = *query2.UserSimpleField
 	userQuery.Id.Set(userIds)
 
 	users, _, err := user.Query.SelectByIds(userQuery)
@@ -108,7 +108,7 @@ func Select(params request.QueryCollectionParams, reqUser model.ReqUser) (Collec
 	return res, err
 }
 
-func Statistics(params request.CollectionStatisticsParams, reqUser model.ReqUser) (response.StatisticsRes, error) {
+func Statistics(params request.CollectionStatisticsParams, reqUser request.ReqUser) (response.StatisticsRes, error) {
 	query_ := params2Model(params.QueryCollectionParams)
 	query_.GroupBy = params.GroupBy
 	resp, err := collection.Query.GroupCount(query_)

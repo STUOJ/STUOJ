@@ -3,11 +3,10 @@ package testcase
 import (
 	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/domain/testcase"
-	"STUOJ/internal/model"
 )
 
 // Insert 插入评测点数据
-func Insert(req request.CreateTestcaseReq, reqUser model.ReqUser) (int64, error) {
+func Insert(req request.CreateTestcaseReq, reqUser request.ReqUser) (int64, error) {
 	err := isPermission(reqUser)
 	if err != nil {
 		return 0, err

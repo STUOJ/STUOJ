@@ -3,10 +3,9 @@ package comment
 import (
 	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/domain/comment"
-	"STUOJ/internal/model"
 )
 
-func Update(req request.UpdateCommentReq, reqUser model.ReqUser) error {
+func Update(req request.UpdateCommentReq, reqUser request.ReqUser) error {
 	cm1 := comment.NewComment(
 		comment.WithId(req.Id),
 		comment.WithContent(req.Content),

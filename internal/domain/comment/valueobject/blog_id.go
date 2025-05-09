@@ -1,13 +1,13 @@
 package valueobject
 
 import (
-	"STUOJ/internal/model"
+	"STUOJ/internal/domain/shared"
 	"errors"
 )
 
 // BlogID 表示评论关联的博客ID值对象
 type BlogID struct {
-	model.Valueobject[int64]
+	shared.Valueobject[int64]
 }
 
 // Verify 验证博客ID是否有效

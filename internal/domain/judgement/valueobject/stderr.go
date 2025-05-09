@@ -1,11 +1,11 @@
 package valueobject
 
 import (
-	"STUOJ/internal/model"
+	"STUOJ/internal/domain/shared"
 )
 
 type Stderr struct {
-	model.Valueobject[string]
+	shared.Valueobject[string]
 }
 
 func NewStderr(content string) Stderr {

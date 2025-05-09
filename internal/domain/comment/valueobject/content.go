@@ -1,14 +1,14 @@
 package valueobject
 
 import (
-	"STUOJ/internal/model"
+	"STUOJ/internal/domain/shared"
 	"errors"
 	"strings"
 	"unicode/utf8"
 )
 
 type Content struct {
-	model.Valueobject[string]
+	shared.Valueobject[string]
 }
 
 func (c Content) Verify() error {

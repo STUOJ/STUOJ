@@ -1,13 +1,13 @@
 package valueobject
 
 import (
-	"STUOJ/internal/infrastructure/repository/entity"
-	"STUOJ/internal/model"
+	"STUOJ/internal/domain/shared"
+	"STUOJ/internal/infrastructure/persistence/entity"
 	"STUOJ/pkg/errors"
 )
 
 type Status struct {
-	model.Valueobject[entity.JudgeStatus]
+	shared.Valueobject[entity.JudgeStatus]
 }
 
 func NewStatus(value entity.JudgeStatus) Status {

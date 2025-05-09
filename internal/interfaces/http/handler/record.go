@@ -3,7 +3,7 @@ package handler
 import (
 	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/application/service/record"
-	"STUOJ/internal/model"
+	"STUOJ/internal/interfaces/http/vo"
 	"STUOJ/pkg/errors"
 	"net/http"
 	"strconv"
@@ -13,7 +13,7 @@ import (
 
 // 获取提交记录信息（提交信息+评测结果）
 func RecordInfo(c *gin.Context) {
-	reqUser := model.NewReqUser(c)
+	reqUser := request.NewReqUser(c)
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.Error(&errors.ErrValidation)
@@ -27,12 +27,12 @@ func RecordInfo(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, model.RespOk("OK", r))
+	c.JSON(http.StatusOK, vo.RespOk("OK", r))
 }
 
 // 获取提交记录列表
 func RecordList(c *gin.Context) {
-	reqUser := model.NewReqUser(c)
+	reqUser := request.NewReqUser(c)
 	params := request.QuerySubmissionParams{}
 	if err := c.ShouldBindQuery(&params); err != nil {
 		c.Error(&errors.ErrValidation)
@@ -45,7 +45,7 @@ func RecordList(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, model.RespOk("OK", records))
+	c.JSON(http.StatusOK, vo.RespOk("OK", records))
 }
 
 // 获取通过用户列表
@@ -70,11 +70,11 @@ func SelectACUsers(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, model.RespOk("OK", users))
+	c.JSON(http.StatusOK, vo.RespOk("OK", users))
 }
 
 func RecordStatistics(c *gin.Context) {
-	reqUser := model.NewReqUser(c)
+	reqUser := request.NewReqUser(c)
 	params := request.SubmissionStatisticsParams{}
 	if err := c.ShouldBindQuery(&params); err != nil {
 		c.Error(&errors.ErrValidation)
@@ -85,5 +85,5 @@ func RecordStatistics(c *gin.Context) {
 		c.Error(err)
 		return
 	}
-	c.JSON(http.StatusOK, model.RespOk("OK", res))
+	c.JSON(http.StatusOK, vo.RespOk("OK", res))
 }

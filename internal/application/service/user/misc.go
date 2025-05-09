@@ -1,13 +1,13 @@
 package user
 
 import (
-	"STUOJ/internal/infrastructure/repository/entity"
-	"STUOJ/internal/model"
+	"STUOJ/internal/application/dto/request"
+	"STUOJ/internal/infrastructure/persistence/entity"
 	"STUOJ/pkg/errors"
 )
 
 // 检查权限
-func isAdminPermission(reqUser model.ReqUser) error {
+func isAdminPermission(reqUser request.ReqUser) error {
 	if reqUser.Role < entity.RoleAdmin {
 		return &errors.ErrUnauthorized
 	}
@@ -15,7 +15,7 @@ func isAdminPermission(reqUser model.ReqUser) error {
 }
 
 // 检查权限
-func isPermission(id int64, reqUser model.ReqUser) error {
+func isPermission(id int64, reqUser request.ReqUser) error {
 	if reqUser.Id != id && reqUser.Role < entity.RoleAdmin {
 		return &errors.ErrUnauthorized
 	}

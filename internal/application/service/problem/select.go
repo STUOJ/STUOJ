@@ -1,14 +1,14 @@
 package problem
 
 import (
+	"STUOJ/internal/application/dto"
 	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/application/dto/response"
 	"STUOJ/internal/domain/problem"
 	"STUOJ/internal/domain/user"
-	entity "STUOJ/internal/infrastructure/repository/entity"
-	query "STUOJ/internal/infrastructure/repository/query"
-	querycontext "STUOJ/internal/infrastructure/repository/querycontext"
-	"STUOJ/internal/model"
+	entity "STUOJ/internal/infrastructure/persistence/entity"
+	querycontext2 "STUOJ/internal/infrastructure/persistence/repository/querycontext"
+	query2 "STUOJ/internal/infrastructure/persistence/repository/queryfield"
 	"STUOJ/pkg/errors"
 	"STUOJ/pkg/utils"
 	"slices"
@@ -16,14 +16,14 @@ import (
 
 type ProblemPage struct {
 	Problems []response.ProblemListItemData `json:"problems"`
-	model.Page
+	dto.Page
 }
 
-func SelectById(id int64, reqUser model.ReqUser) (response.ProblemQueryData, error) {
+func SelectById(id int64, reqUser request.ReqUser) (response.ProblemQueryData, error) {
 	var res response.ProblemQueryData
-	problemQueryContext := querycontext.ProblemQueryContext{}
+	problemQueryContext := querycontext2.ProblemQueryContext{}
 	problemQueryContext.Id.Add(id)
-	problemQueryContext.Field = *query.ProblemAllField
+	problemQueryContext.Field = *query2.ProblemAllField
 	problemDomain, problemMap, err := problem.Query.SelectOne(problemQueryContext, problem.QueryMaxScore(reqUser.Id), problem.QueryTag(), problem.QueryUser())
 	if err != nil {
 		return response.ProblemQueryData{}, err
@@ -41,9 +41,9 @@ func SelectById(id int64, reqUser model.ReqUser) (response.ProblemQueryData, err
 		return response.ProblemQueryData{}, errors.ErrUnauthorized.WithMessage("无权限查看")
 	}
 
-	userQueryContext := querycontext.UserQueryContext{}
+	userQueryContext := querycontext2.UserQueryContext{}
 	userQueryContext.Id.Set(userIds)
-	userQueryContext.Field = *query.UserSimpleField
+	userQueryContext.Field = *query2.UserSimpleField
 	userDomain, _, err := user.Query.Select(userQueryContext)
 	if err != nil {
 		return response.ProblemQueryData{}, err
@@ -54,7 +54,7 @@ func SelectById(id int64, reqUser model.ReqUser) (response.ProblemQueryData, err
 	return res, nil
 }
 
-func Select(params request.QueryProblemParams, reqUser model.ReqUser) (ProblemPage, error) {
+func Select(params request.QueryProblemParams, reqUser request.ReqUser) (ProblemPage, error) {
 	var res ProblemPage
 	problemQueryContext := params2Query(params)
 
@@ -64,7 +64,7 @@ func Select(params request.QueryProblemParams, reqUser model.ReqUser) (ProblemPa
 		problem.WhereUser(reqUser.Id)(&problemQueryContext)
 	}
 
-	problemQueryContext.Field = *query.ProblemListItemField
+	problemQueryContext.Field = *query2.ProblemListItemField
 
 	problemDomain, problemMap, err := problem.Query.Select(problemQueryContext, problem.QueryMaxScore(reqUser.Id), problem.QueryTag(), problem.QueryUser())
 	if err != nil {
@@ -76,7 +76,7 @@ func Select(params request.QueryProblemParams, reqUser model.ReqUser) (ProblemPa
 		res.Problems[i].ProblemUserScore = response.Map2ProblemUserScore(problemMap[i])
 		res.Problems[i].TagIds = response.Map2TagIds(problemMap[i])
 	}
-	res.Page = model.Page{
+	res.Page = dto.Page{
 		Page: problemQueryContext.Page.Page,
 		Size: problemQueryContext.Page.PageSize,
 	}
@@ -85,7 +85,7 @@ func Select(params request.QueryProblemParams, reqUser model.ReqUser) (ProblemPa
 	return res, nil
 }
 
-func Statistics(params request.ProblemStatisticsParams, reqUser model.ReqUser) (response.StatisticsRes, error) {
+func Statistics(params request.ProblemStatisticsParams, reqUser request.ReqUser) (response.StatisticsRes, error) {
 	problemQueryContext := params2Query(params.QueryProblemParams)
 	problemQueryContext.GroupBy = params.GroupBy
 	resp, err := problem.Query.GroupCount(problemQueryContext)

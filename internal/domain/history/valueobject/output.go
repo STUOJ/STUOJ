@@ -1,11 +1,11 @@
 package valueobject
 
 import (
-	"STUOJ/internal/model"
+	"STUOJ/internal/domain/shared"
 )
 
 type Output struct {
-	model.Valueobject[string]
+	shared.Valueobject[string]
 }
 
 func NewOutput(value string) Output {

@@ -3,7 +3,7 @@ package handler
 import (
 	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/application/service/language"
-	"STUOJ/internal/model"
+	"STUOJ/internal/interfaces/http/vo"
 	"STUOJ/pkg/errors"
 	"net/http"
 
@@ -12,7 +12,7 @@ import (
 
 // 获取语言列表
 func LanguageList(c *gin.Context) {
-	reqUser := model.NewReqUser(c)
+	reqUser := request.NewReqUser(c)
 	params := request.QueryLanguageParams{}
 	if err := c.ShouldBindQuery(&params); err != nil {
 		c.Error(&errors.ErrValidation)
@@ -23,11 +23,11 @@ func LanguageList(c *gin.Context) {
 		c.Error(err)
 		return
 	}
-	c.JSON(http.StatusOK, model.RespOk("OK", languages))
+	c.JSON(http.StatusOK, vo.RespOk("OK", languages))
 }
 
 func UpdateLanguage(c *gin.Context) {
-	reqUser := model.NewReqUser(c)
+	reqUser := request.NewReqUser(c)
 
 	req := request.UpdateLanguageReq{}
 	if err := c.ShouldBindBodyWithJSON(&req); err != nil {
@@ -39,11 +39,11 @@ func UpdateLanguage(c *gin.Context) {
 		c.Error(err)
 		return
 	}
-	c.JSON(http.StatusOK, model.RespOk("OK", nil))
+	c.JSON(http.StatusOK, vo.RespOk("OK", nil))
 }
 
 func LanguageStatistics(c *gin.Context) {
-	reqUser := model.NewReqUser(c)
+	reqUser := request.NewReqUser(c)
 	params := request.LanguageStatisticsParams{}
 	if err := c.ShouldBindQuery(&params); err != nil {
 		c.Error(&errors.ErrValidation)
@@ -54,5 +54,5 @@ func LanguageStatistics(c *gin.Context) {
 		c.Error(err)
 		return
 	}
-	c.JSON(http.StatusOK, model.RespOk("OK", res))
+	c.JSON(http.StatusOK, vo.RespOk("OK", res))
 }

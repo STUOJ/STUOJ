@@ -1,12 +1,12 @@
 package valueobject
 
 import (
-	"STUOJ/internal/model"
+	"STUOJ/internal/domain/shared"
 	"errors"
 )
 
 type TimeLimit struct {
-	model.Valueobject[float64]
+	shared.Valueobject[float64]
 }
 
 func NewTimeLimit(value float64) TimeLimit {

@@ -1,24 +1,24 @@
 package testcase
 
 import (
+	"STUOJ/internal/application/dto"
 	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/application/dto/response"
 	"STUOJ/internal/domain/testcase"
-	"STUOJ/internal/infrastructure/repository/query"
-	"STUOJ/internal/infrastructure/repository/querycontext"
-	"STUOJ/internal/model"
+	"STUOJ/internal/infrastructure/persistence/repository/querycontext"
+	"STUOJ/internal/infrastructure/persistence/repository/queryfield"
 )
 
 type TestcasePage struct {
 	Testcases []response.TestcaseData `json:"testcases"`
-	model.Page
+	dto.Page
 }
 
-func Select(params request.QueryTestcaseParams, reqUser model.ReqUser) (TestcasePage, error) {
+func Select(params request.QueryTestcaseParams, reqUser request.ReqUser) (TestcasePage, error) {
 	var resp TestcasePage
 
 	query_ := params2Query(params)
-	query_.Field = *query.TestcaseAllField
+	query_.Field = *queryfield.TestcaseAllField
 
 	testcases, _, err := testcase.Query.Select(query_)
 	if err != nil {
@@ -37,7 +37,7 @@ func Select(params request.QueryTestcaseParams, reqUser model.ReqUser) (Testcase
 }
 
 // SelectById 根据ID查询评测点数据
-func SelectById(id int64, reqUser model.ReqUser) (response.TestcaseData, error) {
+func SelectById(id int64, reqUser request.ReqUser) (response.TestcaseData, error) {
 	var resp response.TestcaseData
 
 	// 检查权限
@@ -49,7 +49,7 @@ func SelectById(id int64, reqUser model.ReqUser) (response.TestcaseData, error) 
 	// 查询
 	qc := querycontext.TestcaseQueryContext{}
 	qc.Id.Add(id)
-	qc.Field = *query.TestcaseAllField
+	qc.Field = *queryfield.TestcaseAllField
 	tc0, _, err := testcase.Query.SelectOne(qc)
 	if err != nil {
 		return resp, err

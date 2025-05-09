@@ -3,7 +3,7 @@ package domain_test
 import (
 	"STUOJ/internal/domain/team"
 	"STUOJ/internal/domain/team/valueobject"
-	"STUOJ/internal/infrastructure/repository/entity"
+	"STUOJ/internal/infrastructure/persistence/entity"
 	"math/rand"
 	"strconv"
 	"testing"

@@ -4,10 +4,9 @@ import (
 	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/application/dto/response"
 	"STUOJ/internal/domain/runner"
-	"STUOJ/internal/model"
 )
 
-func TestRun(req request.TestRunReq, reqUser model.ReqUser) (response.TestRunRes, error) {
+func TestRun(req request.TestRunReq, reqUser request.ReqUser) (response.TestRunRes, error) {
 	languageMapId, err := SelectLanguageMapId(req.LanguageId)
 	if err != nil {
 		return response.TestRunRes{}, err

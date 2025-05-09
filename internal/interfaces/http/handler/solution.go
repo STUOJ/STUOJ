@@ -3,7 +3,7 @@ package handler
 import (
 	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/application/service/solution"
-	"STUOJ/internal/model"
+	"STUOJ/internal/interfaces/http/vo"
 	"STUOJ/pkg/errors"
 	"net/http"
 	"strconv"
@@ -13,7 +13,7 @@ import (
 
 // 获取题解数据
 func SolutionInfo(c *gin.Context) {
-	reqUser := model.NewReqUser(c)
+	reqUser := request.NewReqUser(c)
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.Error(&errors.ErrValidation)
@@ -26,11 +26,11 @@ func SolutionInfo(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, model.RespOk("OK", s))
+	c.JSON(http.StatusOK, vo.RespOk("OK", s))
 }
 
 func SolutionList(c *gin.Context) {
-	reqUser := model.NewReqUser(c)
+	reqUser := request.NewReqUser(c)
 	params := request.QuerySolutionParams{}
 	if err := c.ShouldBindQuery(&params); err != nil {
 		c.Error(&errors.ErrValidation)
@@ -41,11 +41,11 @@ func SolutionList(c *gin.Context) {
 		c.Error(err)
 		return
 	}
-	c.JSON(http.StatusOK, model.RespOk("OK", solutions))
+	c.JSON(http.StatusOK, vo.RespOk("OK", solutions))
 }
 
 func SolutionAdd(c *gin.Context) {
-	reqUser := model.NewReqUser(c)
+	reqUser := request.NewReqUser(c)
 	var req request.CreateSolutionReq
 
 	// 参数绑定
@@ -63,12 +63,12 @@ func SolutionAdd(c *gin.Context) {
 	}
 
 	// 返回结果
-	c.JSON(http.StatusOK, model.RespOk("添加成功，返回题解ID", id))
+	c.JSON(http.StatusOK, vo.RespOk("添加成功，返回题解ID", id))
 }
 
 // 修改题解
 func SolutionModify(c *gin.Context) {
-	reqUser := model.NewReqUser(c)
+	reqUser := request.NewReqUser(c)
 	var req request.UpdateSolutionReq
 	// 参数绑定
 	err := c.ShouldBindBodyWithJSON(&req)
@@ -84,12 +84,12 @@ func SolutionModify(c *gin.Context) {
 	}
 
 	// 返回结果
-	c.JSON(http.StatusOK, model.RespOk("修改成功", nil))
+	c.JSON(http.StatusOK, vo.RespOk("修改成功", nil))
 }
 
 // 删除题解
 func SolutionRemove(c *gin.Context) {
-	reqUser := model.NewReqUser(c)
+	reqUser := request.NewReqUser(c)
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.Error(&errors.ErrValidation)
@@ -104,11 +104,11 @@ func SolutionRemove(c *gin.Context) {
 	}
 
 	// 返回结果
-	c.JSON(http.StatusOK, model.RespOk("删除成功", nil))
+	c.JSON(http.StatusOK, vo.RespOk("删除成功", nil))
 }
 
 func SolutionStatistics(c *gin.Context) {
-	reqUser := model.NewReqUser(c)
+	reqUser := request.NewReqUser(c)
 	params := request.SolutionStatisticsParams{}
 	if err := c.ShouldBindQuery(&params); err != nil {
 		c.Error(&errors.ErrValidation)
@@ -119,5 +119,5 @@ func SolutionStatistics(c *gin.Context) {
 		c.Error(err)
 		return
 	}
-	c.JSON(http.StatusOK, model.RespOk("OK", res))
+	c.JSON(http.StatusOK, vo.RespOk("OK", res))
 }

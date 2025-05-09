@@ -1,11 +1,11 @@
 package valueobject
 
 import (
-	"STUOJ/internal/model"
+	"STUOJ/internal/domain/shared"
 )
 
 type Description struct {
-	model.Valueobject[string]
+	shared.Valueobject[string]
 }
 
 func NewDescription(value string) Description {

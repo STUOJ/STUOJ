@@ -1,12 +1,12 @@
 package valueobject
 
 import (
-	"STUOJ/internal/model"
+	"STUOJ/internal/domain/shared"
 	"STUOJ/pkg/errors"
 )
 
 type ProblemId struct {
-	model.Valueobject[int64]
+	shared.Valueobject[int64]
 }
 
 func NewProblemId(value int64) ProblemId {
