@@ -105,3 +105,25 @@ func AlbumAddFormat(album uint8, format uint64) error {
 	}
 	return nil
 }
+
+func AlbumGetFormat(album uint8) ([]YukiFormat, error) {
+	albumName := GetAlbumName(album)
+	bodystr, err := httpInteraction("/album/format/"+albumName, "GET", nil)
+	if err != nil {
+		return nil, err
+	}
+	var responses YukiResponses
+	err = json.Unmarshal([]byte(bodystr), &responses)
+	if err != nil {
+		return nil, err
+	}
+	if responses.Code == 0 {
+		return nil, errors.New(responses.Message)
+	}
+	var formatList []YukiFormat
+	err = mapstructure.Decode(responses.Data, &formatList)
+	if err != nil {
+		return nil, err
+	}
+	return formatList, nil
+}

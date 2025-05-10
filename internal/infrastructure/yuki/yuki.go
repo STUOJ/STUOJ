@@ -52,6 +52,13 @@ func InitYukiImage(host, port, token string) error {
 		}
 		currentAlbum = fullCurrentAlbum
 
+		// 检查并补充 FormatSupport
+		currentAlbum.FormatSupport, err = AlbumGetFormat(GetAlbumRoleByName(wantedAlbum.Name))
+		if err != nil {
+			log.Printf("Error fetching formats for album '%s' (ID: %d): %v", currentAlbum.Name, currentAlbum.Id, err)
+			return err
+		}
+
 		existingFormats := make(map[uint64]bool)
 		for _, format := range currentAlbum.FormatSupport {
 			existingFormats[format.Id] = true
