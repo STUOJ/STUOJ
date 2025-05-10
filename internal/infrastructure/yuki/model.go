@@ -102,9 +102,9 @@ func GetAlbumName(role uint8) string {
 }
 
 type YukiResponses struct {
-	Code    int                    `json:"code"`
-	Message string                 `json:"message"`
-	Data    map[string]interface{} `json:"data"`
+	Code    int         `json:"code"`
+	Message string      `json:"message"`
+	Data    interface{} `json:"data"`
 }
 
 type YukiAlbum struct {

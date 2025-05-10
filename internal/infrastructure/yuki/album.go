@@ -14,12 +14,7 @@ func GetAlbumList() ([]YukiAlbum, error) {
 		return nil, err
 	}
 
-	type tmpResponses struct {
-		Code    int                      `json:"code"`
-		Message string                   `json:"message"`
-		Data    []map[string]interface{} `json:"data"`
-	}
-	var responses tmpResponses
+	var responses YukiResponses
 
 	err = json.Unmarshal([]byte(bodystr), &responses)
 	if err != nil {
@@ -31,13 +26,13 @@ func GetAlbumList() ([]YukiAlbum, error) {
 	var albumList []YukiAlbum
 	err = mapstructure.Decode(responses.Data, &albumList)
 	if err != nil {
-		return nil, err
+		return nil, nil
 	}
 	return albumList, nil
 }
 
 func GetAlbum(albumId uint64) (YukiAlbum, error) {
-	bodystr, err := httpInteraction("/album/"+string(albumId), "GET", nil)
+	bodystr, err := httpInteraction("/album/"+GetAlbumName(uint8(albumId)), "GET", nil)
 	if err != nil {
 		return YukiAlbum{}, err
 	}
@@ -59,9 +54,9 @@ func GetAlbum(albumId uint64) (YukiAlbum, error) {
 
 func CreateAlbum(name string, height, width int64) (YukiAlbum, error) {
 	data := map[string]interface{}{
-		"name":   name,
-		"height": height,
-		"width":  width,
+		"name":       name,
+		"max_height": height,
+		"max_width":  width,
 	}
 	jsonData, err := json.Marshal(data)
 	if err != nil {
