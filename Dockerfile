@@ -3,17 +3,20 @@ FROM golang:alpine AS builder
 LABEL stage=gobuilder
 
 ENV GOPROXY=https://goproxy.cn,direct
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+RUN sed -i 's#https\?://dl-cdn.alpinelinux.org/alpine#https://mirrors.tuna.tsinghua.edu.cn/alpine#g' /etc/apk/repositories
 
 RUN apk update --no-cache && apk add --no-cache tzdata
 
-WORKDIR /build
+WORKDIR /app/stuoj
 
 ADD go.mod .
 ADD go.sum .
 RUN go mod download
 COPY . .
-RUN go build -ldflags="-s -w" -o /app/stuoj main.go
+RUN ls
+RUN go run ./dev/tools/clean_generated.go -y
+RUN go generate ./...
+RUN go build -ldflags="-s -w" -o ./stuoj main.go
 
 FROM alpine
 
