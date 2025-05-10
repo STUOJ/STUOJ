@@ -12,6 +12,82 @@ const (
 	YukiBlogAlbum    uint8 = 3
 )
 
+var wantAlbum = []YukiAlbum{
+	{
+		Name:      GetAlbumName(YukiAvatarAlbum),
+		MaxHeight: 512,
+		MaxWidth:  512,
+		FormatSupport: []YukiFormat{
+			{
+				Id: JPEG,
+			},
+			{
+				Id: PNG,
+			},
+		},
+	},
+	{
+		Name:      GetAlbumName(YukiProblemAlbum),
+		MaxHeight: 1080,
+		MaxWidth:  1920,
+		FormatSupport: []YukiFormat{
+			{
+				Id: JPEG,
+			},
+			{
+				Id: PNG,
+			},
+			{
+				Id: GIF,
+			},
+		},
+	},
+	{
+		Name:      GetAlbumName(YukiBlogAlbum),
+		MaxHeight: 1080,
+		MaxWidth:  1920,
+		FormatSupport: []YukiFormat{
+			{
+				Id: JPEG,
+			},
+			{
+				Id: PNG,
+			},
+			{
+				Id: GIF,
+			},
+		},
+	},
+}
+
+func GetFormatName(id uint64) string {
+	switch id {
+	case JPEG:
+		return "jpeg"
+	case PNG:
+		return "png"
+	case GIF:
+		return "gif"
+	default:
+		return "unknown"
+	}
+}
+
+// GetAlbumRoleByName 根据相册名称查找其对应的 uint8 角色常量。
+func GetAlbumRoleByName(name string) uint8 {
+	switch name {
+	case "avatar":
+		return YukiAvatarAlbum
+	case "problem":
+		return YukiProblemAlbum
+	case "blog":
+		return YukiBlogAlbum
+	default:
+		return 0 // 或者一个表示未知的常量
+	}
+}
+
+// GetAlbumName 根据角色获取相册名称。
 func GetAlbumName(role uint8) string {
 	switch role {
 	case YukiAvatarAlbum:
@@ -26,9 +102,9 @@ func GetAlbumName(role uint8) string {
 }
 
 type YukiResponses struct {
-	Code    int                    `json:"code"`
-	Message string                 `json:"message"`
-	Data    map[string]interface{} `json:"data"`
+	Code    int         `json:"code"`
+	Message string      `json:"message"`
+	Data    interface{} `json:"data"`
 }
 
 type YukiAlbum struct {
