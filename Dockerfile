@@ -25,7 +25,7 @@ COPY --from=builder /usr/share/zoneinfo/Asia/Shanghai /usr/share/zoneinfo/Asia/S
 ENV TZ=Asia/Shanghai
 
 WORKDIR /app
-COPY --from=builder /app/stuoj /app/stuoj
+COPY --from=builder /app/stuoj/stuoj /app/stuoj
 
 CMD ["./stuoj"]
 
