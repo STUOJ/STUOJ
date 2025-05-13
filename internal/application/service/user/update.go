@@ -47,7 +47,7 @@ func UpdatePassword(req request.UserForgetPasswordReq, reqUser request.ReqUser) 
 
 	u1 := user.NewUser(
 		user.WithId(u0.Id.Value()),
-		user.WithPassword(req.Password),
+		user.WithPasswordPlaintext(req.Password),
 	)
 
 	return u1.Update()
