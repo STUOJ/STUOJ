@@ -3,6 +3,7 @@ package valueobject
 import (
 	"STUOJ/internal/domain/shared"
 	"errors"
+
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -14,7 +15,14 @@ type Password struct {
 
 // NewPasswordPlaintext 创建新密码（明文），用于注册/修改密码
 func NewPasswordPlaintext(plaintext string) Password {
-	return Password{plaintext: plaintext}
+	var p Password
+	p.plaintext = plaintext
+	hashed, err := p.Hash()
+	if err != nil {
+		return Password{}
+	}
+	p.Set(hashed.Value())
+	return p
 }
 
 // NewPassword 用于数据库读出（只含密文）
