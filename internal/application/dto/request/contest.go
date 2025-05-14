@@ -7,6 +7,8 @@ type QueryContestParams struct {
 	Size      *int64  `form:"size,omitempty"`
 	StartTime *string `form:"start-time,omitempty"`
 	Status    *string `form:"status,omitempty"`
+	Title     *string `form:"title,omitempty"`
+	UserId    *int64  `form:"user_id,omitempty"`
 }
 
 type ContestStatisticsParams struct {

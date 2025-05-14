@@ -28,7 +28,6 @@ type ContestData struct {
 }
 
 type ContestListItemData struct {
-	Collaborator []UserSimpleData `json:"collaborator"`
 	// 创建时间
 	CreateTime string `json:"create_time"`
 	// 结束时间
