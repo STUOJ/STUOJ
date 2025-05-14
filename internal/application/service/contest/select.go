@@ -19,13 +19,13 @@ func Select(req request.QueryContestParams, reqUser request.ReqUser) (ContestPag
 	var res ContestPage
 	contestQuery := params2Query(req)
 	contestQuery.Field = *queryfield.ContestSimpleField
-	contestDomain, contestMap, err := contest.Query.Select(contestQuery, contest.QueryUserId())
+	contestDomain, _, err := contest.Query.Select(contestQuery)
 	if err != nil {
 		return res, err
 	}
 	userIds := make([]int64, len(contestDomain))
-	for i, c := range contestMap {
-		userId := c["contest_user_id"].(int64)
+	for i, c := range contestDomain {
+		userId := c.UserId.Value()
 		userIds[i] = userId
 	}
 	userQuery := querycontext.UserQueryContext{}
