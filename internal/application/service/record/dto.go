@@ -30,15 +30,16 @@ func domain2SubmissionData(dm submission.Submission) (resp response.SubmissionDa
 
 func domain2JudgementData(dm judgement.Judgement) (resp response.JudgementData) {
 	resp = response.JudgementData{
-		Id:           dm.Id.Value(),
-		Memory:       dm.Memory.Value(),
-		Message:      dm.Message.Value(),
-		Status:       int64(dm.Status.Value()),
-		Stderr:       dm.Stderr.Value(),
-		Stdout:       dm.Stdout.Value(),
-		SubmissionId: dm.SubmissionId.Value(),
-		TestcaseId:   dm.TestcaseId.Value(),
-		Time:         float64(dm.Time.Value()),
+		Id:            dm.Id.Value(),
+		Memory:        dm.Memory.Value(),
+		Message:       dm.Message.Value(),
+		Status:        int64(dm.Status.Value()),
+		Stderr:        dm.Stderr.Value(),
+		Stdout:        dm.Stdout.Value(),
+		SubmissionId:  dm.SubmissionId.Value(),
+		CompileOutput: dm.CompileOutput.Value(),
+		TestcaseId:    dm.TestcaseId.Value(),
+		Time:          float64(dm.Time.Value()),
 	}
 	return
 }
