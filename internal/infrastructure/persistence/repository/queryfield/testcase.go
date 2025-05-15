@@ -9,7 +9,5 @@ var (
 	TestcaseSimpleField = field.NewTestcaseField().
 				SelectId().
 				SelectProblemId().
-				SelectSerial().
-				SelectTestInput().
-				SelectTestOutput()
+				SelectSerial()
 )

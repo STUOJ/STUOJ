@@ -1,9 +1,9 @@
 package request
 
 type QueryTestcaseParams struct {
-	Page    *int64  `json:"page,omitempty"`
-	Problem *string `json:"problem,omitempty"`
-	Size    *int64  `json:"size,omitempty"`
+	Page    *int64  `form:"page,omitempty"`
+	Problem *string `form:"problem,omitempty"`
+	Size    *int64  `form:"size,omitempty"`
 }
 
 type CreateTestcaseReq struct {

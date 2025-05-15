@@ -18,7 +18,7 @@ func Select(params request.QueryTestcaseParams, reqUser request.ReqUser) (Testca
 	var resp TestcasePage
 
 	query_ := params2Query(params)
-	query_.Field = *queryfield.TestcaseAllField
+	query_.Field = *queryfield.TestcaseSimpleField
 
 	testcases, _, err := testcase.Query.Select(query_)
 	if err != nil {
