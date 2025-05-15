@@ -33,6 +33,9 @@ func (query *ProblemQueryContext) applyFilter(options option.Options) option.Opt
 	if query.Source.Exist() {
 		filters.Add(field.ProblemSource, option.OpLike, query.Source.Value())
 	}
+	if query.Difficulty.Exist() {
+		filters.Add(field.ProblemDifficulty, option.OpIn, query.Difficulty.Value())
+	}
 	if query.Status.Exist() {
 		filters.Add(field.ProblemStatus, option.OpIn, query.Status.Value())
 	}
