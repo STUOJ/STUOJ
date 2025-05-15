@@ -6,6 +6,7 @@ package problem
 import (
 	"STUOJ/internal/infrastructure/persistence/entity"
 	"STUOJ/internal/infrastructure/persistence/repository/dao"
+	"STUOJ/internal/infrastructure/persistence/repository/querycontext"
 	"STUOJ/pkg/errors"
 	"time"
 
@@ -32,12 +33,9 @@ type Problem struct {
 
 func (p *Problem) UpdateTags(tagIds []int64) error {
 	var err error
-	options := p.toOption()
-	_, err = dao.ProblemStore.SelectOne(options)
-	if err != nil {
-		return errors.ErrNotFound.WithMessage(err.Error())
-	}
-	err = dao.ProblemTagStore.Delete(options)
+	options := querycontext.ProblemTagQueryContext{}
+	options.ProblemId.Set(p.Id.Value())
+	err = dao.ProblemTagStore.Delete(options.GenerateOptions())
 	if err != nil {
 		return errors.ErrInternalServer.WithMessage(err.Error())
 	}
