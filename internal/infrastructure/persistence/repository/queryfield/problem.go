@@ -15,6 +15,7 @@ var (
 				SelectId().
 				SelectTitle().
 				SelectSource().
+				SelectStatus().
 				SelectDifficulty().
 				SelectCreateTime().
 				SelectUpdateTime()
