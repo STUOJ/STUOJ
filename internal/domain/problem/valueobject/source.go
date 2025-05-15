@@ -23,12 +23,12 @@ func (s Source) Equals(other Source) bool {
 }
 
 func (s Source) Verify() error {
-	if len(s.Value()) > 100 || len(s.Value()) == 0 {
+	if len(s.Value()) > 100 {
 		return ErrSource
 	}
 	return nil
 }
 
 var (
-	ErrSource = fmt.Errorf("source length must be between 1 and 100 characters")
+	ErrSource = fmt.Errorf("来源过长")
 )
