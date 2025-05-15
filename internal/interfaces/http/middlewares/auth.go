@@ -36,6 +36,9 @@ func TokenGetInfo() gin.HandlerFunc {
 			return
 		}
 
+		c.Set("req_user_id", int64(uid))
+		c.Set("req_user_role", role)
+
 		if role != entity.RoleVisitor {
 			err = tokenAutoRefresh(c)
 			if err != nil {
@@ -43,8 +46,6 @@ func TokenGetInfo() gin.HandlerFunc {
 			}
 		}
 
-		c.Set("req_user_id", int64(uid))
-		c.Set("req_user_role", role)
 		c.Next()
 	}
 }
