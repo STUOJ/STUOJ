@@ -83,6 +83,10 @@ func Select(params request.QueryBlogParams, reqUser request.ReqUser) (BlogPage, 
 	for _, blog_ := range blogs {
 		var resBlog response.BlogData
 		resBlog = domain2Resp(blog_)
+		// 截断Content字段，只保留前40个rune
+		if len([]rune(resBlog.Content)) > 100 {
+			resBlog.Content = string([]rune(resBlog.Content)[:100]) + "..."
+		}
 		if blog_.ProblemId.Value() != 0 {
 			resBlog.Problem.ProblemSimpleData = response.Map2ProblemSimpleData(problemMap[blog_.ProblemId.Value()])
 			resBlog.Problem.ProblemUserScore = response.Map2ProblemUserScore(problemMap[blog_.ProblemId.Value()])
