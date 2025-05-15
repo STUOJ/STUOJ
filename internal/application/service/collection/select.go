@@ -103,7 +103,7 @@ func Select(params request.QueryCollectionParams, reqUser request.ReqUser) (Coll
 
 	res.Page.Page = query_.Page.Page
 	res.Page.Size = query_.Page.PageSize
-	total, _ := GetStatistics(params)
+	total, _ := Count(params)
 	res.Page.Total = total
 	return res, err
 }

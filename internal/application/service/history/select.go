@@ -65,11 +65,11 @@ func Select(params request.QueryHistoryParams, reqUser request.ReqUser) (History
 		}
 	}
 
-	// 构建分页信息
-	res.Page = dto.Page{
-		Page:  historyQueryContext.Page.Page,
-		Size:  historyQueryContext.Page.PageSize,
-		Total: int64(len(historyDomains)),
+	res.Page.Page = historyQueryContext.Page.Page
+	res.Size = historyQueryContext.Page.PageSize
+	res.Page.Total, err = Count(params)
+	if err != nil {
+		return HistoryPage{}, err
 	}
 
 	return res, nil

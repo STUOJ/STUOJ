@@ -43,7 +43,7 @@ func GetSystemInfo() (JudgeSystemInfo, error) {
 	return system, nil
 }
 
-func GetStatistics() (JudgeStatistics, error) {
+func Count() (JudgeStatistics, error) {
 	bodystr, err := httpInteraction("/statistics", "GET", nil)
 	if err != nil {
 		return JudgeStatistics{}, err

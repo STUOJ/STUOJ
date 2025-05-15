@@ -1,16 +1,16 @@
-package record
+package history
 
 import (
 	"STUOJ/internal/application/dto/request"
-	"STUOJ/internal/domain/submission"
+	"STUOJ/internal/domain/history"
 	option "STUOJ/internal/infrastructure/persistence/repository/option"
 )
 
-// Count 统计提交记录数量
-func Count(req request.QuerySubmissionParams) (int64, error) {
+// Count 统计数量
+func Count(req request.QueryHistoryParams) (int64, error) {
 	query := params2Query(req)
 	query.Page = option.NewPagination(0, 0)
-	count, err := submission.Query.Count(query)
+	count, err := history.Query.Count(query)
 	if err != nil {
 		return 0, err
 	}
