@@ -32,7 +32,7 @@ func Select(params request.QuerySolutionParams, reqUser request.ReqUser) (Soluti
 	return res, nil
 }
 
-// SelectById 根据ID查询评测点数据
+// SelectById 根据ID查询题解
 func SelectById(id int64, reqUser request.ReqUser) (response.SolutionData, error) {
 	var resp response.SolutionData
 
