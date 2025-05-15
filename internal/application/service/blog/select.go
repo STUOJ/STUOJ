@@ -94,7 +94,7 @@ func Select(params request.QueryBlogParams, reqUser request.ReqUser) (BlogPage, 
 	}
 	resp.Page.Page = query_.Page.Page
 	resp.Page.Size = query_.Page.PageSize
-	resp.Page.Total, err = Count(params)
+	resp.Page.Total, err = Count(query_)
 	if err != nil {
 		return resp, err
 	}

@@ -31,7 +31,7 @@ func Select(params request.QueryTestcaseParams, reqUser request.ReqUser) (Testca
 	}
 	resp.Page.Page = query_.Page.Page
 	resp.Page.Size = query_.Page.PageSize
-	total, _ := Count(params)
+	total, _ := Count(query_)
 	resp.Page.Total = total
 	return resp, nil
 }

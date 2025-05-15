@@ -67,7 +67,7 @@ func Select(params request.QuerySubmissionParams, reqUser request.ReqUser) (Subm
 
 	resp.Page.Page = qc.Page.Page
 	resp.Size = qc.Page.PageSize
-	resp.Page.Total, err = Count(params)
+	resp.Page.Total, err = Count(qc)
 	if err != nil {
 		return resp, err
 	}

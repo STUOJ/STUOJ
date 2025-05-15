@@ -67,7 +67,7 @@ func Select(params request.QueryHistoryParams, reqUser request.ReqUser) (History
 
 	res.Page.Page = historyQueryContext.Page.Page
 	res.Size = historyQueryContext.Page.PageSize
-	res.Page.Total, err = Count(params)
+	res.Page.Total, err = Count(historyQueryContext)
 	if err != nil {
 		return HistoryPage{}, err
 	}

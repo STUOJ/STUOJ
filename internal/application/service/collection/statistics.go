@@ -1,13 +1,12 @@
 package collection
 
 import (
-	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/domain/collection"
 	option "STUOJ/internal/infrastructure/persistence/repository/option"
+	"STUOJ/internal/infrastructure/persistence/repository/querycontext"
 )
 
-func Count(req request.QueryCollectionParams) (int64, error) {
-	query := params2Model(req)
+func Count(query querycontext.CollectionQueryContext) (int64, error) {
 	query.Page = option.NewPagination(0, 0)
 	return collection.Query.Count(query)
 }

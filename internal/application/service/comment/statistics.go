@@ -1,14 +1,13 @@
 package comment
 
 import (
-	"STUOJ/internal/application/dto/request"
 	"STUOJ/internal/domain/comment"
 	option "STUOJ/internal/infrastructure/persistence/repository/option"
+	"STUOJ/internal/infrastructure/persistence/repository/querycontext"
 )
 
 // Count 统计数量
-func Count(req request.QueryCommentParams) (int64, error) {
-	query := params2Query(req)
+func Count(query querycontext.CommentQueryContext) (int64, error) {
 	query.Page = option.NewPagination(0, 0)
 	count, err := comment.Query.Count(query)
 	if err != nil {

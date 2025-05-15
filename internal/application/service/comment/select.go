@@ -71,7 +71,7 @@ func Select(params request.QueryCommentParams, reqUser request.ReqUser) (Comment
 
 	resp.Page.Page = qc.Page.Page
 	resp.Size = qc.Page.PageSize
-	resp.Page.Total, err = Count(params)
+	resp.Page.Total, err = Count(qc)
 	if err != nil {
 		return resp, err
 	}

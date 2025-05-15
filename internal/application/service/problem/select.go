@@ -80,7 +80,7 @@ func Select(params request.QueryProblemParams, reqUser request.ReqUser) (Problem
 		Page: problemQueryContext.Page.Page,
 		Size: problemQueryContext.Page.PageSize,
 	}
-	total, _ := Count(params)
+	total, _ := Count(problemQueryContext)
 	res.Page.Total = total
 	return res, nil
 }

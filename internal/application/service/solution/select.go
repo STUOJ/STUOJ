@@ -27,7 +27,7 @@ func Select(params request.QuerySolutionParams, reqUser request.ReqUser) (Soluti
 	}
 	res.Page.Page = query_.Page.Page
 	res.Page.Size = query_.Page.PageSize
-	total, _ := Count(params)
+	total, _ := Count(query_)
 	res.Page.Total = total
 	return res, nil
 }
