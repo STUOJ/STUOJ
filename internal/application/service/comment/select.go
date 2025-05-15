@@ -24,7 +24,7 @@ func Select(params request.QueryCommentParams, reqUser request.ReqUser) (Comment
 
 	// 查询
 	qc := params2Query(params)
-	qc.Field.SelectId().SelectUserId().SelectBlogId().SelectStatus().SelectCreateTime().SelectUpdateTime()
+	qc.Field = *query.CommentAllField
 	if !qc.Status.Exist() {
 		qc.Status.Add(entity.CommentPublic)
 	} else if slices.Contains(qc.Status.Value(), entity.CommentDeleted) && reqUser.Role < entity.RoleAdmin {
@@ -42,7 +42,7 @@ func Select(params request.QueryCommentParams, reqUser request.ReqUser) (Comment
 	uqc := querycontext2.UserQueryContext{}
 	uqc.Id.Add(userIds...)
 	uqc.Field = *query.UserSimpleField
-	users, _, err := user.Query.Select(uqc)
+	users, _, err := user.Query.SelectByIds(uqc)
 
 	blogIds := make([]int64, len(comments))
 	for i, c := range comments {
@@ -51,7 +51,7 @@ func Select(params request.QueryCommentParams, reqUser request.ReqUser) (Comment
 	bqc := querycontext2.BlogQueryContext{}
 	bqc.Id.Add(blogIds...)
 	bqc.Field = *query.BlogSimpleField
-	blogs, _, err := blog.Query.Select(bqc)
+	blogs, _, err := blog.Query.SelectByIds(bqc)
 
 	for _, u := range comments {
 		respComment := domain2Resp(u)
