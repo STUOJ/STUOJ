@@ -7,7 +7,7 @@ import (
 
 type UserData struct {
 	Id         int64  `json:"id"`
-	Username   string `json:"name"`
+	Username   string `json:"username"`
 	Role       uint8  `json:"role"`
 	Avatar     string `json:"avatar"`
 	Email      string `json:"email"`
@@ -37,7 +37,7 @@ type UserQueryData struct {
 
 type UserSimpleData struct {
 	Id     int64  `json:"id"`
-	Name   string `json:"name"`
+	Name   string `json:"username"`
 	Role   uint8  `json:"role"`
 	Avatar string `json:"avatar"`
 }
