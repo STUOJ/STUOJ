@@ -15,14 +15,14 @@ func ErrorHandler() gin.HandlerFunc {
 			err := c.Errors.Last().Err
 			if e, ok := err.(*errors.Error); ok {
 				c.JSON(e.HttpStatus, gin.H{
-					"code":    e.Code,
-					"message": e.Message,
-					"data":    e.Data,
+					"code": e.Code,
+					"msg":  e.Message,
+					"data": e.Data,
 				})
 			} else {
 				c.JSON(http.StatusInternalServerError, gin.H{
-					"code":    500,
-					"message": "服务器内部错误",
+					"code": 500,
+					"msg":  "服务器内部错误",
 				})
 			}
 		}
