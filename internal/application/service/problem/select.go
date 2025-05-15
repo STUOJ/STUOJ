@@ -60,7 +60,7 @@ func Select(params request.QueryProblemParams, reqUser request.ReqUser) (Problem
 
 	if !problemQueryContext.Status.Exist() {
 		problemQueryContext.Status.Add(entity.ProblemPublic)
-	} else if len(slices.DeleteFunc(problemQueryContext.Status.Value(), func(s entity.ProblemStatus) bool { return s == entity.ProblemPublic })) > 0 && reqUser.Role < entity.RoleAdmin {
+	} else if slices.ContainsFunc(problemQueryContext.Status.Value(), func(s entity.ProblemStatus) bool { return s != entity.ProblemPublic }) && reqUser.Role < entity.RoleAdmin {
 		problem.WhereUser(reqUser.Id)(&problemQueryContext)
 	}
 
