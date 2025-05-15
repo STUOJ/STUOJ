@@ -1,10 +1,10 @@
 package request
 
 type QuerySolutionParams struct {
-	Language *string `json:"language,omitempty"`
-	Page     *int64  `json:"page,omitempty"`
-	Problem  *string `json:"problem,omitempty"`
-	Size     *int64  `json:"size,omitempty"`
+	Language *string `form:"language,omitempty"`
+	Page     *int64  `form:"page,omitempty"`
+	Problem  *string `form:"problem,omitempty"`
+	Size     *int64  `form:"size,omitempty"`
 }
 
 type SolutionStatisticsParams struct {
