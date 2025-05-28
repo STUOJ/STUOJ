@@ -39,12 +39,6 @@ func UpdatePassword(req request.UserForgetPasswordReq, reqUser request.ReqUser) 
 		return err
 	}
 
-	// 检查权限
-	err = isPermission(u0.Id.Value(), reqUser)
-	if err != nil {
-		return err
-	}
-
 	u1 := user.NewUser(
 		user.WithId(u0.Id.Value()),
 		user.WithPasswordPlaintext(req.Password),
