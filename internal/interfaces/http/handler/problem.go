@@ -49,6 +49,17 @@ func ProblemList(c *gin.Context) {
 	c.JSON(http.StatusOK, vo.RespOk("OK", ps))
 }
 
+func ProblemDaily(c *gin.Context) {
+	reqUser := request.NewReqUser(c)
+	p, err := problem.SelectDailyProblem(*reqUser)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	c.JSON(http.StatusOK, vo.RespOk("OK", p))
+}
+
 // 添加题目
 
 func ProblemAdd(c *gin.Context) {

@@ -15,6 +15,14 @@ func InitProblemRoute(ginServer *gin.Engine) {
 		problemPublicRoute.GET("/statistics", handler.ProblemStatistics)
 	}
 
+	problemUserRoute := ginServer.Group("/problem")
+	{
+		// 使用中间件
+		problemUserRoute.Use(middlewares.TokenAuthUser())
+
+		problemUserRoute.GET("/daily", handler.ProblemDaily)
+	}
+
 	problemEditorRoute := ginServer.Group("/problem")
 	{
 		// 使用中间件
