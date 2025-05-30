@@ -7,11 +7,15 @@ import (
 	"STUOJ/internal/domain/problem"
 	"STUOJ/internal/domain/user"
 	entity "STUOJ/internal/infrastructure/persistence/entity"
+	option "STUOJ/internal/infrastructure/persistence/repository/option"
 	querycontext2 "STUOJ/internal/infrastructure/persistence/repository/querycontext"
 	query "STUOJ/internal/infrastructure/persistence/repository/queryfield"
 	"STUOJ/pkg/errors"
 	"STUOJ/pkg/utils"
+	"fmt"
+	"hash/fnv"
 	"slices"
+	"time"
 )
 
 type ProblemPage struct {
@@ -93,4 +97,37 @@ func Statistics(params request.ProblemStatisticsParams, reqUser request.ReqUser)
 		return nil, err
 	}
 	return resp, nil
+}
+
+func SelectDailyProblem(reqUser request.ReqUser) (response.ProblemSimpleWithUserScore, error) {
+	date := time.Now()
+	dateStr := date.Format("2006-01-02")
+
+	problemQueryContext := querycontext2.ProblemQueryContext{}
+
+	problemQueryContext.Status.Add(entity.ProblemPublic)
+
+	hasher := fnv.New64()
+	hasher.Write([]byte(dateStr))
+	hasher.Write([]byte{0}) // 添加分隔符
+	hasher.Write([]byte(fmt.Sprintf("%d", reqUser.Id)))
+	hashValue := hasher.Sum64()
+
+	total, err := problem.Query.Count(problemQueryContext, problem.WhereUserNoACBeforeDate(reqUser.Id, date))
+	if err != nil {
+		return response.ProblemSimpleWithUserScore{}, err
+	}
+
+	index := hashValue % uint64(total)
+
+	problemQueryContext.Field = *query.ProblemSimpleField
+	problemQueryContext.Page = option.NewPagination(int64(index), 1)
+	problemDomain, problemMap, err := problem.Query.Select(problemQueryContext, problem.QueryMaxScore(reqUser.Id), problem.WhereUserNoACBeforeDate(reqUser.Id, date))
+	if err != nil {
+		return response.ProblemSimpleWithUserScore{}, err
+	}
+	var res response.ProblemSimpleWithUserScore
+	res.ProblemSimpleData = response.Domain2ProblemSimpleData(problemDomain[0])
+	res.ProblemUserScore = response.Map2ProblemUserScore(problemMap[0])
+	return res, nil
 }

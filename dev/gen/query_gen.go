@@ -57,7 +57,10 @@ func (*_Query) SelectOne(context querycontext.{{.EntityName}}QueryContext, optio
 	return Dto(map_), map_, nil
 }
 
-func (*_Query) Count(context querycontext.{{.EntityName}}QueryContext) (int64, error) {
+func (*_Query) Count(context querycontext.{{.EntityName}}QueryContext, optionFunc ...option.QueryContextOption) (int64, error) {
+	for _, o := range optionFunc {
+		o(&context)
+	}
 	res, err := dao.{{.EntityName}}Store.Count(context.GenerateOptions())
 	if err != nil {
 		return res, errors.ErrInternalServer.WithMessage("查询失败")
