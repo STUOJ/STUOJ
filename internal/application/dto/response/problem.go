@@ -24,6 +24,11 @@ type ProblemData struct {
 	TagIds
 }
 
+type ProblemSimpleWithUserScore struct {
+	ProblemSimpleData
+	ProblemUserScore
+}
+
 type ProblemSimpleData struct {
 	Difficulty int64  `json:"difficulty,omitempty"`
 	Id         int64  `json:"id"`
