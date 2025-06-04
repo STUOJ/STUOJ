@@ -7,6 +7,7 @@ import (
 	"STUOJ/internal/infrastructure/persistence/repository/dao"
 	"STUOJ/internal/infrastructure/persistence/repository/option"
 	"STUOJ/internal/infrastructure/persistence/repository/querycontext"
+	"STUOJ/pkg/utils"
 	"time"
 )
 
@@ -43,6 +44,12 @@ func params2Query(params request.QueryContestParams) (query querycontext.Contest
 			query.Format.Set(format)
 		}
 	}
+	if params.Status != nil {
+		status, err := dao.StringToContestStatusSlice(*params.Status)
+		if err == nil {
+			query.Status.Set(status)
+		}
+	}
 	if params.EndTime != nil {
 		t, err := time.Parse("2006-01-02 15:04:05", *params.EndTime)
 		if err == nil {
@@ -55,8 +62,41 @@ func params2Query(params request.QueryContestParams) (query querycontext.Contest
 			query.StartTime.Set(t)
 		}
 	}
+	if params.TeamSize != nil {
+		teamsize, err := utils.StringToInt8Slice(*params.TeamSize)
+		if err == nil {
+			query.TeamSize.Set(teamsize)
+		}
+	}
+	if params.BeginStart != nil {
+		t, err := time.Parse("2006-01-02 15:04:05", *params.BeginStart)
+		if err == nil {
+			query.BeginStart.Set(t)
+		}
+	}
+	if params.BeginEnd != nil {
+		t, err := time.Parse("2006-01-02 15:04:05", *params.BeginEnd)
+		if err == nil {
+			query.BeginEnd.Set(t)
+		}
+	}
+	if params.FinishStart != nil {
+		t, err := time.Parse("2006-01-02 15:04:05", *params.FinishStart)
+		if err == nil {
+			query.FinishStart.Set(t)
+		}
+	}
+	if params.FinishEnd != nil {
+		t, err := time.Parse("2006-01-02 15:04:05", *params.FinishEnd)
+		if err == nil {
+			query.FinishEnd.Set(t)
+		}
+	}
 	if params.Page != nil && params.Size != nil {
 		query.Page = option.NewPagination(*params.Page, *params.Size)
+	}
+	if params.Order != nil && params.OrderBy != nil {
+		query.Sort = option.NewSortQuery(*params.OrderBy, *params.Order)
 	}
 	return
 }

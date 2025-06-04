@@ -1,14 +1,21 @@
 package request
 
 type QueryContestParams struct {
-	EndTime   *string `form:"end-time,omitempty"`
-	Format    *string `form:"format,omitempty"`
-	Page      *int64  `form:"page,omitempty"`
-	Size      *int64  `form:"size,omitempty"`
-	StartTime *string `form:"start-time,omitempty"`
-	Status    *string `form:"status,omitempty"`
-	Title     *string `form:"title,omitempty"`
-	UserId    *int64  `form:"user_id,omitempty"`
+	BeginEnd    *string `json:"begin-end,omitempty"`
+	BeginStart  *string `json:"begin-start,omitempty"`
+	EndTime     *string `json:"end-time,omitempty"`
+	FinishEnd   *string `json:"finish-end,omitempty"`
+	FinishStart *string `json:"finish-start,omitempty"`
+	Format      *string `json:"format,omitempty"`
+	TeamSize    *string `json:"team-size,omitempty"`
+	Order       *string `json:"order,omitempty"`
+	OrderBy     *string `json:"order-by,omitempty"`
+	Page        *int64  `json:"page,omitempty"`
+	Size        *int64  `json:"size,omitempty"`
+	StartTime   *string `json:"start-time,omitempty"`
+	Status      *string `json:"status,omitempty"`
+	Title       *string `json:"title,omitempty"`
+	UserId      *int64  `json:"user_id,omitempty"`
 }
 
 type ContestStatisticsParams struct {
