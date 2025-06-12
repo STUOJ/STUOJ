@@ -24,6 +24,26 @@ type ProblemData struct {
 	TagIds
 }
 
+func Domain2ProblemData(p problem.Problem) ProblemData {
+	return ProblemData{
+		Id:           p.Id.Value(),
+		Title:        p.Title.Value(),
+		Description:  p.Description.Value(),
+		Input:        p.Input.Value(),
+		Output:       p.Output.Value(),
+		Hint:         p.Hint.Value(),
+		Source:       p.Source.Value(),
+		TimeLimit:    int64(p.TimeLimit.Value()),
+		MemoryLimit:  int64(p.MemoryLimit.Value()),
+		Difficulty:   int64(p.Difficulty.Value()),
+		Status:       int64(p.Status.Value()),
+		SampleInput:  p.SampleInput.Value(),
+		SampleOutput: p.SampleOutput.Value(),
+		CreateTime:   p.CreateTime.String(),
+		UpdateTime:   p.UpdateTime.String(),
+	}
+}
+
 type ProblemSimpleData struct {
 	Difficulty int64  `json:"difficulty,omitempty"`
 	Id         int64  `json:"id"`
