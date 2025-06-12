@@ -25,6 +25,21 @@ func domain2listItemResponse(c contest.Contest) response.ContestListItemData {
 	}
 }
 
+func domain2response(c contest.Contest) response.ContestData {
+	return response.ContestData{
+		Id:          c.Id.Value(),
+		Title:       c.Title.Value(),
+		Format:      int64(c.Format.Value()),
+		Status:      int64(c.Status.Value()),
+		StartTime:   c.StartTime.Value().String(),
+		EndTime:     c.EndTime.Value().String(),
+		TeamSize:    int64(c.TeamSize.Value()),
+		Description: c.Description.Value(),
+		CreateTime:  c.CreateTime.String(),
+		UpdateTime:  c.UpdateTime.String(),
+	}
+}
+
 func params2Query(params request.QueryContestParams) (query querycontext.ContestQueryContext) {
 	if params.UserId != nil {
 		query.UserId.Add(*params.UserId)
