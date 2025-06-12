@@ -139,3 +139,28 @@ func SelectById(id int64, reqUser request.ReqUser) (response.ContestData, error)
 	}
 	return res, nil
 }
+
+func SelectProblem(contestId, problemSerial int64, reqUser request.ReqUser) (response.ProblemQueryData, error) {
+	var res response.ProblemQueryData
+	contsetQuery := querycontext.ContestQueryContext{}
+	contsetQuery.Field.SelectId()
+	_, contestMap, err := contest.Query.SelectOne(contsetQuery, contest.QueryProblemId())
+	if err != nil {
+		return res, err
+	}
+	problemIds, err := utils.StringToInt64Slice(string(contestMap["contest_problem_id"].([]uint8)))
+	if err != nil {
+		return res, err
+	}
+	problemId := problemIds[problemSerial-1]
+	problemQuery := querycontext.ProblemQueryContext{}
+	problemQuery.Field.SelectId().SelectTitle().SelectDescription().SelectInput().SelectOutput().SelectSampleInput().SelectSampleOutput().SelectTimeLimit().SelectMemoryLimit().SelectHint()
+	problemQuery.Id.Add(problemId)
+	problemDomain, problemMap, err := problem.Query.SelectOne(problemQuery, problem.QueryContestMaxScore(contestId, reqUser.Id))
+	if err != nil {
+		return res, err
+	}
+	res.ProblemData = response.Domain2ProblemData(problemDomain)
+	res.ProblemUserScore = response.Map2ProblemUserScore(problemMap)
+	return res, nil
+}
