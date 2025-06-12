@@ -49,6 +49,21 @@ func QueryUser() option.QueryContextOption {
 }
 
 const (
+	QueryContestMaxScoreSQL      = "(SELECT MAX(tbl_submission.score) FROM tbl_team_user INNER JOIN tbl_team ON tbl_team_user.team_id = tbl_team.id INNER JOIN tbl_team_submission ON tbl_team.id = tbl_team_submission.team_id INNER JOIN tbl_submission ON tbl_team_submission.submission_id = tbl_submission.id WHERE tbl_team.contest_id = %d AND tbl_team_user.user_id = %d AND tbl_submission.problem_id = tbl_problem.id) AS contest_user_score"
+	QueryContestHasSubmissionSQL = "EXISTS (SELECT 1 FROM tbl_team_user INNER JOIN tbl_team ON tbl_team_user.team_id = tbl_team.id INNER JOIN tbl_team_submission ON tbl_team.id = tbl_team_submission.team_id INNER JOIN tbl_submission ON tbl_team_submission.submission_id = tbl_submission.id WHERE tbl_team.contest_id = %d AND tbl_team_user.user_id = %d AND tbl_submission.problem_id = tbl_problem.id) AS has_contest_submission"
+)
+
+func QueryContestMaxScore(contestId, userId int64) option.QueryContextOption {
+	return func(pqm option.QueryContext) option.QueryContext {
+		field := pqm.GetField()
+		maxScoreselector := option.NewSelector(QueryContestMaxScoreSQL, contestId, userId)
+		hasSubmissionselector := option.NewSelector(QueryContestHasSubmissionSQL, contestId, userId)
+		field.AddSelect(*maxScoreselector, *hasSubmissionselector)
+		return pqm
+	}
+}
+
+const (
 	WhereProblemTag = "tbl_problem.id IN (SELECT problem_id FROM tbl_problem_tag WHERE tag_id In(?) GROUP BY problem_id HAVING COUNT(DISTINCT tag_id) =?)"
 )
 
