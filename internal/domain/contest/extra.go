@@ -27,3 +27,16 @@ func QueryUserId() option.QueryContextOption {
 		return pqm
 	}
 }
+
+const (
+	QueryJoinUserSQL = "(SELECT GROUP_CONCAT(DISTINCT COALESCE(tbl_team_user.user_id, tbl_team.user_id)) FROM tbl_team_user RIGHT JOIN tbl_team ON tbl_team_user.team_id = tbl_team.id WHERE tbl_team.contest_id = tbl_contest.id) AS join_user_id"
+)
+
+func QueryJoinUserId() option.QueryContextOption {
+	return func(pqm option.QueryContext) option.QueryContext {
+		field := pqm.GetField()
+		selector := option.NewSelector(QueryJoinUserSQL)
+		field.AddSelect(*selector)
+		return pqm
+	}
+}
