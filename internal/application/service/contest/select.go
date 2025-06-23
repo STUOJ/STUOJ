@@ -63,16 +63,13 @@ func SelectById(id int64, reqUser request.ReqUser) (response.ContestData, error)
 	if err != nil {
 		return res, err
 	}
-	var flag uint8 = 0 // 0 无权限 1 管理权限 2 参赛人员权限
-	userIds, err := utils.StringToInt64Slice(string(contestMap["contest_user_id"].([]uint8)))
+	flag, err := checkContestPermission(contestDomain, contestMap, reqUser)
 	if err != nil {
 		return res, err
 	}
 
-	// 判断是否为比赛管理员
-	if reqUser.Id == contestDomain.UserId.Value() || slices.Contains(userIds, reqUser.Id) || reqUser.Role >= entity.RoleAdmin {
-		flag = 1
-	}
+	// 处理用户信息查询
+	userIds, err := utils.StringToInt64Slice(string(contestMap["contest_user_id"].([]uint8)))
 
 	// 如果不是比赛管理员，判断是否为参赛人员
 	if flag == 0 {
@@ -147,27 +144,90 @@ func SelectById(id int64, reqUser request.ReqUser) (response.ContestData, error)
 
 func SelectProblem(contestId, problemSerial int64, reqUser request.ReqUser) (response.ContestProblem, error) {
 	var res response.ContestProblem
-	contsetQuery := querycontext.ContestQueryContext{}
-	contsetQuery.Field.SelectId()
-	_, contestMap, err := contest.Query.SelectOne(contsetQuery, contest.QueryProblemId())
+
+	contestQuery := querycontext.ContestQueryContext{
+		Field: *queryfield.ContestAllField,
+	}
+	contestQuery.Id.Set([]int64{contestId})
+	contestDomain, contestMap, err := contest.Query.SelectOne(contestQuery,
+		contest.QueryUserId(),
+		contest.QueryJoinUserId())
 	if err != nil {
 		return res, err
 	}
+
+	flag, err := checkContestPermission(contestDomain, contestMap, reqUser)
+	if err != nil {
+		return res, err
+	}
+
 	problemIds, err := utils.StringToInt64Slice(string(contestMap["contest_problem_id"].([]uint8)))
 	if err != nil {
 		return res, err
 	}
+	if problemSerial < 1 || int(problemSerial) > len(problemIds) {
+		return res, errors.ErrNotFound.WithMessage("题目序号无效")
+	}
 	problemId := problemIds[problemSerial-1]
+
 	problemQuery := querycontext.ProblemQueryContext{}
-	problemQuery.Field.SelectId().SelectTitle().SelectDescription().SelectInput().SelectOutput().SelectSampleInput().SelectSampleOutput().SelectTimeLimit().SelectMemoryLimit().SelectHint()
+	problemQuery.Field.SelectId().SelectTitle().SelectDescription().SelectInput().SelectOutput().
+		SelectSampleInput().SelectSampleOutput().SelectTimeLimit().SelectMemoryLimit().SelectHint()
 	problemQuery.Id.Add(problemId)
-	problemDomain, problemMap, err := problem.Query.SelectOne(problemQuery, problem.QueryContestMaxScore(contestId, reqUser.Id))
+	problemDomain, problemMap, err := problem.Query.SelectOne(problemQuery,
+		problem.QueryContestMaxScore(contestId, reqUser.Id))
 	if err != nil {
 		return res, err
 	}
+
 	res.ProblemData = response.Domain2ProblemData(problemDomain)
 	res.ProblemUserScore = response.Map2ProblemUserScore(problemMap)
-	res.Id = 0
+
+	// 根据权限隐藏题目真实ID
+	if flag != 1 {
+		res.Id = 0
+	}
 	res.Serial = problemSerial
+
 	return res, nil
+}
+
+// 权限检查函数
+// 0 - 无权限 1 - 比赛管理员 2 - 参赛人员
+func checkContestPermission(contestDomain contest.Contest, contestMap map[string]any, reqUser request.ReqUser) (uint8, error) {
+	var flag uint8 = 0
+	userIds, err := utils.StringToInt64Slice(string(contestMap["contest_user_id"].([]uint8)))
+	if err != nil {
+		return flag, err
+	}
+
+	// 管理员权限检查
+	if reqUser.Id == contestDomain.UserId.Value() ||
+		slices.Contains(userIds, reqUser.Id) ||
+		reqUser.Role >= entity.RoleAdmin {
+		flag = 1
+	}
+
+	// 参赛人员检查
+	if flag == 0 {
+		joinUserIds, err := utils.StringToInt64Slice(string(contestMap["join_user_id"].([]uint8)))
+		if err != nil {
+			return flag, err
+		}
+		if slices.Contains(joinUserIds, reqUser.Id) {
+			flag = 2
+		}
+	}
+
+	// 公开比赛检查
+	if flag == 0 && contestDomain.Status.Value() < entity.ContestPublic {
+		return flag, errors.ErrUnauthorized.WithMessage("无权限查看")
+	}
+
+	// 比赛时间检查
+	if flag == 2 && contestDomain.StartTime.Value().After(time.Now()) {
+		return flag, errors.ErrUnauthorized.WithMessage("比赛尚未开始")
+	}
+
+	return flag, nil
 }
