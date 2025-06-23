@@ -12,6 +12,7 @@ type ContestData struct {
 	// 比赛Id
 	Id      int64 `json:"id"`
 	Problem []struct {
+		Serial int64 `json:"serial"`
 		ProblemSimpleData
 		ProblemUserScore
 	} `json:"problem"`
@@ -46,4 +47,10 @@ type ContestListItemData struct {
 	// 更新时间
 	UpdateTime string         `json:"update_time"`
 	User       UserSimpleData `json:"user"`
+}
+
+type ContestProblem struct {
+	Serial int64 `json:"serial"`
+	ProblemData
+	ProblemUserScore
 }

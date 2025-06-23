@@ -129,19 +129,24 @@ func SelectById(id int64, reqUser request.ReqUser) (response.ContestData, error)
 	}
 	for _, v := range problemIds {
 		var problem_ struct {
+			Serial int64 `json:"serial"`
 			response.ProblemSimpleData
 			response.ProblemUserScore
 		}
 		problem_.ProblemSimpleData = response.Map2ProblemSimpleData(problemMaps[v])
 		problem_.ProblemUserScore = response.Map2ProblemUserScore(problemMaps[v])
-		problem_.Id = v
+		if flag != 1 {
+			problem_.Id = 0
+		}
+		problem_.Serial = v
+
 		res.Problem = append(res.Problem, problem_)
 	}
 	return res, nil
 }
 
-func SelectProblem(contestId, problemSerial int64, reqUser request.ReqUser) (response.ProblemQueryData, error) {
-	var res response.ProblemQueryData
+func SelectProblem(contestId, problemSerial int64, reqUser request.ReqUser) (response.ContestProblem, error) {
+	var res response.ContestProblem
 	contsetQuery := querycontext.ContestQueryContext{}
 	contsetQuery.Field.SelectId()
 	_, contestMap, err := contest.Query.SelectOne(contsetQuery, contest.QueryProblemId())
@@ -162,5 +167,7 @@ func SelectProblem(contestId, problemSerial int64, reqUser request.ReqUser) (res
 	}
 	res.ProblemData = response.Domain2ProblemData(problemDomain)
 	res.ProblemUserScore = response.Map2ProblemUserScore(problemMap)
+	res.Id = 0
+	res.Serial = problemSerial
 	return res, nil
 }
